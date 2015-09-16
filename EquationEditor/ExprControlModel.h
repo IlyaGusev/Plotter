@@ -16,6 +16,8 @@ public:
 	RECT GetRect();
 
 	void SetRect( RECT rect );
+
+	//void SetFontSize( int fontSize );
 private:
 	RECT rect;
 

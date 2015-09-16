@@ -47,19 +47,21 @@ void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
 }
 
 void CEquationEditorWindow::OnChar() {
-	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
+	presenter.ExtendControlView( ::GetFocus(), 7 );
 
-	HWND hwndEdit1 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
-		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
+	//HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 
-	::SetWindowLong( hwndEdit1, GWL_WNDPROC, (DWORD) editControlProc );
+	//HWND hwndEdit1 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
+	//	0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
 
-	HWND hwndEdit2 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
-		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
+	//::SetWindowLong( hwndEdit1, GWL_WNDPROC, (DWORD) editControlProc );
 
-	::SetWindowLong( hwndEdit2, GWL_WNDPROC, (DWORD) editControlProc );
+	//HWND hwndEdit2 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
+	//	0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
 
-	presenter.AddControlView( new CFracControlView( this, new CEditControlView( hwndEdit1 ), new CEditControlView( hwndEdit2 ) ), ::GetFocus() );
+	//::SetWindowLong( hwndEdit2, GWL_WNDPROC, (DWORD) editControlProc );
+
+	//presenter.AddControlView( new CFracControlView( this, new CEditControlView( hwndEdit1 ), new CEditControlView( hwndEdit2 ) ), ::GetFocus() );
 }
 
 void CEquationEditorWindow::OnDrawFrac( RECT rect ) {
@@ -129,7 +131,10 @@ LRESULT CALLBACK CEquationEditorWindow::editControlProc( HWND hwnd, UINT message
 
 	switch( message ) {
 	case WM_CHAR:
-		wnd->OnChar();
+		// TODO обработать символ и передавать его длину в OnChar (для backspace передавать отрицательную длину)
+		if( wParam != VK_BACK ) {
+			wnd->OnChar();
+		}
 	default:
 		break;
 	}

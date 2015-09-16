@@ -21,12 +21,18 @@ public:
     CEquationPresenter();
 
 	void AddControlView( IControlView* newView, HWND currViewHwnd );
+
+	void ExtendControlView( HWND currViewHwnd, int deltaWidth );
 private:
     CExprControlModel* root;
 
 	std::unordered_map<IBaseExprModel*, IControlView*> views;
 
-	IBaseExprModel* getControlView( HWND hwnd );
+	IBaseExprModel* getModel( HWND hwnd );
 
 	void addFrac( IControlView* view, CExprControlModel* parent, RECT focusedViewRect );
+
+	void setRect( IBaseExprModel* model, RECT rect );
+
+	// void updateGraph(IControlModel* startVert);
 };

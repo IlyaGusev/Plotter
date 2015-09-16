@@ -83,6 +83,8 @@
     <ClCompile Include="EquationEditorWindow.cpp" />
     <ClCompile Include="EditControlView.h" />
     <ClCompile Include="ExprControlModel.cpp" />
+    <ClCompile Include="FracControlModel.cpp" />
+    <ClCompile Include="FracControlView.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,9 +93,12 @@
     <ClInclude Include="EquationEditorWindow.h" />
     <ClInclude Include="ExprControlModel.h" />
     <ClInclude Include="ExprControlView.h" />
+    <ClInclude Include="FracControlModel.h" />
+    <ClInclude Include="FracControlView.h" />
+    <ClInclude Include="FracDrawable.h" />
     <ClInclude Include="IBaseExprModel.h" />
     <ClInclude Include="IControlView.h" />
-    <ClInclude Include="IExprView.h" />
+    <ClInclude Include="IExprDrawable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

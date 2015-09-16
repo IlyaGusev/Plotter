@@ -2,10 +2,12 @@
 #include "IControlView.h"
 #include "ExprControlView.h"
 #include "EditControlView.h"
+#include "FracControlView.h"
 
 #include "IBaseExprModel.h"
 #include "ExprControlModel.h"
 #include "EditControlModel.h"
+#include "FracControlModel.h"
 
 #include <vector>
 #include <queue>
@@ -19,11 +21,12 @@ public:
     CEquationPresenter();
 
 	void AddControlView( IControlView* newView, HWND currViewHwnd );
-
 private:
-    IBaseExprModel* root;
+    CExprControlModel* root;
 
 	std::unordered_map<IBaseExprModel*, IControlView*> views;
 
 	IBaseExprModel* getControlView( HWND hwnd );
+
+	void addFrac( IControlView* view, CExprControlModel* parent, RECT focusedViewRect );
 };

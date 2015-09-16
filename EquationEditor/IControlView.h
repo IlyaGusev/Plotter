@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 
-enum ViewType { EDIT_CONTROL, EXPR };
+enum ViewType { EDIT_CONTROL, EXPR, FRAC_CONTROL };
 
 // ¬ьюшка, по€вл€юща€с€ на экране, например, edit control или дробь
 class IControlView {

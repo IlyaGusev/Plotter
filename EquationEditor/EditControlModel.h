@@ -11,7 +11,6 @@ public:
 	void SetParent( IBaseExprModel* parent );
 
 	std::list< IBaseExprModel* > GetChilds( );
-	void AddChild( IBaseExprModel* child );
 
 	RECT GetRect();
 	void SetRect( RECT rect );

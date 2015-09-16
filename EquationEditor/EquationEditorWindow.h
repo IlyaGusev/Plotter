@@ -1,9 +1,20 @@
 #pragma once
 #include <Windows.h>
+
 #include "EquationPresenter.h"
+
 #include "EditControlView.h"
 
-class CEquationEditorWindow {
+#include "FracDrawable.h"
+
+struct CPoint {
+	int x;
+	int y;
+
+	CPoint( int cx, int cy ) : x(cx), y(cy) {}
+};
+
+class CEquationEditorWindow : public CFracDrawable {
 public:
     CEquationEditorWindow();
 
@@ -22,11 +33,16 @@ public:
     void OnSize(int cxSize, int cySize);
 
 	void OnChar();
+
+	void OnDrawFrac( RECT rect );
+
+	void OnDraw();
 protected:
     void OnDestroy();
 
 private:
     HWND hwnd; // хэндл окна
+	std::list<CPoint> paintedPoints;
 
     static const wchar_t* const className;
 

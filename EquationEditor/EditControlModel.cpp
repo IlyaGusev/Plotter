@@ -24,6 +24,3 @@ void CEditControlModel::SetRect( RECT newRect ) {
 std::list< IBaseExprModel* > CEditControlModel::GetChilds( ) {
 	return std::list< IBaseExprModel* >();
 }
-
-void CEditControlModel::AddChild( IBaseExprModel* child ) {
-}

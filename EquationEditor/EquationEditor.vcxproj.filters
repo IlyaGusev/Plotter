@@ -48,11 +48,14 @@
     <ClCompile Include="ExprControlView.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
+    <ClCompile Include="FracControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="FracControlView.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IExprView.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
     <ClInclude Include="IControlView.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
@@ -73,6 +76,18 @@
     </ClInclude>
     <ClInclude Include="ExprControlModel.h">
       <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="FracControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="IExprDrawable.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="FracControlView.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="FracDrawable.h">
+      <Filter>Source Files\View</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

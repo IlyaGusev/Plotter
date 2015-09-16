@@ -4,7 +4,7 @@ CEditControlView::CEditControlView(HWND editControl) : hwndEditControl(editContr
 }
 
 void CEditControlView::SetRect(RECT newRect) {
-    ::SetWindowPos(hwndEditControl, 0, newRect.left, newRect.bottom, newRect.right, newRect.top, SWP_NOZORDER);
+	::SetWindowPos( hwndEditControl, HWND_TOP, newRect.left, newRect.bottom, newRect.right - newRect.left, newRect.top - newRect.bottom, NULL );
 }
 
 HWND CEditControlView::GetHWND() {

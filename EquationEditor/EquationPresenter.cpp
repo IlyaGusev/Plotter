@@ -32,24 +32,79 @@ IBaseExprModel* CEquationPresenter::getControlView( HWND hwnd )
 	return nullptr;
 }
 
+void CEquationPresenter::addFrac( IControlView* view, CExprControlModel* parent, RECT focusedViewRect ) {
+	CFracControlView* fracView = dynamic_cast<CFracControlView*>(view);
+
+	if( fracView != nullptr ) {
+		CFracControlModel* fracModel = new CFracControlModel();
+		CExprControlModel* firstChild = new CExprControlModel();
+		CEditControlModel* firstChildEdit = new CEditControlModel();
+		CExprControlModel* secondChild = new CExprControlModel();
+		CEditControlModel* secondChildEdit = new CEditControlModel();
+
+		fracModel->SetParent( parent );
+		parent->AddChild( fracModel );
+		fracModel->SetFirstChild( firstChild );
+		firstChild->SetParent( fracModel );
+		fracModel->SetSecondChild( secondChild );
+		secondChild->SetParent( fracModel );
+		firstChild->AddChild( firstChildEdit );
+		firstChildEdit->SetParent( firstChild );
+		secondChild->AddChild( secondChildEdit );
+		secondChildEdit->SetParent( secondChild );
+
+		RECT fracRect, firstChildRect, secondChildRect;
+		firstChildRect.bottom = fracRect.bottom = focusedViewRect.bottom - (focusedViewRect.top - focusedViewRect.bottom) / 2;
+		secondChildRect.bottom = (focusedViewRect.top + focusedViewRect.bottom) / 2 + 1;
+		secondChildRect.top = fracRect.top = focusedViewRect.top + (focusedViewRect.top - focusedViewRect.bottom) / 2;
+		firstChildRect.top = (focusedViewRect.top + focusedViewRect.bottom) / 2 - 1;
+		firstChildRect.left = secondChildRect.left = fracRect.left = focusedViewRect.right;
+		firstChildRect.right = secondChildRect.right = fracRect.right = focusedViewRect.right + 15;
+
+		fracModel->SetRect( fracRect );
+		fracView->SetRect( fracRect );
+		firstChild->SetRect( firstChildRect );
+		firstChildEdit->SetRect( firstChildRect );
+		fracView->GetFirstChild( )->SetRect( firstChildRect );
+		secondChild->SetRect( secondChildRect );
+		secondChildEdit->SetRect( secondChildRect );
+		fracView->GetSecondChild( )->SetRect( secondChildRect );
+
+		views[fracModel] = view;
+		views[firstChild] = new CExprControlView();
+		views[secondChild] = new CExprControlView();
+		views[firstChildEdit] = fracView->GetFirstChild();
+		views[secondChildEdit] = fracView->GetSecondChild();
+	}
+}
+
 void CEquationPresenter::AddControlView( IControlView* newView, HWND currViewHwnd )
 {
+	// Ищем по hwnd окна с фокусом соответствующую вьюшку
 	IBaseExprModel* focusedModel = getControlView( currViewHwnd );
 
 	if( focusedModel != nullptr ) {
 		IBaseExprModel* newModel;
 
+		// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
+		// Родитель должен иметь тип CExprControlModel
+		CExprControlModel* parent = dynamic_cast<CExprControlModel*>(focusedModel->GetParent());
+		if( parent == nullptr ) {
+			parent = root;
+		}
+
+		// Создаем новую вьюшку с выбранным типом
 		switch( newView->GetType() ) {
 		case EDIT_CONTROL:
 			newModel = new CEditControlModel();
+			break;
+		case FRAC_CONTROL:
+			addFrac( newView, parent, focusedModel->GetRect() );
+			return;
 		default:
 			break;
 		}
 
-		IBaseExprModel* parent = focusedModel->GetParent( );
-		if( parent == nullptr ) {
-			parent = root;
-		}
 		parent->AddChild( newModel );
 		newModel->SetParent( parent );
 		RECT rect = focusedModel->GetRect();

@@ -3,9 +3,9 @@
 CEquationPresenter::CEquationPresenter() 
 {
 	RECT rect;
-	rect.bottom = 0;
+	rect.bottom = 20;
 	rect.left = 0;
-	rect.top = 20;
+	rect.top = 0;
 	rect.right = 30;
 
 	root = new CExprControlModel();
@@ -54,10 +54,11 @@ void CEquationPresenter::addFrac( IControlView* view, CExprControlModel* parent,
 		secondChildEdit->SetParent( secondChild );
 
 		RECT fracRect, firstChildRect, secondChildRect;
-		firstChildRect.bottom = fracRect.bottom = focusedViewRect.bottom - (focusedViewRect.top - focusedViewRect.bottom) / 2;
-		secondChildRect.bottom = (focusedViewRect.top + focusedViewRect.bottom) / 2 + 1;
-		secondChildRect.top = fracRect.top = focusedViewRect.top + (focusedViewRect.top - focusedViewRect.bottom) / 2;
-		firstChildRect.top = (focusedViewRect.top + focusedViewRect.bottom) / 2 - 1;
+		// Высота дроби - две высоты родителя
+		firstChildRect.top = fracRect.top = focusedViewRect.top - (focusedViewRect.bottom - focusedViewRect.top) / 2;
+		secondChildRect.top = (focusedViewRect.bottom + focusedViewRect.top) / 2 + 1;
+		secondChildRect.bottom = fracRect.bottom = focusedViewRect.bottom + (focusedViewRect.bottom - focusedViewRect.top) / 2;
+		firstChildRect.bottom = (focusedViewRect.bottom + focusedViewRect.top) / 2 - 1;
 		firstChildRect.left = secondChildRect.left = fracRect.left = focusedViewRect.right;
 		firstChildRect.right = secondChildRect.right = fracRect.right = focusedViewRect.right + 15;
 
@@ -65,10 +66,10 @@ void CEquationPresenter::addFrac( IControlView* view, CExprControlModel* parent,
 		fracView->SetRect( fracRect );
 		firstChild->SetRect( firstChildRect );
 		firstChildEdit->SetRect( firstChildRect );
-		fracView->GetFirstChild( )->SetRect( firstChildRect );
+		fracView->GetFirstChild()->SetRect( firstChildRect );
 		secondChild->SetRect( secondChildRect );
 		secondChildEdit->SetRect( secondChildRect );
-		fracView->GetSecondChild( )->SetRect( secondChildRect );
+		fracView->GetSecondChild()->SetRect( secondChildRect );
 
 		views[fracModel] = view;
 		views[firstChild] = new CExprControlView();

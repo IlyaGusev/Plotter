@@ -38,32 +38,23 @@ void CEquationEditorWindow::OnCreate() {
 	HWND hwndEdit = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT | WS_BORDER,
 		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
 
-	presenter.AddControlView( new CEditControlView( hwndEdit ), NULL );
-
 	originEditControlProc = (WNDPROC) ::SetWindowLong( hwndEdit, GWL_WNDPROC, (DWORD) editControlProc );
 
-	RECT rect;
-	rect.left = rect.bottom = 0;
-	rect.right = rect.top = 100;
-	OnDrawFrac( rect );
+	presenter.AddControlView( new CEditControlView( hwndEdit ), NULL );
 }
 
 void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
-	RECT rect;
-	rect.left = rect.bottom = 100;
-	rect.right = rect.top = 200;
-	OnDrawFrac( rect );
 }
 
 void CEquationEditorWindow::OnChar() {
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 
-	HWND hwndEdit1 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT | WS_BORDER,
+	HWND hwndEdit1 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
 		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
 
 	::SetWindowLong( hwndEdit1, GWL_WNDPROC, (DWORD) editControlProc );
 
-	HWND hwndEdit2 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT | WS_BORDER,
+	HWND hwndEdit2 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
 		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
 
 	::SetWindowLong( hwndEdit2, GWL_WNDPROC, (DWORD) editControlProc );
@@ -72,23 +63,29 @@ void CEquationEditorWindow::OnChar() {
 }
 
 void CEquationEditorWindow::OnDrawFrac( RECT rect ) {
-	paintedPoints.push_back( CPoint( rect.left, (rect.top + rect.bottom) / 2 ) );
-	paintedPoints.push_back( CPoint( rect.right, (rect.top + rect.bottom) / 2 ) );
+	paintedLines.push_back( CLine( rect.left, (rect.top + rect.bottom) / 2, rect.right, (rect.top + rect.bottom) / 2 ) );
 	::InvalidateRect( hwnd, NULL, FALSE );
 }
 
 void CEquationEditorWindow::OnDraw() {
 	PAINTSTRUCT ps;
+	//RECT rect;
+	//::GetClientRect( hwnd, &rect );
 	HDC hdc = ::BeginPaint( hwnd, &ps );
-	
-	if( !paintedPoints.empty() ) {
-		::MoveToEx( hdc, paintedPoints.front().x, paintedPoints.front().y, NULL );
-
-		for( CPoint point : paintedPoints ) {
-			::LineTo( hdc, point.x, point.y );
+	//HDC backbuffDC = ::CreateCompatibleDC( hdc );
+	//HBITMAP backbuffer = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
+	//::SelectObject( backbuffDC, backbuffer );
+	//
+	if( !paintedLines.empty() ) {
+		for( CLine line : paintedLines ) {
+			::MoveToEx( hdc, line.left, line.top, NULL );
+			::LineTo( hdc, line.right, line.bottom );
 		}
-		paintedPoints.clear();
 	}
+	//::BitBlt( hdc, 0, 0, rect.right - rect.left, rect.top - rect.bottom, backbuffDC, 0, 0, SRCCOPY );
+
+	//::DeleteObject( backbuffer );
+	//::DeleteDC( backbuffDC );
 	::EndPaint( hwnd, &ps );
 }
 

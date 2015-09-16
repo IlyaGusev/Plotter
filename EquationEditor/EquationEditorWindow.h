@@ -7,11 +7,13 @@
 
 #include "FracDrawable.h"
 
-struct CPoint {
-	int x;
-	int y;
+struct CLine {
+	LONG left;
+	LONG top;
+	LONG right;
+	LONG bottom;
 
-	CPoint( int cx, int cy ) : x(cx), y(cy) {}
+	CLine( LONG _left, LONG _top, LONG _right, LONG _bottom ) : left( _left ), top( _top ), right( _right ), bottom( _bottom ) {}
 };
 
 class CEquationEditorWindow : public CFracDrawable {
@@ -42,7 +44,7 @@ protected:
 
 private:
     HWND hwnd; // хэндл окна
-	std::list<CPoint> paintedPoints;
+	std::list<CLine> paintedLines; // Список всех нарисованных линий
 
     static const wchar_t* const className;
 

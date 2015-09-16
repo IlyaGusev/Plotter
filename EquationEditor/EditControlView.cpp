@@ -10,3 +10,7 @@ void CEditControlView::SetRect(RECT newRect) {
 HWND CEditControlView::GetHWND() {
     return hwndEditControl;
 }
+
+ViewType CEditControlView::GetType() {
+    return EDIT_CONTROL;
+}

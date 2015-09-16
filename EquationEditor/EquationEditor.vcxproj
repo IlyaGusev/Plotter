@@ -76,15 +76,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ExprControlView.cpp" />
+    <ClCompile Include="EditControlModel.cpp" />
     <ClCompile Include="EditControlView.cpp" />
     <ClCompile Include="EquationPresenter.cpp" />
     <ClCompile Include="EquationEditorWindow.cpp" />
     <ClCompile Include="EditControlView.h" />
+    <ClCompile Include="ExprControlModel.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EditControlModel.h" />
     <ClInclude Include="EquationPresenter.h" />
     <ClInclude Include="EquationEditorWindow.h" />
+    <ClInclude Include="ExprControlModel.h" />
+    <ClInclude Include="ExprControlView.h" />
     <ClInclude Include="IBaseExprModel.h" />
     <ClInclude Include="IControlView.h" />
     <ClInclude Include="IExprView.h" />

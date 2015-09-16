@@ -20,6 +20,8 @@ public:
     void OnCreate();
     // Реагировать на изменения размера окна
     void OnSize(int cxSize, int cySize);
+
+	void OnChar();
 protected:
     void OnDestroy();
 
@@ -29,6 +31,8 @@ private:
     static const wchar_t* const className;
 
     static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK editControlProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
+	WNDPROC originEditControlProc;
 
     CEquationPresenter presenter;
 };

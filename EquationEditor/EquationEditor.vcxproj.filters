@@ -13,39 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Model">
+      <UniqueIdentifier>{0212998d-a6bd-4255-9b6c-1dc41ea90f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\View">
+      <UniqueIdentifier>{ec207b0c-ea36-46a0-8feb-2dd3215d3df9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Presenter">
+      <UniqueIdentifier>{98ba1d03-e6f8-4e79-bdab-dbd4ff40df9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="EditControlView.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
     <ClCompile Include="EquationEditorWindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\View</Filter>
     </ClCompile>
     <ClCompile Include="EquationPresenter.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Presenter</Filter>
     </ClCompile>
     <ClCompile Include="EditControlView.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\View</Filter>
     </ClCompile>
-    <ClCompile Include="EditControlView.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="EditControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ExprControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ExprControlView.cpp">
+      <Filter>Source Files\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EquationEditorWindow.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="IExprView.h">
+      <Filter>Source Files\View</Filter>
     </ClInclude>
     <ClInclude Include="IControlView.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="ExprControlView.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="EquationEditorWindow.h">
+      <Filter>Source Files\View</Filter>
     </ClInclude>
     <ClInclude Include="EquationPresenter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IExprView.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Presenter</Filter>
     </ClInclude>
     <ClInclude Include="IBaseExprModel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="EditControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ExprControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

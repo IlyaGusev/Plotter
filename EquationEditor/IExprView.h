@@ -3,5 +3,9 @@
 
 // Отвечает за отрисовку знаков в выражении, например, дроби или корня 
 class IExprView {
+    virtual ~IExprView() = 0;
+
     virtual void ResizeView(RECT rect) = 0;
 };
+
+inline IExprView::~IExprView() {}

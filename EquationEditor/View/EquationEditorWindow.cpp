@@ -3,7 +3,7 @@
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
-	presenter = CEquationPresenter();
+	presenter = new CEquationPresenter( this );
 }
 
 bool CEquationEditorWindow::RegisterClassW() {
@@ -35,19 +35,56 @@ void CEquationEditorWindow::OnDestroy() {
 void CEquationEditorWindow::OnCreate() {
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 
-	HWND hwndEdit = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT | WS_BORDER,
-		0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
-
-	originEditControlProc = (WNDPROC) ::SetWindowLong( hwndEdit, GWL_WNDPROC, (DWORD) editControlProc );
-
-	presenter.AddControlView( new CEditControlView( hwndEdit ), NULL );
+	presenter->AddControlView( TEXT );
 }
 
 void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
 }
 
-void CEquationEditorWindow::OnChar() {
-	presenter.ExtendControlView( ::GetFocus(), 7 );
+void CEquationEditorWindow::Redraw() {
+	::InvalidateRect( hwnd, NULL, TRUE );
+}
+
+int CEquationEditorWindow::GetCharWidth( wchar_t symbol ) {
+	HDC hdc = GetDC( hwnd );
+	int symbolWidth = 0;
+	::GetCharWidth32( hdc, symbol, symbol, &symbolWidth );
+	::ReleaseDC( hwnd, hdc );
+	return symbolWidth;
+}
+
+void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) {
+
+}
+
+void CEquationEditorWindow::OnChar( WPARAM wParam ) {
+	switch( wParam ) {
+	case 0x08:  // backspace
+		presenter->DeleteSymbol();
+		return;
+	case 0x0A:  // linefeed 
+	case 0x1B:  // escape 
+		MessageBeep( (UINT) -1 );
+		return;
+
+	case 0x09:  // tab 
+		// Convert tabs to four consecutive spaces. 
+		for( int i = 0; i < 4; ++i )
+			::SendMessage( hwnd, WM_CHAR, 0x20, 0 );
+		return;
+
+	default:    // displayable character
+		presenter->InsertSymbol( (wchar_t) wParam );
+		break;
+	}
+
+
+	//::DestroyCaret();
+	//::CreateCaret( hwnd, (HBITMAP) NULL, -1, 15 );
+	//::SetCaretPos( 10, 10 );
+	//::ShowCaret( hwnd );
+	//
+	//presenter.ExtendControlView( ::GetFocus(), 10 );
 
 	//HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 
@@ -64,27 +101,40 @@ void CEquationEditorWindow::OnChar() {
 	//presenter.AddControlView( new CFracControlView( this, new CEditControlView( hwndEdit1 ), new CEditControlView( hwndEdit2 ) ), ::GetFocus() );
 }
 
-void CEquationEditorWindow::OnDrawFrac( RECT rect ) {
-	paintedLines.push_back( CLine( rect.left, (rect.top + rect.bottom) / 2, rect.right, (rect.top + rect.bottom) / 2 ) );
-	::InvalidateRect( hwnd, NULL, FALSE );
+
+void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, RECT rect ) {
+	::DrawText( hdc, text.c_str(), text.size(), &rect, DT_LEFT );
 }
 
-void CEquationEditorWindow::OnDraw() {
-	PAINTSTRUCT ps;
-	//RECT rect;
-	//::GetClientRect( hwnd, &rect );
-	HDC hdc = ::BeginPaint( hwnd, &ps );
-	//HDC backbuffDC = ::CreateCompatibleDC( hdc );
-	//HBITMAP backbuffer = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
-	//::SelectObject( backbuffDC, backbuffer );
-	//
-	if( !paintedLines.empty() ) {
-		for( CLine line : paintedLines ) {
+void CEquationEditorWindow::DrawPolygon( HDC hdc, std::list<CLine> polygon ) {
+	if( !polygon.empty( ) ) {
+		for( CLine line : polygon ) {
 			::MoveToEx( hdc, line.left, line.top, NULL );
 			::LineTo( hdc, line.right, line.bottom );
 		}
 	}
-	//::BitBlt( hdc, 0, 0, rect.right - rect.left, rect.top - rect.bottom, backbuffDC, 0, 0, SRCCOPY );
+}
+
+void CEquationEditorWindow::SetCaret( POINT caretPoint, int height ) {
+	::DestroyCaret();
+	::CreateCaret( hwnd, (HBITMAP) NULL, -1, height );
+	::SetCaretPos( caretPoint.x, caretPoint.y );
+	::ShowCaret( hwnd );
+}
+
+void CEquationEditorWindow::OnDraw() {
+	PAINTSTRUCT ps;
+	HDC hdc = ::BeginPaint( hwnd, &ps );
+
+	presenter->Draw( hdc );
+	//RECT rect;
+	//::GetClientRect( hwnd, &rect );
+	//HDC backbuffDC = ::CreateCompatibleDC( hdc );
+	//HBITMAP backbuffer = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
+	//::SelectObject( backbuffDC, backbuffer );
+
+	
+	//::BitBlt( hdc, 0, 0, rect.right - rect.left, rect.bottom - rect.top, backbuffDC, 0, 0, SRCCOPY );
 
 	//::DeleteObject( backbuffer );
 	//::DeleteDC( backbuffDC );
@@ -122,21 +172,15 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 	case WM_SIZE:
 		wnd->OnSize( LOWORD( lParam ), HIWORD( lParam ) );
 		return 0;
-	}
-	return ::DefWindowProc( handle, message, wParam, lParam );
-}
 
-LRESULT CALLBACK CEquationEditorWindow::editControlProc( HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam ) {
-	CEquationEditorWindow *wnd = reinterpret_cast<CEquationEditorWindow*>(::GetWindowLong( ::GetParent( hwnd ), GWL_USERDATA ));
-
-	switch( message ) {
 	case WM_CHAR:
 		// TODO обработать символ и передавать его длину в OnChar (для backspace передавать отрицательную длину)
-		if( wParam != VK_BACK ) {
-			wnd->OnChar();
-		}
-	default:
-		break;
+		wnd->OnChar( wParam );
+		return 0;
+
+	case WM_LBUTTONDOWN:
+		wnd->OnLButtonDown( LOWORD( lParam ), HIWORD( lParam ) );
+		return 0;
 	}
-	return ::CallWindowProc( (WNDPROC) wnd->originEditControlProc, hwnd, message, wParam, lParam );
+	return ::DefWindowProc( handle, message, wParam, lParam );
 }

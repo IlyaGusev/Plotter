@@ -27,66 +27,39 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EditControlView.cpp">
-      <Filter>Source Files\View</Filter>
+    <ClCompile Include="Model\EditControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="EquationEditorWindow.cpp">
-      <Filter>Source Files\View</Filter>
+    <ClCompile Include="Model\ExprControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="EquationPresenter.cpp">
+    <ClCompile Include="Model\FracControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Presenter\EquationPresenter.cpp">
       <Filter>Source Files\Presenter</Filter>
     </ClCompile>
-    <ClCompile Include="EditControlView.h">
-      <Filter>Source Files\View</Filter>
-    </ClCompile>
-    <ClCompile Include="EditControlModel.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="ExprControlModel.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="ExprControlView.cpp">
-      <Filter>Source Files\View</Filter>
-    </ClCompile>
-    <ClCompile Include="FracControlModel.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="FracControlView.cpp">
+    <ClCompile Include="View\EquationEditorWindow.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="IControlView.h">
-      <Filter>Source Files\View</Filter>
+    <ClInclude Include="Model\EditControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="ExprControlView.h">
-      <Filter>Source Files\View</Filter>
+    <ClInclude Include="Model\ExprControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="EquationEditorWindow.h">
-      <Filter>Source Files\View</Filter>
+    <ClInclude Include="Model\FracControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="EquationPresenter.h">
+    <ClInclude Include="Model\IBaseExprModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenter\EquationPresenter.h">
       <Filter>Source Files\Presenter</Filter>
     </ClInclude>
-    <ClInclude Include="IBaseExprModel.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="EditControlModel.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="ExprControlModel.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="FracControlModel.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="IExprDrawable.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="FracControlView.h">
-      <Filter>Source Files\View</Filter>
-    </ClInclude>
-    <ClInclude Include="FracDrawable.h">
+    <ClInclude Include="View\EquationEditorWindow.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
   </ItemGroup>

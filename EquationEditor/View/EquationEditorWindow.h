@@ -3,20 +3,7 @@
 
 #include "EquationPresenter.h"
 
-#include "EditControlView.h"
-
-#include "FracDrawable.h"
-
-struct CLine {
-	LONG left;
-	LONG top;
-	LONG right;
-	LONG bottom;
-
-	CLine( LONG _left, LONG _top, LONG _right, LONG _bottom ) : left( _left ), top( _top ), right( _right ), bottom( _bottom ) {}
-};
-
-class CEquationEditorWindow : public CFracDrawable {
+class CEquationEditorWindow : public IEditorView {
 public:
     CEquationEditorWindow();
 
@@ -34,11 +21,21 @@ public:
     // Реагировать на изменения размера окна
     void OnSize(int cxSize, int cySize);
 
-	void OnChar();
-
-	void OnDrawFrac( RECT rect );
+	void OnChar( WPARAM wParam );
 
 	void OnDraw();
+
+	void DrawText( HDC hdc, std::wstring text, RECT rect );
+
+	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
+
+	void SetCaret( POINT caretPoint, int height );
+
+	void Redraw();
+
+	int GetCharWidth( wchar_t symbol );
+
+	void OnLButtonDown( int xMousePos, int yMousePos );
 protected:
     void OnDestroy();
 
@@ -49,8 +46,7 @@ private:
     static const wchar_t* const className;
 
     static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
-	static LRESULT CALLBACK editControlProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 	WNDPROC originEditControlProc;
 
-    CEquationPresenter presenter;
+    CEquationPresenter* presenter;
 };

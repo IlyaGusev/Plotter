@@ -52,6 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\Model;C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\Presenter;C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -76,29 +77,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ExprControlView.cpp" />
-    <ClCompile Include="EditControlModel.cpp" />
-    <ClCompile Include="EditControlView.cpp" />
-    <ClCompile Include="EquationPresenter.cpp" />
-    <ClCompile Include="EquationEditorWindow.cpp" />
-    <ClCompile Include="EditControlView.h" />
-    <ClCompile Include="ExprControlModel.cpp" />
-    <ClCompile Include="FracControlModel.cpp" />
-    <ClCompile Include="FracControlView.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\EditControlModel.cpp" />
+    <ClCompile Include="Model\ExprControlModel.cpp" />
+    <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Presenter\EquationPresenter.cpp" />
+    <ClCompile Include="View\EquationEditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EditControlModel.h" />
-    <ClInclude Include="EquationPresenter.h" />
-    <ClInclude Include="EquationEditorWindow.h" />
-    <ClInclude Include="ExprControlModel.h" />
-    <ClInclude Include="ExprControlView.h" />
-    <ClInclude Include="FracControlModel.h" />
-    <ClInclude Include="FracControlView.h" />
-    <ClInclude Include="FracDrawable.h" />
-    <ClInclude Include="IBaseExprModel.h" />
-    <ClInclude Include="IControlView.h" />
-    <ClInclude Include="IExprDrawable.h" />
+    <ClInclude Include="Model\EditControlModel.h" />
+    <ClInclude Include="Model\ExprControlModel.h" />
+    <ClInclude Include="Model\FracControlModel.h" />
+    <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Presenter\EquationPresenter.h" />
+    <ClInclude Include="View\EquationEditorWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

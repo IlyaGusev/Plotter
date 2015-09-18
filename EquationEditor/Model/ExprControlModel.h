@@ -1,7 +1,7 @@
 #pragma once
 #include "IBaseExprModel.h"
 
-// Модель текстового поля
+// Модель холдера под вьюшки
 class CExprControlModel : public IBaseExprModel {
 public:
 	CExprControlModel();
@@ -11,13 +11,14 @@ public:
 	void SetParent( IBaseExprModel* parent );
 
 	std::list<IBaseExprModel*> GetChilds();
+	
 	void AddChild( IBaseExprModel* child );
 
 	RECT GetRect();
 
 	void SetRect( RECT rect );
 
-	//void SetFontSize( int fontSize );
+	CDrawParams GetDrawParams() { return CDrawParams(); }
 private:
 	RECT rect;
 

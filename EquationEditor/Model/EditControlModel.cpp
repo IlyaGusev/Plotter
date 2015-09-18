@@ -24,3 +24,17 @@ void CEditControlModel::SetRect( RECT newRect ) {
 std::list< IBaseExprModel* > CEditControlModel::GetChilds( ) {
 	return std::list< IBaseExprModel* >();
 }
+
+CDrawParams CEditControlModel::GetDrawParams() {
+	return params;
+}
+
+void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) {
+	params.text.insert( offset, 1, symbol );
+	rect.right += symbolWidth;
+}
+
+void CEditControlModel::DeleteSymbol( int offset, int symbolWidth ) {
+	params.text.erase( offset, 1 );
+	rect.right -= symbolWidth;
+}

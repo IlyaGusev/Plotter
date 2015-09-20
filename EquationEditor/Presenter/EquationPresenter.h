@@ -1,9 +1,9 @@
 #pragma once
 #include <utility>
-#include "IBaseExprModel.h"
-#include "ExprControlModel.h"
-#include "EditControlModel.h"
-#include "FracControlModel.h"
+#include "Model/IBaseExprModel.h"
+#include "Model/ExprControlModel.h"
+#include "Model/EditControlModel.h"
+#include "Model/FracControlModel.h"
 
 enum ViewType { TEXT, EXPR, FRAC };
 

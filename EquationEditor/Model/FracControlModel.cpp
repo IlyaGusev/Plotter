@@ -1,8 +1,21 @@
 #include "FracControlModel.h"
+#include "EditControlModel.h"
 
 CFracControlModel::CFracControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;
-	parent = firstChild = secondChild = nullptr;
+	parent = nullptr;
+
+	firstChild = new CExprControlModel();
+	firstChild->SetParent( this );
+	CEditControlModel* firstChildEdit = new CEditControlModel();
+	secondChild = new CExprControlModel();
+	secondChild->SetParent( this );
+	CEditControlModel* secondChildEdit = new CEditControlModel();
+
+	firstChild->AddChild( firstChildEdit );
+	firstChildEdit->SetParent( firstChild );
+	secondChild->AddChild( secondChildEdit );
+	secondChildEdit->SetParent( secondChild );
 }
 
 IBaseExprModel* CFracControlModel::GetParent() {
@@ -13,16 +26,8 @@ void CFracControlModel::SetParent( IBaseExprModel* newParent ) {
 	parent = newParent;
 }
 
-std::list<IBaseExprModel*> CFracControlModel::GetChilds() {
+std::list<IBaseExprModel*> CFracControlModel::GetChildren() {
 	return std::list<IBaseExprModel*> { firstChild, secondChild };
-}
-
-void CFracControlModel::SetFirstChild( IBaseExprModel* child ) {
-	firstChild = child;
-}
-
-void CFracControlModel::SetSecondChild( IBaseExprModel* child ) {
-	secondChild = child;
 }
 
 RECT CFracControlModel::GetRect() {
@@ -31,4 +36,10 @@ RECT CFracControlModel::GetRect() {
 
 void CFracControlModel::SetRect( RECT newRect ) {
 	rect = newRect;
+}
+
+CDrawParams CFracControlModel::GetDrawParams() {
+	CDrawParams params;
+	params.polygon.push_back( CLine( rect.left, (rect.bottom + rect.top) / 2, rect.right, (rect.bottom + rect.top) / 2 ) );
+	return params;
 }

@@ -21,7 +21,7 @@ void CEditControlModel::SetRect( RECT newRect ) {
 	rect = newRect;
 }
 
-std::list< IBaseExprModel* > CEditControlModel::GetChilds( ) {
+std::list< IBaseExprModel* > CEditControlModel::GetChildren( ) {
 	return std::list< IBaseExprModel* >();
 }
 
@@ -32,9 +32,37 @@ CDrawParams CEditControlModel::GetDrawParams() {
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) {
 	params.text.insert( offset, 1, symbol );
 	rect.right += symbolWidth;
+	symbolsWidths.push_back( symbolWidth );
 }
 
-void CEditControlModel::DeleteSymbol( int offset, int symbolWidth ) {
+int CEditControlModel::DeleteSymbol( int offset ) {
 	params.text.erase( offset, 1 );
-	rect.right -= symbolWidth;
+	int symbolsWidth = symbolsWidths[offset];
+	rect.right -= symbolsWidth;
+	symbolsWidths.erase( symbolsWidths.begin() + offset );
+	return symbolsWidth;
+}
+
+CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
+	CEditControlModel* newEditControl = new CEditControlModel();
+
+	// Вставляем всё, начиная с offset, в новый edit control
+	int newEditControlWidth = 0;
+	for( int i = offset; i < symbolsWidths.size(); ++i ) {
+		newEditControlWidth += symbolsWidths[i];
+		newEditControl->symbolsWidths.push_back( symbolsWidths[i] );
+		newEditControl->params.text.push_back( params.text[i] );
+	}
+	newEditControl->rect = rect;
+	newEditControl->rect.left = rect.right - newEditControlWidth;
+
+	// Удаляем всё до offset из старого
+	rect.right = newEditControl->rect.left;
+	params.text.resize( offset );
+	symbolsWidths.resize( offset );
+	return newEditControl;
+}
+
+std::vector<int> CEditControlModel::GetSymbolsWidths() {
+	return symbolsWidths;
 }

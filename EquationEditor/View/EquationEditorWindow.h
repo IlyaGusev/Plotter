@@ -36,6 +36,8 @@ public:
 	int GetCharWidth( wchar_t symbol );
 
 	void OnLButtonDown( int xMousePos, int yMousePos );
+
+	void OnWmCommand( WPARAM wParam, LPARAM lParam );
 protected:
     void OnDestroy();
 

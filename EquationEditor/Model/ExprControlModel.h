@@ -10,7 +10,7 @@ public:
 	IBaseExprModel* GetParent();
 	void SetParent( IBaseExprModel* parent );
 
-	std::list<IBaseExprModel*> GetChilds();
+	std::list<IBaseExprModel*> GetChildren();
 	
 	void AddChild( IBaseExprModel* child );
 
@@ -23,5 +23,5 @@ private:
 	RECT rect;
 
 	IBaseExprModel* parent;
-	std::list<IBaseExprModel*> childs;
+	std::list<IBaseExprModel*> children;
 };

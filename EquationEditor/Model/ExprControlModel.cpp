@@ -13,8 +13,8 @@ void CExprControlModel::SetParent( IBaseExprModel* newParent ) {
 	parent = newParent;
 }
 
-std::list<IBaseExprModel*> CExprControlModel::GetChilds( ) {
-	return childs;
+std::list<IBaseExprModel*> CExprControlModel::GetChildren( ) {
+	return children;
 }
 
 RECT CExprControlModel::GetRect() {
@@ -26,7 +26,7 @@ void CExprControlModel::SetRect( RECT newRect ) {
 }
 
 void CExprControlModel::AddChild( IBaseExprModel* child ) {
-	childs.push_back( child );
+	children.push_back( child );
 	if( rect.left != -1 ) {
 		rect.left = min( rect.left, child->GetRect().left );
 		rect.top = min( rect.top, child->GetRect().top );

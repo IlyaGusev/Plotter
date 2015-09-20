@@ -29,7 +29,7 @@ public:
 	virtual IBaseExprModel* GetParent( ) = 0;
 	virtual void SetParent( IBaseExprModel* parent ) = 0;
 
-	virtual std::list<IBaseExprModel*> GetChilds() = 0;
+	virtual std::list<IBaseExprModel*> GetChildren() = 0;
 
     virtual RECT GetRect() = 0;
     virtual void SetRect(RECT rect) = 0;

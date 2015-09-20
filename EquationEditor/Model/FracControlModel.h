@@ -1,5 +1,6 @@
 #pragma once
 #include "IBaseExprModel.h"
+#include "ExprControlModel.h"
 
 // Модель для дроби
 class CFracControlModel : public IBaseExprModel {
@@ -10,20 +11,19 @@ public:
 	IBaseExprModel* GetParent();
 	void SetParent( IBaseExprModel* parent );
 
-	std::list<IBaseExprModel*> GetChilds();
-
-	void SetFirstChild( IBaseExprModel* child );
-	void SetSecondChild( IBaseExprModel* child );
+	std::list<IBaseExprModel*> GetChildren();
 
 	RECT GetRect();
 
 	void SetRect( RECT rect );
+
+	CDrawParams GetDrawParams();
 private:
 	RECT rect;
 
 	IBaseExprModel* parent;
 	// Верхний ребенок
-	IBaseExprModel* firstChild;
+	CExprControlModel* firstChild;
 	// Нижний ребенок
-	IBaseExprModel* secondChild;
+	CExprControlModel* secondChild;
 };

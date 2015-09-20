@@ -1,4 +1,5 @@
 #include "EquationEditorWindow.h"
+#include "resource.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
@@ -34,8 +35,10 @@ void CEquationEditorWindow::OnDestroy() {
 
 void CEquationEditorWindow::OnCreate() {
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
-
-	presenter->AddControlView( TEXT );
+	
+	// ƒобавл€ем меню
+	HMENU hMenu = ::LoadMenu( hInstance, MAKEINTRESOURCE( IDR_MENU1 ) );
+	::SetMenu( hwnd, hMenu );
 }
 
 void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
@@ -54,7 +57,16 @@ int CEquationEditorWindow::GetCharWidth( wchar_t symbol ) {
 }
 
 void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) {
+	presenter->SetCaret( xMousePos, yMousePos );
+}
 
+void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
+	if( HIWORD( wParam ) == 0 ) {
+		switch( LOWORD( wParam ) ) {
+		case ID_ADD_FRAC:
+			presenter->AddControlView( FRAC );
+		}
+	}
 }
 
 void CEquationEditorWindow::OnChar( WPARAM wParam ) {
@@ -174,12 +186,15 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 		return 0;
 
 	case WM_CHAR:
-		// TODO обработать символ и передавать его длину в OnChar (дл€ backspace передавать отрицательную длину)
 		wnd->OnChar( wParam );
 		return 0;
 
 	case WM_LBUTTONDOWN:
 		wnd->OnLButtonDown( LOWORD( lParam ), HIWORD( lParam ) );
+		return 0;
+
+	case WM_COMMAND:
+		wnd->OnWmCommand( wParam, lParam );
 		return 0;
 	}
 	return ::DefWindowProc( handle, message, wParam, lParam );

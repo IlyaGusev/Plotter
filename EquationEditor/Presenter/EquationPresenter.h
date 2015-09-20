@@ -1,7 +1,9 @@
 #pragma once
+#include <utility>
 #include "IBaseExprModel.h"
 #include "ExprControlModel.h"
 #include "EditControlModel.h"
+#include "FracControlModel.h"
 
 enum ViewType { TEXT, EXPR, FRAC };
 
@@ -54,14 +56,22 @@ public:
 	void DeleteSymbol();
 
 	void Draw( HDC hdc );
-
-	void FindCaretPos( int x, int y );
+	
+	void SetCaret( int x, int y );
 private:
     CExprControlModel* root;
 	CCaret caret;
 	IEditorView* view;
 
-	//void addFrac( IControlView* view, CExprControlModel* parent, RECT focusedViewRect );
+	void addFrac( CExprControlModel* parent );
+	void setFracRects( RECT parentRect, CFracControlModel* fracModel );
+
 	void setRect( IBaseExprModel* model, RECT rect );
+
+	bool isInTheRect( int x, int y, RECT rect );
+	
+	// Ищет позицию каретки с таким x
+	// Возвращает пару <координата, номер буквы>
+	std::pair<int, int> findCaretPos( CEditControlModel* editControlModel, int x );
 	// void updateGraph(IControlModel* startVert);
 };

@@ -1,8 +1,5 @@
 #include "EquationPresenter.h"
 
-#include "EditControlModel.h"
-#include "FracControlModel.h"
-
 #include <queue>
 
 CEquationPresenter::CEquationPresenter( IEditorView* newView ) 
@@ -38,9 +35,7 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol ) {
 
 void CEquationPresenter::DeleteSymbol() {
 	if( caret.offset != 0 ) {
-		int symbolWidth = view->GetCharWidth( caret.curEdit->GetDrawParams( ).text[caret.offset - 1] );
-		caret.curEdit->DeleteSymbol( caret.offset - 1, symbolWidth );
-		caret.caretPoint.x -= symbolWidth;
+		caret.caretPoint.x -= caret.curEdit->DeleteSymbol( caret.offset - 1 );
 		--caret.offset;
 		// resetGraph();
 		view->Redraw();
@@ -51,7 +46,7 @@ void CEquationPresenter::Draw( HDC hdc )
 {
 	std::queue< IBaseExprModel* > queue;
 	queue.push( root );
-
+	
 	while( !queue.empty() ) {
 		IBaseExprModel* curNode = queue.front();
 		queue.pop();
@@ -63,79 +58,93 @@ void CEquationPresenter::Draw( HDC hdc )
 		if( !curNodeDrawParams.text.empty() ) {
 			view->DrawText( hdc, curNodeDrawParams.text, curNode->GetRect() );
 		}
-		for( IBaseExprModel* model : curNode->GetChilds() ) {
+		for( IBaseExprModel* model : curNode->GetChildren() ) {
 			queue.push( model );
 		}
 	}
 
 	view->SetCaret( caret.caretPoint, caret.curEdit->GetRect().bottom - caret.curEdit->GetRect().top );
 }
-	
-void CEquationPresenter::FindCaretPos( int x, int y ) {
-	std::queue< IBaseExprModel* > queue;
-	queue.push( root );
 
-	while( !queue.empty() ) {
-		IBaseExprModel* curNode = queue.front();
-		queue.pop();
-		
-		RECT rect = curNode->GetRect();
-		if( rect.left <= x && x <= rect.right ) {
-
+std::pair<int, int> CEquationPresenter::findCaretPos( CEditControlModel* editControlModel, int x ) {
+	int offset = 0;
+	int length = editControlModel->GetRect().left;
+	for( int width : editControlModel->GetSymbolsWidths() ) {
+		if( length >= x ) {
+			break;
 		}
-
-		// Если внутри
-		for( IBaseExprModel* model : curNode->GetChilds() ) {
-			queue.push( model );
-		}
+		length += width;
+		++offset;
 	}
+	return std::make_pair(length, offset);
 }
 
-//void CEquationPresenter::addFrac( IControlView* view, CExprControlModel* parent, RECT focusedViewRect ) {
-//	CFracControlView* fracView = dynamic_cast<CFracControlView*>(view);
-//
-//	if( fracView != nullptr ) {
-//		CFracControlModel* fracModel = new CFracControlModel();
-//		CExprControlModel* firstChild = new CExprControlModel();
-//		CEditControlModel* firstChildEdit = new CEditControlModel();
-//		CExprControlModel* secondChild = new CExprControlModel();
-//		CEditControlModel* secondChildEdit = new CEditControlModel();
-//
-//		// Выставляем размеры вьюшек
-//		// Высота дроби - две высоты родителя
-//		RECT fracRect, firstChildRect, secondChildRect;
-//		firstChildRect.top = fracRect.top = focusedViewRect.top - (focusedViewRect.bottom - focusedViewRect.top) / 2;
-//		secondChildRect.top = (focusedViewRect.bottom + focusedViewRect.top) / 2 + 1;
-//		secondChildRect.bottom = fracRect.bottom = focusedViewRect.bottom + (focusedViewRect.bottom - focusedViewRect.top) / 2;
-//		firstChildRect.bottom = (focusedViewRect.bottom + focusedViewRect.top) / 2 - 1;
-//		firstChildRect.left = secondChildRect.left = fracRect.left = focusedViewRect.right;
-//		firstChildRect.right = secondChildRect.right = fracRect.right = focusedViewRect.right + 7;
-//
-//		// Прикрепляем вьюшки к моделькам
-//		//views[fracModel] = view;
-//		//views[firstChild] = new CExprControlView();
-//		//views[secondChild] = new CExprControlView();
-//		//views[firstChildEdit] = fracView->GetFirstChild();
-//		//views[secondChildEdit] = fracView->GetSecondChild();
-//
-//		// Посылаем размеры в модели и вьюшки
-//		setRect( fracModel, fracRect );
-//		setRect( firstChildEdit, firstChildRect );
-//		setRect( secondChildEdit, secondChildRect );
-//
-//		// Обновляем граф
-//		fracModel->SetParent( parent );
-//		parent->AddChild( fracModel );
-//		fracModel->SetFirstChild( firstChild );
-//		firstChild->SetParent( fracModel );
-//		fracModel->SetSecondChild( secondChild );
-//		secondChild->SetParent( fracModel );
-//		firstChild->AddChild( firstChildEdit );
-//		firstChildEdit->SetParent( firstChild );
-//		secondChild->AddChild( secondChildEdit );
-//		secondChildEdit->SetParent( secondChild );
-//	}
-//}
+void CEquationPresenter::SetCaret( int x, int y ) {
+	std::queue<IBaseExprModel*> queue;
+	queue.push( root );
+	while( !queue.empty() ) {
+		IBaseExprModel* curNode = queue.back();
+		queue.pop();
+		if( isInTheRect( x, y, curNode->GetRect() ) ) {
+			CEditControlModel* editControlModel = dynamic_cast<CEditControlModel*>( curNode );
+			if( editControlModel != nullptr ) {
+				caret.curEdit = editControlModel;
+				std::pair<int, int> newCaretPos = findCaretPos( editControlModel, x );
+				caret.caretPoint.x = newCaretPos.first;
+				caret.offset = newCaretPos.second;
+				caret.caretPoint.y = editControlModel->GetRect().top;
+			} else {
+				for( IBaseExprModel* child : curNode->GetChildren() ) {
+					queue.push( child );
+				}
+			}
+		}
+	}
+	view->Redraw();
+}
+
+void CEquationPresenter::setFracRects( RECT parentRect, CFracControlModel* fracModel ) {
+	// Выставляем размеры вьюшек
+	// Высота дроби - две высоты родителя
+	RECT fracRect, firstChildRect, secondChildRect;
+	firstChildRect.bottom = fracRect.bottom = parentRect.bottom - (parentRect.top - parentRect.bottom) / 2;
+	secondChildRect.bottom = (parentRect.top + parentRect.bottom) / 2;
+	secondChildRect.top = fracRect.top = parentRect.top + (parentRect.top - parentRect.bottom) / 2;
+	firstChildRect.top = (parentRect.top + parentRect.bottom) / 2;
+	firstChildRect.left = secondChildRect.left = fracRect.left = caret.caretPoint.x;
+	firstChildRect.right = secondChildRect.right = fracRect.right = caret.caretPoint.x + 15;
+
+	fracModel->SetRect( fracRect );
+	fracModel->GetChildren().front()->SetRect( firstChildRect );
+	fracModel->GetChildren().front()->GetChildren().front()->SetRect( firstChildRect );
+	fracModel->GetChildren().back()->SetRect( secondChildRect );
+	fracModel->GetChildren().back()->GetChildren().front()->SetRect( secondChildRect );
+}
+
+void CEquationPresenter::addFrac( CExprControlModel* parent ) {
+	// Создаем новые модели для дроби
+	CFracControlModel* fracModel = new CFracControlModel();
+
+	// Посылаем размеры в модели
+	setFracRects( caret.curEdit->GetRect(), fracModel );
+
+	// Обновляем граф
+	fracModel->SetParent( parent );
+	parent->AddChild( fracModel );
+
+	CEditControlModel* newEditControl = caret.curEdit->SliceEditControl( caret.offset );
+	RECT rect = newEditControl->GetRect();
+	rect.left += fracModel->GetRect().right - fracModel->GetRect().left;
+	rect.right += fracModel->GetRect().right - fracModel->GetRect().left;
+	newEditControl->SetRect( rect );
+	parent->AddChild( newEditControl );
+
+	view->Redraw();
+}
+
+bool CEquationPresenter::isInTheRect( int x, int y, RECT rect ) {
+	return rect.top <= y && y <= rect.bottom && rect.left <= x && x <= rect.right;
+}
 
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
@@ -143,7 +152,7 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
-	CExprControlModel* parent = dynamic_cast<CExprControlModel*>(caret.curEdit->GetParent( ));
+	CExprControlModel* parent = dynamic_cast<CExprControlModel*>( caret.curEdit->GetParent() );
 	if( parent == nullptr ) {
 		parent = root;
 	}
@@ -152,15 +161,14 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	switch( viewType ) {
 	case TEXT:
 		newModel = new CEditControlModel();
+		newModel->SetRect( parent->GetRect() );
+		parent->AddChild( newModel );
+		newModel->SetParent( parent );
 		break;
 	case FRAC:
-		//addFrac( newView, parent, focusedModel->GetRect() );
-		return;
+		addFrac( parent );
+		break;
 	default:
 		break;
 	}
-
-	newModel->SetRect( parent->GetRect() );
-	parent->AddChild( newModel );
-	newModel->SetParent( parent );
 }

@@ -119,7 +119,7 @@ void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, RECT rect ) {
 }
 
 void CEquationEditorWindow::DrawPolygon( HDC hdc, std::list<CLine> polygon ) {
-	if( !polygon.empty( ) ) {
+	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
 			::MoveToEx( hdc, line.left, line.top, NULL );
 			::LineTo( hdc, line.right, line.bottom );

@@ -81,9 +81,11 @@ std::pair<int, int> CEquationPresenter::findCaretPos( CEditControlModel* editCon
 
 void CEquationPresenter::SetCaret( int x, int y ) {
 	std::queue<IBaseExprModel*> queue;
-	queue.push( root );
+	for( IBaseExprModel* child : root->GetChildren() ) {
+		queue.push( child );
+	}
 	while( !queue.empty() ) {
-		IBaseExprModel* curNode = queue.back();
+		IBaseExprModel* curNode = queue.front();
 		queue.pop();
 		if( isInTheRect( x, y, curNode->GetRect() ) ) {
 			CEditControlModel* editControlModel = dynamic_cast<CEditControlModel*>( curNode );

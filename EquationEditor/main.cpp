@@ -1,5 +1,5 @@
 #include <Windows.h>
-#include "EquationEditorWindow.h"
+#include "View/EquationEditorWindow.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {

@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\Model;C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor;C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\Presenter;C:\Users\qBic\Documents\GitHub\EquationEditor\EquationEditor\View;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

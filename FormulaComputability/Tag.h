@@ -15,18 +15,17 @@
 using namespace std;
 
 typedef unsigned int CType;
-typedef CAttributes;
-typedef CNode;
+//typedef CAttributes;
+typedef pugi::xml_node CNode;
 
 class CTag
 {
 public:
 	CTag();
-	static const CType type;
 
-	virtual void operator ()(CNode& Node) = 0;
+	virtual void operator ()(CNode& node) = 0;
 
-	virtual CNode checkSignature(CNode Node)const = 0;
+	virtual CNode checkSignature(CNode& node) const = 0;
 
 	virtual ~CTag();
 };
@@ -34,18 +33,25 @@ public:
 
 class CTagAtamar : public CTag
 {
-	virtual CNode  checkSignature(CNode Node)const
+public:
+	virtual void operator ()(CNode& node) {}
+	virtual CNode  checkSignature(CNode& node) const
 	{
-		return Node.next_sibling();
+		return node.next_sibling();
 	}
+private:
+	static const CType type;
 };
 
 class CTagApply : public CTagAtamar
 {
-	static const CType type = NUMBER;
+public:
 	virtual void operator ()(CNode& node)
 	{
 
 	};
+	virtual CNode checkSignature(CNode& node) const {}
+private:
+	static const CType type = NUMBER;
 };
 

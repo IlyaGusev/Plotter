@@ -4,7 +4,8 @@
 class CTagContainer
 {
 public:
-	static const unordered_map<string, CTag*> Tags;
+	static const unordered_map<string, CTag*> tags;
+    static void CTagContainerDestroy();
 private:
 	static const unordered_map<string, CTag*> CTagContainerBuild();
 };

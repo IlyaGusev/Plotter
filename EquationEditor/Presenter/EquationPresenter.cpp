@@ -144,6 +144,45 @@ void CEquationPresenter::addFrac( CExprControlModel* parent ) {
 	view->Redraw();
 }
 
+
+void CEquationPresenter::setDegrRects(RECT parentRect, CDegrControlModel* degrModel) {
+	// Выставляем размеры вьюшек
+	// высота показателя - 3/4 высоты родительского; пересекается в 2/4 высоты родительского с основанием
+	RECT degrRect, childRect;
+	degrRect.bottom = parentRect.bottom;
+	degrRect.top = (parentRect.top - ((parentRect.bottom - parentRect.top) / 4));
+	childRect.top = (parentRect.top - ((parentRect.bottom - parentRect.top) / 4));
+	childRect.bottom = (parentRect.bottom - ((parentRect.bottom - parentRect.top) / 2));
+	childRect.left = degrRect.left = caret.caretPoint.x;
+	childRect.right = degrRect.right = caret.caretPoint.x + 15;
+
+	degrModel->SetRect(degrRect);
+	degrModel->GetChildren().front()->SetRect(childRect);
+	degrModel->GetChildren().front()->GetChildren().front()->SetRect(childRect);
+}
+
+void CEquationPresenter::addDegr(CExprControlModel* parent) {
+	// Создаем новые модели для степени
+	CDegrControlModel* degrModel = new CDegrControlModel();
+
+	// Посылаем размеры в модели
+	setDegrRects(caret.curEdit->GetRect(), degrModel);
+
+	// Обновляем граф
+	degrModel->SetParent(parent);
+	parent->AddChild(degrModel);
+
+	CEditControlModel* newEditControl = caret.curEdit->SliceEditControl(caret.offset);
+	RECT rect = newEditControl->GetRect();
+	rect.left += (degrModel->GetRect().right - degrModel->GetRect().left);
+	rect.right += (degrModel->GetRect().right - degrModel->GetRect().left);
+	newEditControl->SetRect(rect);
+	parent->AddChild(newEditControl);
+
+	view->Redraw();
+}
+
+
 bool CEquationPresenter::isInTheRect( int x, int y, RECT rect ) {
 	return rect.top <= y && y <= rect.bottom && rect.left <= x && x <= rect.right;
 }
@@ -169,6 +208,9 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		break;
 	case FRAC:
 		addFrac( parent );
+		break;
+	case DEGR:
+		addDegr(parent);
 		break;
 	default:
 		break;

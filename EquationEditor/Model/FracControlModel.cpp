@@ -40,6 +40,6 @@ void CFracControlModel::SetRect( RECT newRect ) {
 
 CDrawParams CFracControlModel::GetDrawParams() {
 	CDrawParams params;
-	params.polygon.push_back( CLine( rect.left, (rect.bottom + rect.top) / 2, rect.right, (rect.bottom + rect.top) / 2 ) );
+	params.polygon.push_back( CLine( rect.left, (rect.bottom + rect.top) / 2 - 1, rect.right, (rect.bottom + rect.top) / 2 - 1) );
 	return params;
 }

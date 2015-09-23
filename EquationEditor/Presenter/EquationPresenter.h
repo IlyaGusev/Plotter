@@ -5,8 +5,9 @@
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/FracControlModel.h"
+#include "Model/DegrControlModel.h"
 
-enum ViewType { TEXT, EXPR, FRAC };
+enum ViewType { TEXT, EXPR, FRAC, DEGR };
 
 // Интерфейс окна редактора
 class IEditorView {
@@ -66,6 +67,9 @@ private:
 
 	void addFrac( CExprControlModel* parent );
 	void setFracRects( RECT parentRect, CFracControlModel* fracModel );
+
+	void addDegr(CExprControlModel* parent);
+	void setDegrRects(RECT parentRect, CDegrControlModel* degrModel);
 
 	void setRect( IBaseExprModel* model, RECT rect );
 

@@ -79,6 +79,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\DegrControlModel.cpp" />
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
@@ -86,6 +87,7 @@
     <ClCompile Include="View\EquationEditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />
     <ClInclude Include="Model\FracControlModel.h" />

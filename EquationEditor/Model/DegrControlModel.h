@@ -1,9 +1,9 @@
-#pragma once
+п»ї#pragma once
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
-// попытка индент. dasha
-// Модель для степени
+// РїРѕРїС‹С‚РєР° РёРЅРґРµРЅС‚. dasha
+// РњРѕРґРµР»СЊ РґР»СЏ СЃС‚РµРїРµРЅРё
 class CDegrControlModel : public IBaseExprModel {
 public:
 	CDegrControlModel();
@@ -17,6 +17,6 @@ private:
 
 	std::shared_ptr<IBaseExprModel> parent;
 
-	// Показатель
-	std::shared_ptr<CExprControlModel> сhild;
+	// РџРѕРєР°Р·Р°С‚РµР»СЊ
+	std::shared_ptr<CExprControlModel> СЃhild;
 };

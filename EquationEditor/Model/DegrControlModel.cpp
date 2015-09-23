@@ -1,20 +1,20 @@
-#include "Model/DegrControlModel.h"
+Ôªø#include "Model/DegrControlModel.h"
 #include "Model/EditControlModel.h"
 
 CDegrControlModel::CDegrControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;
 	parent = nullptr;
 
-	Òhild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
-	Òhild->SetParent( std::shared_ptr<IBaseExprModel>(this) );
-	std::shared_ptr<CEditControlModel> ÒhildEdit( new CEditControlModel() );
+	—Åhild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
+	—Åhild->SetParent( std::shared_ptr<IBaseExprModel>(this) );
+	std::shared_ptr<CEditControlModel> —ÅhildEdit( new CEditControlModel() );
 
-	Òhild->AddChild(ÒhildEdit);
-	ÒhildEdit->SetParent(Òhild);
+	—Åhild->AddChild(—ÅhildEdit);
+	—ÅhildEdit->SetParent(—Åhild);
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren( ) {
-	return std::list<std::shared_ptr<IBaseExprModel>> { Òhild };
+	return std::list<std::shared_ptr<IBaseExprModel>> { —Åhild };
 }
 
 ViewType CDegrControlModel::GetType() {

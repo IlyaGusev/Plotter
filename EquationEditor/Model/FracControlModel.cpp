@@ -1,5 +1,5 @@
-#include "FracControlModel.h"
-#include "EditControlModel.h"
+﻿#include "Model/FracControlModel.h"
+#include "Model/EditControlModel.h"
 
 CFracControlModel::CFracControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;

@@ -1,28 +1,47 @@
-#pragma once
-#include <Windows.h>
+п»ї#pragma once
 #include <list>
 
-struct CLine {
-	LONG left;
-	LONG top;
-	LONG right;
-	LONG bottom;
+#include <Windows.h>
 
-	CLine( LONG _left, LONG _top, LONG _right, LONG _bottom ) : left( _left ), top( _top ), right( _right ), bottom( _bottom ) {}
+struct CLine {
+	LONG startX;
+	LONG startY;
+	LONG endX;
+	LONG endY;
+
+	CLine( LONG _startX, LONG _startY, LONG _endX, LONG _endY ) :
+		startX( _startX ),
+		startY( _startY ),
+		endX( _endX ),
+		endY( _endY )
+	{
+	}
 };
 
-// Что из этой модельки нужно отрисовать на экране
+// Р§С‚Рѕ РёР· СЌС‚РѕР№ РјРѕРґРµР»СЊРєРё РЅСѓР¶РЅРѕ РѕС‚СЂРёСЃРѕРІР°С‚СЊ РЅР° СЌРєСЂР°РЅРµ
 struct CDrawParams {
 	std::wstring text;
 
 	std::list<CLine> polygon;
 
-	CDrawParams() {}
-	CDrawParams( std::wstring _text, std::list<CLine> _polygon ) : text( text ), polygon( _polygon ) {}
+	CDrawParams()
+	{
+	}
+
+	CDrawParams( std::wstring _text, std::list<CLine> _polygon ) :
+		text( _text ),
+		polygon( _polygon )
+	{
+	}
 };
 
-// Модель элемента выражения
+// РњРѕРґРµР»СЊ СЌР»РµРјРµРЅС‚Р° РІС‹СЂР°Р¶РµРЅРёСЏ
 class IBaseExprModel {
+protected:
+	IBaseExprModel* parent;
+	RECT rect;
+	CDrawParams params;
+
 public:
     virtual ~IBaseExprModel() = 0;
 

@@ -1,4 +1,4 @@
-#include "EditControlModel.h"
+п»ї#include "Model/EditControlModel.h"
 
 CEditControlModel::CEditControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;
@@ -46,7 +46,7 @@ int CEditControlModel::DeleteSymbol( int offset ) {
 CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
 	CEditControlModel* newEditControl = new CEditControlModel();
 
-	// Вставляем всё, начиная с offset, в новый edit control
+	// Р’СЃС‚Р°РІР»СЏРµРј РІСЃС‘, РЅР°С‡РёРЅР°СЏ СЃ offset, РІ РЅРѕРІС‹Р№ edit control
 	int newEditControlWidth = 0;
 	for( int i = offset; i < symbolsWidths.size(); ++i ) {
 		newEditControlWidth += symbolsWidths[i];
@@ -56,7 +56,7 @@ CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
 	newEditControl->rect = rect;
 	newEditControl->rect.left = rect.right - newEditControlWidth;
 
-	// Удаляем всё до offset из старого
+	// РЈРґР°Р»СЏРµРј РІСЃС‘ РґРѕ offset РёР· СЃС‚Р°СЂРѕРіРѕ
 	rect.right = newEditControl->rect.left;
 	params.text.resize( offset );
 	symbolsWidths.resize( offset );

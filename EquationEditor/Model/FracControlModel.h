@@ -1,8 +1,8 @@
-#pragma once
-#include "IBaseExprModel.h"
-#include "ExprControlModel.h"
+п»ї#pragma once
+#include "Model/IBaseExprModel.h"
+#include "Model/ExprControlModel.h"
 
-// Модель для дроби
+// РњРѕРґРµР»СЊ РґР»СЏ РґСЂРѕР±Рё
 class CFracControlModel : public IBaseExprModel {
 public:
 	CFracControlModel();
@@ -22,8 +22,8 @@ private:
 	RECT rect;
 
 	IBaseExprModel* parent;
-	// Верхний ребенок
+	// Р’РµСЂС…РЅРёР№ СЂРµР±РµРЅРѕРє
 	CExprControlModel* firstChild;
-	// Нижний ребенок
+	// РќРёР¶РЅРёР№ СЂРµР±РµРЅРѕРє
 	CExprControlModel* secondChild;
 };

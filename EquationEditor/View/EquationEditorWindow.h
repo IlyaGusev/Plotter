@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <Windows.h>
 
 #include "Presenter/EquationPresenter.h"
@@ -7,18 +7,18 @@ class CEquationEditorWindow : public IEditorView {
 public:
     CEquationEditorWindow();
 
-    // Зарегистрировать класс окна
-    // Если true, то зарегистрировали успешно
+    // Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊ РєР»Р°СЃСЃ РѕРєРЅР°
+    // Р•СЃР»Рё true, С‚Рѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°Р»Рё СѓСЃРїРµС€РЅРѕ
     static bool RegisterClassW();
 
-    // Создать экземпляр окна
-    // Если true, то создано успешно
+    // РЎРѕР·РґР°С‚СЊ СЌРєР·РµРјРїР»СЏСЂ РѕРєРЅР°
+    // Р•СЃР»Рё true, С‚Рѕ СЃРѕР·РґР°РЅРѕ СѓСЃРїРµС€РЅРѕ
     bool Create();
-    // Показать окно
+    // РџРѕРєР°Р·Р°С‚СЊ РѕРєРЅРѕ
     void Show(int cmdShow);
-    // Создание edit'а
+    // РЎРѕР·РґР°РЅРёРµ edit'Р°
     void OnCreate();
-    // Реагировать на изменения размера окна
+    // Р РµР°РіРёСЂРѕРІР°С‚СЊ РЅР° РёР·РјРµРЅРµРЅРёСЏ СЂР°Р·РјРµСЂР° РѕРєРЅР°
     void OnSize(int cxSize, int cySize);
 
 	void OnChar( WPARAM wParam );
@@ -42,8 +42,8 @@ protected:
     void OnDestroy();
 
 private:
-    HWND hwnd; // хэндл окна
-	std::list<CLine> paintedLines; // Список всех нарисованных линий
+    HWND hwnd; // С…СЌРЅРґР» РѕРєРЅР°
+	std::list<CLine> paintedLines; // РЎРїРёСЃРѕРє РІСЃРµС… РЅР°СЂРёСЃРѕРІР°РЅРЅС‹С… Р»РёРЅРёР№
 
     static const wchar_t* const className;
 

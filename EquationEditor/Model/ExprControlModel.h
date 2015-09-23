@@ -1,7 +1,7 @@
-#pragma once
-#include "IBaseExprModel.h"
+п»ї#pragma once
+#include "Model/IBaseExprModel.h"
 
-// Модель холдера под вьюшки
+// РњРѕРґРµР»СЊ С…РѕР»РґРµСЂР° РїРѕРґ РІСЊСЋС€РєРё
 class CExprControlModel : public IBaseExprModel {
 public:
 	CExprControlModel();

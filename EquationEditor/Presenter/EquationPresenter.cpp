@@ -1,6 +1,6 @@
-#include "EquationPresenter.h"
+п»ї#include <queue>
 
-#include <queue>
+#include "Presenter/EquationPresenter.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView* newView ) 
 {
@@ -106,8 +106,8 @@ void CEquationPresenter::SetCaret( int x, int y ) {
 }
 
 void CEquationPresenter::setFracRects( RECT parentRect, CFracControlModel* fracModel ) {
-	// Выставляем размеры вьюшек
-	// Высота дроби - две высоты родителя
+	// Р’С‹СЃС‚Р°РІР»СЏРµРј СЂР°Р·РјРµСЂС‹ РІСЊСЋС€РµРє
+	// Р’С‹СЃРѕС‚Р° РґСЂРѕР±Рё - РґРІРµ РІС‹СЃРѕС‚С‹ СЂРѕРґРёС‚РµР»СЏ
 	RECT fracRect, firstChildRect, secondChildRect;
 	firstChildRect.bottom = fracRect.bottom = parentRect.bottom - (parentRect.top - parentRect.bottom) / 2;
 	secondChildRect.bottom = (parentRect.top + parentRect.bottom) / 2;
@@ -124,13 +124,13 @@ void CEquationPresenter::setFracRects( RECT parentRect, CFracControlModel* fracM
 }
 
 void CEquationPresenter::addFrac( CExprControlModel* parent ) {
-	// Создаем новые модели для дроби
+	// РЎРѕР·РґР°РµРј РЅРѕРІС‹Рµ РјРѕРґРµР»Рё РґР»СЏ РґСЂРѕР±Рё
 	CFracControlModel* fracModel = new CFracControlModel();
 
-	// Посылаем размеры в модели
+	// РџРѕСЃС‹Р»Р°РµРј СЂР°Р·РјРµСЂС‹ РІ РјРѕРґРµР»Рё
 	setFracRects( caret.curEdit->GetRect(), fracModel );
 
-	// Обновляем граф
+	// РћР±РЅРѕРІР»СЏРµРј РіСЂР°С„
 	fracModel->SetParent( parent );
 	parent->AddChild( fracModel );
 
@@ -152,14 +152,14 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 {
 	IBaseExprModel* newModel;
 
-	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
-	// Родитель должен иметь тип CExprControlModel
+	// РџРѕРґС†РµРїР»СЏРµРј РЅРѕРІСѓСЋ РІСЊСЋС€РєСѓ Рє СЂРѕРґРёС‚РµР»СЋ С‚РѕР№ РІСЊСЋС€РєРё, РЅР° РєРѕС‚РѕСЂРѕР№ РЅР°С…РѕРґРёР»СЃСЏ С„РѕРєСѓСЃ
+	// Р РѕРґРёС‚РµР»СЊ РґРѕР»Р¶РµРЅ РёРјРµС‚СЊ С‚РёРї CExprControlModel
 	CExprControlModel* parent = dynamic_cast<CExprControlModel*>( caret.curEdit->GetParent() );
 	if( parent == nullptr ) {
 		parent = root;
 	}
 
-	// Создаем новую вьюшку с выбранным типом
+	// РЎРѕР·РґР°РµРј РЅРѕРІСѓСЋ РІСЊСЋС€РєСѓ СЃ РІС‹Р±СЂР°РЅРЅС‹Рј С‚РёРїРѕРј
 	switch( viewType ) {
 	case TEXT:
 		newModel = new CEditControlModel();

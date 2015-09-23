@@ -1,9 +1,10 @@
-#pragma once
-#include "IBaseExprModel.h"
+п»ї#pragma once
 #include <string>
 #include <vector>
 
-// Модель текстового поля
+#include "Model/IBaseExprModel.h"
+
+// РњРѕРґРµР»СЊ С‚РµРєСЃС‚РѕРІРѕРіРѕ РїРѕР»СЏ
 class CEditControlModel : public IBaseExprModel {
 public:
 	CEditControlModel();
@@ -21,20 +22,16 @@ public:
 
 	void InsertSymbol( wchar_t symbol, int offset, int symbolWidth );
 	
-	// Удаляет символ
-	// Возвращает ширину удаленного символа
+	// РЈРґР°Р»СЏРµС‚ СЃРёРјРІРѕР»
+	// Р’РѕР·РІСЂР°С‰Р°РµС‚ С€РёСЂРёРЅСѓ СѓРґР°Р»РµРЅРЅРѕРіРѕ СЃРёРјРІРѕР»Р°
 	int DeleteSymbol( int offset );
 
-	// Разрезает edit control на два по offset
-	// Возвращает второй edit control
+	// Р Р°Р·СЂРµР·Р°РµС‚ edit control РЅР° РґРІР° РїРѕ offset
+	// Р’РѕР·РІСЂР°С‰Р°РµС‚ РІС‚РѕСЂРѕР№ edit control
 	CEditControlModel* SliceEditControl( int offset );
 
 	std::vector<int> GetSymbolsWidths();
 private:
-	RECT rect;
-	CDrawParams params;
-
-	IBaseExprModel* parent;
-	// Ширина каждого символа
+	// РЁРёСЂРёРЅР° РєР°Р¶РґРѕРіРѕ СЃРёРјРІРѕР»Р°
 	std::vector<int> symbolsWidths;
 };

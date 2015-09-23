@@ -1,5 +1,6 @@
-#include "EquationEditorWindow.h"
-#include "resource.h"
+п»ї#include "resource.h"
+
+#include "View/EquationEditorWindow.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
@@ -36,7 +37,7 @@ void CEquationEditorWindow::OnDestroy() {
 void CEquationEditorWindow::OnCreate() {
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 	
-	// Добавляем меню
+	// Р”РѕР±Р°РІР»СЏРµРј РјРµРЅСЋ
 	HMENU hMenu = ::LoadMenu( hInstance, MAKEINTRESOURCE( IDR_MENU1 ) );
 	::SetMenu( hwnd, hMenu );
 }
@@ -121,8 +122,8 @@ void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, RECT rect ) {
 void CEquationEditorWindow::DrawPolygon( HDC hdc, std::list<CLine> polygon ) {
 	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
-			::MoveToEx( hdc, line.left, line.top, NULL );
-			::LineTo( hdc, line.right, line.bottom );
+			::MoveToEx( hdc, line.startX, line.startY, NULL );
+			::LineTo( hdc, line.endX, line.endY );
 		}
 	}
 }
@@ -142,11 +143,11 @@ void CEquationEditorWindow::OnDraw() {
 	//RECT rect;
 	//::GetClientRect( hwnd, &rect );
 	//HDC backbuffDC = ::CreateCompatibleDC( hdc );
-	//HBITMAP backbuffer = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
+	//HBITMAP backbuffer = ::CreateCompatibleBitmap( hdc, rect.endX - rect.startX, rect.endY - rect.startY );
 	//::SelectObject( backbuffDC, backbuffer );
 
 	
-	//::BitBlt( hdc, 0, 0, rect.right - rect.left, rect.bottom - rect.top, backbuffDC, 0, 0, SRCCOPY );
+	//::BitBlt( hdc, 0, 0, rect.endX - rect.startX, rect.endY - rect.startY, backbuffDC, 0, 0, SRCCOPY );
 
 	//::DeleteObject( backbuffer );
 	//::DeleteDC( backbuffDC );
@@ -157,14 +158,14 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 	CEquationEditorWindow *wnd = nullptr;
 
 	if( message == WM_NCCREATE ) {
-		// Получаем указатель на экземпляр нашего окна, который мы передали в функцию CreateWindowEx
+		// РџРѕР»СѓС‡Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° СЌРєР·РµРјРїР»СЏСЂ РЅР°С€РµРіРѕ РѕРєРЅР°, РєРѕС‚РѕСЂС‹Р№ РјС‹ РїРµСЂРµРґР°Р»Рё РІ С„СѓРЅРєС†РёСЋ CreateWindowEx
 		wnd = static_cast<CEquationEditorWindow*>(LPCREATESTRUCT( lParam )->lpCreateParams);
-		// И сохраняем в поле GWL_USERDATA
+		// Р СЃРѕС…СЂР°РЅСЏРµРј РІ РїРѕР»Рµ GWL_USERDATA
 		::SetWindowLong( handle, GWL_USERDATA, reinterpret_cast<LONG>(LPCREATESTRUCT( lParam )->lpCreateParams) );
-		// Запоминаем handle
+		// Р—Р°РїРѕРјРёРЅР°РµРј handle
 		wnd->hwnd = handle;
 	}
-	// Теперь получаем указатель на наш экземпляр окна, но уже из поля GWL_USERDATA
+	// РўРµРїРµСЂСЊ РїРѕР»СѓС‡Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РЅР°С€ СЌРєР·РµРјРїР»СЏСЂ РѕРєРЅР°, РЅРѕ СѓР¶Рµ РёР· РїРѕР»СЏ GWL_USERDATA
 	wnd = reinterpret_cast<CEquationEditorWindow*>(::GetWindowLong( handle, GWL_USERDATA ));
 
 	switch( message ) {

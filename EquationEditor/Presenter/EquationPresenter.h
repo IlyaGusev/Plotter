@@ -1,5 +1,6 @@
-#pragma once
+п»ї#pragma once
 #include <utility>
+
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
@@ -7,21 +8,21 @@
 
 enum ViewType { TEXT, EXPR, FRAC };
 
-// Интерфейс окна редактора
+// РРЅС‚РµСЂС„РµР№СЃ РѕРєРЅР° СЂРµРґР°РєС‚РѕСЂР°
 class IEditorView {
 public:
 	virtual ~IEditorView() = 0;
 
-	// Отобразить текст в определенном прямоугольнике
+	// РћС‚РѕР±СЂР°Р·РёС‚СЊ С‚РµРєСЃС‚ РІ РѕРїСЂРµРґРµР»РµРЅРЅРѕРј РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРµ
 	virtual void DrawText( HDC hdc, std::wstring text, RECT rect ) = 0;
 
-	// Нарисовать ломаную
+	// РќР°СЂРёСЃРѕРІР°С‚СЊ Р»РѕРјР°РЅСѓСЋ
 	virtual void DrawPolygon( HDC hdc, std::list<CLine> polygon ) = 0;
 
-	// Установить положение каретки
+	// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ РєР°СЂРµС‚РєРё
 	virtual void SetCaret( POINT caretPoint, int height ) = 0;
 
-	// Запустить перерисовку окна
+	// Р—Р°РїСѓСЃС‚РёС‚СЊ РїРµСЂРµСЂРёСЃРѕРІРєСѓ РѕРєРЅР°
 	virtual void Redraw() = 0;
 
 	virtual int GetCharWidth( wchar_t symbol ) = 0;
@@ -30,11 +31,11 @@ public:
 inline IEditorView::~IEditorView() {}
 
 struct CCaret {
-	// Текущий edit control, на котором стоит каретка
+	// РўРµРєСѓС‰РёР№ edit control, РЅР° РєРѕС‚РѕСЂРѕРј СЃС‚РѕРёС‚ РєР°СЂРµС‚РєР°
 	CEditControlModel* curEdit;
-	// Координаты каретки на экране
+	// РљРѕРѕСЂРґРёРЅР°С‚С‹ РєР°СЂРµС‚РєРё РЅР° СЌРєСЂР°РЅРµ
 	POINT caretPoint;
-	// Номер символа, за которым стоит каретка
+	// РќРѕРјРµСЂ СЃРёРјРІРѕР»Р°, Р·Р° РєРѕС‚РѕСЂС‹Рј СЃС‚РѕРёС‚ РєР°СЂРµС‚РєР°
 	int offset;
 
 	CCaret() : offset( 0 ) {
@@ -44,7 +45,7 @@ struct CCaret {
 	}
 };
 
-// Класс, размещающий прямоугольники вьюшек на экране
+// РљР»Р°СЃСЃ, СЂР°Р·РјРµС‰Р°СЋС‰РёР№ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРё РІСЊСЋС€РµРє РЅР° СЌРєСЂР°РЅРµ
 class CEquationPresenter {
 public:
 	CEquationPresenter( IEditorView* view );
@@ -70,8 +71,8 @@ private:
 
 	bool isInTheRect( int x, int y, RECT rect );
 	
-	// Ищет позицию каретки с таким x
-	// Возвращает пару <координата, номер буквы>
+	// РС‰РµС‚ РїРѕР·РёС†РёСЋ РєР°СЂРµС‚РєРё СЃ С‚Р°РєРёРј x
+	// Р’РѕР·РІСЂР°С‰Р°РµС‚ РїР°СЂСѓ <РєРѕРѕСЂРґРёРЅР°С‚Р°, РЅРѕРјРµСЂ Р±СѓРєРІС‹>
 	std::pair<int, int> findCaretPos( CEditControlModel* editControlModel, int x );
 	// void updateGraph(IControlModel* startVert);
 };

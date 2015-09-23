@@ -2,6 +2,7 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
+// попытка индент. dasha
 // Модель для степени
 class CDegrControlModel : public IBaseExprModel {
 public:

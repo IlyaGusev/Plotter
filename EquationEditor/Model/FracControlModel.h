@@ -2,6 +2,7 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
+
 // Модель для дроби
 class CFracControlModel : public IBaseExprModel {
 public:

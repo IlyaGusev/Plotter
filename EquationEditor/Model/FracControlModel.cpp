@@ -1,21 +1,16 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
+#include "Model/GeneralFunct.h"
 
 CFracControlModel::CFracControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;
 	parent = nullptr;
 
 	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
-	firstChild->SetParent( std::shared_ptr<IBaseExprModel>(this) );
-	std::shared_ptr<CEditControlModel> firstChildEdit( new CEditControlModel() );
+	linkChildWithParent(firstChild, this);
+	
 	secondChild = std::make_shared<CExprControlModel>( CExprControlModel() );
-	secondChild->SetParent( std::shared_ptr<IBaseExprModel>( this ) );
-	std::shared_ptr<CEditControlModel> secondChildEdit( new CEditControlModel() );
-
-	firstChild->AddChild( firstChildEdit );
-	firstChildEdit->SetParent( firstChild );
-	secondChild->AddChild( secondChildEdit );
-	secondChildEdit->SetParent( secondChild );
+	linkChildWithParent(secondChild, this);
 
 	params.polygon.push_back( CLine(0, 0, 0, 0) );
 }

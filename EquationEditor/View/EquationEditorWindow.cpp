@@ -74,9 +74,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 		case ID_ADD_FRAC:
 			presenter->AddControlView(FRAC);
 			break;
-	/*	case ID_ADD_DEGR:
+		case ID_ADD_DEGR:
 			presenter->AddControlView(DEGR);
-			break;*/
+			break;
 		}
 	}
 }

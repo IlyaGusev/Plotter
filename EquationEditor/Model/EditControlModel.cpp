@@ -50,3 +50,4 @@ std::vector<int> CEditControlModel::GetSymbolsWidths() {
 ViewType CEditControlModel::GetType( ) {
 	return TEXT;
 }
+

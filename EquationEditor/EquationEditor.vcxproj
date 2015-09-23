@@ -83,6 +83,8 @@
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\GeneralFunct.cpp" />
+    <ClCompile Include="Model\RadicControlModel.cpp" />
     <ClCompile Include="Presenter\EquationPresenter.cpp" />
     <ClCompile Include="View\EquationEditorWindow.cpp" />
   </ItemGroup>
@@ -91,7 +93,9 @@
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />
     <ClInclude Include="Model\FracControlModel.h" />
+    <ClInclude Include="Model\GeneralFunct.h" />
     <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\RadicControlModel.h" />
     <ClInclude Include="Presenter\EquationPresenter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="View\EquationEditorWindow.h" />

@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "../pugixml/pugixml.hpp"
 #define VOID (~0)
 #define NUMBER			0x00000001
 #define BOOL			0x00000004
@@ -30,6 +31,7 @@ public:
 	virtual ~CTag();
 };
 
+
 class CTagAtamar : public CTag
 {
 	virtual CNode  checkSignature(CNode Node)const
@@ -47,25 +49,3 @@ class CTagApply : public CTagAtamar
 	};
 };
 
-
-class CTagContainear
-{
-public:
-	static const unordered_map<string, CTag*> Tags;
-private:
-	static const unordered_map<string, CTag*> CTagCuotainearBuild()
-	{ 
-		pair< string, CTag* > TagList[] = {
-
-			/***********write here tags*********************/
-
-			pair< string, CTag* >("apply", (CTag*) new CTagApply())
-
-			/**********************************************/
-
-		};
-		return unordered_map<string, CTag*>(TagList, TagList + sizeof(TagList) / sizeof(pair< string, CTag* >));
-	};
-};
-
-const unordered_map<string, CTag*> CTagContainear::Tags = CTagContainear::CTagCuotainearBuild();

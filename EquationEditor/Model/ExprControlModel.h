@@ -7,21 +7,11 @@ public:
 	CExprControlModel();
 	~CExprControlModel() {}
 
-	IBaseExprModel* GetParent();
-	void SetParent( IBaseExprModel* parent );
-
-	std::list<IBaseExprModel*> GetChildren();
+	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( );
 	
-	void AddChild( IBaseExprModel* child );
+	void AddChild( std::shared_ptr<IBaseExprModel> child );
 
-	RECT GetRect();
-
-	void SetRect( RECT rect );
-
-	CDrawParams GetDrawParams() { return CDrawParams(); }
+	ViewType GetType();
 private:
-	RECT rect;
-
-	IBaseExprModel* parent;
-	std::list<IBaseExprModel*> children;
+	std::list<std::shared_ptr<IBaseExprModel>> children;
 };

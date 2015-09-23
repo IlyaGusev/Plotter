@@ -9,21 +9,14 @@ public:
 	CDegrControlModel();
 	~CDegrControlModel() {}
 
-	IBaseExprModel* GetParent();
-	void SetParent(IBaseExprModel* parent);
+	std::list<std::shared_ptr<IBaseExprModel>> GetChildren();
 
-	std::list<IBaseExprModel*> GetChildren();
-
-	RECT GetRect();
-
-	void SetRect(RECT rect);
-
-	CDrawParams GetDrawParams();
+	ViewType GetType();
 private:
 	RECT rect;
 
-	IBaseExprModel* parent;
+	std::shared_ptr<IBaseExprModel> parent;
 
 	// Показатель
-	CExprControlModel* сhild;
+	std::shared_ptr<CExprControlModel> сhild;
 };

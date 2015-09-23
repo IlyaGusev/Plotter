@@ -6,8 +6,7 @@
 #include "Model/EditControlModel.h"
 #include "Model/FracControlModel.h"
 #include "Model/DegrControlModel.h"
-
-enum ViewType { TEXT, EXPR, FRAC, DEGR };
+#include <memory>
 
 // Интерфейс окна редактора
 class IEditorView {
@@ -33,7 +32,7 @@ inline IEditorView::~IEditorView() {}
 
 struct CCaret {
 	// Текущий edit control, на котором стоит каретка
-	CEditControlModel* curEdit;
+	std::shared_ptr<CEditControlModel> curEdit;
 	// Координаты каретки на экране
 	POINT caretPoint;
 	// Номер символа, за которым стоит каретка
@@ -50,6 +49,7 @@ struct CCaret {
 class CEquationPresenter {
 public:
 	CEquationPresenter( IEditorView* view );
+	~CEquationPresenter();
 
 	void AddControlView( ViewType viewType );
 
@@ -61,22 +61,22 @@ public:
 	
 	void SetCaret( int x, int y );
 private:
-    CExprControlModel* root;
+    std::shared_ptr<CExprControlModel> root;
 	CCaret caret;
 	IEditorView* view;
 
-	void addFrac( CExprControlModel* parent );
-	void setFracRects( RECT parentRect, CFracControlModel* fracModel );
+	void addFrac( std::shared_ptr<CExprControlModel> parent );
+	void setFracRects( RECT parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
-	void addDegr(CExprControlModel* parent);
-	void setDegrRects(RECT parentRect, CDegrControlModel* degrModel);
+	void setRect( std::shared_ptr<IBaseExprModel> model, RECT rect );
 
-	void setRect( IBaseExprModel* model, RECT rect );
+	void addDegr( std::shared_ptr<CExprControlModel> parent );
+	void setDegrRects( RECT parentRect, std::shared_ptr<CDegrControlModel> degrModel );
 
 	bool isInTheRect( int x, int y, RECT rect );
 	
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>
-	std::pair<int, int> findCaretPos( CEditControlModel* editControlModel, int x );
+	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 	// void updateGraph(IControlModel* startVert);
 };

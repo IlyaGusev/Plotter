@@ -5,36 +5,18 @@ CDegrControlModel::CDegrControlModel() {
 	rect.bottom = rect.top = rect.left = rect.right = 0;
 	parent = nullptr;
 
-	ñhild = new CExprControlModel();
-	ñhild->SetParent(this);
-	CEditControlModel* ñhildEdit = new CEditControlModel();
-
+	ñhild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
+	ñhild->SetParent( std::shared_ptr<IBaseExprModel>(this) );
+	std::shared_ptr<CEditControlModel> ñhildEdit( new CEditControlModel() );
 
 	ñhild->AddChild(ñhildEdit);
 	ñhildEdit->SetParent(ñhild);
 }
 
-IBaseExprModel* CDegrControlModel::GetParent() {
-	return parent;
+std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren( ) {
+	return std::list<std::shared_ptr<IBaseExprModel>> { ñhild };
 }
 
-void CDegrControlModel::SetParent(IBaseExprModel* newParent) {
-	parent = newParent;
-}
-
-std::list<IBaseExprModel*> CDegrControlModel::GetChildren() {
-	return std::list<IBaseExprModel*> { ñhild };
-}
-
-RECT CDegrControlModel::GetRect() {
-	return rect;
-}
-
-void CDegrControlModel::SetRect(RECT newRect) {
-	rect = newRect;
-}
-
-CDrawParams CDegrControlModel::GetDrawParams() {
-	CDrawParams params;
-	return params;
+ViewType CDegrControlModel::GetType() {
+	return DEGR;
 }

@@ -8,6 +8,10 @@ CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
 	presenter = new CEquationPresenter( this );
 }
 
+CEquationEditorWindow::~CEquationEditorWindow() {
+	delete presenter;
+}
+
 bool CEquationEditorWindow::RegisterClassW() {
 	WNDCLASSEX wnd;
 	ZeroMemory( &wnd, sizeof(wnd) );

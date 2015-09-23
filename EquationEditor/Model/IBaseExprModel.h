@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include <list>
-
+#include <memory>
 #include <Windows.h>
+
+enum ViewType { TEXT, EXPR, FRAC, DEGR };
 
 struct CLine {
 	LONG startX;
@@ -15,6 +17,13 @@ struct CLine {
 		endX( _endX ),
 		endY( _endY )
 	{
+	}
+
+	void Set( LONG startX, LONG startY, LONG endX, LONG endY ) {
+		this->startX = startX;
+		this->startY = startY;
+		this->endX = endX;
+		this->endY = endY;
 	}
 };
 
@@ -38,22 +47,44 @@ struct CDrawParams {
 // Модель элемента выражения
 class IBaseExprModel {
 protected:
-	IBaseExprModel* parent;
+	std::shared_ptr<IBaseExprModel> parent;
 	RECT rect;
 	CDrawParams params;
 
 public:
-    virtual ~IBaseExprModel() = 0;
+	virtual ~IBaseExprModel() {};
 
-	virtual IBaseExprModel* GetParent( ) = 0;
-	virtual void SetParent( IBaseExprModel* parent ) = 0;
+	virtual std::shared_ptr<IBaseExprModel> GetParent( );
+	
+	virtual void SetParent( std::shared_ptr<IBaseExprModel> parent );
 
-	virtual std::list<IBaseExprModel*> GetChildren() = 0;
+	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) = 0;
 
-    virtual RECT GetRect() = 0;
-    virtual void SetRect(RECT rect) = 0;
+	virtual RECT GetRect();
 
-	virtual CDrawParams GetDrawParams() = 0;
+	virtual void SetRect( RECT rect );
+
+	virtual CDrawParams GetDrawParams();
+
+	virtual ViewType GetType() = 0;
 };
 
-inline IBaseExprModel::~IBaseExprModel() {}
+inline std::shared_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) {
+	return parent;
+}
+
+inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent ) {
+	this->parent = parent;
+}
+
+inline RECT IBaseExprModel::GetRect() {
+	return rect;
+}
+
+inline void IBaseExprModel::SetRect( RECT rect ) {
+	this->rect = rect;
+}
+
+inline CDrawParams IBaseExprModel::GetDrawParams() {
+	return params;
+}

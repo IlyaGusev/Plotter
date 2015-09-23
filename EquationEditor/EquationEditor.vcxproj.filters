@@ -42,6 +42,12 @@
     <ClCompile Include="View\EquationEditorWindow.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
+    <ClCompile Include="Presenter\TreeDfsProcessor.cpp">
+      <Filter>Source Files\Presenter</Filter>
+    </ClCompile>
+    <ClCompile Include="Presenter\TreeBfsProcessor.cpp">
+      <Filter>Source Files\Presenter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -64,6 +70,12 @@
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenter\TreeDfsProcessor.h">
+      <Filter>Source Files\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenter\TreeBfsProcessor.h">
+      <Filter>Source Files\Presenter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

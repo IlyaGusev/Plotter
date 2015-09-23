@@ -1,6 +1,7 @@
 ﻿#include <queue>
 
 #include "Presenter/EquationPresenter.h"
+#include "TreeDfsProcessor.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView* newView ) 
 {
@@ -29,7 +30,9 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol ) {
 	caret.curEdit->InsertSymbol( symbol, caret.offset, symbolWidth );
 	++caret.offset;
 	caret.caretPoint.x += symbolWidth;
-	// resetGraph();
+
+	updateTreeAfterSizeChange( caret.curEdit );
+
 	view->Redraw();
 }
 
@@ -37,7 +40,9 @@ void CEquationPresenter::DeleteSymbol() {
 	if( caret.offset != 0 ) {
 		caret.caretPoint.x -= caret.curEdit->DeleteSymbol( caret.offset - 1 );
 		--caret.offset;
-		// resetGraph();
+
+		updateTreeAfterSizeChange( caret.curEdit );
+
 		view->Redraw();
 	}
 }
@@ -173,4 +178,33 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	default:
 		break;
 	}
+}
+
+void CEquationPresenter::updateTreeAfterSizeChange( IBaseExprModel* startVert )
+{
+	auto node = startVert;
+	while (node->GetParent() != nullptr)
+	{
+		auto oldRect = node->GetRect();
+		node->Resize();
+		auto newRect = node->GetRect();
+		node = node->GetParent();
+
+//		if (oldRect.left == newRect.left
+//			&& oldRect.right == newRect.right
+//			&& oldRect.top == newRect.top
+//			&& oldRect.bottom == newRect.bottom)
+//		{
+//			break;
+//		}
+	}
+
+	std::function<void( IBaseExprModel* )> permutateFunction( []( IBaseExprModel* node )
+	{
+		node->PermutateChildren();
+	} );
+
+	CTreeDfsProcessor processor( node, permutateFunction );
+
+	processor.Process();
 }

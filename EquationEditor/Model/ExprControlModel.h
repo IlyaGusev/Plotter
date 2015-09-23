@@ -7,18 +7,21 @@ public:
 	CExprControlModel();
 	~CExprControlModel() {}
 
-	IBaseExprModel* GetParent();
+	IBaseExprModel* GetParent() const;
 	void SetParent( IBaseExprModel* parent );
 
-	std::list<IBaseExprModel*> GetChildren();
+	std::list<IBaseExprModel*> GetChildren() const;
 	
 	void AddChild( IBaseExprModel* child );
 
-	RECT GetRect();
-
+	RECT GetRect() const;
 	void SetRect( RECT rect );
 
-	CDrawParams GetDrawParams() { return CDrawParams(); }
+	void Resize();
+
+	void PermutateChildren();
+
+	CDrawParams GetDrawParams() const;
 private:
 	RECT rect;
 

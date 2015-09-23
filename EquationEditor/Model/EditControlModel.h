@@ -10,15 +10,19 @@ public:
 	CEditControlModel();
 	~CEditControlModel() {}
 
-	IBaseExprModel* GetParent();
+	IBaseExprModel* GetParent() const;
 	void SetParent( IBaseExprModel* parent );
 
-	std::list< IBaseExprModel* > GetChildren();
+	std::list< IBaseExprModel* > GetChildren() const;
 
-	RECT GetRect();
+	RECT GetRect() const;
 	void SetRect( RECT rect );
+	
+	void Resize();
 
-	CDrawParams GetDrawParams();
+	void PermutateChildren();
+
+	CDrawParams GetDrawParams() const;
 
 	void InsertSymbol( wchar_t symbol, int offset, int symbolWidth );
 	

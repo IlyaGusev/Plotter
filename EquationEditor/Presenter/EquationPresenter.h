@@ -74,5 +74,6 @@ private:
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( CEditControlModel* editControlModel, int x );
-	// void updateGraph(IControlModel* startVert);
+
+	void updateTreeAfterSizeChange(IBaseExprModel* startVert);
 };

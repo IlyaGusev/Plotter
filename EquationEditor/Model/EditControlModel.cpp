@@ -5,7 +5,7 @@ CEditControlModel::CEditControlModel() {
 	parent = nullptr;
 }
 
-IBaseExprModel* CEditControlModel::GetParent( ) {
+IBaseExprModel* CEditControlModel::GetParent() const {
 	return parent;
 }
 
@@ -13,7 +13,7 @@ void CEditControlModel::SetParent( IBaseExprModel* newParent ) {
 	parent = newParent;
 }
 
-RECT CEditControlModel::GetRect() {
+RECT CEditControlModel::GetRect() const {
 	return rect;
 }
 
@@ -21,11 +21,19 @@ void CEditControlModel::SetRect( RECT newRect ) {
 	rect = newRect;
 }
 
-std::list< IBaseExprModel* > CEditControlModel::GetChildren( ) {
+void CEditControlModel::Resize( )
+{
+}
+
+void CEditControlModel::PermutateChildren( )
+{
+}
+
+std::list< IBaseExprModel* > CEditControlModel::GetChildren() const {
 	return std::list< IBaseExprModel* >();
 }
 
-CDrawParams CEditControlModel::GetDrawParams() {
+CDrawParams CEditControlModel::GetDrawParams() const {
 	return params;
 }
 

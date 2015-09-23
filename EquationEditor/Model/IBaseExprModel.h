@@ -43,17 +43,23 @@ protected:
 	CDrawParams params;
 
 public:
-    virtual ~IBaseExprModel() = 0;
+	virtual ~IBaseExprModel()
+	{
+	}
 
-	virtual IBaseExprModel* GetParent( ) = 0;
+	virtual IBaseExprModel* GetParent( ) const = 0;
 	virtual void SetParent( IBaseExprModel* parent ) = 0;
 
-	virtual std::list<IBaseExprModel*> GetChildren() = 0;
+	virtual std::list<IBaseExprModel*> GetChildren() const = 0;
 
-    virtual RECT GetRect() = 0;
-    virtual void SetRect(RECT rect) = 0;
+	virtual RECT GetRect() const = 0;
+	virtual void SetRect( RECT rect ) = 0;
 
-	virtual CDrawParams GetDrawParams() = 0;
+	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
+	virtual void Resize() = 0;
+
+	// расставить детей по своим местам
+	virtual void PermutateChildren() = 0;
+
+	virtual CDrawParams GetDrawParams() const = 0;
 };
-
-inline IBaseExprModel::~IBaseExprModel() {}

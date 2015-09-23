@@ -83,6 +83,8 @@
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
     <ClCompile Include="Presenter\EquationPresenter.cpp" />
+    <ClCompile Include="Presenter\TreeBfsProcessor.cpp" />
+    <ClCompile Include="Presenter\TreeDfsProcessor.cpp" />
     <ClCompile Include="View\EquationEditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +93,8 @@
     <ClInclude Include="Model\FracControlModel.h" />
     <ClInclude Include="Model\IBaseExprModel.h" />
     <ClInclude Include="Presenter\EquationPresenter.h" />
+    <ClInclude Include="Presenter\TreeBfsProcessor.h" />
+    <ClInclude Include="Presenter\TreeDfsProcessor.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="View\EquationEditorWindow.h" />
   </ItemGroup>

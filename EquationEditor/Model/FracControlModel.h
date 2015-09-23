@@ -8,16 +8,19 @@ public:
 	CFracControlModel();
 	~CFracControlModel() {}
 
-	IBaseExprModel* GetParent();
+	IBaseExprModel* GetParent() const;
 	void SetParent( IBaseExprModel* parent );
 
-	std::list<IBaseExprModel*> GetChildren();
+	std::list<IBaseExprModel*> GetChildren() const;
 
-	RECT GetRect();
-
+	RECT GetRect() const;
 	void SetRect( RECT rect );
 
-	CDrawParams GetDrawParams();
+	void Resize();
+
+	void PermutateChildren();
+
+	CDrawParams GetDrawParams() const;
 private:
 	RECT rect;
 

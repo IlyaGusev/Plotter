@@ -10,19 +10,11 @@ public:
 	CEditControlModel();
 	~CEditControlModel() {}
 
-	IBaseExprModel* GetParent() const;
-	void SetParent( IBaseExprModel* parent );
+	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;
 
-	std::list< IBaseExprModel* > GetChildren() const;
-
-	RECT GetRect() const;
-	void SetRect( RECT rect );
-	
 	void Resize();
 
 	void PermutateChildren();
-
-	CDrawParams GetDrawParams() const;
 
 	void InsertSymbol( wchar_t symbol, int offset, int symbolWidth );
 	
@@ -32,10 +24,13 @@ public:
 
 	// Разрезает edit control на два по offset
 	// Возвращает второй edit control
-	CEditControlModel* SliceEditControl( int offset );
+	std::shared_ptr<CEditControlModel> SliceEditControl( int offset );
 
 	std::vector<int> GetSymbolsWidths();
+
+	ViewType GetType() const;
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;
+	std::list< std::shared_ptr<IBaseExprModel> > children;
 };

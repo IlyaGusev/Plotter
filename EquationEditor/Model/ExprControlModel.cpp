@@ -5,26 +5,6 @@ CExprControlModel::CExprControlModel() {
 	parent = nullptr;
 }
 
-IBaseExprModel* CExprControlModel::GetParent() const {
-	return parent;
-}
-
-void CExprControlModel::SetParent( IBaseExprModel* newParent ) {
-	parent = newParent;
-}
-
-std::list<IBaseExprModel*> CExprControlModel::GetChildren() const {
-	return children;
-}
-
-RECT CExprControlModel::GetRect() const {
-	return rect;
-}
-
-void CExprControlModel::SetRect( RECT newRect ) {
-	rect = newRect;
-}
-
 void CExprControlModel::Resize( )
 {
 	int width = 0;
@@ -69,12 +49,11 @@ void CExprControlModel::PermutateChildren( )
 	}
 }
 
-CDrawParams CExprControlModel::GetDrawParams() const
-{
-	return CDrawParams( );
+std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren( ) const {
+	return children;
 }
 
-void CExprControlModel::AddChild( IBaseExprModel* child ) {
+void CExprControlModel::AddChild( std::shared_ptr<IBaseExprModel> child ) {
 	children.push_back( child );
 	if( rect.left != -1 ) {
 		rect.left = min( rect.left, child->GetRect().left );
@@ -87,4 +66,8 @@ void CExprControlModel::AddChild( IBaseExprModel* child ) {
 		rect.right = child->GetRect().right;
 		rect.bottom = child->GetRect().bottom;
 	}
+}
+
+ViewType CExprControlModel::GetType() const {
+	return EXPR;
 }

@@ -8,25 +8,19 @@ public:
 	CFracControlModel();
 	~CFracControlModel() {}
 
-	IBaseExprModel* GetParent() const;
-	void SetParent( IBaseExprModel* parent );
+	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
 
-	std::list<IBaseExprModel*> GetChildren() const;
-
-	RECT GetRect() const;
-	void SetRect( RECT rect );
+	virtual void SetRect( RECT rect );
 
 	void Resize();
 
 	void PermutateChildren();
 
-	CDrawParams GetDrawParams() const;
-private:
-	RECT rect;
+	ViewType GetType() const;
 
-	IBaseExprModel* parent;
+private:
 	// Верхний ребенок
-	CExprControlModel* firstChild;
+	std::shared_ptr<CExprControlModel> firstChild;
 	// Нижний ребенок
-	CExprControlModel* secondChild;
+	std::shared_ptr<CExprControlModel> secondChild;
 };

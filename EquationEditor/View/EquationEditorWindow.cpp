@@ -8,6 +8,10 @@ CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
 	presenter = new CEquationPresenter( this );
 }
 
+CEquationEditorWindow::~CEquationEditorWindow() {
+	delete presenter;
+}
+
 bool CEquationEditorWindow::RegisterClassW() {
 	WNDCLASSEX wnd;
 	ZeroMemory( &wnd, sizeof(wnd) );
@@ -64,8 +68,15 @@ void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) {
 void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
+	/*	case ID_ADD_FRAC:
+			presenter->AddControlView(DEGR);
+			break;*/
 		case ID_ADD_FRAC:
-			presenter->AddControlView( FRAC );
+			presenter->AddControlView(FRAC);
+			break;
+		case ID_ADD_DEGR:
+			presenter->AddControlView(DEGR);
+			break;
 		}
 	}
 }

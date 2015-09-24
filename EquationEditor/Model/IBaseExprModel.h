@@ -1,7 +1,10 @@
 ﻿#pragma once
 #include <list>
+#include <memory>
 
 #include <Windows.h>
+
+enum ViewType { TEXT, EXPR, FRAC, DEGR };
 
 struct CLine {
 	LONG startX;
@@ -15,6 +18,13 @@ struct CLine {
 		endX( _endX ),
 		endY( _endY )
 	{
+	}
+
+	void Set( LONG startX, LONG startY, LONG endX, LONG endY ) {
+		this->startX = startX;
+		this->startY = startY;
+		this->endX = endX;
+		this->endY = endY;
 	}
 };
 
@@ -38,7 +48,7 @@ struct CDrawParams {
 // Модель элемента выражения
 class IBaseExprModel {
 protected:
-	IBaseExprModel* parent;
+	std::shared_ptr<IBaseExprModel> parent;
 	RECT rect;
 	CDrawParams params;
 
@@ -47,13 +57,13 @@ public:
 	{
 	}
 
-	virtual IBaseExprModel* GetParent( ) const = 0;
-	virtual void SetParent( IBaseExprModel* parent ) = 0;
+	virtual std::shared_ptr<IBaseExprModel> GetParent( ) const;
+	virtual void SetParent( std::shared_ptr<IBaseExprModel> parent );
 
-	virtual std::list<IBaseExprModel*> GetChildren() const = 0;
+	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
 
-	virtual RECT GetRect() const = 0;
-	virtual void SetRect( RECT rect ) = 0;
+	virtual RECT GetRect() const;
+	virtual void SetRect( RECT rect );
 
 	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
 	virtual void Resize() = 0;
@@ -61,5 +71,27 @@ public:
 	// расставить детей по своим местам
 	virtual void PermutateChildren() = 0;
 
-	virtual CDrawParams GetDrawParams() const = 0;
+	virtual CDrawParams GetDrawParams() const;
+
+	virtual ViewType GetType() const = 0;
 };
+
+inline std::shared_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const {
+	return parent;
+}
+
+inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent ) {
+	this->parent = parent;
+}
+
+inline RECT IBaseExprModel::GetRect() const {
+	return rect;
+}
+
+inline void IBaseExprModel::SetRect( RECT rect ) {
+	this->rect = rect;
+}
+
+inline CDrawParams IBaseExprModel::GetDrawParams() const {
+	return params;
+}

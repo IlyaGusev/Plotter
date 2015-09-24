@@ -1,12 +1,12 @@
 #include "Presenter/TreeBfsProcessor.h"
 
 CTreeBfsProcessor::CTreeBfsProcessor(
-	IBaseExprModel* startingNode,
-	const std::function<void( IBaseExprModel* )>& afterEnter,
-	const std::function<void( IBaseExprModel*, IBaseExprModel* )>& beforeEachChild,
-	const std::function<bool( IBaseExprModel*, IBaseExprModel* )>& condition,
-	const std::function<void( IBaseExprModel*, IBaseExprModel* )>& afterEachChild,
-	const std::function<void( IBaseExprModel* )>& beforeExit ) :
+	Node startingNode,
+	const std::function<void( Node )>& afterEnter,
+	const std::function<void( Node, Node )>& beforeEachChild,
+	const std::function<bool( Node, Node )>& condition,
+	const std::function<void( Node, Node )>& afterEachChild,
+	const std::function<void( Node )>& beforeExit ) :
 	_startingNode( startingNode ),
 	_beforeEachChild( beforeEachChild ),
 	_condition( condition ),
@@ -15,37 +15,37 @@ CTreeBfsProcessor::CTreeBfsProcessor(
 {
 }
 
-void CTreeBfsProcessor::SetStartingNode( IBaseExprModel* startingNode )
+void CTreeBfsProcessor::SetStartingNode( Node startingNode )
 {
 	_startingNode = startingNode;
 }
 
-void CTreeBfsProcessor::SetEnterProcessFunc( const std::function<void(IBaseExprModel*)>& afterEnter )
+void CTreeBfsProcessor::SetEnterProcessFunc( const std::function<void(Node)>& afterEnter )
 {
 	_afterEnter = afterEnter;
 }
 
-void CTreeBfsProcessor::SetBeforeChildProcessFunc( const std::function<void(IBaseExprModel*, IBaseExprModel*)>& beforeEachChild )
+void CTreeBfsProcessor::SetBeforeChildProcessFunc( const std::function<void(Node, Node)>& beforeEachChild )
 {
 	_beforeEachChild = beforeEachChild;
 }
 
-void CTreeBfsProcessor::SetCondition( const std::function<bool(IBaseExprModel*, IBaseExprModel*)>& condition )
+void CTreeBfsProcessor::SetCondition( const std::function<bool(Node, Node)>& condition )
 {
 	_condition = condition;
 }
 
-void CTreeBfsProcessor::SetAfterChildProcessFunc( const std::function<void(IBaseExprModel*, IBaseExprModel*)>& afterEachChild )
+void CTreeBfsProcessor::SetAfterChildProcessFunc( const std::function<void(Node, Node)>& afterEachChild )
 {
 	_afterEachChild = afterEachChild;
 }
 
-void CTreeBfsProcessor::SetExitProcessFunc( const std::function<void(IBaseExprModel*)>& beforeExit )
+void CTreeBfsProcessor::SetExitProcessFunc( const std::function<void(Node)>& beforeExit )
 {
 	_beforeExit = beforeExit;
 }
 
-IBaseExprModel* CTreeBfsProcessor::Find( const std::function<bool(IBaseExprModel*)>& predicate, const std::function<bool(IBaseExprModel*, IBaseExprModel*)>& hint ) const
+std::shared_ptr<IBaseExprModel> CTreeBfsProcessor::Find( const std::function<bool( Node )>& predicate, const std::function<bool( Node, Node )>& hint ) const
 {
 	return nullptr;
 }
@@ -57,7 +57,7 @@ void CTreeBfsProcessor::Process( ) const
 		throw std::exception( "starting node is not initialized" );
 	}
 	
-	std::queue<IBaseExprModel*> nodeQueue;
+	std::queue<Node> nodeQueue;
 	nodeQueue.push( _startingNode );
 	while (nodeQueue.size())
 	{

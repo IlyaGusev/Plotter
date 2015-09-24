@@ -5,22 +5,6 @@ CEditControlModel::CEditControlModel() {
 	parent = nullptr;
 }
 
-IBaseExprModel* CEditControlModel::GetParent() const {
-	return parent;
-}
-
-void CEditControlModel::SetParent( IBaseExprModel* newParent ) {
-	parent = newParent;
-}
-
-RECT CEditControlModel::GetRect() const {
-	return rect;
-}
-
-void CEditControlModel::SetRect( RECT newRect ) {
-	rect = newRect;
-}
-
 void CEditControlModel::Resize( )
 {
 }
@@ -29,12 +13,8 @@ void CEditControlModel::PermutateChildren( )
 {
 }
 
-std::list< IBaseExprModel* > CEditControlModel::GetChildren() const {
-	return std::list< IBaseExprModel* >();
-}
-
-CDrawParams CEditControlModel::GetDrawParams() const {
-	return params;
+std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() const {
+	return children;
 }
 
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) {
@@ -51,12 +31,12 @@ int CEditControlModel::DeleteSymbol( int offset ) {
 	return symbolsWidth;
 }
 
-CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
-	CEditControlModel* newEditControl = new CEditControlModel();
+std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offset ) {
+	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel() );
 
 	// Вставляем всё, начиная с offset, в новый edit control
 	int newEditControlWidth = 0;
-	for( int i = offset; i < symbolsWidths.size(); ++i ) {
+	for( size_t i = offset; i < symbolsWidths.size(); ++i ) {
 		newEditControlWidth += symbolsWidths[i];
 		newEditControl->symbolsWidths.push_back( symbolsWidths[i] );
 		newEditControl->params.text.push_back( params.text[i] );
@@ -75,3 +55,8 @@ CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
 std::vector<int> CEditControlModel::GetSymbolsWidths() {
 	return symbolsWidths;
 }
+
+ViewType CEditControlModel::GetType( ) const {
+	return TEXT;
+}
+

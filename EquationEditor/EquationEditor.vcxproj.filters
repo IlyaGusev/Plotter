@@ -48,6 +48,12 @@
     <ClCompile Include="Presenter\TreeBfsProcessor.cpp">
       <Filter>Source Files\Presenter</Filter>
     </ClCompile>
+    <ClCompile Include="Model\DegrControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\GeneralFunct.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -76,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="Presenter\TreeBfsProcessor.h">
       <Filter>Source Files\Presenter</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\DegrControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\GeneralFunct.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

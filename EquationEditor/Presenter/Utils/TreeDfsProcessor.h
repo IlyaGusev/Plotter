@@ -1,9 +1,9 @@
-#include <functional>
+п»ї#include <functional>
 
 #include <Model/IBaseExprModel.h>
 
-// класс, который обходит в глубину дерево и совершает над ним необходимые действия
-// сделан отдельно метод для удобного поиска
+// РєР»Р°СЃСЃ, РєРѕС‚РѕСЂС‹Р№ РѕР±С…РѕРґРёС‚ РІ РіР»СѓР±РёРЅСѓ РґРµСЂРµРІРѕ Рё СЃРѕРІРµСЂС€Р°РµС‚ РЅР°Рґ РЅРёРј РЅРµРѕР±С…РѕРґРёРјС‹Рµ РґРµР№СЃС‚РІРёСЏ
+// СЃРґРµР»Р°РЅ РѕС‚РґРµР»СЊРЅРѕ РјРµС‚РѕРґ РґР»СЏ СѓРґРѕР±РЅРѕРіРѕ РїРѕРёСЃРєР°
 class CTreeDfsProcessor
 {
 	typedef std::shared_ptr<IBaseExprModel> Node;
@@ -18,12 +18,12 @@ class CTreeDfsProcessor
 	void dfsFunction( Node currentNode ) const;
 
 public:
-	// при вызове process процессор начинает обход в глубину с startingNode
-	// при входе в вершину node вызывается afterEnter(node)
-	// перед рекурсивным входом в ребёнка node, вершину child, выполняется beforeEachChild(node, child)
-	// если condition(node, child) = false, то заход в child не происходит
-	// после выхода из child выполняется afterEachChild(node, child)
-	// перед выходом из вершины выполняется beforeExit(node)
+	// РїСЂРё РІС‹Р·РѕРІРµ process РїСЂРѕС†РµСЃСЃРѕСЂ РЅР°С‡РёРЅР°РµС‚ РѕР±С…РѕРґ РІ РіР»СѓР±РёРЅСѓ СЃ startingNode
+	// РїСЂРё РІС…РѕРґРµ РІ РІРµСЂС€РёРЅСѓ node РІС‹Р·С‹РІР°РµС‚СЃСЏ afterEnter(node)
+	// РїРµСЂРµРґ СЂРµРєСѓСЂСЃРёРІРЅС‹Рј РІС…РѕРґРѕРј РІ СЂРµР±С‘РЅРєР° node, РІРµСЂС€РёРЅСѓ child, РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ beforeEachChild(node, child)
+	// РµСЃР»Рё condition(node, child) = false, С‚Рѕ Р·Р°С…РѕРґ РІ child РЅРµ РїСЂРѕРёСЃС…РѕРґРёС‚
+	// РїРѕСЃР»Рµ РІС‹С…РѕРґР° РёР· child РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ afterEachChild(node, child)
+	// РїРµСЂРµРґ РІС‹С…РѕРґРѕРј РёР· РІРµСЂС€РёРЅС‹ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ beforeExit(node)
 	CTreeDfsProcessor(
 		Node startingNode = nullptr, 
 		const std::function<void( Node )>& afterEnter = std::function<void( Node )>( [](Node arg1){} ),
@@ -39,8 +39,8 @@ public:
 	void SetAfterChildProcessFunc( const std::function<void( Node, Node )>& afterEachChild );
 	void SetExitProcessFunc( const std::function<void( Node )>& beforeExit );
 
-	// функция ищет самую верхнюю вершину в дереве, для которой predicate = true
-	// обход при этом не затрагивает вершины, для которых hint = false
+	// С„СѓРЅРєС†РёСЏ РёС‰РµС‚ СЃР°РјСѓСЋ РІРµСЂС…РЅСЋСЋ РІРµСЂС€РёРЅСѓ РІ РґРµСЂРµРІРµ, РґР»СЏ РєРѕС‚РѕСЂРѕР№ predicate = true
+	// РѕР±С…РѕРґ РїСЂРё СЌС‚РѕРј РЅРµ Р·Р°С‚СЂР°РіРёРІР°РµС‚ РІРµСЂС€РёРЅС‹, РґР»СЏ РєРѕС‚РѕСЂС‹С… hint = false
 	Node Find(
 		const std::function<bool( Node )>& predicate,
 		const std::function<bool( Node, Node )>& hint = std::function<bool( Node, Node )>( []( Node arg1, Node arg2 ){return true;} ) ) const;

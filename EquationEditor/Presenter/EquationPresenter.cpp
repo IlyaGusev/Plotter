@@ -1,7 +1,7 @@
 ﻿#include <queue>
 
 #include "Presenter/EquationPresenter.h"
-#include "TreeDfsProcessor.h"
+#include "Presenter/Utils/TreeDfsProcessor.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView* newView )
 {

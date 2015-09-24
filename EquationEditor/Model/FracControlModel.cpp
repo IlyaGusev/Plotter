@@ -59,7 +59,7 @@ void CFracControlModel::Resize( )
 void CFracControlModel::PermutateChildren( )
 {
 	RECT newRect;
-	int middle = rect.right + rect.left / 2;
+	int middle = (rect.right + rect.left) / 2;
 	
 	RECT oldRect = firstChild->GetRect( );
 	newRect.top = rect.top;

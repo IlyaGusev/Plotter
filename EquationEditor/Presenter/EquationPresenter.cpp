@@ -18,7 +18,10 @@ CEquationPresenter::CEquationPresenter( IEditorView* newView )
 
 	caret.caretPoint.x = rect.left;
 	caret.caretPoint.y = rect.top;
+	rect.right = 20;
+	rect.bottom = 40;
 	caret.curEdit = new CEditControlModel();
+	caret.curEdit->SetRect( rect );
 
 	root->AddChild( caret.curEdit );
 	caret.curEdit->SetParent( root );
@@ -182,7 +185,7 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 
 void CEquationPresenter::updateTreeAfterSizeChange( IBaseExprModel* startVert )
 {
-	auto node = startVert;
+	auto node = startVert->GetParent();
 	while (node->GetParent() != nullptr)
 	{
 		auto oldRect = node->GetRect();
@@ -190,13 +193,13 @@ void CEquationPresenter::updateTreeAfterSizeChange( IBaseExprModel* startVert )
 		auto newRect = node->GetRect();
 		node = node->GetParent();
 
-//		if (oldRect.left == newRect.left
-//			&& oldRect.right == newRect.right
-//			&& oldRect.top == newRect.top
-//			&& oldRect.bottom == newRect.bottom)
-//		{
-//			break;
-//		}
+		if (oldRect.left == newRect.left
+			&& oldRect.right == newRect.right
+			&& oldRect.top == newRect.top
+			&& oldRect.bottom == newRect.bottom)
+		{
+			break;
+		}
 	}
 
 	std::function<void( IBaseExprModel* )> permutateFunction( []( IBaseExprModel* node )

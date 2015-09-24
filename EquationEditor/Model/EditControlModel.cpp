@@ -61,6 +61,7 @@ CEditControlModel* CEditControlModel::SliceEditControl( int offset ) {
 		newEditControl->symbolsWidths.push_back( symbolsWidths[i] );
 		newEditControl->params.text.push_back( params.text[i] );
 	}
+	newEditControl->parent = parent;
 	newEditControl->rect = rect;
 	newEditControl->rect.left = rect.right - newEditControlWidth;
 

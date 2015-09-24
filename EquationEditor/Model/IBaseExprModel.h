@@ -2,17 +2,20 @@
 #include <list>
 #include <memory>
 
-#include <Windows.h>
+#include "Model/Utils/RectI.h"
+
+#define MIN(x, y) x < y ? x : y;
+#define MAX(x, y) x > y ? x : y;
 
 enum ViewType { TEXT, EXPR, FRAC, DEGR };
 
 struct CLine {
-	LONG startX;
-	LONG startY;
-	LONG endX;
-	LONG endY;
+	int startX;
+	int startY;
+	int endX;
+	int endY;
 
-	CLine( LONG _startX, LONG _startY, LONG _endX, LONG _endY ) :
+	CLine( int _startX, int _startY, int _endX, int _endY ) :
 		startX( _startX ),
 		startY( _startY ),
 		endX( _endX ),
@@ -20,7 +23,7 @@ struct CLine {
 	{
 	}
 
-	void Set( LONG startX, LONG startY, LONG endX, LONG endY ) {
+	void Set( int startX, int startY, int endX, int endY ) {
 		this->startX = startX;
 		this->startY = startY;
 		this->endX = endX;
@@ -49,7 +52,7 @@ struct CDrawParams {
 class IBaseExprModel {
 protected:
 	std::shared_ptr<IBaseExprModel> parent;
-	RECT rect;
+	CRectI rect;
 	CDrawParams params;
 
 public:
@@ -62,8 +65,8 @@ public:
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
 
-	virtual RECT GetRect() const;
-	virtual void SetRect( RECT rect );
+	virtual CRectI GetRect() const;
+	virtual void SetRect( CRectI rect );
 
 	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
 	virtual void Resize() = 0;
@@ -84,11 +87,11 @@ inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent ) 
 	this->parent = parent;
 }
 
-inline RECT IBaseExprModel::GetRect() const {
+inline CRectI IBaseExprModel::GetRect( ) const {
 	return rect;
 }
 
-inline void IBaseExprModel::SetRect( RECT rect ) {
+inline void IBaseExprModel::SetRect( CRectI rect ) {
 	this->rect = rect;
 }
 

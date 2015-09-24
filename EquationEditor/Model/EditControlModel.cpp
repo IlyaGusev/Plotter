@@ -1,7 +1,6 @@
 ﻿#include "Model/EditControlModel.h"
 
 CEditControlModel::CEditControlModel() {
-	rect.bottom = rect.top = rect.left = rect.right = -1;
 	parent = nullptr;
 }
 
@@ -19,14 +18,14 @@ std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() co
 
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) {
 	params.text.insert( offset, 1, symbol );
-	rect.right += symbolWidth;
+	rect.Right() += symbolWidth;
 	symbolsWidths.push_back( symbolWidth );
 }
 
 int CEditControlModel::DeleteSymbol( int offset ) {
 	params.text.erase( offset, 1 );
 	int symbolsWidth = symbolsWidths[offset];
-	rect.right -= symbolsWidth;
+	rect.Right() -= symbolsWidth;
 	symbolsWidths.erase( symbolsWidths.begin() + offset );
 	return symbolsWidth;
 }
@@ -43,10 +42,10 @@ std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offs
 	}
 	newEditControl->parent = parent;
 	newEditControl->rect = rect;
-	newEditControl->rect.left = rect.right - newEditControlWidth;
+	newEditControl->rect.Left() = rect.Right() - newEditControlWidth;
 
 	// Удаляем всё до offset из старого
-	rect.right = newEditControl->rect.left;
+	rect.Right() = newEditControl->rect.Left();
 	params.text.resize( offset );
 	symbolsWidths.resize( offset );
 	return newEditControl;

@@ -19,10 +19,6 @@ public:
 
 	ViewType GetType( ) const;
 private:
-	RECT rect;
-
-	std::shared_ptr<IBaseExprModel> parent;
-
 	// Показатель
 	std::shared_ptr<CExprControlModel> child;
 };

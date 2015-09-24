@@ -25,6 +25,9 @@
     <Filter Include="Source Files\Presenter\Utils">
       <UniqueIdentifier>{66057fc3-d8dd-48ff-91ca-689d05fc5364}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Model\Utils">
+      <UniqueIdentifier>{d8c6bae1-ddd6-454c-8784-7f08866621e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,14 +51,17 @@
     <ClCompile Include="Model\DegrControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
-    <ClCompile Include="Model\GeneralFunct.cpp">
-      <Filter>Source Files\Model</Filter>
-    </ClCompile>
     <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp">
       <Filter>Source Files\Presenter\Utils</Filter>
     </ClCompile>
     <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp">
       <Filter>Source Files\Presenter\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Utils\GeneralFunct.cpp">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Utils\RectI.cpp">
+      <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,14 +89,17 @@
     <ClInclude Include="Model\DegrControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="Model\GeneralFunct.h">
-      <Filter>Source Files\Model</Filter>
-    </ClInclude>
     <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h">
       <Filter>Source Files\Presenter\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h">
       <Filter>Source Files\Presenter\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Utils\GeneralFunct.h">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Utils\RectI.h">
+      <Filter>Source Files\Model\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

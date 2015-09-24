@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <Windows.h>
-
 #include "Presenter/EquationPresenter.h"
 
 class CEquationEditorWindow : public IEditorView {
@@ -26,7 +24,7 @@ public:
 
 	void OnDraw();
 
-	void DrawText( HDC hdc, std::wstring text, RECT rect );
+	void DrawText( HDC hdc, std::wstring text, CRectI rect );
 
 	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
 

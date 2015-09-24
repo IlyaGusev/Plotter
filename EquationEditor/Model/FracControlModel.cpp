@@ -1,9 +1,8 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/GeneralFunct.h"
+#include "Model/Utils/GeneralFunct.h"
 
 CFracControlModel::CFracControlModel() {
-	rect.bottom = rect.top = rect.left = rect.right = -1;
 	parent = nullptr;
 
 	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
@@ -17,36 +16,36 @@ CFracControlModel::CFracControlModel() {
 
 void CFracControlModel::Resize( )
 {
-	int width = firstChild->GetRect().right - firstChild->GetRect().left;
-	if (secondChild->GetRect().right - secondChild->GetRect().left > width)
+	int width = firstChild->GetRect().Right() - firstChild->GetRect().Left();
+	if (secondChild->GetRect().Right() - secondChild->GetRect().Left() > width)
 	{
-		width = secondChild->GetRect().right - secondChild->GetRect().left;
+		width = secondChild->GetRect().Right() - secondChild->GetRect().Left();
 	}
-	int height = firstChild->GetRect().bottom - firstChild->GetRect().top 
-		+ secondChild->GetRect().bottom - secondChild->GetRect().top
+	int height = firstChild->GetRect().Bottom() - firstChild->GetRect().Top() 
+		+ secondChild->GetRect().Bottom() - secondChild->GetRect().Top()
 		+ 5; // +5 для промежутка между числителем и знаменателем
 
-	rect.right = rect.left + width;
-	rect.bottom = rect.top + height;
+	rect.Right() = rect.Left() + width;
+	rect.Bottom() = rect.Top() + height;
 }
 
 void CFracControlModel::PermutateChildren( )
 {
-	RECT newRect;
-	int middle = (rect.right + rect.left) / 2;
+	CRectI newRect;
+	int middle = (rect.Right() + rect.Left()) / 2;
 	
-	RECT oldRect = firstChild->GetRect( );
-	newRect.top = rect.top;
-	newRect.bottom = rect.top + oldRect.bottom - oldRect.top;
-	newRect.left = middle - (oldRect.right - oldRect.left) / 2;
-	newRect.right = middle + (oldRect.right - oldRect.left) / 2;
+	CRectI oldRect = firstChild->GetRect( );
+	newRect.Top() = rect.Top();
+	newRect.Bottom() = rect.Top() + oldRect.Bottom() - oldRect.Top();
+	newRect.Left() = middle - (oldRect.Right() - oldRect.Left()) / 2;
+	newRect.Right() = middle + (oldRect.Right() - oldRect.Left()) / 2;
 	firstChild->SetRect( newRect );
 	
 	oldRect = secondChild->GetRect( );
-	newRect.bottom = rect.bottom;
-	newRect.top = rect.bottom - (oldRect.bottom - oldRect.top);
-	newRect.left = middle - (oldRect.right - oldRect.left) / 2;
-	newRect.right = middle + (oldRect.right - oldRect.left) / 2;
+	newRect.Bottom() = rect.Bottom();
+	newRect.Top() = rect.Bottom() - (oldRect.Bottom() - oldRect.Top());
+	newRect.Left() = middle - (oldRect.Right() - oldRect.Left()) / 2;
+	newRect.Right() = middle + (oldRect.Right() - oldRect.Left()) / 2;
 	secondChild->SetRect( newRect );
 }
 
@@ -54,9 +53,9 @@ std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() cons
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( RECT rect ) {
+void CFracControlModel::SetRect( CRectI rect ) {
 	this->rect = rect;
-	params.polygon.front().Set( rect.left, (rect.bottom + rect.top) / 2, rect.right, (rect.bottom + rect.top) / 2 );
+	params.polygon.front().Set( rect.Left(), (rect.Bottom() + rect.Top()) / 2, rect.Right(), (rect.Bottom() + rect.Top()) / 2 );
 }
 
 ViewType CFracControlModel::GetType() const {

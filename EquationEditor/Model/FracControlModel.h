@@ -8,9 +8,9 @@ public:
 	CFracControlModel();
 	~CFracControlModel() {}
 
-	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
+	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	virtual void SetRect( RECT rect );
+	virtual void SetRect( CRectI rect );
 
 	void Resize();
 

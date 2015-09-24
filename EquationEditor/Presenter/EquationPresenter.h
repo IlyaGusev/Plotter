@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <utility>
 #include <memory>
+#include <Windows.h>
 
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
@@ -14,7 +15,7 @@ public:
 	virtual ~IEditorView() = 0;
 
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawText( HDC hdc, std::wstring text, RECT rect ) = 0;
+	virtual void DrawText( HDC hdc, std::wstring text, CRectI rect ) = 0;
 
 	// Нарисовать ломаную
 	virtual void DrawPolygon( HDC hdc, std::list<CLine> polygon ) = 0;
@@ -66,12 +67,10 @@ private:
 	IEditorView* view;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void setFracRects( RECT parentRect, std::shared_ptr<CFracControlModel> fracModel );
+	void setFracRects( CRectI parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
-	void setDegrRects( RECT parentRect, std::shared_ptr<CDegrControlModel> degrModel );
-
-	bool isInTheRect( int x, int y, RECT rect );
+	void setDegrRects( CRectI parentRect, std::shared_ptr<CDegrControlModel> degrModel );
 	
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>

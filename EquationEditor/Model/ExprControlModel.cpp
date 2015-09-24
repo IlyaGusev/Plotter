@@ -1,7 +1,6 @@
 ﻿#include "Model/ExprControlModel.h"
 
 CExprControlModel::CExprControlModel() {
-	rect.bottom = rect.top = rect.left = rect.right = -1;
 	parent = nullptr;
 }
 
@@ -12,32 +11,32 @@ void CExprControlModel::Resize( )
 	for (auto child : children)
 	{
 		auto childRect = child->GetRect();
-		width += childRect.right - childRect.left;
-		if (height < childRect.bottom - childRect.top)
+		width += childRect.Right() - childRect.Left();
+		if (height < childRect.Bottom() - childRect.Top())
 		{
-			height = childRect.bottom - childRect.top;
+			height = childRect.Bottom() - childRect.Top();
 		}
 	}
-	rect.right = rect.left + width;
-	rect.bottom = rect.top + height;
+	rect.Right() = rect.Left() + width;
+	rect.Bottom() = rect.Top() + height;
 }
 
 void CExprControlModel::PermutateChildren( )
 {
-	int currentX = rect.left;
-	int middleY = (rect.bottom + rect.top) / 2;
+	int currentX = rect.Left();
+	int middleY = (rect.Bottom() + rect.Top()) / 2;
 
-	RECT newRect;
+	CRectI newRect;
 	for (auto child : children)
 	{
-		RECT oldRect = child->GetRect();
-		newRect.left = currentX;
-		newRect.right = newRect.left + oldRect.right - oldRect.left;
-		newRect.top = middleY - (oldRect.bottom - oldRect.top) / 2;
-		newRect.bottom = middleY + (oldRect.bottom - oldRect.top) / 2;
+		CRectI oldRect = child->GetRect( );
+		newRect.Left() = currentX;
+		newRect.Right() = newRect.Left() + oldRect.Right() - oldRect.Left();
+		newRect.Top() = middleY - (oldRect.Bottom() - oldRect.Top()) / 2;
+		newRect.Bottom() = middleY + (oldRect.Bottom() - oldRect.Top()) / 2;
 		child->SetRect( newRect );
 
-		currentX = newRect.right;
+		currentX = newRect.Right();
 	}
 }
 
@@ -53,10 +52,10 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 		++curChildIt;
 		children.insert( curChildIt, newChild );
 	}
-	rect.left = min( rect.left, newChild->GetRect().left );
-	rect.top = min( rect.top, newChild->GetRect().top );
-	rect.right = max( rect.right, newChild->GetRect().right );
-	rect.bottom = max( rect.bottom, newChild->GetRect().bottom );
+	rect.Left() = MIN( rect.Left(), newChild->GetRect().Left() );
+	rect.Top() = MIN( rect.Top(), newChild->GetRect().Top() );
+	rect.Right() = MAX( rect.Right(), newChild->GetRect().Right() );
+	rect.Bottom() = MAX( rect.Bottom(), newChild->GetRect().Bottom() );
 }
 
 ViewType CExprControlModel::GetType() const {

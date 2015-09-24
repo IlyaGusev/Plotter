@@ -13,7 +13,9 @@ public:
 
 	void PermutateChildren( );
 	
-	void AddChild( std::shared_ptr<IBaseExprModel> child );
+	// Вставляет нового ребенка после curChild
+	// Если curChild == nullptr, вставляет в конец списка
+	void AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild );
 
 	ViewType GetType() const;
 

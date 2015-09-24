@@ -24,5 +24,5 @@ private:
 	std::shared_ptr<IBaseExprModel> parent;
 
 	// Показатель
-	std::shared_ptr<CExprControlModel> сhild;
+	std::shared_ptr<CExprControlModel> child;
 };

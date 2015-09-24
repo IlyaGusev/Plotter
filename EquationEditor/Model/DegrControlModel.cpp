@@ -4,16 +4,16 @@
 
 
 CDegrControlModel::CDegrControlModel() {
-	rect.bottom = rect.top = rect.left = rect.right = 0;
+	rect.bottom = rect.top = rect.left = rect.right = -1;
 	parent = nullptr;
 
-	сhild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
-	linkChildWithParent(сhild, this);
+	child = std::make_shared<CExprControlModel>( CExprControlModel( ) );
+	linkChildWithParent(child, this);
 
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren( ) const {
-	return std::list<std::shared_ptr<IBaseExprModel>> { сhild };
+	return std::list<std::shared_ptr<IBaseExprModel>> { child };
 }
 
 void CDegrControlModel::Resize( )

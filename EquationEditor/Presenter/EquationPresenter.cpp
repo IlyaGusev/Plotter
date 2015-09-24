@@ -18,12 +18,10 @@ CEquationPresenter::CEquationPresenter( IEditorView* newView )
 
 	caret.caretPoint.x = rect.left;
 	caret.caretPoint.y = rect.top;
-	rect.right = 20;
-	rect.bottom = 40;
 	caret.curEdit = std::make_shared<CEditControlModel>( CEditControlModel( ) );
 	caret.curEdit->SetRect( rect );
 
-	root->AddChild( caret.curEdit );
+	root->AddChildAfter( caret.curEdit, nullptr );
 	caret.curEdit->SetParent( root );
 	caret.curEdit->SetRect( rect );
 }
@@ -73,7 +71,7 @@ void CEquationPresenter::Draw( HDC hdc )
 		}
 	}
 
-	view->SetCaret( caret.caretPoint, caret.curEdit->GetRect( ).bottom - caret.curEdit->GetRect( ).top );
+	view->SetCaret( caret.caretPoint, caret.curEdit->GetRect().bottom - caret.curEdit->GetRect().top );
 }
 
 std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) {
@@ -119,7 +117,7 @@ void CEquationPresenter::SetCaret( int x, int y ) {
 
 void CEquationPresenter::setFracRects( RECT parentRect, std::shared_ptr<CFracControlModel> fracModel ) {
 	// Выставляем размеры вьюшек
-	// Высота дроби - две высоты родителя
+	// Высота дроби - две высоты соседнего текстового поля
 	RECT fracRect, firstChildRect, secondChildRect;
 	firstChildRect.bottom = fracRect.bottom = parentRect.bottom - (parentRect.top - parentRect.bottom) / 2;
 	secondChildRect.bottom = (parentRect.top + parentRect.bottom) / 2;
@@ -144,16 +142,18 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) {
 
 	// Обновляем граф
 	fracModel->SetParent( parent );
-	parent->AddChild( fracModel );
+	parent->AddChildAfter( fracModel, caret.curEdit );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.curEdit->SliceEditControl( caret.offset );
 	RECT rect = newEditControl->GetRect();
 	rect.left += fracModel->GetRect().right - fracModel->GetRect().left;
 	rect.right += fracModel->GetRect().right - fracModel->GetRect().left;
 	newEditControl->SetRect( rect );
-	parent->AddChild( newEditControl );
+	parent->AddChildAfter( newEditControl, fracModel );
 
-	view->Redraw( );
+	updateTreeAfterSizeChange( fracModel );
+
+	view->Redraw();
 }
 
 
@@ -182,14 +182,16 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) {
 
 	// Обновляем граф
 	degrModel->SetParent(parent);
-	parent->AddChild(degrModel);
+	parent->AddChildAfter( degrModel, caret.curEdit );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.curEdit->SliceEditControl(caret.offset);
 	RECT rect = newEditControl->GetRect();
 	rect.left += (degrModel->GetRect().right - degrModel->GetRect().left);
 	rect.right += (degrModel->GetRect().right - degrModel->GetRect().left);
 	newEditControl->SetRect(rect);
-	parent->AddChild(newEditControl);
+	parent->AddChildAfter( newEditControl, degrModel );
+
+	updateTreeAfterSizeChange( degrModel );
 
 	view->Redraw( );
 }
@@ -213,15 +215,15 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	case TEXT: {
 		std::shared_ptr<IBaseExprModel> newModel( new CEditControlModel() );
 		newModel->SetRect( parent->GetRect() );
-		parent->AddChild( newModel );
+		parent->AddChildAfter( newModel, caret.curEdit );
 		newModel->SetParent( parent );
 		break;
 	}
 	case FRAC:
-		addFrac( std::shared_ptr<CExprControlModel>(parent) );
+		addFrac( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	case DEGR:
-		addDegr(parent);
+		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	default:
 		break;

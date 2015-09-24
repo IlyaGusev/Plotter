@@ -51,10 +51,7 @@ public:
 	// обход при этом не затрагивает вершины, для которых hint(node, child) = false
 	std::list<Node> FindAll(
 		const std::function<bool( Node )>& predicate,
-		const std::function<bool( Node, Node )>& hint = std::function<bool( Node, Node )>( []( Node arg1, Node arg2 )
-	{
-		return true;
-	} ) ) const;
+		const std::function<bool( Node, Node )>& hint = std::function<bool( Node, Node )>( []( Node arg1, Node arg2 ){return true;} ) ) const;
 
 	void Process() const;
 };

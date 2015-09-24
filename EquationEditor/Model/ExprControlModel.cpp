@@ -41,23 +41,22 @@ void CExprControlModel::PermutateChildren( )
 	}
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren( ) const {
+std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren() const {
 	return children;
 }
 
-void CExprControlModel::AddChild( std::shared_ptr<IBaseExprModel> child ) {
-	children.push_back( child );
-	if( rect.left != -1 ) {
-		rect.left = min( rect.left, child->GetRect().left );
-		rect.top = min( rect.top, child->GetRect().top );
-		rect.right = max( rect.right, child->GetRect().right );
-		rect.bottom = max( rect.bottom, child->GetRect().bottom );
+void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild ) {
+	auto curChildIt = std::find( children.begin(), children.end(), curChild );
+	if( curChildIt == children.end() ) {
+		children.push_back( newChild );
 	} else {
-		rect.left = child->GetRect().left;
-		rect.top = child->GetRect().top;
-		rect.right = child->GetRect().right;
-		rect.bottom = child->GetRect().bottom;
+		++curChildIt;
+		children.insert( curChildIt, newChild );
 	}
+	rect.left = min( rect.left, newChild->GetRect().left );
+	rect.top = min( rect.top, newChild->GetRect().top );
+	rect.right = max( rect.right, newChild->GetRect().right );
+	rect.bottom = max( rect.bottom, newChild->GetRect().bottom );
 }
 
 ViewType CExprControlModel::GetType() const {

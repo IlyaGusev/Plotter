@@ -3,7 +3,7 @@
 #include "Model/GeneralFunct.h"
 
 CFracControlModel::CFracControlModel() {
-	rect.bottom = rect.top = rect.left = rect.right = 0;
+	rect.bottom = rect.top = rect.left = rect.right = -1;
 	parent = nullptr;
 
 	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( ) );

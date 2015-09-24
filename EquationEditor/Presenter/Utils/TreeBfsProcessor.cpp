@@ -1,4 +1,7 @@
-﻿#include "Presenter/Utils/TreeBfsProcessor.h"
+﻿#include <queue>
+
+#include "Presenter/Utils/TreeBfsProcessor.h"
+#include "Model/IBaseExprModel.h"
 
 CTreeBfsProcessor::CTreeBfsProcessor(
 	Node startingNode,
@@ -8,6 +11,7 @@ CTreeBfsProcessor::CTreeBfsProcessor(
 	const std::function<void( Node, Node )>& afterEachChild,
 	const std::function<void( Node )>& beforeExit ) :
 	_startingNode( startingNode ),
+	_afterEnter( afterEnter ),
 	_beforeEachChild( beforeEachChild ),
 	_condition( condition ),
 	_afterEachChild( afterEachChild ),
@@ -47,28 +51,70 @@ void CTreeBfsProcessor::SetExitProcessFunc( const std::function<void(Node)>& bef
 
 std::shared_ptr<IBaseExprModel> CTreeBfsProcessor::Find( const std::function<bool( Node )>& predicate, const std::function<bool( Node, Node )>& hint ) const
 {
-	return nullptr;
-}
-
-void CTreeBfsProcessor::Process( ) const
-{
-	if (_startingNode == nullptr)
-	{
+	if( _startingNode == nullptr ) {
 		throw std::exception( "starting node is not initialized" );
 	}
 	
 	std::queue<Node> nodeQueue;
 	nodeQueue.push( _startingNode );
-	while (nodeQueue.size())
-	{
-		auto currentNode = nodeQueue.front();
-		nodeQueue.pop();
+	
+	while( nodeQueue.size() > 0 ) {
+		auto currentNode = nodeQueue.front( );
+		nodeQueue.pop( );
+		if( predicate( currentNode ) ) {
+			return currentNode;
+		}
+		for( auto child : currentNode->GetChildren( ) ) {
+			if( hint( currentNode, child ) ) {
+				nodeQueue.push( child );
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+std::list<std::shared_ptr<IBaseExprModel>> CTreeBfsProcessor::FindAll( const std::function<bool(Node)>& predicate, const std::function<bool(Node, Node)>& hint ) const
+{
+	if( _startingNode == nullptr ) {
+		throw std::exception( "starting node is not initialized" );
+	}
+	
+	std::list<Node> result;
+	std::queue<Node> nodeQueue;
+	nodeQueue.push( _startingNode );
+
+	while( nodeQueue.size( ) > 0 ) {
+		auto currentNode = nodeQueue.front( );
+		nodeQueue.pop( );
+		if( predicate( currentNode ) ) {
+			result.push_back(currentNode);
+		}
+		for( auto child : currentNode->GetChildren( ) ) {
+			if( hint( currentNode, child ) ) {
+				nodeQueue.push( child );
+			}
+		}
+	}
+
+	return result;
+}
+
+void CTreeBfsProcessor::Process( ) const
+{
+	if( _startingNode == nullptr ) {
+		throw std::exception( "starting node is not initialized" );
+	}
+
+	std::queue<Node> nodeQueue;
+	nodeQueue.push( _startingNode );
+	while( nodeQueue.size( ) > 0 ) {
+		auto currentNode = nodeQueue.front( );
+		nodeQueue.pop( );
 		_afterEnter( currentNode );
-		for (auto child : currentNode->GetChildren())
-		{
+		for( auto child : currentNode->GetChildren( ) ) {
 			_beforeEachChild( currentNode, child );
-			if (_condition( currentNode, child ))
-			{
+			if( _condition( currentNode, child ) ) {
 				nodeQueue.push( child );
 			}
 			_afterEachChild( currentNode, child );

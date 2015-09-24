@@ -1,7 +1,5 @@
-﻿#include <queue>
-
-#include "Presenter/EquationPresenter.h"
-#include "Presenter/Utils/TreeDfsProcessor.h"
+﻿#include "Presenter/EquationPresenter.h"
+#include "Presenter/Utils/TreeBfsProcessor.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView* newView )
 {
@@ -54,24 +52,18 @@ void CEquationPresenter::DeleteSymbol() {
 
 void CEquationPresenter::Draw( HDC hdc ) 
 {
-	std::queue< std::shared_ptr<IBaseExprModel> > queue;
-	queue.push( root );
-	
-	while( !queue.empty() ) {
-		std::shared_ptr<IBaseExprModel> curNode = queue.front( );
-		queue.pop();
-
-		CDrawParams curNodeDrawParams = curNode->GetDrawParams();
+	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
+	{
+		CDrawParams curNodeDrawParams = node->GetDrawParams( );
 		if( !curNodeDrawParams.polygon.empty() ) {
 			view->DrawPolygon( hdc, curNodeDrawParams.polygon );
 		}
 		if( !curNodeDrawParams.text.empty() ) {
-			view->DrawText( hdc, curNodeDrawParams.text, curNode->GetRect( ) );
+			view->DrawText( hdc, curNodeDrawParams.text, node->GetRect( ) );
 		}
-		for( std::shared_ptr<IBaseExprModel> model : curNode->GetChildren( ) ) {
-			queue.push( model );
-		}
-	}
+	};
+	CTreeBfsProcessor drawer( root, drawingFuction );
+	drawer.Process();
 
 	view->SetCaret( caret.caretPoint, caret.curEdit->GetRect( ).bottom - caret.curEdit->GetRect( ).top );
 }
@@ -90,30 +82,29 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 }
 
 void CEquationPresenter::SetCaret( int x, int y ) {
-	std::queue<std::shared_ptr<IBaseExprModel>> queue;
-	for( std::shared_ptr<IBaseExprModel> child : root->GetChildren( ) ) {
-		queue.push( std::shared_ptr<IBaseExprModel>( child ) );
+	auto predicate = [=]( CTreeBfsProcessor::Node node ) -> bool
+	{
+		return isInTheRect( x, y, node->GetRect() ) && node->GetType() == TEXT;
+	};
+	auto hint = [=]( CTreeBfsProcessor::Node node, CTreeBfsProcessor::Node child ) -> bool
+	{
+		return isInTheRect( x, y, child->GetRect( ) );
+	};
+
+	CTreeBfsProcessor processor( root );
+	auto firstCandidate = processor.Find( predicate, hint );
+	if( firstCandidate == nullptr ) {
+		return;
 	}
-	std::shared_ptr<IBaseExprModel> curNode;
-	while( !queue.empty() ) {
-		curNode = queue.front();
-		queue.pop();
-		if( isInTheRect( x, y, curNode->GetRect() ) ) {
-			if( curNode->GetType() == TEXT ) {
-				if( caret.curEdit != curNode ) {
-					caret.curEdit = std::dynamic_pointer_cast<CEditControlModel>(curNode);
-				}
-				std::pair<int, int> newCaretPos = findCaretPos( caret.curEdit, x );
-				caret.caretPoint.x = newCaretPos.first;
-				caret.offset = newCaretPos.second;
-				caret.caretPoint.y = caret.curEdit->GetRect().top;
-			} else {
-				for( std::shared_ptr<IBaseExprModel> child : curNode->GetChildren() ) {
-					queue.push( std::shared_ptr<IBaseExprModel>( child ) );
-				}
-			}
-		}
+	if( caret.curEdit != firstCandidate ) {
+		caret.curEdit = std::dynamic_pointer_cast<CEditControlModel>(firstCandidate);
 	}
+
+	std::pair<int, int> newCaretPos = findCaretPos( caret.curEdit, x );
+	caret.caretPoint.x = newCaretPos.first;
+	caret.offset = newCaretPos.second;
+	caret.caretPoint.y = caret.curEdit->GetRect( ).top;
+
 	view->Redraw( );
 }
 
@@ -230,6 +221,7 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 
 void CEquationPresenter::updateTreeAfterSizeChange( std::shared_ptr<IBaseExprModel> startVert )
 {
+	// не подавайте сюда корень дерева, всё сломается
 	auto node = startVert->GetParent();
 	while (node->GetParent() != nullptr)
 	{
@@ -252,7 +244,7 @@ void CEquationPresenter::updateTreeAfterSizeChange( std::shared_ptr<IBaseExprMod
 		node->PermutateChildren();
 	} );
 
-	CTreeDfsProcessor processor( node, permutateFunction );
+	CTreeBfsProcessor processor( node, permutateFunction );
 
 	processor.Process();
 }

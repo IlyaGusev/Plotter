@@ -1,4 +1,5 @@
-﻿#include <Presenter/Utils/TreeDfsProcessor.h>
+﻿#include "Model/IBaseExprModel.h"
+#include "Presenter/Utils/TreeDfsProcessor.h"
 
 CTreeDfsProcessor::CTreeDfsProcessor(
 	Node startingNode,
@@ -65,7 +66,50 @@ std::shared_ptr<IBaseExprModel> CTreeDfsProcessor::Find(
 	const std::function<bool(Node)>& predicate,
 	const std::function<bool(Node, Node)>& hint ) const
 {
-	return nullptr;
+	if( _startingNode == nullptr ) {
+		throw std::exception( "starting node is not initialized" );
+	}
+	std::function<Node(Node)> findFunction = [&]( Node currentNode ) -> Node
+	{
+		if( predicate( currentNode ) ) {
+			return currentNode;
+		}
+		for( auto child : currentNode->GetChildren( ) ) {
+			if( hint( currentNode, child ) ) {
+				auto result = findFunction( child );
+				if( result != nullptr ) {
+					return child;
+				}
+			}
+		}
+		return nullptr;
+	};
+	
+	return findFunction( _startingNode );
+}
+
+std::list<CTreeDfsProcessor::Node> CTreeDfsProcessor::FindAll(
+	const std::function<bool(Node)>& predicate,
+	const std::function<bool(Node, Node)>& hint ) const
+{
+	if( _startingNode == nullptr ) {
+		throw std::exception( "starting node is not initialized" );
+	}
+
+	std::list<Node> result;
+	std::function<void(Node)> findFunction = [&]( Node currentNode )
+	{
+		if( predicate( currentNode ) ) {
+			result.push_back( currentNode );
+		}
+		for( auto child : currentNode->GetChildren( ) ) {
+			if( hint( currentNode, child ) ) {
+				findFunction( child );
+			}
+		}
+	};
+
+	return result;
 }
 
 void CTreeDfsProcessor::Process( ) const

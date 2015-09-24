@@ -1,14 +1,17 @@
 ﻿#include <functional>
-#include <queue>
+#include <memory>
+#include <list>
 
-#include <Model/IBaseExprModel.h>
+class IBaseExprModel;
 
 // класс, который обходит в ширину дерево и совершает над ним необходимые действия
 // сделан отдельно метод для удобного поиска
 class CTreeBfsProcessor
 {
+public:
 	typedef std::shared_ptr<IBaseExprModel> Node;
 
+private:
 	Node _startingNode;
 	std::function<void( Node )> _afterEnter;
 	std::function<void( Node, Node )> _beforeEachChild;
@@ -38,9 +41,14 @@ public:
 	void SetAfterChildProcessFunc( const std::function<void( Node, Node )>& afterEachChild );
 	void SetExitProcessFunc( const std::function<void( Node )>& beforeExit );
 
-	// функция ищет самую первую в порядке обхода в ширину вершину в дереве, для которой predicate = true
-	// обход при этом не затрагивает вершины, для которых hint = false (т.е. и их потомков тоже)
+	// функция ищет самую первую в порядке обхода в ширину вершину в дереве, для которой predicate(node) = true
+	// обход при этом не затрагивает вершины, для которых hint(node, child) = false (т.е. и их потомков тоже)
 	Node Find(
+		const std::function<bool( Node )>& predicate,
+		const std::function<bool( Node, Node )>& hint = std::function<bool( Node, Node )>( []( Node arg1, Node arg2 ){return true;} ) ) const;
+	// функция ищет обходом в ширину все вершины в дереве, для которых predicate(node) = true
+	// обход при этом не затрагивает вершины, для которых hint(node, child) = false (т.е. и их потомков тоже)
+	std::list<Node> FindAll(
 		const std::function<bool( Node )>& predicate,
 		const std::function<bool( Node, Node )>& hint = std::function<bool( Node, Node )>( []( Node arg1, Node arg2 ){return true;} ) ) const;
 

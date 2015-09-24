@@ -24,14 +24,6 @@ void CExprControlModel::Resize( )
 
 void CExprControlModel::PermutateChildren( )
 {
-	auto moveRect = []( RECT rect, int dx, int dy )
-	{
-		rect.right += dx;
-		rect.left += dx;
-		rect.top += dy;
-		rect.bottom += dy;
-	};
-
 	int currentX = rect.left;
 	int middleY = (rect.bottom + rect.top) / 2;
 

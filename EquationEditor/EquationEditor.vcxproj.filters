@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Presenter">
       <UniqueIdentifier>{98ba1d03-e6f8-4e79-bdab-dbd4ff40df9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Presenter\Utils">
+      <UniqueIdentifier>{66057fc3-d8dd-48ff-91ca-689d05fc5364}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,17 +45,17 @@
     <ClCompile Include="View\EquationEditorWindow.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
-    <ClCompile Include="Presenter\TreeDfsProcessor.cpp">
-      <Filter>Source Files\Presenter</Filter>
-    </ClCompile>
-    <ClCompile Include="Presenter\TreeBfsProcessor.cpp">
-      <Filter>Source Files\Presenter</Filter>
-    </ClCompile>
     <ClCompile Include="Model\DegrControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="Model\GeneralFunct.cpp">
       <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp">
+      <Filter>Source Files\Presenter\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp">
+      <Filter>Source Files\Presenter\Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,17 +80,17 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Presenter\TreeDfsProcessor.h">
-      <Filter>Source Files\Presenter</Filter>
-    </ClInclude>
-    <ClInclude Include="Presenter\TreeBfsProcessor.h">
-      <Filter>Source Files\Presenter</Filter>
-    </ClInclude>
     <ClInclude Include="Model\DegrControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Model\GeneralFunct.h">
       <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h">
+      <Filter>Source Files\Presenter\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h">
+      <Filter>Source Files\Presenter\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

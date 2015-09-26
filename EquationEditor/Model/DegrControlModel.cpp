@@ -7,7 +7,7 @@ CDegrControlModel::CDegrControlModel() {
 	parent = nullptr;
 	child = std::make_shared<CExprControlModel>( CExprControlModel( ) );
 
-	linkChildWithParent(child, this);
+	linkChildWithParent(child, this); 
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren( ) const {

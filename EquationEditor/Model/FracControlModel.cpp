@@ -55,6 +55,9 @@ std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() cons
 void CFracControlModel::SetRect( CRect rect ) {
 	this->rect = rect;
 	params.polygon.front().Set( rect.Left(), (rect.Bottom() + rect.Top()) / 2, rect.Right(), (rect.Bottom() + rect.Top()) / 2 );
+	//CRect firstChildRect = firstChild->Rect();
+	//CRect secondChildRect = secondChild->Rect();
+	//params.polygon.front().Set(rect.Left(), secondChildRect.Top() - 1, rect.Right(), secondChildRect.Top() - 1);
 }
 
 ViewType CFracControlModel::GetType() const {

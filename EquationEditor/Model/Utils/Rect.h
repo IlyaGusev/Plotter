@@ -1,10 +1,9 @@
 #pragma once
 
-class CRectI {
+class CRect {
 public:
-	CRectI();
-	CRectI( int _left, int _top, int _right, int _bottom );
-	~CRectI();
+	CRect();
+	CRect( int _left, int _top, int _right, int _bottom );
 
 	void MoveBy( int dx, int dy );
 
@@ -14,9 +13,9 @@ public:
 
 	bool isContain( int x, int y ) const;
 
-	CRectI& CRectI::operator=(const CRectI& rect);
+	CRect& CRect::operator= (const CRect& rect );
 
-	bool operator==( CRectI& rect ) const;
+	bool operator==( const CRect& rect ) const;
 
 	int& Left();
 	int& Right();

@@ -60,7 +60,13 @@
     <ClCompile Include="Model\Utils\GeneralFunct.cpp">
       <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Utils\RectI.cpp">
+    <ClCompile Include="Model\Utils\Rect.cpp">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Utils\Line.cpp">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Utils\Caret.cpp">
       <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +104,13 @@
     <ClInclude Include="Model\Utils\GeneralFunct.h">
       <Filter>Source Files\Model\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Model\Utils\RectI.h">
+    <ClInclude Include="Model\Utils\Rect.h">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Utils\Line.h">
+      <Filter>Source Files\Model\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Utils\Caret.h">
       <Filter>Source Files\Model\Utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -93,61 +93,47 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 
 	case 0x09:  // tab 
 		// Convert tabs to four consecutive spaces. 
-		for( int i = 0; i < 4; ++i )
+		for( int i = 0; i < 4; ++i ) {
 			::SendMessage( hwnd, WM_CHAR, 0x20, 0 );
+		}
 		return;
 
 	default:    // displayable character
 		presenter->InsertSymbol( (wchar_t) wParam );
 		break;
 	}
-
-
-	//::DestroyCaret();
-	//::CreateCaret( hwnd, (HBITMAP) NULL, -1, 15 );
-	//::SetCaretPos( 10, 10 );
-	//::ShowCaret( hwnd );
-	//
-	//presenter.ExtendControlView( ::GetFocus(), 10 );
-
-	//HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
-
-	//HWND hwndEdit1 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
-	//	0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
-
-	//::SetWindowLong( hwndEdit1, GWL_WNDPROC, (DWORD) editControlProc );
-
-	//HWND hwndEdit2 = ::CreateWindowEx( 0, L"EDIT", NULL, WS_CHILD | WS_VISIBLE | ES_LEFT,
-	//	0, 0, 0, 0, hwnd, NULL, hInstance, NULL );
-
-	//::SetWindowLong( hwndEdit2, GWL_WNDPROC, (DWORD) editControlProc );
-
-	//presenter.AddControlView( new CFracControlView( this, new CEditControlView( hwndEdit1 ), new CEditControlView( hwndEdit2 ) ), ::GetFocus() );
 }
 
 
-void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRectI rectI ) {
+void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRect rectI ) {
 	RECT rect;
 	rect.bottom = rectI.Bottom();
 	rect.top = rectI.Top();
 	rect.left = rectI.Left();
 	rect.right = rectI.Right();
-	::DrawText( hdc, text.c_str(), text.size(), &rect, DT_LEFT );
+	//HFONT hNewFont = ::CreateFont( rectI.Bottom() - rectI.Top(), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
+	//	CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Arial" );
+	//HFONT hOldFont = (HFONT) ::SelectObject( hdc, hNewFont );
+
+	::DrawText( hdc, text.c_str( ), text.size( ), &rect, DT_LEFT );
+
+	//::SelectObject( hdc, hOldFont );
+	//::DeleteObject( hNewFont );
 }
 
 void CEquationEditorWindow::DrawPolygon( HDC hdc, std::list<CLine> polygon ) {
 	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
-			::MoveToEx( hdc, line.startX, line.startY, NULL );
-			::LineTo( hdc, line.endX, line.endY );
+			::MoveToEx( hdc, line.StartX(), line.StartY(), NULL );
+			::LineTo( hdc, line.EndX(), line.EndY() );
 		}
 	}
 }
 
-void CEquationEditorWindow::SetCaret( POINT caretPoint, int height ) {
+void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) {
 	::DestroyCaret();
 	::CreateCaret( hwnd, (HBITMAP) NULL, -1, height );
-	::SetCaretPos( caretPoint.x, caretPoint.y );
+	::SetCaretPos( caretPointX, caretPointY );
 	::ShowCaret( hwnd );
 }
 

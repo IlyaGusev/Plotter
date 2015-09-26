@@ -2,34 +2,13 @@
 #include <list>
 #include <memory>
 
-#include "Model/Utils/RectI.h"
+#include "Model/Utils/Rect.h"
+#include "Model/Utils/Line.h"
 
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
 
 enum ViewType { TEXT, EXPR, FRAC, DEGR };
-
-struct CLine {
-	int startX;
-	int startY;
-	int endX;
-	int endY;
-
-	CLine( int _startX, int _startY, int _endX, int _endY ) :
-		startX( _startX ),
-		startY( _startY ),
-		endX( _endX ),
-		endY( _endY )
-	{
-	}
-
-	void Set( int startX, int startY, int endX, int endY ) {
-		this->startX = startX;
-		this->startY = startY;
-		this->endX = endX;
-		this->endY = endY;
-	}
-};
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
@@ -52,7 +31,7 @@ struct CDrawParams {
 class IBaseExprModel {
 protected:
 	std::shared_ptr<IBaseExprModel> parent;
-	CRectI rect;
+	CRect rect;
 	CDrawParams params;
 
 public:
@@ -65,8 +44,12 @@ public:
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
 
-	virtual CRectI GetRect() const;
-	virtual void SetRect( CRectI rect );
+	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
+	virtual void SetRect( CRect rect );
+	// Просто выставляет размеры прямоугольника
+	virtual CRect& Rect();
+	// Двигает прямоугольник со всеми относящимися к нему дочерними элементами 
+	virtual void MoveBy( int dx, int dy );
 
 	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
 	virtual void Resize() = 0;
@@ -87,14 +70,18 @@ inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent ) 
 	this->parent = parent;
 }
 
-inline CRectI IBaseExprModel::GetRect( ) const {
+inline CRect& IBaseExprModel::Rect( ) {
 	return rect;
 }
 
-inline void IBaseExprModel::SetRect( CRectI rect ) {
+inline void IBaseExprModel::SetRect( CRect rect ) {
 	this->rect = rect;
 }
 
 inline CDrawParams IBaseExprModel::GetDrawParams() const {
 	return params;
+}
+
+inline void IBaseExprModel::MoveBy( int dx, int dy ) {
+	rect.MoveBy( dx, dy );
 }

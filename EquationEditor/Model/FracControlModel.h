@@ -10,7 +10,7 @@ public:
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	virtual void SetRect( CRectI rect );
+	virtual void SetRect( CRect rect );
 
 	void Resize();
 
@@ -18,6 +18,7 @@ public:
 
 	ViewType GetType() const;
 
+	void MoveBy( int dx, int dy );
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

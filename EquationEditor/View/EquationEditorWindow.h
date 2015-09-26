@@ -24,11 +24,11 @@ public:
 
 	void OnDraw();
 
-	void DrawText( HDC hdc, std::wstring text, CRectI rect );
+	void DrawText( HDC hdc, std::wstring text, CRect rect );
 
 	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
 
-	void SetCaret( POINT caretPoint, int height );
+	void SetCaret( int caretPointX, int caretPointY, int height );
 
 	void Redraw();
 

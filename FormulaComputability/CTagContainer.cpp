@@ -2,33 +2,28 @@
 #include "Tag.h"
 
 
-const map<string, CTag*> CTagContainer::CTagContainerBuild()
+map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 {
-	pair< string, CTag* > TagList[] = {
+    map< string, unique_ptr<CTag> > tagsToFill;
 
-		/***********write here tags*********************/
+    /***********insert here tags*********************/
 
-		pair< string, CTag* >("apply", (CTag*) new CTagApply()),
-		pair< string, CTag* >("plus", (CTag*) new CTagBinaryNumFunction() ),
-		pair< string, CTag* >("cn", (CTag*) new CTagCn())
-		/**********************************************/
+    tagsToFill.emplace( "apply", unique_ptr<CTag>( ( CTag* ) new CTagApply() ) );
+    tagsToFill.emplace( "plus", unique_ptr<CTag>( ( CTag* ) new CTagBinaryNumFunction() ) );
+    tagsToFill.emplace( "cn", unique_ptr<CTag>( (CTag*) new CTagCn() ) );
 
-	};
-	return map<string, CTag*>(TagList, TagList + sizeof(TagList) / sizeof(pair< string, CTag* >));
+    /**********************************************/
+
+	return tagsToFill;
 };
 
-const map<string, CTag*> CTagContainer::Tags = CTagContainer::CTagContainerBuild();
+const map< string, unique_ptr< CTag > > CTagContainer::tags = CTagContainer::CTagContainerBuild();
 
-void CTagContainer::CTagContainerDestroy() {
-    auto itEnd = Tags.end();
-    for ( auto it = Tags.begin(); it != Tags.end(); ++it ) {
-        delete it->second;
-    }
-};
 
-CTag* getTag(string name)
+CTag* CTagContainer::getTag(const string& name)
 {
-	if (CTagContainer::Tags.find(name) == CTagContainer::Tags.end())
-		throw exception((string("no such tag: ") + name).c_str());
-	return CTagContainer::Tags.find(name)->second;
+    auto foundTagIterator = tags.find( name );
+	if ( foundTagIterator == tags.end() )
+		throw invalid_argument( ( string( "no such tag: " ) + name ) );
+	return foundTagIterator->second.get();
 };

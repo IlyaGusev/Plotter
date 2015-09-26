@@ -1,16 +1,17 @@
 #pragma once
 #include <map>
+#include <memory>
+#include <utility>
+
 using namespace std;
 
 class CTag;
 
-class CTagContainer
+class CTagContainer 
 {
 public:
-	static const map<string, CTag*> Tags;
-	static void CTagContainerDestroy();
+    static CTag* getTag(const string& name);
+    static const map< string, unique_ptr< CTag > > tags;
 private:
-	static const map<string, CTag*> CTagContainerBuild();
+	static map< string, unique_ptr< CTag > > CTagContainerBuild();
 };
-
-CTag* getTag(string name);

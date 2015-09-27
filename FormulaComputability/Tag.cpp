@@ -132,7 +132,7 @@ void CTagApply::operator ()(const CNode& node)const
 CTagBinaryNumFunction::CTagBinaryNumFunction() 
 {
     type = NUMBER | FUNCTION | CALCULATEBLE;
-} 
+};
 
 void CTagBinaryNumFunction::operator ()(const CNode& node)const
 {
@@ -154,12 +154,12 @@ const CNode  CTagBinaryNumFunction::checkSignature(const CNode& node)const
 	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
 		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	return arg.next_sibling();
-}
+};
 
 CTagCn::CTagCn()
 {
      type = NUMBER;
-}
+};
 
 
 void CTagCn::nodeIsInteger(const CNode& node)const 
@@ -222,5 +222,40 @@ void CTagCn::operator ()(const CNode& node)const
 	{
 		return;
 	};
+
 	throwException(node.name(), node.offset_debug(), UNKNOWN_ATTRIBUTE);
 }
+
+
+CTagVarArgFunction::CTagVarArgFunction() 
+{
+	type = NUMBER | FUNCTION | CALCULATEBLE;
+};
+
+void CTagVarArgFunction::operator ()(const CNode& node)const 
+{
+
+};
+
+const CNode CTagVarArgFunction::checkSignature(const CNode& node)const 
+{
+	auto arg = node.next_sibling();
+	if (arg.empty())
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
+	CType argType = CTagContainer::getTag(arg.name())->type;
+	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
+	arg = arg.next_sibling();
+
+	while (!arg.empty())
+	{
+		if (arg.empty())
+			throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
+		CType argType = CTagContainer::getTag(arg.name())->type;
+		if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
+			break;
+		arg = arg.next_sibling();
+	};
+
+	return arg;
+};

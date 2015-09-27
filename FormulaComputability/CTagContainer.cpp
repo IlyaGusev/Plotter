@@ -9,7 +9,7 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
     /***********insert here tags*********************/
 
     tagsToFill.emplace( "apply", unique_ptr<CTag>( ( CTag* ) new CTagApply() ) );
-    tagsToFill.emplace( "plus", unique_ptr<CTag>( ( CTag* ) new CTagBinaryNumFunction() ) );
+    tagsToFill.emplace( "plus", unique_ptr<CTag>( ( CTag* ) new CTagVarArgFunction() ) );
     tagsToFill.emplace( "cn", unique_ptr<CTag>( (CTag*) new CTagCn() ) );
 
     /**********************************************/

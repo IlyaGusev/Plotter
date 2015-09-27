@@ -23,12 +23,16 @@ using namespace pugi;
 typedef unsigned int CType;
 typedef pugi::xml_node CNode;
 
-
-
 class CTag
 {
+public:
+	CTag();
+	virtual void operator ()(const CNode& node) const = 0;
+	virtual const CNode checkSignature(const CNode& Node)const = 0;
+	virtual ~CTag();
+	const string name;
+	CType type;
 protected:
-
 	static void enterToAllChilds(const CNode& node);
 	void throwException(string text, int position) const;
 	void hasNoAttributes(const CNode& node) const;
@@ -36,20 +40,13 @@ protected:
 	void hasNoText(const CNode& node) const;
 	void hasNoChilds(const CNode& node) const;
 	void hasNChilds(const CNode& node,int N)const;
-public:
-
-	const string name;
-	CType type;
-	
-	CTag();
-	virtual void operator ()(const CNode& node)const = 0;
-	virtual CNode checkSignature(const CNode& Node)const = 0;
-	virtual ~CTag();
+	const string& getName() const;
+	CType getType() const;
 };
 
-class CTagAtamar : public CTag//tag is not requier any siblings
+class CTagAtamar : public CTag //tag doesn't requier any siblings
 {
-	virtual CNode  checkSignature(const CNode& Node)const;
+	virtual const CNode  checkSignature(const CNode& Node) const;
 };
 
 class CTagApply : public CTagAtamar
@@ -65,7 +62,7 @@ class CTagBinaryNumFunction : public CTag
 public:
 	CTagBinaryNumFunction();
 	virtual void operator ()(const CNode& node)const;
-	virtual CNode  checkSignature(const CNode& node)const;
+	virtual const CNode checkSignature(const CNode& node)const;
 };
 
 class CTagCn : public CTagAtamar

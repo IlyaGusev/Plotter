@@ -35,7 +35,7 @@ void CTag::checkAttributes(const CNode& node, const set<string>& attributes) con
 			errorMessage += string( it->name() ) + ' ';
         }
     }
-	if ( errorMessage.empty() ) {
+	if ( !errorMessage.empty() ) {
         throwException("unknown attribute(s): " + errorMessage, node.offset_debug());
     }
 }

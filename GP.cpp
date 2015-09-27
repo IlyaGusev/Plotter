@@ -55,8 +55,8 @@ using namespace std;
 
 	void GP::CalculateRelativePoints() {
 		pair<double, double> x = getAxisVector( 0 );
-		pair<double, double> y = getAxisVector( 0 );
-		pair<double, double> z = getAxisVector( 0 );
+		pair<double, double> y = getAxisVector( 1 );
+		pair<double, double> z = getAxisVector( 2 );
 		for( int i = 0; i < relativePoints.size(); i++ ) {
 			for( int j = 0; j < relativePoints[i].size(); j++ ) {
 				double xRel = x.first * i * lengthOfSection + y.first * j * lengthOfSection + z.first * points[i][j];

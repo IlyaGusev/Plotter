@@ -16,6 +16,8 @@ public:
 
 	void PermutateChildren();
 
+	int GetMiddle() const;
+
 	void InsertSymbol( wchar_t symbol, int offset, int symbolWidth );
 	
 	// Удаляет символ

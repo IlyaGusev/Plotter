@@ -24,6 +24,11 @@ void CDegrControlModel::PermutateChildren( )
 	throw std::exception( "not implemented" );
 }
 
+int CDegrControlModel::GetMiddle( ) const
+{
+	throw std::exception( "not implemented" );
+}
+
 ViewType CDegrControlModel::GetType() const {
 	return DEGR;
 }

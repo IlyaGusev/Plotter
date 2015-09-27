@@ -17,6 +17,8 @@ public:
 
 	void PermutateChildren( );
 
+	int GetMiddle() const;
+
 	ViewType GetType( ) const;
 private:
 	// Показатель

@@ -10,11 +10,13 @@ public:
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	virtual void SetRect( CRectI rect );
+	virtual void SetRect( CRect rect );
 
 	void Resize();
 
 	void PermutateChildren();
+
+	int GetMiddle() const;
 
 	ViewType GetType() const;
 

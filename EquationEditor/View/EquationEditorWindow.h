@@ -24,7 +24,7 @@ public:
 
 	void OnDraw();
 
-	void DrawText( HDC hdc, std::wstring text, CRectI rect );
+	void DrawText( HDC hdc, std::wstring text, CRect rect );
 
 	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
 

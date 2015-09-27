@@ -126,7 +126,7 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 }
 
 
-void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRectI rectI ) {
+void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRect rectI ) {
 	RECT rect;
 	rect.bottom = rectI.Bottom();
 	rect.top = rectI.Top();

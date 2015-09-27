@@ -12,6 +12,11 @@ void CEditControlModel::PermutateChildren( )
 {
 }
 
+int CEditControlModel::GetMiddle( ) const
+{
+	return (rect.Bottom() - rect.Top()) / 2;
+}
+
 std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() const {
 	return children;
 }

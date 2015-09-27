@@ -16,14 +16,8 @@ CFracControlModel::CFracControlModel() {
 
 void CFracControlModel::Resize( )
 {
-	int width = firstChild->GetRect().Right() - firstChild->GetRect().Left();
-	if (secondChild->GetRect().Right() - secondChild->GetRect().Left() > width)
-	{
-		width = secondChild->GetRect().Right() - secondChild->GetRect().Left();
-	}
-	int height = firstChild->GetRect().Bottom() - firstChild->GetRect().Top() 
-		+ secondChild->GetRect().Bottom() - secondChild->GetRect().Top()
-		+ 5; // +5 для промежутка между числителем и знаменателем
+	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth());
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 5; // +5 для промежутка между числителем и знаменателем
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -31,32 +25,37 @@ void CFracControlModel::Resize( )
 
 void CFracControlModel::PermutateChildren( )
 {
-	CRectI newRect;
+	CRect newRect;
 	int middle = (rect.Right() + rect.Left()) / 2;
 	
-	CRectI oldRect = firstChild->GetRect( );
+	CRect oldRect = firstChild->GetRect( );
 	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.Bottom() - oldRect.Top();
-	newRect.Left() = middle - (oldRect.Right() - oldRect.Left()) / 2;
-	newRect.Right() = middle + (oldRect.Right() - oldRect.Left()) / 2;
+	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
+	newRect.Left() = middle + oldRect.GetWidth() / 2;
+	newRect.Right() = oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 	
 	oldRect = secondChild->GetRect( );
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - (oldRect.Bottom() - oldRect.Top());
-	newRect.Left() = middle - (oldRect.Right() - oldRect.Left()) / 2;
-	newRect.Right() = middle + (oldRect.Right() - oldRect.Left()) / 2;
+	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
+	newRect.Left() = middle - oldRect.GetWidth() / 2;
+	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
+}
+
+int CFracControlModel::GetMiddle( ) const
+{
+	return (firstChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( CRectI rect ) {
+void CFracControlModel::SetRect( CRect rect ) {
 	this->rect = rect;
-	CRectI firstChildRect = firstChild->GetRect();
-	CRectI secondChildRect = secondChild->GetRect();
+	CRect firstChildRect = firstChild->GetRect();
+	CRect secondChildRect = secondChild->GetRect();
 	params.polygon.front().Set(rect.Left(), secondChildRect.Top() - 1, rect.Right(), secondChildRect.Top() - 1);
 }
 

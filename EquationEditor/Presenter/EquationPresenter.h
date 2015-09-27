@@ -15,7 +15,7 @@ public:
 	virtual ~IEditorView() = 0;
 
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawText( HDC hdc, std::wstring text, CRectI rect ) = 0;
+	virtual void DrawText( HDC hdc, std::wstring text, CRect rect ) = 0;
 
 	// Нарисовать ломаную
 	virtual void DrawPolygon( HDC hdc, std::list<CLine> polygon ) = 0;
@@ -67,10 +67,10 @@ private:
 	IEditorView* view;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void setFracRects( CRectI parentRect, std::shared_ptr<CFracControlModel> fracModel );
+	void setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
-	void setDegrRects( CRectI parentRect, std::shared_ptr<CDegrControlModel> degrModel );
+	void setDegrRects( CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel );
 	
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>

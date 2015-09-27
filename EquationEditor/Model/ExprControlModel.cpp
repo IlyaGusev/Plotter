@@ -1,43 +1,49 @@
 ﻿#include "Model/ExprControlModel.h"
 
-CExprControlModel::CExprControlModel() {
+CExprControlModel::CExprControlModel()
+{
+	middle = 10;
 	parent = nullptr;
 }
 
 void CExprControlModel::Resize( )
 {
 	int width = 0;
-	int height = 0;
-	for (auto child : children)
-	{
+	int aboveMiddle = 0;
+	int underMiddle = 0;
+	for( auto child : children ) {
 		auto childRect = child->GetRect();
-		width += childRect.Right() - childRect.Left();
-		if (height < childRect.Bottom() - childRect.Top())
-		{
-			height = childRect.Bottom() - childRect.Top();
-		}
+		width += childRect.GetWidth();
+
+		aboveMiddle = MAX( aboveMiddle, child->GetMiddle() );
+		underMiddle = MAX( underMiddle, childRect.GetHeight() - child->GetMiddle() );
 	}
 	rect.Right() = rect.Left() + width;
-	rect.Bottom() = rect.Top() + height;
+	rect.Bottom() = rect.Top() + aboveMiddle + underMiddle;
+	middle = aboveMiddle;
 }
 
 void CExprControlModel::PermutateChildren( )
 {
 	int currentX = rect.Left();
-	int middleY = (rect.Bottom() + rect.Top()) / 2;
 
-	CRectI newRect;
+	CRect newRect;
 	for (auto child : children)
 	{
-		CRectI oldRect = child->GetRect( );
+		CRect oldRect = child->GetRect( );
 		newRect.Left() = currentX;
-		newRect.Right() = newRect.Left() + oldRect.Right() - oldRect.Left();
-		newRect.Top() = middleY - (oldRect.Bottom() - oldRect.Top()) / 2;
-		newRect.Bottom() = middleY + (oldRect.Bottom() - oldRect.Top()) / 2;
+		newRect.Right() = newRect.Left() + oldRect.GetWidth();
+		newRect.Top() = rect.Top() + middle - child->GetMiddle();
+		newRect.Bottom() = rect.Top() + middle + (oldRect.GetHeight() - child->GetMiddle());
 		child->SetRect( newRect );
 
 		currentX = newRect.Right();
 	}
+}
+
+int CExprControlModel::GetMiddle( ) const
+{
+	return middle;
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren() const {

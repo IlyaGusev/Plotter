@@ -6,8 +6,7 @@ class IBaseExprModel;
 
 // класс, который обходит в ширину дерево и совершает над ним необходимые действия
 // сделан отдельно метод для удобного поиска
-class CTreeBfsProcessor
-{
+class CTreeBfsProcessor {
 public:
 	typedef std::shared_ptr<IBaseExprModel> Node;
 

@@ -2,7 +2,7 @@
 #include <list>
 #include <memory>
 
-#include "Model/Utils/RectI.h"
+#include "Model/Utils/Rect.h"
 
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
@@ -23,7 +23,8 @@ struct CLine {
 	{
 	}
 
-	void Set( int startX, int startY, int endX, int endY ) {
+	void Set( int startX, int startY, int endX, int endY )
+	{
 		this->startX = startX;
 		this->startY = startY;
 		this->endX = endX;
@@ -52,7 +53,7 @@ struct CDrawParams {
 class IBaseExprModel {
 protected:
 	std::shared_ptr<IBaseExprModel> parent;
-	CRectI rect;
+	CRect rect;
 	CDrawParams params;
 
 public:
@@ -65,8 +66,8 @@ public:
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
 
-	virtual CRectI GetRect() const;
-	virtual void SetRect( CRectI rect );
+	virtual CRect GetRect() const;
+	virtual void SetRect( CRect rect );
 
 	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
 	virtual void Resize() = 0;
@@ -74,27 +75,35 @@ public:
 	// расставить детей по своим местам
 	virtual void PermutateChildren() = 0;
 
+	// выдаёт середину модели, по которой будет выполняться выравнивание
+	virtual int GetMiddle() const = 0;
+
 	virtual CDrawParams GetDrawParams() const;
 
 	virtual ViewType GetType() const = 0;
 };
 
-inline std::shared_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const {
+inline std::shared_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
+{
 	return parent;
 }
 
-inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent ) {
+inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent )
+{
 	this->parent = parent;
 }
 
-inline CRectI IBaseExprModel::GetRect( ) const {
+inline CRect IBaseExprModel::GetRect( ) const
+{
 	return rect;
 }
 
-inline void IBaseExprModel::SetRect( CRectI rect ) {
+inline void IBaseExprModel::SetRect( CRect rect )
+{
 	this->rect = rect;
 }
 
-inline CDrawParams IBaseExprModel::GetDrawParams() const {
+inline CDrawParams IBaseExprModel::GetDrawParams() const
+{
 	return params;
 }

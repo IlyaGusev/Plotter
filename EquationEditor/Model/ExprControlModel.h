@@ -12,6 +12,8 @@ public:
 	void Resize( );
 
 	void PermutateChildren( );
+
+	int GetMiddle() const;
 	
 	// Вставляет нового ребенка после curChild
 	// Если curChild == nullptr, вставляет в конец списка
@@ -21,4 +23,7 @@ public:
 
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
+
+	// высота оси, относительно которой центрируются все модели внутри данного выражения
+	int middle;
 };

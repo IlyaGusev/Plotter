@@ -12,7 +12,7 @@ FormulaComputability::~FormulaComputability()
 
 bool FormulaComputability::checkComputability( const CNode& rootNode )
 {
-    CNode currentNode = rootNode;
+    CNode currentNode = rootNode.first_child();
     while ( !currentNode.empty() )
     {
         CTag* currentTag = CTagContainer::getTag(currentNode.name());

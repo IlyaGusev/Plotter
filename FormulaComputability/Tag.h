@@ -73,3 +73,11 @@ public:
 	CTagCn();
 	virtual void operator ()(const CNode& node)const;
 };
+
+class CTagVarArgFunction : public CTag
+{
+public:
+	CTagVarArgFunction();
+	virtual void operator ()(const CNode& node)const;
+	virtual const CNode checkSignature(const CNode& node)const;
+};

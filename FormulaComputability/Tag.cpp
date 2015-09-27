@@ -1,7 +1,5 @@
 #include "Tag.h"
 
-
-
 CTag::CTag()
 {
 }
@@ -22,8 +20,8 @@ void CTag::enterToAllChilds(const CNode& node)
 
 void CTag::hasNoAttributes(const CNode& node) const
 {
-	if (node.attributes().begin() != node.attributes().end()) {
-        throwException("this tag can't have any attribute", node.offset_debug());
+	if ( node.attributes().begin() != node.attributes().end() ) {
+        throwException(node.name(), node.offset_debug(), INVALID_ATTRIBUTE);
     }
 }
 
@@ -36,22 +34,23 @@ void CTag::checkAttributes(const CNode& node, const set<string>& attributes) con
         }
     }
 	if ( !errorMessage.empty() ) {
-        throwException("unknown attribute(s): " + errorMessage, node.offset_debug());
+        throwException(node.name(), node.offset_debug(), UNKNOWN_ATTRIBUTE);
     }
 }
 
 void CTag::hasNoText(const CNode& node) const
 {
+    //this tag can't have any value
 	if (node.text().as_string() != "") {
-		throwException("this tag can't have any value", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), UNEXPECTED_VALUE );
     }
 }
 
 void CTag::hasNoChilds(const CNode& node) const
 {
 	if (node.children().begin() != node.children().end())
-		throwException("this tag can't have any value", node.offset_debug());
-};
+		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
+}
 
 void CTag::hasNChilds(const CNode& node, int N)const
 {
@@ -61,14 +60,39 @@ void CTag::hasNChilds(const CNode& node, int N)const
 	{
 		++i;
 		child = child.next_sibling();
-	};
+	}
 	if (i != N)
-		throwException("too much childs in tag", node.offset_debug());
-};
+		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
+}
 
-void CTag::throwException(string text, int position) const
-{
-	throw invalid_argument("exception: " + text + " in tag");
+void CTag::throwException(const string& tagName, int position, ErrorType errType) const
+{   
+    string errorMsg;
+    switch (errType) {
+        case INVALID_ARGUMENT:
+            errorMsg += "invalid argument";
+            break;
+        case UNKNOWN_ATTRIBUTE:
+            errorMsg += "unknown attribute(s): ";
+            break;
+        case INCORRECT_VALUE:
+            errorMsg += "incorrect value ";
+            break;
+        case INVALID_ATTRIBUTE:
+            errorMsg += "invalid attribute";
+            break;
+        case UNEXPECTED_VALUE:
+            errorMsg += "this tag can't have any value";
+            break;
+        case UNEXPECTED_CHILD:
+            errorMsg += "this tag can't have any child";
+            break;
+        default:
+            break;
+    }
+    errorMsg += " in tag " + tagName + "\nposition: " + to_string(position);
+
+	throw invalid_argument( errorMsg );
 };
 
 const string& CTag::getName() const 
@@ -98,10 +122,10 @@ void CTagApply::operator ()(const CNode& node)const
 	auto child = node.first_child();
 	const CTag* func = CTagContainer::getTag(child.name());
 	if (!((func->type & CALCULATEBLE) && (func->type & NUMBER)))
-		throwException("wrong 1-st argument",node.offset_debug());
+		throwException(node.name(), child.offset_debug(), INVALID_ARGUMENT);
 	child = func->checkSignature(child);
 	if (!( child.empty() ))
-		throwException("wrong last argument", node.offset_debug());
+		throwException(node.name(), child.offset_debug(), INVALID_ARGUMENT);
 	enterToAllChilds(node);
 }
 
@@ -120,15 +144,15 @@ const CNode  CTagBinaryNumFunction::checkSignature(const CNode& node)const
 {
 	auto arg = node.next_sibling();
 	if (arg.empty())
-		throwException("incorrect argument", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	CType argType = CTagContainer::getTag(arg.name())->type;
 	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-		throwException("incorrect argument", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	arg = arg.next_sibling();
 	if (arg.empty())
-		throwException("incorrect argument", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-		throwException("incorrect argument", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	return arg.next_sibling();
 }
 
@@ -146,7 +170,7 @@ void CTagCn::nodeIsInteger(const CNode& node)const
 	}
 	catch (...)
 	{
-		throwException("incorrect integer", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	};
 }
 
@@ -158,7 +182,7 @@ void CTagCn::nodeIsReal(const CNode& node)const
 	}
 	catch (...)
 	{
-		throwException("incorrect integer", node.offset_debug());
+		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	};
 }
 
@@ -198,5 +222,5 @@ void CTagCn::operator ()(const CNode& node)const
 	{
 		return;
 	};
-	throwException("unexceted attribute name", node.offset_debug());
+	throwException(node.name(), node.offset_debug(), UNKNOWN_ATTRIBUTE);
 }

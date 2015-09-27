@@ -23,6 +23,12 @@ using namespace pugi;
 typedef unsigned int CType;
 typedef pugi::xml_node CNode;
 
+enum ErrorType 
+{
+	INVALID_ARGUMENT, UNKNOWN_ATTRIBUTE, INCORRECT_VALUE, INVALID_ATTRIBUTE, UNEXPECTED_VALUE,
+	UNEXPECTED_CHILD
+};
+
 class CTag
 {
 public:
@@ -34,7 +40,7 @@ public:
 	CType type;
 protected:
 	static void enterToAllChilds(const CNode& node);
-	void throwException(string text, int position) const;
+	void throwException(const string& tagName, int position, ErrorType errType) const;
 	void hasNoAttributes(const CNode& node) const;
 	void checkAttributes(const CNode& node,const set<string>& attributes) const;
 	void hasNoText(const CNode& node) const;

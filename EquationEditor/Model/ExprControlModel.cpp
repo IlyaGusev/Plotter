@@ -9,10 +9,10 @@ CExprControlModel::CExprControlModel()
 void CExprControlModel::Resize( )
 {
 	int width = 0;
-	int aboveMiddle = 0;
-	int underMiddle = 0;
+	int aboveMiddle = 0;	// Расстояния от верха до середины
+	int underMiddle = 0;	// Расстояние от низа до середины
 	for( auto child : children ) {
-		auto childRect = child->Rect();
+		auto childRect = child->GetRect();
 		width += childRect.GetWidth();
 
 		aboveMiddle = MAX( aboveMiddle, child->GetMiddle() );
@@ -23,14 +23,14 @@ void CExprControlModel::Resize( )
 	middle = aboveMiddle;
 }
 
-void CExprControlModel::PermutateChildren()
+void CExprControlModel::PlaceChildren()
 {
 	int currentX = rect.Left();
 
 	CRect newRect;
 	for (auto child : children)
 	{
-		CRect oldRect = child->Rect();
+		CRect oldRect = child->GetRect();
 		newRect.Left() = currentX;
 		newRect.Right() = newRect.Left() + oldRect.GetWidth();
 		newRect.Top() = rect.Top() + middle - child->GetMiddle();
@@ -58,10 +58,10 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 		++curChildIt;
 		children.insert( curChildIt, newChild );
 	}
-	rect.Left() = MIN( rect.Left(), newChild->Rect().Left() );
-	rect.Top() = MIN( rect.Top(), newChild->Rect().Top() );
-	rect.Right() = MAX( rect.Right(), newChild->Rect().Right() );
-	rect.Bottom() = MAX( rect.Bottom(), newChild->Rect().Bottom() );
+	rect.Left() = MIN( rect.Left(), newChild->GetRect().Left() );
+	rect.Top() = MIN( rect.Top(), newChild->GetRect().Top() );
+	rect.Right() = MAX( rect.Right(), newChild->GetRect().Right() );
+	rect.Bottom() = MAX( rect.Bottom(), newChild->GetRect().Bottom() );
 }
 
 ViewType CExprControlModel::GetType() const {

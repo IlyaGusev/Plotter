@@ -5,11 +5,10 @@
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
-	presenter = new CEquationPresenter( this );
+	presenter = std::shared_ptr<CEquationPresenter>( new CEquationPresenter( *this ) );
 }
 
 CEquationEditorWindow::~CEquationEditorWindow() {
-	delete presenter;
 }
 
 bool CEquationEditorWindow::RegisterClassW() {
@@ -68,9 +67,6 @@ void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) {
 void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
-	/*	case ID_ADD_FRAC:
-			presenter->AddControlView(DEGR);
-			break;*/
 		case ID_ADD_FRAC:
 			presenter->AddControlView(FRAC);
 			break;
@@ -105,7 +101,7 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 }
 
 
-void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRect rectI ) {
+void CEquationEditorWindow::DrawText( std::wstring text, CRect rectI ) {
 	RECT rect;
 	rect.bottom = rectI.Bottom();
 	rect.top = rectI.Top();
@@ -121,7 +117,7 @@ void CEquationEditorWindow::DrawText( HDC hdc, std::wstring text, CRect rectI ) 
 	//::DeleteObject( hNewFont );
 }
 
-void CEquationEditorWindow::DrawPolygon( HDC hdc, std::list<CLine> polygon ) {
+void CEquationEditorWindow::DrawPolygon( std::list<CLine> polygon ) {
 	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
 			::MoveToEx( hdc, line.StartX(), line.StartY(), NULL );
@@ -139,9 +135,9 @@ void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int heig
 
 void CEquationEditorWindow::OnDraw() {
 	PAINTSTRUCT ps;
-	HDC hdc = ::BeginPaint( hwnd, &ps );
+	hdc = ::BeginPaint( hwnd, &ps );
 
-	presenter->Draw( hdc );
+	presenter->OnDraw();
 	//RECT rect;
 	//::GetClientRect( hwnd, &rect );
 	//HDC backbuffDC = ::CreateCompatibleDC( hdc );

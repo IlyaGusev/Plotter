@@ -24,9 +24,9 @@ public:
 
 	void OnDraw();
 
-	void DrawText( HDC hdc, std::wstring text, CRect rect );
+	void DrawText( std::wstring text, CRect rect );
 
-	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
+	void DrawPolygon( std::list<CLine> polygon );
 
 	void SetCaret( int caretPointX, int caretPointY, int height );
 
@@ -42,12 +42,12 @@ protected:
 
 private:
     HWND hwnd; // хэндл окна
-	std::list<CLine> paintedLines; // Список всех нарисованных линий
+	HDC hdc;
 
     static const wchar_t* const className;
 
     static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 	WNDPROC originEditControlProc;
 
-    CEquationPresenter* presenter;
+    std::shared_ptr<CEquationPresenter> presenter;
 };

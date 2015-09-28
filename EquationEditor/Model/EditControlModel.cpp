@@ -8,7 +8,7 @@ void CEditControlModel::Resize( )
 {
 }
 
-void CEditControlModel::PermutateChildren( )
+void CEditControlModel::PlaceChildren( )
 {
 }
 

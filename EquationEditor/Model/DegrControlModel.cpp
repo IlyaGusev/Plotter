@@ -19,7 +19,7 @@ void CDegrControlModel::Resize( )
 	throw std::exception( "not implemented" );
 }
 
-void CDegrControlModel::PermutateChildren( )
+void CDegrControlModel::PlaceChildren( )
 {
 	throw std::exception( "not implemented" );
 }

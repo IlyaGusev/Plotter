@@ -13,13 +13,13 @@
 // Интерфейс окна редактора
 class IEditorView {
 public:
-	virtual ~IEditorView() = 0;
+	virtual ~IEditorView() {}
 
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawText( HDC hdc, std::wstring text, CRect rect ) = 0;
+	virtual void DrawText( std::wstring text, CRect rect ) = 0;
 
 	// Нарисовать ломаную
-	virtual void DrawPolygon( HDC hdc, std::list<CLine> polygon ) = 0;
+	virtual void DrawPolygon( std::list<CLine> polygon ) = 0;
 
 	// Установить положение каретки
 	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;
@@ -29,13 +29,11 @@ public:
 
 	virtual int GetCharWidth( wchar_t symbol ) = 0;
 };
-inline IEditorView::~IEditorView() {}
-
 
 // Класс, размещающий прямоугольники вьюшек на экране
 class CEquationPresenter {
 public:
-	CEquationPresenter( IEditorView* view );
+	CEquationPresenter( IEditorView& newView );
 	~CEquationPresenter();
 
 	void AddControlView( ViewType viewType );
@@ -44,13 +42,14 @@ public:
 
 	void DeleteSymbol();
 
-	void Draw( HDC hdc );
+	// Отправляет во вьюшку всё, что нужно на ней нарисовать
+	void OnDraw();
 	
 	void SetCaret( int x, int y );
 private:
     std::shared_ptr<CExprControlModel> root;
+	IEditorView& view;
 	CCaret caret;
-	IEditorView* view;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
 	void setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel );

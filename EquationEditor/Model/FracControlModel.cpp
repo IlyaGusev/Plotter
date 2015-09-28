@@ -16,26 +16,26 @@ CFracControlModel::CFracControlModel() {
 
 void CFracControlModel::Resize( )
 {
-	int width = MAX( firstChild->Rect().GetWidth(), secondChild->Rect().GetWidth());
-	int height = firstChild->Rect().GetHeight() + secondChild->Rect().GetHeight() + 5; // +5 для промежутка между числителем и знаменателем
+	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth());
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 5; // +5 для промежутка между числителем и знаменателем
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
 }
 
-void CFracControlModel::PermutateChildren( )
+void CFracControlModel::PlaceChildren( )
 {
 	CRect newRect;
 	int middle = (rect.Right() + rect.Left()) / 2;
 	
-	CRect oldRect = firstChild->Rect( );
+	CRect oldRect = firstChild->GetRect( );
 	newRect.Top() = rect.Top();
 	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 	
-	oldRect = secondChild->Rect( );
+	oldRect = secondChild->GetRect( );
 	newRect.Bottom() = rect.Bottom();
 	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
@@ -45,7 +45,7 @@ void CFracControlModel::PermutateChildren( )
 
 int CFracControlModel::GetMiddle( ) const
 {
-	return (firstChild->Rect().Bottom() + secondChild->Rect().Top()) / 2 - rect.Top();
+	return (firstChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
@@ -54,7 +54,8 @@ std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() cons
 
 void CFracControlModel::SetRect( CRect rect ) {
 	this->rect = rect;
-	params.polygon.front( ).Set( rect.Left( ), Rect( ).Top( ) + GetMiddle( ), rect.Right( ), Rect( ).Top( ) + GetMiddle( ) );
+	int a = GetMiddle();
+	params.polygon.front( ).Set( rect.Left( ), GetRect( ).Top( ) + GetMiddle( ), rect.Right( ), GetRect( ).Top( ) + GetMiddle( ) );
 	//CRect firstChildRect = firstChild->Rect();
 	//CRect secondChildRect = secondChild->Rect();
 	//params.polygon.front().Set(rect.Left(), secondChildRect.Top() - 1, rect.Right(), secondChildRect.Top() - 1);

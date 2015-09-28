@@ -14,7 +14,7 @@ public:
 
 	void Resize();
 
-	void PermutateChildren();
+	void PlaceChildren();
 
 	int GetMiddle() const;
 

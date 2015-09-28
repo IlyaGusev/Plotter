@@ -47,7 +47,7 @@ public:
 	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
 	virtual void SetRect( CRect rect );
 	// Просто выставляет размеры прямоугольника
-	virtual CRect& Rect();
+	virtual CRect GetRect();
 	// Двигает прямоугольник со всеми относящимися к нему дочерними элементами 
 	virtual void MoveBy( int dx, int dy );
 
@@ -55,7 +55,7 @@ public:
 	virtual void Resize() = 0;
 
 	// расставить детей по своим местам
-	virtual void PermutateChildren() = 0;
+	virtual void PlaceChildren() = 0;
 
 	// выдаёт середину модели, по которой будет выполняться выравнивание
 	virtual int GetMiddle() const = 0;
@@ -75,7 +75,7 @@ inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent )
 	this->parent = parent;
 }
 
-inline CRect& IBaseExprModel::Rect( )
+inline CRect IBaseExprModel::GetRect()
 {
 	return rect;
 }

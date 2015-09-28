@@ -9,11 +9,11 @@ int CCaret::GetPointX() {
 }
 
 int CCaret::GetPointY() {
-	return curEdit->Rect().Top();
+	return curEdit->GetRect().Top();
 }
 
 int CCaret::GetHeight() {
-	return curEdit->Rect().Bottom() - curEdit->Rect().Top();
+	return curEdit->GetRect().Bottom() - curEdit->GetRect().Top();
 }
 
 void CCaret::SetCurEdit( std::shared_ptr<CEditControlModel> curEdit ) {

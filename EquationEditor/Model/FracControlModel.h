@@ -20,6 +20,7 @@ public:
 
 	ViewType GetType() const;
 
+	void MoveBy( int dx, int dy );
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

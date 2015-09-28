@@ -3,34 +3,12 @@
 #include <memory>
 
 #include "Model/Utils/Rect.h"
+#include "Model/Utils/Line.h"
 
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
 
 enum ViewType { TEXT, EXPR, FRAC, DEGR };
-
-struct CLine {
-	int startX;
-	int startY;
-	int endX;
-	int endY;
-
-	CLine( int _startX, int _startY, int _endX, int _endY ) :
-		startX( _startX ),
-		startY( _startY ),
-		endX( _endX ),
-		endY( _endY )
-	{
-	}
-
-	void Set( int startX, int startY, int endX, int endY )
-	{
-		this->startX = startX;
-		this->startY = startY;
-		this->endX = endX;
-		this->endY = endY;
-	}
-};
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
@@ -66,8 +44,12 @@ public:
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
 
-	virtual CRect GetRect() const;
+	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
 	virtual void SetRect( CRect rect );
+	// Просто выставляет размеры прямоугольника
+	virtual CRect& Rect();
+	// Двигает прямоугольник со всеми относящимися к нему дочерними элементами 
+	virtual void MoveBy( int dx, int dy );
 
 	// изменение размеров (только размеров) своего прямоугольника в соответствии с размерами прямоугольников непосредственных детей
 	virtual void Resize() = 0;
@@ -93,7 +75,7 @@ inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent )
 	this->parent = parent;
 }
 
-inline CRect IBaseExprModel::GetRect( ) const
+inline CRect& IBaseExprModel::Rect( )
 {
 	return rect;
 }
@@ -106,4 +88,8 @@ inline void IBaseExprModel::SetRect( CRect rect )
 inline CDrawParams IBaseExprModel::GetDrawParams() const
 {
 	return params;
+}
+
+inline void IBaseExprModel::MoveBy( int dx, int dy ) {
+	rect.MoveBy( dx, dy );
 }

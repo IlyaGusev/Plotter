@@ -83,7 +83,9 @@
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\Utils\Caret.cpp" />
     <ClCompile Include="Model\Utils\GeneralFunct.cpp" />
+    <ClCompile Include="Model\Utils\Line.cpp" />
     <ClCompile Include="Model\Utils\Rect.cpp" />
     <ClCompile Include="Presenter\EquationPresenter.cpp" />
     <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp" />
@@ -96,7 +98,9 @@
     <ClInclude Include="Model\ExprControlModel.h" />
     <ClInclude Include="Model\FracControlModel.h" />
     <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\Utils\Caret.h" />
     <ClInclude Include="Model\Utils\GeneralFunct.h" />
+    <ClInclude Include="Model\Utils\Line.h" />
     <ClInclude Include="Model\Utils\Rect.h" />
     <ClInclude Include="Presenter\EquationPresenter.h" />
     <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h" />

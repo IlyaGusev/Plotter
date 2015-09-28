@@ -11,8 +11,6 @@ CRect::CRect( int _left, int _top, int _right, int _bottom ) :
 {
 }
 
-CRect::~CRect() {}
-
 void CRect::MoveBy( int dx, int dy )
 {
 	left += dx;
@@ -95,8 +93,7 @@ const int CRect::GetHeight( ) const
 	return bottom - top;
 }
 
-CRect& CRect::operator=(const CRect& rect)
-{
+CRect& CRect::operator=(const CRect& rect) {
 	if( this == &rect ) {
 		return *this;
 	}
@@ -107,8 +104,7 @@ CRect& CRect::operator=(const CRect& rect)
 	return *this;
 }
 
-bool CRect::operator==(CRect& rect) const
-{
+bool CRect::operator==( const CRect& rect ) const {
 	return left == rect.left && right == rect.right && 
 		bottom == rect.bottom && top == rect.top;
 }

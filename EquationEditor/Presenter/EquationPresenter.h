@@ -8,6 +8,7 @@
 #include "Model/EditControlModel.h"
 #include "Model/FracControlModel.h"
 #include "Model/DegrControlModel.h"
+#include "Model/Utils/Caret.h"
 
 // Интерфейс окна редактора
 class IEditorView {
@@ -21,30 +22,15 @@ public:
 	virtual void DrawPolygon( HDC hdc, std::list<CLine> polygon ) = 0;
 
 	// Установить положение каретки
-	virtual void SetCaret( POINT caretPoint, int height ) = 0;
+	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;
 
 	// Запустить перерисовку окна
 	virtual void Redraw() = 0;
 
 	virtual int GetCharWidth( wchar_t symbol ) = 0;
 };
-
 inline IEditorView::~IEditorView() {}
 
-struct CCaret {
-	// Текущий edit control, на котором стоит каретка
-	std::shared_ptr<CEditControlModel> curEdit;
-	// Координаты каретки на экране
-	POINT caretPoint;
-	// Номер символа, за которым стоит каретка
-	int offset;
-
-	CCaret() : offset( 0 ) {
-		caretPoint.x = 0;
-		caretPoint.y = 0;
-		curEdit = nullptr;
-	}
-};
 
 // Класс, размещающий прямоугольники вьюшек на экране
 class CEquationPresenter {
@@ -76,5 +62,6 @@ private:
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 
+	// не подавайте сюда корень дерева, всё сломается
 	void updateTreeAfterSizeChange(std::shared_ptr<IBaseExprModel> startVert);
 };

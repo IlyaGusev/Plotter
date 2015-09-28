@@ -2,7 +2,7 @@
 
 CExprControlModel::CExprControlModel()
 {
-	middle = 10;
+	middle = 10; // костыль. нужно сделать по-нормальному, а то чёт не очень :(
 	parent = nullptr;
 }
 
@@ -12,7 +12,7 @@ void CExprControlModel::Resize( )
 	int aboveMiddle = 0;
 	int underMiddle = 0;
 	for( auto child : children ) {
-		auto childRect = child->GetRect();
+		auto childRect = child->Rect();
 		width += childRect.GetWidth();
 
 		aboveMiddle = MAX( aboveMiddle, child->GetMiddle() );
@@ -23,14 +23,14 @@ void CExprControlModel::Resize( )
 	middle = aboveMiddle;
 }
 
-void CExprControlModel::PermutateChildren( )
+void CExprControlModel::PermutateChildren()
 {
 	int currentX = rect.Left();
 
 	CRect newRect;
 	for (auto child : children)
 	{
-		CRect oldRect = child->GetRect( );
+		CRect oldRect = child->Rect();
 		newRect.Left() = currentX;
 		newRect.Right() = newRect.Left() + oldRect.GetWidth();
 		newRect.Top() = rect.Top() + middle - child->GetMiddle();
@@ -58,10 +58,10 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 		++curChildIt;
 		children.insert( curChildIt, newChild );
 	}
-	rect.Left() = MIN( rect.Left(), newChild->GetRect().Left() );
-	rect.Top() = MIN( rect.Top(), newChild->GetRect().Top() );
-	rect.Right() = MAX( rect.Right(), newChild->GetRect().Right() );
-	rect.Bottom() = MAX( rect.Bottom(), newChild->GetRect().Bottom() );
+	rect.Left() = MIN( rect.Left(), newChild->Rect().Left() );
+	rect.Top() = MIN( rect.Top(), newChild->Rect().Top() );
+	rect.Right() = MAX( rect.Right(), newChild->Rect().Right() );
+	rect.Bottom() = MAX( rect.Bottom(), newChild->Rect().Bottom() );
 }
 
 ViewType CExprControlModel::GetType() const {

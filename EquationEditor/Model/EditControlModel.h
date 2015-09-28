@@ -31,6 +31,9 @@ public:
 	std::vector<int> GetSymbolsWidths();
 
 	ViewType GetType() const;
+
+	// Возвращает позицию символа на экране по его номеру
+	int GetSymbolPointByNumber( int number );
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;

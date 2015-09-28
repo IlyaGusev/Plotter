@@ -28,7 +28,7 @@ public:
 
 	void DrawPolygon( HDC hdc, std::list<CLine> polygon );
 
-	void SetCaret( POINT caretPoint, int height );
+	void SetCaret( int caretPointX, int caretPointY, int height );
 
 	void Redraw();
 

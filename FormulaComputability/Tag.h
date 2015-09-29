@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _TAG_H
+#define _TAG_H
+
 #include <string>
 #include <vector>
 #include <exception>
@@ -62,15 +65,6 @@ public:
 	virtual void operator ()(const CNode& node)const;
 };
 
-
-class CTagBinaryNumFunction : public CTag
-{
-public:
-	CTagBinaryNumFunction();
-	virtual void operator ()(const CNode& node)const;
-	virtual const CNode checkSignature(const CNode& node)const;
-};
-
 class CTagCn : public CTagAtamar
 {
 	void nodeIsInteger(const CNode& node)const;
@@ -80,10 +74,4 @@ public:
 	virtual void operator ()(const CNode& node)const;
 };
 
-class CTagVarArgFunction : public CTag
-{
-public:
-	CTagVarArgFunction();
-	virtual void operator ()(const CNode& node)const;
-	virtual const CNode checkSignature(const CNode& node)const;
-};
+#endif

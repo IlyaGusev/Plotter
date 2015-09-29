@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _FORMULACOMPUTALILITY_H
+#define _FORMULACOMPUTALILITY_H
+
 #include "CTagContainer.h"
 #include "../pugixml/pugixml.hpp"
 #include "Tag.h"
@@ -13,3 +16,4 @@ public:
 	~FormulaComputability();
 };
 
+#endif

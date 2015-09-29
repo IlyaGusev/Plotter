@@ -1,4 +1,7 @@
 #pragma once
+#ifndef _CTAGCONTAINER_H
+#define _CTAGCONTAINER_H
+
 #include <map>
 #include <memory>
 #include <utility>
@@ -15,3 +18,5 @@ public:
 private:
 	static map< string, unique_ptr< CTag > > CTagContainerBuild();
 };
+
+#endif

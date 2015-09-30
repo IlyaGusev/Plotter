@@ -7,10 +7,11 @@
 // Модель текстового поля
 class CEditControlModel : public IBaseExprModel {
 public:
-	CEditControlModel();
+	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent );
 	~CEditControlModel() {}
 
 	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;
+	void InitializeChildren() {}
 
 	void Resize();
 
@@ -28,12 +29,12 @@ public:
 	// Возвращает второй edit control
 	std::shared_ptr<CEditControlModel> SliceEditControl( int offset );
 
-	std::vector<int> GetSymbolsWidths();
+	std::vector<int> GetSymbolsWidths() const;
 
 	ViewType GetType() const;
 
 	// Возвращает позицию символа на экране по его номеру
-	int GetSymbolPointByNumber( int number );
+	int GetSymbolPointByNumber( int number ) const;
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;

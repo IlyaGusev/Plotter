@@ -6,12 +6,13 @@
 // Модель для степени
 class CDegrControlModel : public IBaseExprModel {
 public:
-	CDegrControlModel( );
+	CDegrControlModel( CRect rect );
 	~CDegrControlModel( )
 	{
 	}
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
+	void InitializeChildren() {}
 
 	void Resize( );
 

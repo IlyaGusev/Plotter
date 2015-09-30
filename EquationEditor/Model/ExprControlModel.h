@@ -4,10 +4,12 @@
 // Модель холдера под вьюшки
 class CExprControlModel : public IBaseExprModel {
 public:
-	CExprControlModel();
+	// Прямоугольник соседнего текстового поля, высота которого будет совпадать с высотой каждого текстового поля дроби
+	CExprControlModel( CRect newRect, const std::weak_ptr<IBaseExprModel> newParent );
 	~CExprControlModel() {}
 
-	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
+	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
+	void InitializeChildren();
 
 	void Resize( );
 

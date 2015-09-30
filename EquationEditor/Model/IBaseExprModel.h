@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <list>
 #include <memory>
+#include <Windows.h>
 
 #include "Model/Utils/Rect.h"
 #include "Model/Utils/Line.h"
@@ -28,9 +29,9 @@ struct CDrawParams {
 };
 
 // Модель элемента выражения
-class IBaseExprModel {
+class IBaseExprModel : public std::enable_shared_from_this<IBaseExprModel> {
 protected:
-	std::shared_ptr<IBaseExprModel> parent;
+	std::weak_ptr<IBaseExprModel> parent;
 	CRect rect;
 	CDrawParams params;
 
@@ -39,10 +40,13 @@ public:
 	{
 	}
 
-	virtual std::shared_ptr<IBaseExprModel> GetParent( ) const;
-	virtual void SetParent( std::shared_ptr<IBaseExprModel> parent );
+	virtual std::weak_ptr<IBaseExprModel> GetParent( ) const;
+	virtual void SetParent( std::weak_ptr<IBaseExprModel> parent );
 
-	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const = 0;
+	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const = 0;
+
+	// Прикрепляет детей к свежесозданной модели. Имеет смысл вызывать эту функцию после каждого конструктора
+	virtual void InitializeChildren() = 0;
 
 	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
 	virtual void SetRect( CRect rect );
@@ -65,12 +69,12 @@ public:
 	virtual ViewType GetType() const = 0;
 };
 
-inline std::shared_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
+inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
 {
 	return parent;
 }
 
-inline void IBaseExprModel::SetParent( std::shared_ptr<IBaseExprModel> parent )
+inline void IBaseExprModel::SetParent( std::weak_ptr<IBaseExprModel> parent )
 {
 	this->parent = parent;
 }

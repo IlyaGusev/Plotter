@@ -3,9 +3,8 @@
 #include "Model/Utils/GeneralFunct.h"
 
 
-CDegrControlModel::CDegrControlModel() {
-	parent = nullptr;
-	child = std::make_shared<CExprControlModel>( CExprControlModel( ) );
+CDegrControlModel::CDegrControlModel( CRect rect ) {
+	child = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::shared_ptr<IBaseExprModel>(this) ) );
 
 	linkChildWithParent(child, this); 
 }

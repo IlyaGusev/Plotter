@@ -6,20 +6,15 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 {
 	CRect rect(20, 20, 27, 40);
 
-	root = std::make_shared<CExprControlModel>();
-	root->SetRect( rect );
-		
-	caret.SetCurEdit( std::make_shared<CEditControlModel>( CEditControlModel( ) ) );
-	caret.GetCurEdit()->SetRect( rect );
-
-	root->AddChildAfter( caret.GetCurEdit(), nullptr );
-	caret.GetCurEdit()->SetParent( root );
-	caret.GetCurEdit()->SetRect( rect );
+	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
+	root->InitializeChildren();
+	caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( root->GetChildren().front() ) );
 }
 
 CEquationPresenter::~CEquationPresenter() {}
 
-void CEquationPresenter::InsertSymbol( wchar_t symbol ) {
+void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
+{
 	int symbolWidth = view.GetCharWidth( symbol );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
@@ -29,7 +24,8 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol ) {
 	view.Redraw();
 }
 
-void CEquationPresenter::DeleteSymbol() {
+void CEquationPresenter::DeleteSymbol() 
+{
 	if( caret.Offset() != 0 ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
@@ -58,7 +54,8 @@ void CEquationPresenter::OnDraw()
 	view.SetCaret( caret.GetPointX(), caret.GetPointY(), caret.GetHeight() );
 }
 
-std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) {
+std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) 
+{
 	int offset = 0;
 	int length = editControlModel->GetRect().Left();
 	for( int width : editControlModel->GetSymbolsWidths() ) {
@@ -71,7 +68,8 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 	return std::make_pair(length, offset);
 }
 
-void CEquationPresenter::SetCaret( int x, int y ) {
+void CEquationPresenter::SetCaret( int x, int y ) 
+{
 	auto predicate = [=]( CTreeBfsProcessor::Node node ) -> bool {
 		return node->GetRect().IsContain( x, y ) && node->GetType() == TEXT;
 	};
@@ -85,40 +83,20 @@ void CEquationPresenter::SetCaret( int x, int y ) {
 		return;
 	}
 	if( caret.GetCurEdit() != firstCandidate ) {
-		caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>(firstCandidate) );
+		caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( firstCandidate ) );
 	}
 
 	std::pair<int, int> newCaretPos = findCaretPos( caret.GetCurEdit(), x );
 	caret.Offset() = newCaretPos.second;
 
-	view.Redraw( );
+	view.Redraw();
 }
 
-void CEquationPresenter::setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel ) {
-	// Выставляем размеры вьюшек
-	// Ширина дроби - 15 пикселей
-	// Высота дроби - две высоты соседнего текстового поля + 5
-	CRect childRect = CRect( 0, 0, 15, parentRect.GetHeight() );
-	fracModel->GetChildren().front()->SetRect( childRect );
-	fracModel->GetChildren().front()->GetChildren().front()->SetRect( childRect );
-	fracModel->GetChildren().back()->SetRect( childRect );
-	fracModel->GetChildren().back()->GetChildren().front()->SetRect( childRect );
-	fracModel->Resize();
-	auto newRect = fracModel->GetRect();
-	newRect.MoveBy( parentRect.Left(), parentRect.Top() );
-	fracModel->SetRect( newRect );
-	fracModel->PlaceChildren();
-}
-
-void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) {
+void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) 
+{
 	// Создаем новые модели для дроби
-	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel() );
-
-	// Посылаем размеры в модели
-	setFracRects( caret.GetCurEdit()->GetRect(), fracModel );
-
-	// Обновляем граф
-	fracModel->SetParent( parent );
+	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	fracModel->InitializeChildren();
 	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
@@ -126,11 +104,13 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) {
 	parent->AddChildAfter( newEditControl, fracModel );
 
 	updateTreeAfterSizeChange( fracModel );
+	fracModel->SetRect( fracModel->GetRect() );		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
 }
 
-void CEquationPresenter::setDegrRects( CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel ) {
+void CEquationPresenter::setDegrRects( CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel ) 
+{
 	// Выставляем размеры вьюшек
 	// высота показателя - 3/4 высоты родительского; пересекается в 2/4 высоты родительского с основанием
 	CRect degrRect, childRect;
@@ -146,9 +126,10 @@ void CEquationPresenter::setDegrRects( CRect parentRect, std::shared_ptr<CDegrCo
 	degrModel->GetChildren().front()->GetChildren().front()->SetRect(childRect);
 }
 
-void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) {
+void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
+{
 	// Создаем новые модели для степени
-	std::shared_ptr<CDegrControlModel> degrModel = std::make_shared<CDegrControlModel>( CDegrControlModel() );
+	std::shared_ptr<CDegrControlModel> degrModel = std::make_shared<CDegrControlModel>( CDegrControlModel( caret.GetCurEdit()->GetRect() ) );
 
 	// Посылаем размеры в модели
 	setDegrRects(caret.GetCurEdit()->GetRect(), degrModel);
@@ -173,20 +154,13 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 {
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
-	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast<CExprControlModel>( caret.GetCurEdit()->GetParent() ) );
+	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast<CExprControlModel>( caret.GetCurEdit()->GetParent().lock() ) );
 	if( parent == nullptr ) {
 		parent = root;
 	}
 
 	// Создаем новую вьюшку с выбранным типом
 	switch( viewType ) {
-	case TEXT: {
-		std::shared_ptr<IBaseExprModel> newModel( new CEditControlModel() );
-		newModel->SetRect( parent->GetRect() );
-		parent->AddChildAfter( newModel, caret.GetCurEdit() );
-		newModel->SetParent( parent );
-		break;
-	}
 	case FRAC:
 		addFrac( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
@@ -201,8 +175,8 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	// не подавайте сюда корень дерева, всё сломается
 void CEquationPresenter::updateTreeAfterSizeChange( std::shared_ptr<IBaseExprModel> startVert )
 {
-	auto node = startVert->GetParent();
-	while( node->GetParent() != nullptr ) {
+	auto node = startVert->GetParent().lock();
+	while( node->GetParent().lock() != nullptr ) {
 //		auto oldRect = node->Rect();
 		node->Resize();
 		node->PlaceChildren(); // скорее всего здесь спрятан костыль, но пока всё работает, а без него не очень. следует рассмотреть поподробнее случаи, когда здесь может всё сломаться
@@ -212,7 +186,7 @@ void CEquationPresenter::updateTreeAfterSizeChange( std::shared_ptr<IBaseExprMod
 //			break;
 //		}
 
-		node = node->GetParent();
+		node = node->GetParent().lock();
 	}
 	node->Resize();
 

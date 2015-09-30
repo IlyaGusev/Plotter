@@ -1,7 +1,9 @@
 ﻿#include "Model/EditControlModel.h"
 
-CEditControlModel::CEditControlModel() {
-	parent = nullptr;
+CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent ) 
+{
+	this->parent = parent;
+	this->rect = rect;
 }
 
 void CEditControlModel::Resize( )
@@ -14,20 +16,23 @@ void CEditControlModel::PlaceChildren( )
 
 int CEditControlModel::GetMiddle( ) const
 {
-	return (rect.Bottom() - rect.Top()) / 2;
+	return rect.GetHeight() / 2;
 }
 
-std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() const {
+std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() const 
+{
 	return children;
 }
 
-void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) {
+void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) 
+{
 	params.text.insert( offset, 1, symbol );
 	rect.Right() += symbolWidth;
 	symbolsWidths.push_back( symbolWidth );
 }
 
-int CEditControlModel::DeleteSymbol( int offset ) {
+int CEditControlModel::DeleteSymbol( int offset ) 
+{
 	params.text.erase( offset, 1 );
 	int symbolsWidth = symbolsWidths[offset];
 	rect.Right() -= symbolsWidth;
@@ -35,8 +40,9 @@ int CEditControlModel::DeleteSymbol( int offset ) {
 	return symbolsWidth;
 }
 
-std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offset ) {
-	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel() );
+std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offset ) 
+{
+	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock() ) );
 
 	// Вставляем всё, начиная с offset, в новый edit control
 	int newEditControlWidth = 0;
@@ -46,7 +52,6 @@ std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offs
 		newEditControl->params.text.push_back( params.text[i] );
 	}
 	newEditControl->parent = parent;
-	newEditControl->rect = rect;
 	newEditControl->rect.Left() = rect.Right() - newEditControlWidth;
 
 	// Удаляем всё до offset из старого
@@ -56,15 +61,18 @@ std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offs
 	return newEditControl;
 }
 
-std::vector<int> CEditControlModel::GetSymbolsWidths() {
+std::vector<int> CEditControlModel::GetSymbolsWidths() const 
+{
 	return symbolsWidths;
 }
 
-ViewType CEditControlModel::GetType( ) const {
+ViewType CEditControlModel::GetType( ) const 
+{
 	return TEXT;
 }
 
-int CEditControlModel::GetSymbolPointByNumber( int number ) {
+int CEditControlModel::GetSymbolPointByNumber( int number ) const 
+{
 	int offset = rect.Left();
 	for( int i = 0; i < number; ++i ) {
 		offset += symbolsWidths[i];

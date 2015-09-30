@@ -5,10 +5,15 @@
 // Модель для дроби
 class CFracControlModel : public IBaseExprModel {
 public:
-	CFracControlModel();
+	CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
 	~CFracControlModel() {}
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
+
+	// Выставляем размеры вьюшек
+	// Ширина дроби - 15 пикселей
+	// Высота дроби - две высоты соседнего текстового поля + 5
+	void InitializeChildren();
 
 	virtual void SetRect( CRect rect );
 

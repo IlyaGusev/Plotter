@@ -2,16 +2,12 @@
 #include "Model/EditControlModel.h"
 #include "Model/Utils/GeneralFunct.h"
 
-CFracControlModel::CFracControlModel() {
-	parent = nullptr;
+#include <string>
 
-	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( ) );
-	linkChildWithParent(firstChild, this);
-	
-	secondChild = std::make_shared<CExprControlModel>( CExprControlModel() );
-	linkChildWithParent(secondChild, this);
-
-	params.polygon.push_back( CLine(0, 0, 0, 0) );
+CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) {
+	this->parent = parent;
+	this->rect = rect;
+	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
 }
 
 void CFracControlModel::Resize( )
@@ -48,17 +44,36 @@ int CFracControlModel::GetMiddle( ) const
 	return (firstChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
 }
 
+void CFracControlModel::InitializeChildren() 
+{
+	CRect childRect = CRect( 0, 0, 15, rect.GetHeight() );
+	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	firstChild->InitializeChildren();
+
+	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	secondChild->InitializeChildren();
+	Resize();
+	auto newRect = GetRect();
+	newRect.MoveBy( rect.Left(), rect.Top() );
+	SetRect( newRect );
+	PlaceChildren();
+}
+
 std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
 void CFracControlModel::SetRect( CRect rect ) {
 	this->rect = rect;
-	int a = GetMiddle();
-	params.polygon.front( ).Set( rect.Left( ), GetRect( ).Top( ) + GetMiddle( ), rect.Right( ), GetRect( ).Top( ) + GetMiddle( ) );
-	//CRect firstChildRect = firstChild->Rect();
-	//CRect secondChildRect = secondChild->Rect();
-	//params.polygon.front().Set(rect.Left(), secondChildRect.Top() - 1, rect.Right(), secondChildRect.Top() - 1);
+	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+	::OutputDebugString( std::to_wstring( GetRect().Top() + GetMiddle() ).c_str() );
+	::OutputDebugString( (LPCWSTR) " " );
+	::OutputDebugString( std::to_wstring( firstChild->GetRect().Bottom() ).c_str() );
+	::OutputDebugString( (LPCWSTR) " " );
+	::OutputDebugString( std::to_wstring( secondChild->GetRect().Top() ).c_str() );
+	::OutputDebugString( (LPCWSTR) " " );
+	::OutputDebugString( std::to_wstring( rect.Top() ).c_str() );
+	::OutputDebugString( (LPCWSTR) "\n" );
 }
 
 ViewType CFracControlModel::GetType() const {

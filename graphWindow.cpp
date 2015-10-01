@@ -76,10 +76,8 @@ void GraphWindow::OnClose() {
 	::DestroyWindow(handle);
 }
 
-void GraphWindow::OnCommand(WPARAM wParam) {
-	switch (HIWORD(wParam)) {
-	case 0:
-		switch (LOWORD(wParam)) {
+void GraphWindow::OnKeyDown(WPARAM wParam) {
+	switch (wParam) {
 		case VK_SPACE:
 			graphInPoints.TurnClockwise();
 			break;
@@ -90,7 +88,6 @@ void GraphWindow::OnCommand(WPARAM wParam) {
 			graphInPoints.TurnFromTheTopToDown(-1);
 			break;
 		}
-	}
 }
 
 void GraphWindow::OnPaint() {
@@ -192,11 +189,11 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 		case WM_PAINT:
 			that->OnPaint();
 			return 0;
+		case WM_KEYDOWN:
+			that->OnKeyDown(wParam);
+			return 0;
 		case WM_ERASEBKGND:
 			return 1;
-		case WM_COMMAND:
-			that->OnCommand(wParam);
-			return 0;
 	}
 		
 	return ::DefWindowProc(handle, message, wParam, lParam);

@@ -16,7 +16,7 @@ public:
 	HWND GetHandle();
 
 protected:
-	void OnCommand(WPARAM wParam);
+	void OnKeyDown(WPARAM wParam);
 
 	void OnPaint();
 	void OnClose();

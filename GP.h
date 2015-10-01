@@ -17,8 +17,10 @@ public:
 	void TurnClockwise();
 	// Возвращает положение относительных точек
 	vector<vector<pair<double, double>>> GetRelativePoints();
-	// возвращвет направляющий вектор Номера осей X - 0, Y - 1, Z - 2
+	// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
 	pair<double, double> getAxisVector( int axisNum );
+	// возвращает координаты пересечения осей в 2d
+	pair<double, double> getOriginCoordinates();
 	
 private:
 	// Пересчет положения точек относительно осей
@@ -31,4 +33,6 @@ private:
 	vector<vector<pair<double, double>>> relativePoints;
 	// длина отрезка сетки
 	double lengthOfSection;
+	// координаты пересечения осей в 2d
+	pair<double, double> origin;
 };

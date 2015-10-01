@@ -109,45 +109,33 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-void CEquationPresenter::setDegrRects( CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel ) 
+void CEquationPresenter::setDegrRects(CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel)
 {
 	// Выставляем размеры вьюшек
 	// высота показателя - 3/4 высоты родительского; пересекается в 2/4 высоты родительского с основанием
-	CRect degrRect, childRect;
+	CRect degrRect;
 	degrRect.Bottom() = parentRect.Bottom();
 	degrRect.Top() = (parentRect.Top() - ((parentRect.Bottom() - parentRect.Top()) / 4));
-	childRect.Top() = (parentRect.Top() - ((parentRect.Bottom() - parentRect.Top()) / 4));
-	childRect.Bottom() = (parentRect.Bottom() - ((parentRect.Bottom() - parentRect.Top()) / 2));
-	childRect.Left() = degrRect.Left() = caret.GetPointX();
-	childRect.Right() = degrRect.Right() = caret.GetPointX() + 15;
+
+	degrRect.Left() = caret.GetPointX();
+	degrRect.Right() = caret.GetPointX() + 15;
 
 	degrModel->SetRect(degrRect);
-	degrModel->GetChildren().front()->SetRect(childRect);
-	degrModel->GetChildren().front()->GetChildren().front()->SetRect(childRect);
+
 }
 
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
 {
-	// Создаем новые модели для степени
-	std::shared_ptr<CDegrControlModel> degrModel = std::make_shared<CDegrControlModel>( CDegrControlModel( caret.GetCurEdit()->GetRect() ) );
+	std::shared_ptr<CDegrControlModel> degrModel(new CDegrControlModel(caret.GetCurEdit()->GetRect(), parent));
+	
+	degrModel->InitializeChildren();
+	parent->AddChildAfter(degrModel, caret.GetCurEdit());
+	
+	updateTreeAfterSizeChange(degrModel);
+	degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
-	// Посылаем размеры в модели
-	setDegrRects(caret.GetCurEdit()->GetRect(), degrModel);
+	view.Redraw(); 
 
-	// Обновляем граф
-	degrModel->SetParent(parent);
-	parent->AddChildAfter( degrModel, caret.GetCurEdit() );
-
-	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
-	CRect rect = newEditControl->GetRect();
-	rect.Left() += degrModel->GetRect().GetWidth();
-	rect.Right() += degrModel->GetRect().GetWidth();
-	newEditControl->SetRect(rect);
-	parent->AddChildAfter( newEditControl, degrModel );
-
-	updateTreeAfterSizeChange( degrModel );
-
-	view.Redraw( );
 }
 
 void CEquationPresenter::AddControlView( ViewType viewType )

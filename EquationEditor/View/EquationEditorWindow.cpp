@@ -178,7 +178,6 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 	case WM_PAINT:
 		wnd->OnDraw();
 		return 0;
-		//return ::DefWindowProc( handle, message, wParam, lParam );
 
 	case WM_SIZE:
 		wnd->OnSize( LOWORD( lParam ), HIWORD( lParam ) );

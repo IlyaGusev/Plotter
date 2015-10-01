@@ -52,9 +52,8 @@ void CFracControlModel::InitializeChildren()
 
 	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	secondChild->InitializeChildren();
-	Resize();
-	auto newRect = GetRect();
-	newRect.MoveBy( rect.Left(), rect.Top() );
+	
+	CRect newRect = CRect( rect.Left( ), rect.Top( ), rect.Left( ) + 15, rect.Top( ) + 2 * childRect.GetHeight( ) + 5 );
 	SetRect( newRect );
 	PlaceChildren();
 }

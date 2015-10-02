@@ -129,10 +129,11 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent )
 	std::shared_ptr<CDegrControlModel> degrModel(new CDegrControlModel(caret.GetCurEdit()->GetRect(), parent));
 	
 	degrModel->InitializeChildren();
+
 	parent->AddChildAfter(degrModel, caret.GetCurEdit());
 	
 	updateTreeAfterSizeChange(degrModel);
-	degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+	//degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw(); 
 

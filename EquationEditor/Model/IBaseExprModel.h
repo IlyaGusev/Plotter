@@ -10,21 +10,23 @@
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
 
-enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT };
+enum ViewType { TEXT, EXPR, FRAC, DEGR, ROOT, SUBSCRIPT };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
 	std::wstring text;
-
 	std::list<CLine> polygon;
+	bool isHightlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
 
-	CDrawParams()
+	CDrawParams() :
+		isHightlighted( false )
 	{
 	}
 
-	CDrawParams( std::wstring _text, std::list<CLine> _polygon ) :
+	CDrawParams( std::wstring _text, std::list<CLine> _polygon, bool _isHightlighted ) :
 		text( _text ),
-		polygon( _polygon )
+		polygon( _polygon ),
+		isHightlighted( _isHightlighted )
 	{
 	}
 };
@@ -70,6 +72,9 @@ public:
 
 	// Возвращает набор линий, которые нужно провести на вьюшке, относящейся к этой модели
 	virtual std::list<CLine> GetLines() const;
+
+	// Говорит, подсвечен ли прямоугольник этого контрола
+	virtual bool IsHightlighted() const;
 	
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
@@ -112,4 +117,8 @@ inline std::wstring IBaseExprModel::GetText() const
 inline std::list<CLine> IBaseExprModel::GetLines() const 
 {
 	return params.polygon;
+}
+
+inline bool IBaseExprModel::IsHightlighted() const {
+	return params.isHightlighted;
 }

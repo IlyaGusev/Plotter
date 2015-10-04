@@ -7,7 +7,7 @@
 // Модель текстового поля
 class CEditControlModel : public IBaseExprModel {
 public:
-	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent );
+	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted = true );
 	~CEditControlModel() {}
 
 	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;

@@ -1,6 +1,5 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
 #include <string>
 

@@ -4,7 +4,7 @@
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView )
 {
-	CRect rect(20, 20, 27, 40);
+	CRect rect(20, 20, 20, 40);
 
 	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
 	root->InitializeChildren();
@@ -15,7 +15,7 @@ CEquationPresenter::~CEquationPresenter() {}
 
 void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
 {
-	int symbolWidth = view.GetCharWidth( symbol );
+	int symbolWidth = view.GetCharWidth( symbol, caret.GetCurEdit()->GetRect().GetHeight() );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
 
@@ -46,11 +46,16 @@ void CEquationPresenter::OnDraw()
 		if( !node->GetText().empty() ) {
 			view.DrawText( node->GetText(), node->GetRect() );
 		}
+		if( node->IsHightlighted() ) {
+			view.DrawHightlightedRect( node->GetRect() );
+		}
 	};
 	CTreeBfsProcessor drawer( root, drawingFuction );
 	drawer.Process();
-
-	view.SetCaret( caret.GetPointX(), caret.GetPointY(), caret.GetHeight() );
+	
+	// Рисует каретку
+	// +2 - чтобы был небольшой пробел между кареткой и символом
+	view.SetCaret( caret.GetPointX() + 1, caret.GetPointY(), caret.GetHeight() );
 }
 
 std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) 

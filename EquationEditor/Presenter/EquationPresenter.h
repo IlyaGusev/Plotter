@@ -17,10 +17,13 @@ public:
 	virtual ~IEditorView() {}
 
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawText( std::wstring text, CRect rect ) = 0;
+	virtual void DrawText( std::wstring& text, CRect& rect ) = 0;
 
 	// Нарисовать ломаную
-	virtual void DrawPolygon( std::list<CLine> polygon ) = 0;
+	virtual void DrawPolygon( std::list<CLine>& polygon ) = 0;
+
+	// Нарисовать подсветку вокруг прямоугольника
+	virtual void DrawHightlightedRect( CRect& rect ) = 0;
 
 	// Установить положение каретки
 	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;
@@ -28,7 +31,7 @@ public:
 	// Запустить перерисовку окна
 	virtual void Redraw() = 0;
 
-	virtual int GetCharWidth( wchar_t symbol ) = 0;
+	virtual int GetCharWidth( wchar_t symbol, int symbolHeight ) = 0;
 };
 
 
@@ -60,7 +63,7 @@ private:
 	CCaret caret;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel );
+	void setFracRects( CRect& parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
 

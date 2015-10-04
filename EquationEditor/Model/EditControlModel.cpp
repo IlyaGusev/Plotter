@@ -1,9 +1,10 @@
 ﻿#include "Model/EditControlModel.h"
 
-CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent ) 
+CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) 
 {
 	this->parent = parent;
 	this->rect = rect;
+	this->params.isHightlighted = isHightlighted;
 }
 
 void CEditControlModel::Resize( )
@@ -27,7 +28,12 @@ std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() co
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) 
 {
 	params.text.insert( offset, 1, symbol );
-	rect.Right() += symbolWidth;
+	if( params.isHightlighted ) {
+		params.isHightlighted = false;
+		rect.Right() = rect.Left() + symbolWidth;
+	} else {
+		rect.Right() += symbolWidth;
+	}
 	symbolsWidths.push_back( symbolWidth );
 }
 
@@ -42,7 +48,7 @@ int CEditControlModel::DeleteSymbol( int offset )
 
 std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offset ) 
 {
-	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock() ) );
+	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock(), false ) );
 
 	// Вставляем всё, начиная с offset, в новый edit control
 	int newEditControlWidth = 0;

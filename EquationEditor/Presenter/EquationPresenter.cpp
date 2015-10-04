@@ -153,6 +153,23 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	view.Redraw();
 }
 
+void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
+{
+
+	std::shared_ptr<CRadicalControlModel> radicalModel(new CRadicalControlModel(caret.GetCurEdit()->GetRect(), parent));
+	radicalModel->InitializeChildren();
+	parent->AddChildAfter(radicalModel, caret.GetCurEdit());
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
+	newEditControl->MoveBy(radicalModel->GetRect().GetWidth(), 0);
+	parent->AddChildAfter(newEditControl, radicalModel);
+
+	updateTreeAfterSizeChange(radicalModel);
+	radicalModel->SetRect(radicalModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+
+	view.Redraw();
+}
+
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
@@ -171,7 +188,9 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	case SUBSCRIPT: 
-		addSubscript(std::shared_ptr<CExprControlModel>(parent));
+		addRadical(std::shared_ptr<CExprControlModel>(parent));
+
+		//addSubscript(std::shared_ptr<CExprControlModel>(parent));
 		break;
 	default:
 		break;

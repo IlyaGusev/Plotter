@@ -65,6 +65,19 @@ void CTag::hasNChilds(const CNode& node, int N)const
 		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
 }
 
+const CNode CTag::checkArgumentType(const CNode& node, int requiredType) const
+{
+    if ( node.empty() ) {
+        throwException(node.parent().name(), node.offset_debug(), INVALID_ARGUMENT);
+    }
+    auto curArgTag = CTagContainer::getTag(node.name());
+    //проверяем, что заявлена переменная требуемого типа
+    if ( !(curArgTag->getType() & requiredType) ) {
+        throwException(node.parent().name(), node.offset_debug(), INVALID_ARGUMENT);
+    }
+    return curArgTag->checkSignature(node);
+}
+
 void CTag::throwException(const string& tagName, int position, ErrorType errType) const
 {   
     string errorMsg;
@@ -111,7 +124,7 @@ const CNode CTagAtamar::checkSignature(const CNode& Node) const
 
 CTagApply::CTagApply()  
 {
-    type = NUMBER;
+    type = NUMBER | SPECIAL;
 }
 
 void CTagApply::operator ()(const CNode& node)const
@@ -128,7 +141,7 @@ void CTagApply::operator ()(const CNode& node)const
 		throwException(node.name(), child.offset_debug(), INVALID_ARGUMENT);
 	enterToAllChilds(node);
 }
-
+/*
 CTagBinaryNumFunction::CTagBinaryNumFunction() 
 {
     type = NUMBER | FUNCTION | CALCULATEBLE;
@@ -155,7 +168,7 @@ const CNode  CTagBinaryNumFunction::checkSignature(const CNode& node)const
 		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	return arg.next_sibling();
 };
-
+*/
 CTagCn::CTagCn()
 {
      type = NUMBER;
@@ -226,16 +239,30 @@ void CTagCn::operator ()(const CNode& node)const
 	throwException(node.name(), node.offset_debug(), UNKNOWN_ATTRIBUTE);
 }
 
+CTagCi::CTagCi() 
+{
+    type = VARIABLE;
+}
 
+void CTagCi::operator()(const CNode& node) const
+{
+    hasNoChilds(node);
+    string ident(node.value());
+    if (ident.empty()) {
+        throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
+    }
+}
+
+/*
 CTagVarArgFunction::CTagVarArgFunction() 
 {
 	type = NUMBER | FUNCTION | CALCULATEBLE;
-};
+}
 
 void CTagVarArgFunction::operator ()(const CNode& node)const 
 {
 
-};
+}
 
 const CNode CTagVarArgFunction::checkSignature(const CNode& node)const 
 {
@@ -258,4 +285,82 @@ const CNode CTagVarArgFunction::checkSignature(const CNode& node)const
 	};
 
 	return arg;
-};
+}
+*/
+CTagBVar::CTagBVar()
+{
+    type = BOUND;
+}
+
+
+void CTagBVar::operator()(const CNode& node) const 
+{
+    hasNoText(node);
+
+    CNode ident = node.first_child();
+    CTag* argTag = CTagContainer::getTag( ident.name() );
+    //проверяем, что первый дочерний тэг - переменная
+    if ( !( argTag->getType() & VARIABLE ) ) {
+        throwException( node.name(), ident.offset_debug(), INVALID_ARGUMENT );
+    }
+    //инициируем проверку дочерних тэгов
+    (*argTag)(ident);
+    ident = argTag->checkSignature(ident);
+    //проверям, что если существует второй дочерний тэг, то им может быть только degree
+    if ( !ident.empty() ) {
+        argTag = CTagContainer::getTag( ident.name() );
+        if ( !( argTag->getType() & DEGREE ) ) {
+            throwException( node.name(), ident.offset_debug(), INVALID_ARGUMENT );
+        }
+        //инициируем проверку дочерних тэгов
+        (*argTag)(ident); 
+        //проверяем, что больше дочерних тэгов нет
+        ident = argTag->checkSignature(ident);
+        if ( !ident.empty() ) {
+            throwException(node.name(), ident.offset_debug(), INVALID_ARGUMENT );
+        }
+    }
+}
+
+CTagCondition::CTagCondition() 
+{
+    type = CONDITION;
+}
+
+void CTagCondition::operator()(const CNode& node) const
+{
+    hasNoText(node);
+    auto lastChild = checkArgumentType(node.first_child(), SPECIAL);
+    if ( !lastChild.empty() ) {
+        throwException(node.name(), lastChild.offset_debug(), INVALID_ARGUMENT);
+    }
+}
+
+CTagLimitable::CTagLimitable()
+{
+    type = LIMITABLE | CALCULATEBLE;
+}
+
+const CNode CTagLimitable::checkSignature(const CNode& node) const
+{
+
+    CNode nextArg = checkArgumentType(node.next_sibling(), BOUND);
+    CTag* nextArgTag = CTagContainer::getTag(nextArg.name());
+    if ( !( nextArgTag->getType() & CONDITION ) ) {
+        nextArg = checkArgumentType( checkArgumentType( nextArg, LIMIT_LO ), LIMIT_UP );
+    } else {
+        nextArg = nextArg.next_sibling();
+    }
+    nextArg = checkArgumentType(nextArg, SPECIAL | NUMBER | VARIABLE);
+    return nextArg;
+}
+
+void CTagLimitable::operator()(const CNode& node) const
+{
+    hasNoAttributes(node);
+    hasNoChilds(node);
+    hasNoText(node);
+}
+
+
+

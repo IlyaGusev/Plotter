@@ -168,12 +168,11 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		addFrac( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	case DEGR:
-		//addDegr( std::shared_ptr<CExprControlModel>( parent ) ); // временно использую ключ под нижний индекс, жду ресурс
+		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
+		break;
+	case SUBSCRIPT: 
 		addSubscript(std::shared_ptr<CExprControlModel>(parent));
 		break;
-	/*case SUBSCRIPT: // создать ключ
-		addSubscript(std::shared_ptr<CExprControlModel>(parent));
-		break;*/
 	default:
 		break;
 	}

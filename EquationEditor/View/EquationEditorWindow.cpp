@@ -73,6 +73,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 		case ID_ADD_DEGR:
 			presenter->AddControlView(DEGR);
 			break;
+		case ID_ADD_SUBSCRIPT:
+			presenter->AddControlView(SUBSCRIPT);
+			break;
 		}
 	}
 }

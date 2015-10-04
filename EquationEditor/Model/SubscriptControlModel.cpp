@@ -69,7 +69,7 @@ void CSubscriptControlModel::SetRect(CRect rect) {
 }
 
 ViewType CSubscriptControlModel::GetType() const {
-	return DEGR;
+	return SUBSCRIPT;
 }
 
 void CSubscriptControlModel::MoveBy(int dx, int dy) {
@@ -77,3 +77,24 @@ void CSubscriptControlModel::MoveBy(int dx, int dy) {
 	params.polygon.front().MoveBy(dx, dy);
 }
 
+void CSubscriptControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+	// Если пришли из родителя - идем в верхнего ребенка
+	if (from == parent.lock()) {
+		firstChild->GoRight(shared_from_this(), caret);
+	}
+	else {
+		// Иначе идем наверх
+		parent.lock()->GoRight(shared_from_this(), caret);
+	}
+}
+
+void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+	// Если пришли из родителя - идем в нижнего ребенка
+	if (from == parent.lock()) {
+		secondChild->GoLeft(shared_from_this(), caret);
+	}
+	else {
+		// Иначе идем наверх
+		parent.lock()->GoLeft(shared_from_this(), caret);
+	}
+}

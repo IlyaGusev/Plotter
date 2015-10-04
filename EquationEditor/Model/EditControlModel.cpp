@@ -5,17 +5,20 @@ CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprM
 	this->parent = parent;
 	this->rect = rect;
 	this->params.isHightlighted = isHightlighted;
+	if( rect.GetWidth() < 10 ) {
+		rect.Right() = rect.Left() + 10;
+	}
 }
 
-void CEditControlModel::Resize( )
+void CEditControlModel::Resize()
 {
 }
 
-void CEditControlModel::PlaceChildren( )
+void CEditControlModel::PlaceChildren()
 {
 }
 
-int CEditControlModel::GetMiddle( ) const
+int CEditControlModel::GetMiddle() const
 {
 	return rect.GetHeight() / 2;
 }
@@ -41,8 +44,12 @@ int CEditControlModel::DeleteSymbol( int offset )
 {
 	params.text.erase( offset, 1 );
 	int symbolsWidth = symbolsWidths[offset];
-	rect.Right() -= symbolsWidth;
 	symbolsWidths.erase( symbolsWidths.begin() + offset );
+	if( symbolsWidths.empty() ) {
+		params.isHightlighted = true;
+	} else {
+		rect.Right() -= symbolsWidth;
+	}
 	return symbolsWidth;
 }
 

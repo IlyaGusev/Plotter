@@ -40,7 +40,7 @@ void CFracControlModel::PlaceChildren( )
 
 int CFracControlModel::GetMiddle( ) const
 {
-	return (firstChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
+	return firstChild->GetRect().GetHeight();
 }
 
 void CFracControlModel::InitializeChildren()

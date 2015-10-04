@@ -2,7 +2,6 @@
 #include "Model/EditControlModel.h"
 #include "Model/Utils/GeneralFunct.h"
 
-
 #include <string>
 
 CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {
@@ -42,8 +41,7 @@ void CDegrControlModel::PlaceChildren( )
 
 int CDegrControlModel::GetMiddle( ) const
 {
-	return (secondChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
-
+	return (rect.GetHeight() - secondChild->GetRect().GetHeight() / 2);
 }
 
 void CDegrControlModel::InitializeChildren()

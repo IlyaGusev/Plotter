@@ -4,7 +4,7 @@
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView )
 {
-	CRect rect(20, 20, 20, 40);
+	CRect rect(20, 20, 30, 40);
 
 	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
 	root->InitializeChildren();
@@ -54,7 +54,7 @@ void CEquationPresenter::OnDraw()
 	drawer.Process();
 	
 	// Рисует каретку
-	// +2 - чтобы был небольшой пробел между кареткой и символом
+	// +1 - чтобы был небольшой пробел между кареткой и символом
 	view.SetCaret( caret.GetPointX() + 1, caret.GetPointY(), caret.GetHeight() );
 }
 
@@ -118,7 +118,7 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	parent->AddChildAfter( newEditControl, fracModel );
 
 	updateTreeAfterSizeChange( fracModel );
-	fracModel->SetRect( fracModel->GetRect() );		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+	//fracModel->SetRect( fracModel->GetRect() );		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
 }
@@ -136,7 +136,7 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent )
 	parent->AddChildAfter(newEditControl, degrModel);
 
 	updateTreeAfterSizeChange(degrModel);
-	degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+	//degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
 }
@@ -153,7 +153,24 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	parent->AddChildAfter(newEditControl, subscriptModel);
 
 	updateTreeAfterSizeChange(subscriptModel);
-	subscriptModel->SetRect(subscriptModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+	//subscriptModel->SetRect(subscriptModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
+{
+
+	std::shared_ptr<CRadicalControlModel> radicalModel(new CRadicalControlModel(caret.GetCurEdit()->GetRect(), parent));
+	radicalModel->InitializeChildren();
+	parent->AddChildAfter(radicalModel, caret.GetCurEdit());
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
+	newEditControl->MoveBy(radicalModel->GetRect().GetWidth(), 0);
+	parent->AddChildAfter(newEditControl, radicalModel);
+
+	updateTreeAfterSizeChange(radicalModel);
+	//radicalModel->SetRect(radicalModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
 }
@@ -178,6 +195,8 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	case SUBSCRIPT: 
 		addSubscript(std::shared_ptr<CExprControlModel>(parent));
 		break;
+	case RADICAL:
+		addRadical(std::shared_ptr<CExprControlModel>(parent));
 	default:
 		break;
 	}

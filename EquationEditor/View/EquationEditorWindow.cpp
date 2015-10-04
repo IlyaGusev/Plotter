@@ -70,13 +70,16 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
 		case ID_ADD_FRAC:
-			presenter->AddControlView(FRAC);
+			presenter->AddControlView( FRAC );
 			break;
 		case ID_ADD_DEGR:
-			presenter->AddControlView(DEGR);
+			presenter->AddControlView( DEGR );
 			break;
 		case ID_ADD_SUBSCRIPT:
-			presenter->AddControlView(SUBSCRIPT);
+			presenter->AddControlView( SUBSCRIPT );
+			break;
+		case ID_ADD_RADICAL:
+			presenter->AddControlView( RADICAL );
 			break;
 		}
 	}

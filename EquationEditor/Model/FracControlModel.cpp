@@ -9,7 +9,7 @@ CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> 
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
 }
 
-void CFracControlModel::Resize( )
+void CFracControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth());
 	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 5; // +5 для промежутка между числителем и знаменателем
@@ -18,7 +18,7 @@ void CFracControlModel::Resize( )
 	rect.Bottom() = rect.Top() + height;
 }
 
-void CFracControlModel::PlaceChildren( )
+void CFracControlModel::PlaceChildren()
 {
 	CRect newRect;
 	int middle = (rect.Right() + rect.Left()) / 2;

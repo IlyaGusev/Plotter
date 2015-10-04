@@ -69,6 +69,19 @@ void CEquationPresenter::DeleteSymbol()
 
 void CEquationPresenter::OnDraw() 
 {
+	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
+	{
+		if( !node->GetLines().empty() ) {
+			view.DrawPolygon( node->GetLines() );
+		}
+		if( !node->GetText().empty() ) {
+			view.DrawString( node->GetText(), node->GetRect() );
+		}
+		if( node->IsHightlighted() ) {
+			view.DrawHightlightedRect( node->GetRect() );
+		}
+	};
+	CTreeBfsProcessor drawer( root, drawingFuction );
 	drawer.Process();
 	
 	// Рисует каретку

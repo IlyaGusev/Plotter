@@ -78,19 +78,12 @@ void CSubscriptControlModel::MoveBy(int dx, int dy) {
 }
 
 void CSubscriptControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
-	// Если пришли из родителя - идем в верхнего ребенка
-	if (from == parent.lock()) {
-		firstChild->GoRight(shared_from_this(), caret);
+	// Если пришли из индекса - идём в основание
+	if (from == secondChild) {
+		firstChild->GoLeft(shared_from_this(), caret);
 	}
-	else {
-		// Иначе идем наверх
-		parent.lock()->GoRight(shared_from_this(), caret);
-	}
-}
-
-void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
-	// Если пришли из родителя - идем в нижнего ребенка
-	if (from == parent.lock()) {
+	//если пришли из родителя - идём в индекс
+	else if (from == parent.lock()) {
 		secondChild->GoLeft(shared_from_this(), caret);
 	}
 	else {
@@ -98,3 +91,19 @@ void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from,
 		parent.lock()->GoLeft(shared_from_this(), caret);
 	}
 }
+
+void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+	// Если пришли из родителя - идем в основание
+	if (from == parent.lock()) {
+		firstChild->GoRight(shared_from_this(), caret);
+	}
+	//если из основания - в индекс
+	else if (from == firstChild) {
+		secondChild->GoRight(shared_from_this(), caret);
+	}
+	else {
+		// Иначе идем наверх
+		parent.lock()->GoRight(shared_from_this(), caret);
+	}
+}
+

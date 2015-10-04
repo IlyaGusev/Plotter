@@ -29,7 +29,7 @@ public:
 
 	void DrawPolygon( const std::list<CLine>& polygon );
 
-	void DrawHightlightedRect( CRect& rect );
+	void DrawHightlightedRect( const CRect& rect );
 
 	void SetCaret( int caretPointX, int caretPointY, int height );
 

@@ -35,6 +35,9 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 		if( !node->GetText( ).empty( ) ) {
 			view.DrawString( node->GetText( ), node->GetRect( ) );
 		}
+		if( node->IsHightlighted( ) ) {
+			view.DrawHightlightedRect( node->GetRect( ) );
+		}
 	};
 	drawer = CTreeBfsProcessor( root, drawingFuction );
 }
@@ -136,16 +139,16 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
 {
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( caret.GetCurEdit()->GetRect(), parent ) );
 	degrModel->InitializeChildren();
-	parent->AddChildAfter(degrModel, caret.GetCurEdit());
-
 	parent->AddChildAfter( degrModel, caret.GetCurEdit() );
-	
-	updateTreeAfterSizeChange( );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
+	parent->AddChildAfter( newEditControl, degrModel );
+
+	updateTreeAfterSizeChange();
 	//degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
@@ -158,7 +161,7 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	parent->AddChildAfter( subscriptModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
-	newEditControl->MoveBy( subscriptModel->GetRect().GetWidth(), 0 );
+//	newEditControl->MoveBy( subscriptModel->GetRect().GetWidth(), 0 );
 	parent->AddChildAfter( newEditControl, subscriptModel );
 
 	updateTreeAfterSizeChange();

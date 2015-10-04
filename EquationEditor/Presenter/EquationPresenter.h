@@ -28,7 +28,7 @@ public:
 	virtual void DrawPolygon( const std::list<CLine>& polygon ) = 0;
 
 	// Нарисовать подсветку вокруг прямоугольника
-	virtual void DrawHightlightedRect( CRect& rect ) = 0;
+	virtual void DrawHightlightedRect( const CRect& rect ) = 0;
 
 	// Установить положение каретки
 	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;

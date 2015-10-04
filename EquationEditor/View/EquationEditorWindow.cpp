@@ -149,7 +149,7 @@ void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon ) {
 	}
 }
 
-void CEquationEditorWindow::DrawHightlightedRect( CRect& controlRect ) {
+void CEquationEditorWindow::DrawHightlightedRect( const CRect& controlRect ) {
 	HBRUSH ballHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
 	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, ballHBrush ) );
 	::SetBkMode( hdc, TRANSPARENT );

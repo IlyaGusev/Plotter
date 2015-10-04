@@ -79,13 +79,13 @@ void GraphWindow::OnClose() {
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
 		case VK_SPACE:
-			graphInPoints.TurnClockwise();
+			graphInPoints.turnClockwise();
 			break;
 		case VK_UP:
-			graphInPoints.TurnFromTheTopToDown(1);
+			graphInPoints.turnFromTheTopToDown(1);
 			break;
 		case VK_DOWN:
-			graphInPoints.TurnFromTheTopToDown(-1);
+			graphInPoints.turnFromTheTopToDown(-1);
 			break;
 		}
 }

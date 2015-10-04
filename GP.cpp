@@ -20,8 +20,12 @@ GP::GP( const vector<vector<double>>& inputPoints, double inputLengthOfSection, 
 	for( int i = 0; i < 3; i++ ) {
 		anglesOfAxis[i] = inputAnglesOfAxis[i];
 	}
+	relativeAxis.resize( 3 );
+	relativeAxis[0] = Vector( 1, 0, 0 );
+	relativeAxis[1] = Vector( 0, 1, 0 );
+	relativeAxis[2] = Vector( 0, 0, 1 );
 	lengthOfSection = inputLengthOfSection;
-	CalculateRelativePoints();
+	calculateRelativePoints();
 }
 
 GP::GP() {
@@ -37,26 +41,57 @@ GP::GP() {
 	}
 	anglesOfAxis.resize( 3 );
 	anglesOfAxis = { 0, 45, 90 };
+	relativeAxis.resize( 3 );
+	relativeAxis[0] = Vector( 1, 0, 0 );
+	relativeAxis[1] = Vector( 0, 1, 0 );
+	relativeAxis[2] = Vector( 0, 0, 1 );
 	lengthOfSection = 1;
-	CalculateRelativePoints();
+	calculateRelativePoints();
 }
 
-void GP::TurnFromTheTopToDown( int angle ) {
+void GP::turnFromTheTopToDown( int angle ) {
+	Quaternion q( angle, -1, 0, 0 );
+	for( int i = 0; i < 3; i++ ) {
+		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+	}
+	calculateRelativePoints();
 }
 
-void GP::TurnClockwise() {
+void GP::turnClockwise( int angle ) {
+	Quaternion q( angle, 0, -1, 0 );
+	for( int i = 0; i < 3; i++ ) {
+		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+	}
+	calculateRelativePoints();
+}
+
+void GP::turnRoundVector( int angle, Vector vector ) {
+	Quaternion q( angle, vector );
+	for( int i = 0; i < 3; i++ ) {
+		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+	}
 }
 
 vector<vector<pair<double, double>>> GP::GetRelativePoints() {
 	return relativePoints;
 }
 
-// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
+// возвращает направляющий вектор относительной( подвижной ) системы отсчета. Номера осей X - 0, Y - 1, Z - 2
 pair<double, double> GP::getAxisVector( int axisNum ) {
-	double x = cos( M_PI * anglesOfAxis[axisNum] / 180 );
-	double y = sin( M_PI * anglesOfAxis[axisNum] / 180 );
-	return pair<double, double>( x, y );
+	// получаем координаты неподвижной системы отсчета в 2D
+	double x0 = cos( M_PI * anglesOfAxis[0] / 180 );
+	double y0 = sin( M_PI * anglesOfAxis[0] / 180 );
+	double x1 = cos( M_PI * anglesOfAxis[1] / 180 );
+	double y1 = sin( M_PI * anglesOfAxis[1] / 180 );
+	double x2 = cos( M_PI * anglesOfAxis[2] / 180 );
+	double y2 = sin( M_PI * anglesOfAxis[2] / 180 );
+	// пересчитываем координаты осей относительной( подвижной ) системы отсчета в 2D, используя координаты неподвижной системы
+	double relX = x0 * relativeAxis[axisNum].x + x1 * relativeAxis[axisNum].y + x2 * relativeAxis[axisNum].z;
+	double relY = y0 * relativeAxis[axisNum].x + y1 * relativeAxis[axisNum].y + y2 * relativeAxis[axisNum].z;
+	return pair<double, double>( relX, relY );
 }
+
+
 
 pair<double, double> GP::getOriginCoordinates() {
 	origin.first = 0;
@@ -64,7 +99,7 @@ pair<double, double> GP::getOriginCoordinates() {
 	return origin;
 }
 
-void GP::CalculateRelativePoints() {
+void GP::calculateRelativePoints() {
 	pair<double, double> x = getAxisVector( 0 );
 	pair<double, double> y = getAxisVector( 1 );
 	pair<double, double> z = getAxisVector( 2 );

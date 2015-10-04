@@ -28,5 +28,9 @@ public:
 
 private:
 	// Показатель
-	std::shared_ptr<CExprControlModel> child;
+	//std::shared_ptr<CExprControlModel> child;
+	// Верхний ребенок
+	std::shared_ptr<CExprControlModel> firstChild;
+	// Нижний ребенок
+	std::shared_ptr<CExprControlModel> secondChild;
 };

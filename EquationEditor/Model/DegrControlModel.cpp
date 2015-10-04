@@ -77,6 +77,25 @@ void CDegrControlModel::MoveBy(int dx, int dy) {
 	params.polygon.front().MoveBy(dx, dy);
 }
 
+void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в нижнего ребенка
+	if( from == parent.lock() ) {
+		secondChild->GoLeft( shared_from_this( ), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoLeft( shared_from_this(), caret );
+	}
+}
+
+void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в верхнего ребенка
+	if( from == parent.lock() ) {
+		firstChild->GoRight( shared_from_this( ), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoRight( shared_from_this( ), caret );
+	}
+}
 
 //
 //CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {
@@ -146,11 +165,3 @@ void CDegrControlModel::MoveBy(int dx, int dy) {
 //	rect.MoveBy(dx, dy);
 //	//params.polygon.front().MoveBy(dx, dy);
 //}
-
-void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
-
-}
-
-void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
-
-}

@@ -10,7 +10,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     wnd.Show(nCmdShow);
 
     MSG msg;
-    while (::GetMessage(&msg, (HWND)NULL, 0, 0)) {
+    while (::GetMessage(&msg, (HWND)nullptr, 0, 0)) {
         ::TranslateMessage(&msg);
         ::DispatchMessage(&msg);
     }

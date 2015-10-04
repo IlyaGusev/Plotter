@@ -8,6 +8,16 @@ CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprM
 
 void CEditControlModel::Resize( )
 {
+	if( params.text.length() == 0 ) {
+		rect.Right() = rect.Left() + 10;
+	}
+	else {
+		auto sum = 0;
+		for( auto width : symbolsWidths ) {
+			sum += width;
+		}
+		rect.Right() = rect.Left() + sum;
+	}
 }
 
 void CEditControlModel::PlaceChildren( )

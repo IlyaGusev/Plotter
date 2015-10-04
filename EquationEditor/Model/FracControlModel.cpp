@@ -6,7 +6,7 @@
 
 CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) {
 	this->parent = parent;
-	this->rect = rect;
+	this->rect = CRect( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
 }
 
@@ -37,24 +37,24 @@ void CFracControlModel::PlaceChildren( )
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
+	params.polygon.front( ).Set( rect.Left( ), rect.Top( ) + GetMiddle( ), rect.Right( ), rect.Top( ) + GetMiddle( ) );
 }
 
 int CFracControlModel::GetMiddle( ) const
 {
-	return (firstChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
+	return (firstChild->GetRect().GetHeight() + (rect.GetHeight() - secondChild->GetRect().GetHeight())) / 2;
 }
 
 void CFracControlModel::InitializeChildren() 
 {
-	CRect childRect = CRect( 0, 0, 15, rect.GetHeight() );
+	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
 	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	firstChild->InitializeChildren();
 
 	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	secondChild->InitializeChildren();
-	
-	CRect newRect = CRect( rect.Left( ), rect.Top( ), rect.Left( ) + 15, rect.Top( ) + 2 * childRect.GetHeight( ) + 5 );
-	SetRect( newRect );
+
+	Resize();
 	PlaceChildren();
 }
 

@@ -39,4 +39,6 @@ private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;
 	std::list< std::shared_ptr<IBaseExprModel> > children;
+
+	static const int MINIMAL_WIDTH = 10;
 };

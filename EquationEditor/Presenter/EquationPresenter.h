@@ -1,4 +1,5 @@
 ﻿#pragma once
+
 #include <utility>
 #include <memory>
 #include <Windows.h>
@@ -9,6 +10,9 @@
 #include "Model/FracControlModel.h"
 #include "Model/DegrControlModel.h"
 #include "Model/Utils/Caret.h"
+
+#include "Presenter/Utils/TreeBfsProcessor.h"
+#include "Presenter/Utils/TreeDfsProcessor.h"
 
 // Интерфейс окна редактора
 class IEditorView {
@@ -51,6 +55,11 @@ private:
 	IEditorView& view;
 	CCaret caret;
 
+	// processors
+	CTreeBfsProcessor placeProcessor;
+	CTreeDfsProcessor resizeProcessor;
+	CTreeBfsProcessor drawer;
+
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
 	void setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
@@ -62,5 +71,5 @@ private:
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 
 	// не подавайте сюда корень дерева, всё сломается
-	void updateTreeAfterSizeChange(std::shared_ptr<IBaseExprModel> startVert);
+	void updateTreeAfterSizeChange();
 };

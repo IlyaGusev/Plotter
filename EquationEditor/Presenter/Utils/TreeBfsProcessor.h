@@ -1,4 +1,6 @@
-﻿#include <functional>
+﻿#pragma once
+
+#include <functional>
 #include <memory>
 #include <list>
 

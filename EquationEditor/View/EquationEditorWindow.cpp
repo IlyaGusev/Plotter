@@ -5,7 +5,7 @@
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
-	presenter = std::shared_ptr<CEquationPresenter>( new CEquationPresenter( *this ) );
+	presenter = std::make_shared<CEquationPresenter>(*this);
 }
 
 CEquationEditorWindow::~CEquationEditorWindow() {
@@ -17,16 +17,16 @@ bool CEquationEditorWindow::RegisterClassW() {
 	wnd.cbSize = sizeof(wnd);
 	wnd.style = CS_HREDRAW | CS_VREDRAW;
 	wnd.lpfnWndProc = equationEditorWindowProc;
-	wnd.hInstance = ::GetModuleHandle( NULL );
+	wnd.hInstance = ::GetModuleHandle( nullptr );
 	wnd.lpszClassName = className;
 	wnd.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
-	wnd.hCursor = ::LoadCursor( NULL, IDC_ARROW );
+	wnd.hCursor = ::LoadCursor( nullptr, IDC_ARROW );
 	return ::RegisterClassEx( &wnd ) != 0;
 }
 
 bool CEquationEditorWindow::Create() {
 	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED, 0, 0, 500, 400,
-		0, 0, ::GetModuleHandle( NULL ), this ) != 0;
+		nullptr, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 
 void CEquationEditorWindow::Show( int cmdShow ) {
@@ -49,7 +49,7 @@ void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
 }
 
 void CEquationEditorWindow::Redraw() {
-	::InvalidateRect( hwnd, NULL, TRUE );
+	::InvalidateRect( hwnd, nullptr, TRUE );
 }
 
 int CEquationEditorWindow::GetCharWidth( wchar_t symbol ) {
@@ -120,7 +120,7 @@ void CEquationEditorWindow::DrawText( std::wstring text, CRect rectI ) {
 void CEquationEditorWindow::DrawPolygon( std::list<CLine> polygon ) {
 	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
-			::MoveToEx( hdc, line.StartX(), line.StartY(), NULL );
+			::MoveToEx( hdc, line.StartX(), line.StartY(), nullptr );
 			::LineTo( hdc, line.EndX(), line.EndY() );
 		}
 	}
@@ -128,7 +128,7 @@ void CEquationEditorWindow::DrawPolygon( std::list<CLine> polygon ) {
 
 void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) {
 	::DestroyCaret();
-	::CreateCaret( hwnd, (HBITMAP) NULL, -1, height );
+	::CreateCaret( hwnd, (HBITMAP) nullptr, -1, height );
 	::SetCaretPos( caretPointX, caretPointY );
 	::ShowCaret( hwnd );
 }

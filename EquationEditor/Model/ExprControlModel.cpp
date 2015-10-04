@@ -10,7 +10,9 @@ CExprControlModel::CExprControlModel( CRect rect, const std::weak_ptr<IBaseExprM
 
 void CExprControlModel::InitializeChildren() 
 {
-	children.push_back( std::shared_ptr<CEditControlModel>( new CEditControlModel( rect, shared_from_this() ) ) );
+	children.push_back( std::make_shared<CEditControlModel>( rect, shared_from_this() ) );
+	Resize();
+	PlaceChildren();
 }
 
 void CExprControlModel::Resize()
@@ -57,19 +59,15 @@ std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren() cons
 	return children;
 }
 
-void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild ) 
+void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) 
 {
-	auto curChildIt = std::find( children.begin(), children.end(), curChild );
-	if( curChildIt == children.end() ) {
+	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
+	if( currentChildIterator == children.end() ) {
 		children.push_back( newChild );
 	} else {
-		++curChildIt;
-		children.insert( curChildIt, newChild );
+		++currentChildIterator;
+		children.insert( currentChildIterator, newChild );
 	}
-	rect.Left() = MIN( rect.Left(), newChild->GetRect().Left() );
-	rect.Top() = MIN( rect.Top(), newChild->GetRect().Top() );
-	rect.Right() = MAX( rect.Right(), newChild->GetRect().Right() );
-	rect.Bottom() = MAX( rect.Bottom(), newChild->GetRect().Bottom() );
 }
 
 ViewType CExprControlModel::GetType() const 

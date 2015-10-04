@@ -30,6 +30,7 @@ public:
 	virtual int GetCharWidth( wchar_t symbol ) = 0;
 };
 
+
 // Класс, размещающий прямоугольники вьюшек на экране
 class CEquationPresenter {
 public:
@@ -46,6 +47,12 @@ public:
 	void OnDraw();
 	
 	void SetCaret( int x, int y );
+
+	// Обработка движений каретки стрелками
+	void MoveCaretLeft();
+	void MoveCaretRight();
+	void MoveCaretTop();
+	void MoveCaretBottom();
 private:
     std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;

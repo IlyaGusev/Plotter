@@ -79,3 +79,33 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 	}
 	return offset;
 }
+
+void CEditControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом конце
+	if( from.get() != this ) {
+		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>( shared_from_this() ) );
+		caret.Offset() = symbolsWidths.size();
+		return;
+	}
+	// Если тот - двигаемся вдоль него
+	if( caret.Offset() > 0 ) {
+		--caret.Offset();
+	} else {
+		parent.lock()->GoLeft( shared_from_this(), caret );
+	}
+}
+
+void CEditControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом начале
+	if( from.get() != this ) {
+		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>(shared_from_this()) );
+		caret.Offset() = 0;
+		return;
+	}
+	// Если тот - двигаемся вдоль него
+	if( caret.Offset() < symbolsWidths.size() ) {
+		++caret.Offset();
+	} else {
+		parent.lock()->GoRight( shared_from_this(), caret );
+	}
+}

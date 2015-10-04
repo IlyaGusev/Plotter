@@ -31,3 +31,11 @@ int CDegrControlModel::GetMiddle( ) const
 ViewType CDegrControlModel::GetType() const {
 	return DEGR;
 }
+
+void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+
+}
+
+void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+
+}

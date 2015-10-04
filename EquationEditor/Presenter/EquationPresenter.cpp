@@ -109,47 +109,39 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-void CEquationPresenter::setDegrRects(CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel)
-{
-	// Выставляем размеры вьюшек
-	// высота показателя - 3/4 высоты родительского; пересекается в 2/4 высоты родительского с основанием
-	CRect degrRect;
-	degrRect.Bottom() = parentRect.Bottom();
-	degrRect.Top() = (parentRect.Top() - ((parentRect.Bottom() - parentRect.Top()) / 4));
-
-	degrRect.Left() = caret.GetPointX();
-	degrRect.Right() = caret.GetPointX() + 15;
-
-	degrModel->SetRect(degrRect);
-
-}
 
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
 {
-	// Создаем новые модели для дроби
-	std::shared_ptr<CDegrControlModel> fracModel(new CDegrControlModel(caret.GetCurEdit()->GetRect(), parent));
-	fracModel->InitializeChildren();
-	parent->AddChildAfter(fracModel, caret.GetCurEdit());
+
+	std::shared_ptr<CDegrControlModel> degrModel(new CDegrControlModel(caret.GetCurEdit()->GetRect(), parent));
+	degrModel->InitializeChildren();
+	parent->AddChildAfter(degrModel, caret.GetCurEdit());
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
-	newEditControl->MoveBy(fracModel->GetRect().GetWidth(), 0);
-	parent->AddChildAfter(newEditControl, fracModel);
+	newEditControl->MoveBy(degrModel->GetRect().GetWidth(), 0);
+	parent->AddChildAfter(newEditControl, degrModel);
 
-	updateTreeAfterSizeChange(fracModel);
-	fracModel->SetRect(fracModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+	updateTreeAfterSizeChange(degrModel);
+	degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
 	view.Redraw();
-	//std::shared_ptr<CDegrControlModel> degrModel(new CDegrControlModel(caret.GetCurEdit()->GetRect(), parent));
-	//
-	//degrModel->InitializeChildren();
+}
 
-	//parent->AddChildAfter(degrModel, caret.GetCurEdit());
-	//
-	//updateTreeAfterSizeChange(degrModel);
-	////degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
+{
 
-	//view.Redraw(); 
+	std::shared_ptr<CSubscriptControlModel> subscriptModel(new CSubscriptControlModel(caret.GetCurEdit()->GetRect(), parent));
+	subscriptModel->InitializeChildren();
+	parent->AddChildAfter(subscriptModel, caret.GetCurEdit());
 
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
+	newEditControl->MoveBy(subscriptModel->GetRect().GetWidth(), 0);
+	parent->AddChildAfter(newEditControl, subscriptModel);
+
+	updateTreeAfterSizeChange(subscriptModel);
+	subscriptModel->SetRect(subscriptModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+
+	view.Redraw();
 }
 
 void CEquationPresenter::AddControlView( ViewType viewType )
@@ -167,8 +159,12 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		addFrac( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	case DEGR:
-		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
+		//addDegr( std::shared_ptr<CExprControlModel>( parent ) ); // временно использую ключ под нижний индекс, жду ресурс
+		addSubscript(std::shared_ptr<CExprControlModel>(parent));
 		break;
+	/*case SUBSCRIPT: // создать ключ
+		addSubscript(std::shared_ptr<CExprControlModel>(parent));
+		break;*/
 	default:
 		break;
 	}

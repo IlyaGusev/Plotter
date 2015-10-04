@@ -83,6 +83,7 @@
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\SubscriptControlModel.cpp" />
     <ClCompile Include="Model\Utils\Caret.cpp" />
     <ClCompile Include="Model\Utils\GeneralFunct.cpp" />
     <ClCompile Include="Model\Utils\Line.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="Model\ExprControlModel.h" />
     <ClInclude Include="Model\FracControlModel.h" />
     <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\SubscriptControlModel.h" />
     <ClInclude Include="Model\Utils\Caret.h" />
     <ClInclude Include="Model\Utils\GeneralFunct.h" />
     <ClInclude Include="Model\Utils\Line.h" />

@@ -8,6 +8,7 @@
 #include "Model/EditControlModel.h"
 #include "Model/FracControlModel.h"
 #include "Model/DegrControlModel.h"
+#include "Model/SubscriptControlModel.h"
 #include "Model/Utils/Caret.h"
 
 // Интерфейс окна редактора
@@ -55,7 +56,8 @@ private:
 	void setFracRects( CRect parentRect, std::shared_ptr<CFracControlModel> fracModel );
 
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
-	void setDegrRects( CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel );
+
+	void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent);
 	
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>

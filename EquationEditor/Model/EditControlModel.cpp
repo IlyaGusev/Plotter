@@ -1,12 +1,16 @@
 ﻿#include "Model/EditControlModel.h"
 
-CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent ) 
+CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) 
 {
 	this->parent = parent;
 	this->rect = rect;
+	this->params.isHightlighted = isHightlighted;
+	if( rect.GetWidth() < 10 ) {
+		rect.Right() = rect.Left() + 10;
+	}
 }
 
-void CEditControlModel::Resize( )
+void CEditControlModel::Resize()
 {
 	if( params.text.length() == 0 ) {
 		rect.Right() = rect.Left() + 10;
@@ -20,11 +24,11 @@ void CEditControlModel::Resize( )
 	}
 }
 
-void CEditControlModel::PlaceChildren( )
+void CEditControlModel::PlaceChildren()
 {
 }
 
-int CEditControlModel::GetMiddle( ) const
+int CEditControlModel::GetMiddle() const
 {
 	return rect.GetHeight() / 2;
 }
@@ -37,7 +41,12 @@ std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() co
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) 
 {
 	params.text.insert( offset, 1, symbol );
-	rect.Right() += symbolWidth;
+	if( params.isHightlighted ) {
+		params.isHightlighted = false;
+		rect.Right() = rect.Left() + symbolWidth;
+	} else {
+		rect.Right() += symbolWidth;
+	}
 	symbolsWidths.push_back( symbolWidth );
 }
 
@@ -45,14 +54,18 @@ int CEditControlModel::DeleteSymbol( int offset )
 {
 	params.text.erase( offset, 1 );
 	int symbolsWidth = symbolsWidths[offset];
-	rect.Right() -= symbolsWidth;
 	symbolsWidths.erase( symbolsWidths.begin() + offset );
+	if( symbolsWidths.empty() ) {
+		params.isHightlighted = true;
+	} else {
+		rect.Right() -= symbolsWidth;
+	}
 	return symbolsWidth;
 }
 
 std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offset ) 
 {
-	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock() ) );
+	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock(), false ) );
 
 	// Вставляем всё, начиная с offset, в новый edit control
 	int newEditControlWidth = 0;
@@ -88,4 +101,34 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 		offset += symbolsWidths[i];
 	}
 	return offset;
+}
+
+void CEditControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом конце
+	if( from.get() != this ) {
+		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>( shared_from_this() ) );
+		caret.Offset() = symbolsWidths.size();
+		return;
+	}
+	// Если тот - двигаемся вдоль него
+	if( caret.Offset() > 0 ) {
+		--caret.Offset();
+	} else {
+		parent.lock()->GoLeft( shared_from_this(), caret );
+	}
+}
+
+void CEditControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом начале
+	if( from.get() != this ) {
+		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>(shared_from_this()) );
+		caret.Offset() = 0;
+		return;
+	}
+	// Если тот - двигаемся вдоль него
+	if( caret.Offset() < symbolsWidths.size() ) {
+		++caret.Offset();
+	} else {
+		parent.lock()->GoRight( shared_from_this(), caret );
+	}
 }

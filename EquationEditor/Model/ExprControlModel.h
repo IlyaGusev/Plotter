@@ -23,6 +23,8 @@ public:
 
 	ViewType GetType() const;
 
+	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
+	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

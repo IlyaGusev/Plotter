@@ -52,8 +52,10 @@ void CEquationEditorWindow::Redraw() {
 	::InvalidateRect( hwnd, nullptr, TRUE );
 }
 
-int CEquationEditorWindow::GetCharWidth( wchar_t symbol ) {
+int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) {
 	HDC hdc = GetDC( hwnd );
+	::SelectObject( hdc, fonts[symbolHeight] );
+	
 	int symbolWidth = 0;
 	::GetCharWidth32( hdc, symbol, symbol, &symbolWidth );
 	::ReleaseDC( hwnd, hdc );
@@ -68,12 +70,34 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
 		case ID_ADD_FRAC:
-			presenter->AddControlView(FRAC);
+			presenter->AddControlView( FRAC );
 			break;
 		case ID_ADD_DEGR:
-			presenter->AddControlView(DEGR);
+			presenter->AddControlView( DEGR );
+			break;
+		case ID_ADD_SUBSCRIPT:
+			presenter->AddControlView( SUBSCRIPT );
+			break;
+		case ID_ADD_RADICAL:
+			presenter->AddControlView( RADICAL );
 			break;
 		}
+	}
+}
+
+void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) {
+	switch( wParam ) {
+	case VK_LEFT:   // LEFT ARROW 
+		presenter->MoveCaretLeft();
+		break;
+
+	case VK_RIGHT:  // RIGHT ARROW
+		presenter->MoveCaretRight();
+		break;
+
+	case VK_UP:     // UP ARROW 
+	case VK_DOWN:   // DOWN ARROW 
+		break;
 	}
 }
 
@@ -101,29 +125,35 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 }
 
 
-void CEquationEditorWindow::DrawText( std::wstring text, CRect rectI ) {
+void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& textRect ) {
 	RECT rect;
-	rect.bottom = rectI.Bottom();
-	rect.top = rectI.Top();
-	rect.left = rectI.Left();
-	rect.right = rectI.Right();
-	//HFONT hNewFont = ::CreateFont( rectI.Bottom() - rectI.Top(), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, 
-	//	CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Arial" );
-	//HFONT hOldFont = (HFONT) ::SelectObject( hdc, hNewFont );
+	rect.bottom = textRect.Bottom( );
+	rect.top = textRect.Top( );
+	rect.left = textRect.Left( );
+	rect.right = textRect.Right( );
+	if( fonts[textRect.GetHeight( )] == 0 ) {
+		fonts[textRect.GetHeight( )] = ::CreateFont( textRect.GetHeight( ), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+			CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
+	}
+	::SelectObject( hdc, fonts[textRect.GetHeight()] );
 
-	::DrawText( hdc, text.c_str( ), text.size( ), &rect, DT_LEFT );
-
-	//::SelectObject( hdc, hOldFont );
-	//::DeleteObject( hNewFont );
+	::DrawText( hdc, text.c_str(), text.size(), &rect, DT_LEFT );
 }
 
-void CEquationEditorWindow::DrawPolygon( std::list<CLine> polygon ) {
+void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon ) {
 	if( !polygon.empty() ) {
 		for( CLine line : polygon ) {
 			::MoveToEx( hdc, line.StartX(), line.StartY(), nullptr );
 			::LineTo( hdc, line.EndX(), line.EndY() );
 		}
 	}
+}
+
+void CEquationEditorWindow::DrawHightlightedRect( CRect& controlRect ) {
+	HBRUSH ballHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
+	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, ballHBrush ) );
+	::SetBkMode( hdc, TRANSPARENT );
+	::Rectangle( hdc, controlRect.Left(), controlRect.Bottom(), controlRect.Right(), controlRect.Top() );
 }
 
 void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) {
@@ -194,6 +224,9 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 	case WM_COMMAND:
 		wnd->OnWmCommand( wParam, lParam );
 		return 0;
+
+	case WM_KEYDOWN:
+		wnd->OnKeyDown( wParam );
 	}
 	return ::DefWindowProc( handle, message, wParam, lParam );
 }

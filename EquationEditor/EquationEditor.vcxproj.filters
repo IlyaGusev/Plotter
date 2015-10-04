@@ -69,6 +69,12 @@
     <ClCompile Include="Model\Utils\Caret.cpp">
       <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Model\SubscriptControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\RadicalControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -112,6 +118,12 @@
     </ClInclude>
     <ClInclude Include="Model\Utils\Caret.h">
       <Filter>Source Files\Model\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SubscriptControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\RadicalControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

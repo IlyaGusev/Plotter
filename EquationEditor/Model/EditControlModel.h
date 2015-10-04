@@ -7,7 +7,7 @@
 // Модель текстового поля
 class CEditControlModel : public IBaseExprModel {
 public:
-	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent );
+	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted = true );
 	~CEditControlModel() {}
 
 	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;
@@ -35,6 +35,9 @@ public:
 
 	// Возвращает позицию символа на экране по его номеру
 	int GetSymbolPointByNumber( int number ) const;
+
+	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
+	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;

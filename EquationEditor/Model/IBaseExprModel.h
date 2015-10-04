@@ -5,25 +5,28 @@
 
 #include "Model/Utils/Rect.h"
 #include "Model/Utils/Line.h"
+#include "Model/Utils/Caret.h"
 
 #define MIN(x, y) x < y ? x : y;
 #define MAX(x, y) x > y ? x : y;
 
-enum ViewType { TEXT, EXPR, FRAC, DEGR };
+enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
 	std::wstring text;
-
 	std::list<CLine> polygon;
+	bool isHightlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
 
-	CDrawParams()
+	CDrawParams() :
+		isHightlighted( false )
 	{
 	}
 
-	CDrawParams( std::wstring _text, std::list<CLine> _polygon ) :
+	CDrawParams( std::wstring _text, std::list<CLine> _polygon, bool _isHightlighted ) :
 		text( _text ),
-		polygon( _polygon )
+		polygon( _polygon ),
+		isHightlighted( _isHightlighted )
 	{
 	}
 };
@@ -40,7 +43,7 @@ public:
 	{
 	}
 
-	virtual std::weak_ptr<IBaseExprModel> GetParent( ) const;
+	virtual std::weak_ptr<IBaseExprModel> GetParent() const;
 	virtual void SetParent( std::weak_ptr<IBaseExprModel> parent );
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const = 0;
@@ -64,9 +67,21 @@ public:
 	// выдаёт середину модели, по которой будет выполняться выравнивание
 	virtual int GetMiddle() const = 0;
 
-	virtual CDrawParams GetDrawParams() const;
+	// Возвращает текст, хранящийся в этой модели
+	virtual std::wstring GetText() const;
 
+	// Возвращает набор линий, которые нужно провести на вьюшке, относящейся к этой модели
+	virtual std::list<CLine> GetLines() const;
+
+	// Говорит, подсвечен ли прямоугольник этого контрола
+	virtual bool IsHightlighted() const;
+	
+	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
+
+	// Сдвигает каретку в нужную сторону относительно from
+	virtual void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const = 0;
+	virtual void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -89,11 +104,21 @@ inline void IBaseExprModel::SetRect( CRect rect )
 	this->rect = rect;
 }
 
-inline CDrawParams IBaseExprModel::GetDrawParams() const
+inline void IBaseExprModel::MoveBy( int dx, int dy ) 
 {
-	return params;
+	rect.MoveBy( dx, dy );
 }
 
-inline void IBaseExprModel::MoveBy( int dx, int dy ) {
-	rect.MoveBy( dx, dy );
+inline std::wstring IBaseExprModel::GetText() const 
+{
+	return params.text;
+}
+
+inline std::list<CLine> IBaseExprModel::GetLines() const 
+{
+	return params.polygon;
+}
+
+inline bool IBaseExprModel::IsHightlighted() const {
+	return params.isHightlighted;
 }

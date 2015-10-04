@@ -1,6 +1,5 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
 #include <string>
 
@@ -45,7 +44,7 @@ int CFracControlModel::GetMiddle( ) const
 	return (firstChild->GetRect().GetHeight() + (rect.GetHeight() - secondChild->GetRect().GetHeight())) / 2;
 }
 
-void CFracControlModel::InitializeChildren() 
+void CFracControlModel::InitializeChildren()
 {
 	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
 	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
@@ -82,4 +81,24 @@ ViewType CFracControlModel::GetType() const {
 void CFracControlModel::MoveBy( int dx, int dy ) {
 	rect.MoveBy( dx, dy );
 	params.polygon.front().MoveBy( dx, dy );
+}
+
+void CFracControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в верхнего ребенка
+	if( from == parent.lock() ) {
+		firstChild->GoLeft( shared_from_this(), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoLeft( shared_from_this(), caret );
+	}
+}
+
+void CFracControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в верхнего ребенка
+	if( from == parent.lock() ) {
+		firstChild->GoRight( shared_from_this(), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoRight( shared_from_this(), caret );
+	}
 }

@@ -5,11 +5,11 @@
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView )
 {
-	CRect rect(20, 20, 27, 40);
+	CRect rect(20, 20, 30, 40);
 
 	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
 	root->InitializeChildren();
-	caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( root->GetChildren().front() ) );
+	caret.SetCurEdit( root->GetChildren().front() );
 
 	// initialize tree invalidate processors
 	auto resizeFunction( []( CTreeDfsProcessor::Node n )
@@ -29,12 +29,11 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	// initialize draw processor
 	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
 	{
-		CDrawParams curNodeDrawParams = node->GetDrawParams( );
-		if( !curNodeDrawParams.polygon.empty( ) ) {
-			view.DrawPolygon( curNodeDrawParams.polygon );
+		if( !node->GetLines( ).empty( ) ) {
+			view.DrawPolygon( node->GetLines( ) );
 		}
-		if( !curNodeDrawParams.text.empty( ) ) {
-			view.DrawText( curNodeDrawParams.text, node->GetRect( ) );
+		if( !node->GetText( ).empty( ) ) {
+			view.DrawString( node->GetText( ), node->GetRect( ) );
 		}
 	};
 	drawer = CTreeBfsProcessor( root, drawingFuction );
@@ -44,7 +43,7 @@ CEquationPresenter::~CEquationPresenter() {}
 
 void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
 {
-	int symbolWidth = view.GetCharWidth( symbol );
+	int symbolWidth = view.GetSymbolWidth( symbol, caret.GetCurEdit()->GetRect().GetHeight() );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
 
@@ -68,8 +67,10 @@ void CEquationPresenter::DeleteSymbol()
 void CEquationPresenter::OnDraw() 
 {
 	drawer.Process();
-
-	view.SetCaret( caret.GetPointX(), caret.GetPointY(), caret.GetHeight() );
+	
+	// Рисует каретку
+	// +1 - чтобы был небольшой пробел между кареткой и символом
+	view.SetCaret( caret.GetPointX() + 1, caret.GetPointY(), caret.GetHeight() );
 }
 
 std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) 
@@ -101,7 +102,7 @@ void CEquationPresenter::SetCaret( int x, int y )
 		return;
 	}
 	if( caret.GetCurEdit() != firstCandidate ) {
-		caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( firstCandidate ) );
+		caret.SetCurEdit( firstCandidate );
 	}
 
 	std::pair<int, int> newCaretPos = findCaretPos( caret.GetCurEdit(), x );
@@ -110,7 +111,17 @@ void CEquationPresenter::SetCaret( int x, int y )
 	view.Redraw();
 }
 
-void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) 
+void CEquationPresenter::MoveCaretLeft() {
+	caret.GetCurEdit()->GoLeft( caret.GetCurEdit(), caret );
+	view.Redraw();
+}
+
+void CEquationPresenter::MoveCaretRight() {
+	caret.GetCurEdit()->GoRight( caret.GetCurEdit(), caret );
+	view.Redraw();
+}
+
+void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 {
 	// Создаем новые модели для дроби
 	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( caret.GetCurEdit()->GetRect(), parent ) );
@@ -125,34 +136,52 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-void CEquationPresenter::setDegrRects(CRect parentRect, std::shared_ptr<CDegrControlModel> degrModel)
-{
-	// Выставляем размеры вьюшек
-	// высота показателя - 3/4 высоты родительского; пересекается в 2/4 высоты родительского с основанием
-	CRect degrRect;
-	degrRect.Bottom() = parentRect.Bottom();
-	degrRect.Top() = (parentRect.Top() - ((parentRect.Bottom() - parentRect.Top()) / 4));
-
-	degrRect.Left() = caret.GetPointX();
-	degrRect.Right() = caret.GetPointX() + 15;
-
-	degrModel->SetRect(degrRect);
-
-}
 
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
 {
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	
 	degrModel->InitializeChildren();
+	parent->AddChildAfter(degrModel, caret.GetCurEdit());
 
 	parent->AddChildAfter( degrModel, caret.GetCurEdit() );
 	
 	updateTreeAfterSizeChange( );
 	//degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
 
-	view.Redraw(); 
+	view.Redraw();
+}
 
+void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
+{
+	std::shared_ptr<CSubscriptControlModel> subscriptModel( new CSubscriptControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	subscriptModel->InitializeChildren();
+	parent->AddChildAfter( subscriptModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	newEditControl->MoveBy( subscriptModel->GetRect().GetWidth(), 0 );
+	parent->AddChildAfter( newEditControl, subscriptModel );
+
+	updateTreeAfterSizeChange();
+	//subscriptModel->SetRect(subscriptModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
+{
+
+	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	radicalModel->InitializeChildren();
+	parent->AddChildAfter( radicalModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	newEditControl->MoveBy( radicalModel->GetRect().GetWidth(), 0 );
+	parent->AddChildAfter( newEditControl, radicalModel );
+
+	updateTreeAfterSizeChange();
+	//radicalModel->SetRect(radicalModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
+
+	view.Redraw();
 }
 
 void CEquationPresenter::AddControlView( ViewType viewType )
@@ -172,6 +201,11 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	case DEGR:
 		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
+	case SUBSCRIPT: 
+		addSubscript(std::shared_ptr<CExprControlModel>(parent));
+		break;
+	case RADICAL:
+		addRadical(std::shared_ptr<CExprControlModel>(parent));
 	default:
 		break;
 	}

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Presenter/EquationPresenter.h"
+#include <unordered_map>
 
 class CEquationEditorWindow : public IEditorView {
 public:
@@ -24,25 +25,30 @@ public:
 
 	void OnDraw();
 
-	void DrawText( std::wstring text, CRect rect );
+	void DrawString( const std::wstring& text, const CRect& rect );
 
-	void DrawPolygon( std::list<CLine> polygon );
+	void DrawPolygon( const std::list<CLine>& polygon );
+
+	void DrawHightlightedRect( CRect& rect );
 
 	void SetCaret( int caretPointX, int caretPointY, int height );
 
 	void Redraw();
 
-	int GetCharWidth( wchar_t symbol );
+	int GetSymbolWidth( wchar_t symbol, int symbolHeight );
 
 	void OnLButtonDown( int xMousePos, int yMousePos );
 
 	void OnWmCommand( WPARAM wParam, LPARAM lParam );
+
+	void OnKeyDown( WPARAM wParam );
 protected:
     void OnDestroy();
 
 private:
     HWND hwnd; // хэндл окна
 	HDC hdc;
+	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
 
     static const wchar_t* const className;
 

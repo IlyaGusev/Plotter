@@ -188,10 +188,10 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
 		break;
 	case SUBSCRIPT: 
-		addRadical(std::shared_ptr<CExprControlModel>(parent));
-
-		//addSubscript(std::shared_ptr<CExprControlModel>(parent));
+		addSubscript(std::shared_ptr<CExprControlModel>(parent));
 		break;
+	case RADICAL:
+		addRadical(std::shared_ptr<CExprControlModel>(parent));
 	default:
 		break;
 	}

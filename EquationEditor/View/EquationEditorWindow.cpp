@@ -77,6 +77,10 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 			presenter->AddControlView(SUBSCRIPT);
 			break;
 		}
+		//case ID_ADD_RADICAL:
+		//	presenter->AddControlView(RADICAL);
+		//	break;
+		//}
 	}
 }
 

@@ -42,7 +42,7 @@ void CSubscriptControlModel::PlaceChildren()
 
 int CSubscriptControlModel::GetMiddle() const
 {
-	return (firstChild->GetRect().Bottom() + firstChild->GetRect().Top()) / 2 - rect.Top();
+	return firstChild->GetRect().GetHeight() / 2;
 
 }
 

@@ -42,7 +42,7 @@ void CRadicalControlModel::PlaceChildren()
 
 int CRadicalControlModel::GetMiddle() const
 {
-	return (secondChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
+	return rect.GetHeight() - secondChild->GetRect().GetHeight() / 2;//rect.GetHeight() - 0.5 * MAX(secondChild->GetRect().GetHeight(), rect.Bottom() - secondChild->GetRect().Top());
 
 }
 
@@ -55,7 +55,7 @@ void CRadicalControlModel::InitializeChildren()
 	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
 	secondChild->InitializeChildren();
 
-	CRect newRect = CRect(rect.Left(), rect.Top(), rect.Left()+ 2*childRect.GetWidth() + 15, rect.Top() + childRect.GetHeight());
+	CRect newRect = CRect(rect.Left(), rect.Top(), rect.Left()+ 2*childRect.GetWidth() + 15, rect.Top() + childRect.GetHeight() + 7);
 	SetRect(newRect);
 	PlaceChildren();
 }
@@ -73,7 +73,7 @@ void CRadicalControlModel::SetRect(CRect rect) {
 }
 
 ViewType CRadicalControlModel::GetType() const {
-	return SUBSCRIPT;
+	return RADICAL;
 }
 
 void CRadicalControlModel::MoveBy(int dx, int dy) {

@@ -42,7 +42,7 @@ void CDegrControlModel::PlaceChildren( )
 
 int CDegrControlModel::GetMiddle( ) const
 {
-	return (secondChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
+	return (rect.GetHeight() - secondChild->GetRect().GetHeight() / 2);
 
 }
 

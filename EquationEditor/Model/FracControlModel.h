@@ -26,6 +26,9 @@ public:
 	ViewType GetType() const;
 
 	void MoveBy( int dx, int dy );
+
+	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
+	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

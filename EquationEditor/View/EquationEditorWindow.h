@@ -37,6 +37,8 @@ public:
 	void OnLButtonDown( int xMousePos, int yMousePos );
 
 	void OnWmCommand( WPARAM wParam, LPARAM lParam );
+
+	void OnKeyDown( WPARAM wParam );
 protected:
     void OnDestroy();
 

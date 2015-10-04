@@ -8,7 +8,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 
 	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
 	root->InitializeChildren();
-	caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( root->GetChildren().front() ) );
+	caret.SetCurEdit( root->GetChildren().front() );
 }
 
 CEquationPresenter::~CEquationPresenter() {}
@@ -40,12 +40,11 @@ void CEquationPresenter::OnDraw()
 {
 	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
 	{
-		CDrawParams curNodeDrawParams = node->GetDrawParams( );
-		if( !curNodeDrawParams.polygon.empty() ) {
-			view.DrawPolygon( curNodeDrawParams.polygon );
+		if( !node->GetLines().empty() ) {
+			view.DrawPolygon( node->GetLines() );
 		}
-		if( !curNodeDrawParams.text.empty() ) {
-			view.DrawText( curNodeDrawParams.text, node->GetRect( ) );
+		if( !node->GetText().empty() ) {
+			view.DrawText( node->GetText(), node->GetRect() );
 		}
 	};
 	CTreeBfsProcessor drawer( root, drawingFuction );
@@ -83,7 +82,7 @@ void CEquationPresenter::SetCaret( int x, int y )
 		return;
 	}
 	if( caret.GetCurEdit() != firstCandidate ) {
-		caret.SetCurEdit( std::dynamic_pointer_cast<CEditControlModel>( firstCandidate ) );
+		caret.SetCurEdit( firstCandidate );
 	}
 
 	std::pair<int, int> newCaretPos = findCaretPos( caret.GetCurEdit(), x );
@@ -92,7 +91,17 @@ void CEquationPresenter::SetCaret( int x, int y )
 	view.Redraw();
 }
 
-void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent ) 
+void CEquationPresenter::MoveCaretLeft() {
+	caret.GetCurEdit()->GoLeft( caret.GetCurEdit(), caret );
+	view.Redraw();
+}
+
+void CEquationPresenter::MoveCaretRight() {
+	caret.GetCurEdit()->GoRight( caret.GetCurEdit(), caret );
+	view.Redraw();
+}
+
+void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 {
 	// Создаем новые модели для дроби
 	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( caret.GetCurEdit()->GetRect(), parent ) );

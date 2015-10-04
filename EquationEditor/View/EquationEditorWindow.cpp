@@ -77,6 +77,22 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	}
 }
 
+void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) {
+	switch( wParam ) {
+	case VK_LEFT:   // LEFT ARROW 
+		presenter->MoveCaretLeft();
+		break;
+
+	case VK_RIGHT:  // RIGHT ARROW
+		presenter->MoveCaretRight();
+		break;
+
+	case VK_UP:     // UP ARROW 
+	case VK_DOWN:   // DOWN ARROW 
+		break;
+	}
+}
+
 void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 	switch( wParam ) {
 	case 0x08:  // backspace
@@ -194,6 +210,9 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 	case WM_COMMAND:
 		wnd->OnWmCommand( wParam, lParam );
 		return 0;
+
+	case WM_KEYDOWN:
+		wnd->OnKeyDown( wParam );
 	}
 	return ::DefWindowProc( handle, message, wParam, lParam );
 }

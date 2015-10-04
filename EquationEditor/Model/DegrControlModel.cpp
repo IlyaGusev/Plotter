@@ -10,7 +10,7 @@ CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> p
 	this->rect = rect;
 }
 
-void CDegrControlModel::Resize()
+void CDegrControlModel::Resize( )
 {
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 5;
 	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - 15; // -15 для пересечения по высоте основания и показателя
@@ -19,7 +19,7 @@ void CDegrControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
-void CDegrControlModel::PlaceChildren()
+void CDegrControlModel::PlaceChildren( )
 {
 	CRect newRect;
 	int middle = (rect.Right() + rect.Left()) / 2;
@@ -40,7 +40,7 @@ void CDegrControlModel::PlaceChildren()
 
 }
 
-int CDegrControlModel::GetMiddle() const
+int CDegrControlModel::GetMiddle( ) const
 {
 	return (secondChild->GetRect().Bottom() + secondChild->GetRect().Top()) / 2 - rect.Top();
 
@@ -77,6 +77,25 @@ void CDegrControlModel::MoveBy(int dx, int dy) {
 	params.polygon.front().MoveBy(dx, dy);
 }
 
+void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в нижнего ребенка
+	if( from == parent.lock() ) {
+		secondChild->GoLeft( shared_from_this( ), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoLeft( shared_from_this(), caret );
+	}
+}
+
+void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+	// Если пришли из родителя - идем в верхнего ребенка
+	if( from == parent.lock() ) {
+		firstChild->GoRight( shared_from_this( ), caret );
+	} else {
+		// Иначе идем наверх
+		parent.lock()->GoRight( shared_from_this( ), caret );
+	}
+}
 
 //
 //CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {

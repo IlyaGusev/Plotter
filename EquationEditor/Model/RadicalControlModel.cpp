@@ -9,7 +9,6 @@ CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprMo
 {
 	this->parent = parent;
 	this->rect = rect;
-
 }
 
 void CRadicalControlModel::Resize()
@@ -34,7 +33,7 @@ void CRadicalControlModel::PlaceChildren()
 	
 	oldRect = secondChild->GetRect();
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Top() + 10;//rect.Bottom() - oldRect.GetHeight();
+	newRect.Top() = rect.Bottom() - oldRect.GetHeight();//rect.Bottom() - oldRect.GetHeight();
 	newRect.Left() = firstChild->GetRect().Right() + 15;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	secondChild->SetRect(newRect);

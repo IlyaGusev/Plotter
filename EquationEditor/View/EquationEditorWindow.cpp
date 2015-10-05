@@ -132,8 +132,8 @@ void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& t
 	rect.left = textRect.Left( );
 	rect.right = textRect.Right( );
 	if( fonts[textRect.GetHeight( )] == 0 ) {
-		fonts[textRect.GetHeight( )] = ::CreateFont( textRect.GetHeight( ), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-			CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
+		fonts[textRect.GetHeight()] = ::CreateFont( textRect.GetHeight( ), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, 
+			OUT_OUTLINE_PRECIS, CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
 	}
 	::SelectObject( hdc, fonts[textRect.GetHeight()] );
 

@@ -30,6 +30,7 @@ public:
 
 	void GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const;
 
+	int getSubscriptHeight( int rectHeight );
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

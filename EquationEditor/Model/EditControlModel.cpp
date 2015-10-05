@@ -47,7 +47,7 @@ void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidt
 	} else {
 		rect.Right() += symbolWidth;
 	}
-	symbolsWidths.push_back( symbolWidth );
+	symbolsWidths.insert( symbolsWidths.begin() + offset, symbolWidth );
 }
 
 int CEditControlModel::DeleteSymbol( int offset ) 

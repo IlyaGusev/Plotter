@@ -28,6 +28,8 @@ public:
 	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
 	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
 private:
+	int getExponentHeight(int rectHeight);
+
 	// Показатель
 	//std::shared_ptr<CExprControlModel> child;
 	// Верхний ребенок

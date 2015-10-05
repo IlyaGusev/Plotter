@@ -45,7 +45,7 @@ void CExprControlModel::PlaceChildren()
 		newRect.Bottom() = rect.Top() + middle + (oldRect.GetHeight() - child->GetMiddle());
 		child->SetRect( newRect );
 
-		currentX = newRect.Right();
+		currentX = newRect.Right() + 2;
 	}
 }
 

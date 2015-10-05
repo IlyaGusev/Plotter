@@ -4,21 +4,22 @@
 
 #include <string>
 
-CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {
+CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
+{
 	this->parent = parent;
 	this->rect = rect;
 }
 
-void CDegrControlModel::Resize( )
+void CDegrControlModel::Resize()
 {
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth();
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - 15; // -15 для пересечения по высоте основания и показателя
-
+	int height = firstChild->GetRect().GetHeight() - getExponentHeight( 4 * firstChild->GetRect().GetHeight() / 3 ) + secondChild->GetRect().GetHeight();
+	
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
 }
 
-void CDegrControlModel::PlaceChildren( )
+void CDegrControlModel::PlaceChildren()
 {
 	CRect newRect;
 
@@ -35,45 +36,50 @@ void CDegrControlModel::PlaceChildren( )
 	newRect.Left() = secondChild->GetRect().Right();
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
-
 }
 
-int CDegrControlModel::GetMiddle( ) const
+int CDegrControlModel::GetMiddle() const
 {
 	return (rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle());
 }
 
 void CDegrControlModel::InitializeChildren()
 {
-	CRect childRect = CRect(0, 0, 0, rect.GetHeight());
-	firstChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect firstChildRect = CRect( 0, 0, 0, 3 * getExponentHeight( rect.GetHeight() ) );
+	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	firstChild->InitializeChildren();
 
-	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	secondChild->InitializeChildren();
 
 	Resize();
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CDegrControlModel::SetRect(CRect rect) {
+void CDegrControlModel::SetRect(CRect rect) 
+{
 	this->rect = rect;
 }
 
-ViewType CDegrControlModel::GetType() const {
+ViewType CDegrControlModel::GetType() const 
+{
 	return DEGR;
 }
 
-void CDegrControlModel::MoveBy(int dx, int dy) {
+void CDegrControlModel::MoveBy(int dx, int dy) 
+{
 	rect.MoveBy(dx, dy);
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const 
+{
 	// Если пришли из показателя - идём в основание
 	if( from == firstChild) {
 		secondChild->GoLeft( shared_from_this( ), caret );
@@ -87,7 +93,8 @@ void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCar
 	}
 }
 
-void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const 
+{
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock() ) {
 		secondChild->GoRight( shared_from_this( ), caret );
@@ -99,4 +106,10 @@ void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCa
 		// Иначе идем наверх
 		parent.lock()->GoRight( shared_from_this( ), caret );
 	}
+}
+
+// Высота выступающего над основанием показателя степени
+int CDegrControlModel::getExponentHeight( int rectHeight )
+{
+	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
 }

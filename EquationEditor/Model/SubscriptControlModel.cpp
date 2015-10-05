@@ -4,15 +4,16 @@
 
 #include <string>
 
-CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {
+CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
+{
 	this->parent = parent;
 	this->rect = rect;
 }
 
 void CSubscriptControlModel::Resize()
 {
-	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 5;
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - 15; // -15 для пересечения по высоте основания и показателя
+	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth();
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - getSubscriptHeight( 4 * secondChild->GetRect().GetHeight() / 3 );
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -46,35 +47,41 @@ int CSubscriptControlModel::GetMiddle() const
 
 void CSubscriptControlModel::InitializeChildren()
 {
-	CRect childRect = CRect(0, 0, 0, rect.GetHeight());
-	firstChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect firstChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	firstChild->InitializeChildren();
 
-	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect secondChildRect = CRect( 0, 0, 0, 3 * getSubscriptHeight( rect.GetHeight() ) );
+	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	secondChild->InitializeChildren();
 
 	Resize();
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CSubscriptControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CSubscriptControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CSubscriptControlModel::SetRect(CRect rect) {
+void CSubscriptControlModel::SetRect(CRect rect) 
+{
 	this->rect = rect;
 }
 
-ViewType CSubscriptControlModel::GetType() const {
+ViewType CSubscriptControlModel::GetType() const 
+{
 	return SUBSCRIPT;
 }
 
-void CSubscriptControlModel::MoveBy(int dx, int dy) {
+void CSubscriptControlModel::MoveBy(int dx, int dy) 
+{
 	rect.MoveBy(dx, dy);
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CSubscriptControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+void CSubscriptControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+{
 	// Если пришли из индекса - идём в основание
 	if (from == secondChild) {
 		firstChild->GoLeft(shared_from_this(), caret);
@@ -104,3 +111,7 @@ void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from,
 	}
 }
 
+// Высота выступающего снизу индекса
+int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
+	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
+}

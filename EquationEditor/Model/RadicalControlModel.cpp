@@ -5,7 +5,8 @@
 
 #include <string>
 
-CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) {
+CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
+{
 	this->parent = parent;
 	this->rect = rect;
 
@@ -37,34 +38,36 @@ void CRadicalControlModel::PlaceChildren()
 	newRect.Left() = firstChild->GetRect().Right() + 15;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	secondChild->SetRect(newRect);
-
 }
 
 int CRadicalControlModel::GetMiddle() const
 {
 	return rect.GetHeight() - secondChild->GetRect().GetHeight() / 2;//rect.GetHeight() - 0.5 * MAX(secondChild->GetRect().GetHeight(), rect.Bottom() - secondChild->GetRect().Top());
-
 }
 
 void CRadicalControlModel::InitializeChildren()
 {
-	CRect childRect = CRect(0, 0, 5, rect.GetHeight());
-	firstChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect firstChildRect = CRect( 0, 0, 5, 3 * getIndexHeight( rect.GetHeight() ) );
+	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	firstChild->InitializeChildren();
 
-	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+	CRect secondChildRect = CRect( 0, 0, 5, rect.GetHeight() );
+	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
 	secondChild->InitializeChildren();
 
-	CRect newRect = CRect(rect.Left(), rect.Top(), rect.Left()+ 2*childRect.GetWidth() + 15, rect.Top() + childRect.GetHeight() + 7);
+	CRect newRect = CRect( rect.Left(), rect.Top(), rect.Left() + firstChildRect.GetWidth() + secondChildRect.GetWidth(),
+		rect.Top() + secondChildRect.GetHeight() + getIndexHeight( rect.GetHeight() ) );
 	SetRect(newRect);
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CRadicalControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CRadicalControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CRadicalControlModel::SetRect(CRect rect) {
+void CRadicalControlModel::SetRect(CRect rect) 
+{
 	this->rect = rect;
 	this->params.polygon.clear();
 	this->params.polygon.push_back( CLine(firstChild->GetRect().Right() + 15, rect.Top(), rect.Right(), rect.Top()) );
@@ -72,18 +75,21 @@ void CRadicalControlModel::SetRect(CRect rect) {
 	this->params.polygon.push_back( CLine(firstChild->GetRect().Right(), rect.Bottom(), firstChild->GetRect().Right() + 15, rect.Top()) );
 }
 
-ViewType CRadicalControlModel::GetType() const {
+ViewType CRadicalControlModel::GetType() const 
+{
 	return RADICAL;
 }
 
-void CRadicalControlModel::MoveBy(int dx, int dy) {
+void CRadicalControlModel::MoveBy(int dx, int dy) 
+{
 	rect.MoveBy(dx, dy);
 	for (CLine line : this->params.polygon) {
 		line.MoveBy(dx, dy);
 	}
 }
 
-void CRadicalControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+void CRadicalControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+{
 	// Если пришли из индекса - идём в основание
 	if (from == secondChild) {
 		firstChild->GoLeft(shared_from_this(), caret);
@@ -98,7 +104,8 @@ void CRadicalControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CC
 	}
 }
 
-void CRadicalControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+void CRadicalControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+{
 	// Если пришли из родителя - идем в основание
 	if (from == parent.lock()) {
 		firstChild->GoRight(shared_from_this(), caret);
@@ -113,3 +120,7 @@ void CRadicalControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, C
 	}
 }
 
+// Высота выступающего над основанием показателя степени
+int CRadicalControlModel::getIndexHeight( int rectHeight ) {
+	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
+}

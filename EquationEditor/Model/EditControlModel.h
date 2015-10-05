@@ -36,8 +36,8 @@ public:
 	// Возвращает позицию символа на экране по его номеру
 	int GetSymbolPointByNumber( int number ) const;
 
-	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
-	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;

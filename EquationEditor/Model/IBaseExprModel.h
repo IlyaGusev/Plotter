@@ -23,7 +23,7 @@ struct CDrawParams {
 	{
 	}
 
-	CDrawParams( std::wstring _text, std::list<CLine> _polygon, bool _isHightlighted ) :
+	CDrawParams( const std::wstring& _text, std::list<CLine> _polygon, bool _isHightlighted ) :
 		text( _text ),
 		polygon( _polygon ),
 		isHightlighted( _isHightlighted )
@@ -38,6 +38,11 @@ protected:
 	CRect rect;
 	CDrawParams params;
 
+	IBaseExprModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+		parent( parent ),
+		rect( rect ) 
+	{
+	}
 public:
 	virtual ~IBaseExprModel()
 	{
@@ -52,7 +57,7 @@ public:
 	virtual void InitializeChildren() = 0;
 
 	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
-	virtual void SetRect( CRect rect );
+	virtual void SetRect( const CRect& rect );
 	// Просто выставляет размеры прямоугольника
 	virtual CRect GetRect();
 	// Двигает прямоугольник со всеми относящимися к нему дочерними элементами 
@@ -80,8 +85,8 @@ public:
 	virtual ViewType GetType() const = 0;
 
 	// Сдвигает каретку в нужную сторону относительно from
-	virtual void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const = 0;
-	virtual void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const = 0;
+	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const = 0;
+	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -99,7 +104,7 @@ inline CRect IBaseExprModel::GetRect()
 	return rect;
 }
 
-inline void IBaseExprModel::SetRect( CRect rect )
+inline void IBaseExprModel::SetRect( const CRect& rect )
 {
 	this->rect = rect;
 }

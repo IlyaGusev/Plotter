@@ -7,7 +7,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 {
 	CRect rect(20, 20, 30, 40);
 
-	root = std::make_shared<CExprControlModel>( CExprControlModel( rect, std::weak_ptr<IBaseExprModel>() ) );
+	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
 	root->InitializeChildren();
 	caret.SetCurEdit( root->GetChildren().front() );
 
@@ -128,12 +128,12 @@ void CEquationPresenter::SetCaret( int x, int y )
 }
 
 void CEquationPresenter::MoveCaretLeft() {
-	caret.GetCurEdit()->GoLeft( caret.GetCurEdit(), caret );
+	caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret );
 	view.Redraw();
 }
 
 void CEquationPresenter::MoveCaretRight() {
-	caret.GetCurEdit()->GoRight( caret.GetCurEdit(), caret );
+	caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret );
 	view.Redraw();
 }
 

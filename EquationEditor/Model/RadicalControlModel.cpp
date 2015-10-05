@@ -5,10 +5,9 @@
 
 #include <string>
 
-CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
+CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+	IBaseExprModel(rect, parent)
 {
-	this->parent = parent;
-	this->rect = rect;
 }
 
 void CRadicalControlModel::Resize()
@@ -47,11 +46,11 @@ int CRadicalControlModel::GetMiddle() const
 void CRadicalControlModel::InitializeChildren()
 {
 	CRect firstChildRect = CRect( 0, 0, 5, 3 * getIndexHeight( rect.GetHeight() ) );
-	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
 	CRect secondChildRect = CRect( 0, 0, 5, rect.GetHeight() );
-	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
 
 	CRect newRect = CRect( rect.Left(), rect.Top(), rect.Left() + firstChildRect.GetWidth() + secondChildRect.GetWidth(),
@@ -65,7 +64,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CRadicalControlModel::GetChildren() c
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CRadicalControlModel::SetRect(CRect rect) 
+void CRadicalControlModel::SetRect(const CRect& rect) 
 {
 	this->rect = rect;
 	this->params.polygon.clear();
@@ -87,35 +86,35 @@ void CRadicalControlModel::MoveBy(int dx, int dy)
 	}
 }
 
-void CRadicalControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
 {
 	// Если пришли из индекса - идём в основание
-	if (from == secondChild) {
-		firstChild->GoLeft(shared_from_this(), caret);
+	if( from == secondChild.get() ) {
+		firstChild->MoveCaretLeft( this, caret );
 	}
 	//если пришли из родителя - идём в индекс
-	else if (from == parent.lock()) {
-		secondChild->GoLeft(shared_from_this(), caret);
+	else if( from == parent.lock().get() ) {
+		secondChild->MoveCaretLeft( this, caret );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->GoLeft(shared_from_this(), caret);
+		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CRadicalControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const 
 {
 	// Если пришли из родителя - идем в основание
-	if (from == parent.lock()) {
-		firstChild->GoRight(shared_from_this(), caret);
+	if( from == parent.lock().get() ) {
+		firstChild->MoveCaretRight( this, caret );
 	}
 	//если из основания - в индекс
-	else if (from == firstChild) {
-		secondChild->GoRight(shared_from_this(), caret);
+	else if( from == firstChild.get() ) {
+		secondChild->MoveCaretRight( this, caret );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->GoRight(shared_from_this(), caret);
+		parent.lock()->MoveCaretRight( this, caret );
 	}
 }
 

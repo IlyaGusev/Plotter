@@ -1,9 +1,8 @@
 ﻿#include "Model/EditControlModel.h"
 
-CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) 
+CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) :
+	IBaseExprModel(rect, parent)
 {
-	this->parent = parent;
-	this->rect = rect;
 	this->params.isHightlighted = isHightlighted;
 	if( rect.GetWidth() < 10 ) {
 		rect.Right() = rect.Left() + 10;
@@ -103,9 +102,9 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 	return offset;
 }
 
-void CEditControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом конце
-	if( from.get() != this ) {
+	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>( shared_from_this() ) );
 		caret.Offset() = symbolsWidths.size();
 		return;
@@ -114,13 +113,13 @@ void CEditControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCar
 	if( caret.Offset() > 0 ) {
 		--caret.Offset();
 	} else {
-		parent.lock()->GoLeft( shared_from_this(), caret );
+		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CEditControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом начале
-	if( from.get() != this ) {
+	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>(shared_from_this()) );
 		caret.Offset() = 0;
 		return;
@@ -129,6 +128,6 @@ void CEditControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCa
 	if( caret.Offset() < symbolsWidths.size() ) {
 		++caret.Offset();
 	} else {
-		parent.lock()->GoRight( shared_from_this(), caret );
+		parent.lock()->MoveCaretRight( this, caret );
 	}
 }

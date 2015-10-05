@@ -148,7 +148,6 @@
   <ItemGroup>
     <None Include="..\..\..\mathTranslation\mathTranslation\mathTranslation\mathTranslation.vcxproj.filters" />
     <None Include="lexer.l" />
-    <None Include="parser.y" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="addNode.cpp" />
@@ -157,20 +156,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="multNode.cpp" />
     <ClCompile Include="Node.cpp" />
-    <ClCompile Include="parser.c" />
     <ClCompile Include="subNode.cpp" />
-    <ClCompile Include="Test.c" />
     <ClCompile Include="variableNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="addNode.h" />
     <ClInclude Include="divNode.h" />
-    <ClInclude Include="lexer.h" />
+    <ClInclude Include="FlexLexer.h" />
     <ClInclude Include="multNode.h" />
     <ClInclude Include="Node.h" />
-    <ClInclude Include="parser.h" />
     <ClInclude Include="subNode.h" />
-    <ClInclude Include="Test.h" />
     <ClInclude Include="variableNode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

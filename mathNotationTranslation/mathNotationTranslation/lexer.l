@@ -1,50 +1,49 @@
-%{
- 
-/*
- * Lexer.l file
- * To generate the lexical analyzer run: "flex Lexer.l"
- */
- 
-#include "Test.h"
-#include "parser.h"
+%option c++
+%option noyywrap
 
-#include <stdio.h>
- 
+%{
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+
+using namespace std;
+
+FlexLexer* lexer = new yyFlexLexer();
+int curLineNum = 0;
+int curPosInLine = 0;
+
+void incrCurPos(int symNumber) {
+    curPosInLine += symNumber;
+}
+
 %}
 
-%option outfile="Lexer.c" header-file="Lexer.h"
-%option warn nodefault
- 
-%option reentrant noyywrap never-interactive nounistd
-%option bison-bridge
- 
-LPAREN      "("
-RPAREN      ")"
-PLUS        "+"
-MULTIPLY    "*"
-DIVIDE		"/"
-MINUS		"-"
- 
-NUMBER      [-+]?[0-9]*\.?[0-9]+
-WS          [ \r\n\t]*
+IDENT   [A-Za-z_][A-Za-z0-9_]*
+INT     [0-9]+
+FLOAT	[0-9]+(\.[0-9]+)?
+SPACE   [ \t]+
+LINE_SEPARATOR [\n]+
 
-LNUMBER		"<mn>"
-RNUMBER		"</mn>"
 
-LOPER		"<mo>"
-ROPER		"</mo>"
- 
 %%
- 
-{WS}            { /* Skip blanks. */ }
-{NUMBER}/{RNUMBER}        { sscanf_s(yytext, "%d", &yylval->value); return TOKEN_NUMBER; }
- 
-{MULTIPLY}/{ROPER}     { return TOKEN_MULTIPLY; }
-{PLUS}/{ROPER}          { return TOKEN_PLUS; }
-{MINUS}/{ROPER}	{ return TOKEN_MINUS; }
-{DIVIDE}/{ROPER}	{ return TOKEN_DIVIDE; }
-{LPAREN}        { return TOKEN_LPAREN; }
-{RPAREN}        { return TOKEN_RPAREN; }
-.               {  }
- 
+
+{INT}       {
+                std::cout << "INT(" << atoi(yytext) << ") ";
+            }
+
+
+{FLOAT}		{
+                std::cout << "FLOAT(" << atof(yytext) << ") ";
+			}
+
+{IDENT}     {   
+                curPosInLine += yyleng;
+                std::cout << "IDENT(" << yytext << ") ";
+            }
+
+{SPACE}     {   ++curPosInLine;    }
+
+{LINE_SEPARATOR}    {}
+.           { }       
+
 %%

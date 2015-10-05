@@ -36,7 +36,7 @@ typedef struct tagSExpression
 * @param value The number value
 * @return The expression or NULL in case of no memory
 */
-SExpression *createNumber(int value);
+SExpression *createNumber(double value);
 
 /**
 * @brief It creates an operation

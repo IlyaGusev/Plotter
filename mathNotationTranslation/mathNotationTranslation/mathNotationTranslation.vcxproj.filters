@@ -17,7 +17,6 @@
   <ItemGroup>
     <None Include="..\..\..\mathTranslation\mathTranslation\mathTranslation\mathTranslation.vcxproj.filters" />
     <None Include="lexer.l" />
-    <None Include="parser.y" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="addNode.cpp">
@@ -26,28 +25,22 @@
     <ClCompile Include="divNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="multNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="parser.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="subNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Test.c">
+    <ClCompile Include="variableNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="variableNode.cpp">
+    <ClCompile Include="Lexer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -58,25 +51,19 @@
     <ClInclude Include="divNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lexer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="multNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="parser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="subNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Test.h">
+    <ClInclude Include="variableNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="variableNode.h">
+    <ClInclude Include="FlexLexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

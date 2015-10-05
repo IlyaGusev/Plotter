@@ -27,7 +27,7 @@ static SExpression *allocateExpression()
 	return b;
 }
 
-SExpression *createNumber(int value)
+SExpression *createNumber(double value)
 {
 	SExpression *b = allocateExpression();
 

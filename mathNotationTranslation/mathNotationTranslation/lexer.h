@@ -168,30 +168,30 @@ struct yy_buffer_state
 	 * and can realloc() it to grow it, and should free() it to
 	 * delete it.
 	 */
-	int yy_is_our_buffer;
+	double yy_is_our_buffer;
 
 	/* Whether this is an "interactive" input source; if so, and
 	 * if we're using stdio for input, then we want to use getc()
 	 * instead of fread(), to make sure we stop fetching input after
 	 * each newline.
 	 */
-	int yy_is_interactive;
+	double yy_is_interactive;
 
 	/* Whether we're considered to be at the beginning of a line.
 	 * If so, '^' rules will be active on the next match, otherwise
 	 * not.
 	 */
-	int yy_at_bol;
+	double yy_at_bol;
 
-    int yy_bs_lineno; /**< The line count. */
-    int yy_bs_column; /**< The column count. */
+	double yy_bs_lineno; /**< The line count. */
+	double yy_bs_column; /**< The column count. */
     
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
-	int yy_fill_buffer;
+	double yy_fill_buffer;
 
-	int yy_buffer_status;
+	double yy_buffer_status;
 
 	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
@@ -335,7 +335,7 @@ extern int yylex \
 #undef YY_DECL
 #endif
 
-#line 49 "lexer.l"
+#line 51 "lexer.l"
 
 
 #line 342 "Lexer.h"

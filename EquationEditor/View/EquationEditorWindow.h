@@ -51,9 +51,10 @@ private:
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
 
     static const wchar_t* const className;
+	
+	std::shared_ptr<CEquationPresenter> presenter;
 
     static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
-	WNDPROC originEditControlProc;
 
-    std::shared_ptr<CEquationPresenter> presenter;
+	HFONT getFont( int height );
 };

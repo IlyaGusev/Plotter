@@ -6,10 +6,7 @@
 // Модель для степени
 class CRadicalControlModel : public IBaseExprModel {
 public:
-	CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent);
-	~CRadicalControlModel()
-	{
-	}
+	CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent); 
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
 	void InitializeChildren( );
@@ -20,15 +17,15 @@ public:
 
 	int GetMiddle() const;
 
-	void SetRect(CRect rect);
+	void SetRect(const CRect& rect);
 
 	ViewType GetType( ) const;
 	
 	void MoveBy(int dx, int dy);
 
-	void GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const;
+	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const;
 
-	void GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const;
+	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const;
 
 	int getIndexHeight( int rectHeight );
 private:

@@ -4,10 +4,9 @@
 
 #include <string>
 
-CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
+CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+	IBaseExprModel(rect, parent)
 {
-	this->parent = parent;
-	this->rect = rect;
 }
 
 void CSubscriptControlModel::Resize()
@@ -48,11 +47,11 @@ int CSubscriptControlModel::GetMiddle() const
 void CSubscriptControlModel::InitializeChildren()
 {
 	CRect firstChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
 	CRect secondChildRect = CRect( 0, 0, 0, 3 * getSubscriptHeight( rect.GetHeight() ) );
-	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
 
 	Resize();
@@ -64,7 +63,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CSubscriptControlModel::GetChildren()
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CSubscriptControlModel::SetRect(CRect rect) 
+void CSubscriptControlModel::SetRect(const CRect& rect) 
 {
 	this->rect = rect;
 }
@@ -80,34 +79,34 @@ void CSubscriptControlModel::MoveBy(int dx, int dy)
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CSubscriptControlModel::GoLeft(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const 
+void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
 {
 	// Если пришли из индекса - идём в основание
-	if (from == secondChild) {
-		firstChild->GoLeft(shared_from_this(), caret);
+	if( from == secondChild.get() ) {
+		firstChild->MoveCaretLeft( this, caret );
 	}
 	//если пришли из родителя - идём в индекс
-	else if (from == parent.lock()) {
-		secondChild->GoLeft(shared_from_this(), caret);
+	else if( from == parent.lock().get() ) {
+		secondChild->MoveCaretLeft( this, caret );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->GoLeft(shared_from_this(), caret);
+		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CSubscriptControlModel::GoRight(std::shared_ptr<const IBaseExprModel> from, CCaret& caret) const {
+void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const {
 	// Если пришли из родителя - идем в основание
-	if (from == parent.lock()) {
-		firstChild->GoRight(shared_from_this(), caret);
+	if( from == parent.lock().get() ) {
+		firstChild->MoveCaretRight( this, caret );
 	}
 	//если из основания - в индекс
-	else if (from == firstChild) {
-		secondChild->GoRight(shared_from_this(), caret);
+	else if( from == firstChild.get() ) {
+		secondChild->MoveCaretRight( this, caret );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->GoRight(shared_from_this(), caret);
+		parent.lock()->MoveCaretRight( this, caret );
 	}
 }
 

@@ -15,7 +15,7 @@ public:
 	// Высота дроби - две высоты соседнего текстового поля + 5
 	void InitializeChildren();
 
-	virtual void SetRect( CRect rect );
+	virtual void SetRect( const CRect& rect );
 
 	void Resize();
 
@@ -27,8 +27,8 @@ public:
 
 	void MoveBy( int dx, int dy );
 
-	void GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
-	void GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

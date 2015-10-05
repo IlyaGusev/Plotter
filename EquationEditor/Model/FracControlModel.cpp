@@ -3,9 +3,10 @@
 
 #include <string>
 
-CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) {
-	this->parent = parent;
-	this->rect = CRect( 0, 0, 0, rect.GetHeight() );
+CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel(rect, parent)
+{
+	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
 }
 
@@ -47,10 +48,10 @@ int CFracControlModel::GetMiddle( ) const
 void CFracControlModel::InitializeChildren()
 {
 	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
-	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
-	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	secondChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
 
 	Resize();
@@ -61,7 +62,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() cons
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( CRect rect ) {
+void CFracControlModel::SetRect( const CRect& rect ) {
 	this->rect = rect;
 	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
 	::OutputDebugString( std::to_wstring( GetRect().Top() + GetMiddle() ).c_str() );
@@ -83,22 +84,22 @@ void CFracControlModel::MoveBy( int dx, int dy ) {
 	params.polygon.front().MoveBy( dx, dy );
 }
 
-void CFracControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
 	// Если пришли из родителя - идем в верхнего ребенка
-	if( from == parent.lock() ) {
-		firstChild->GoLeft( shared_from_this(), caret );
+	if( from == parent.lock().get() ) {
+		firstChild->MoveCaretLeft( this, caret );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->GoLeft( shared_from_this(), caret );
+		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CFracControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const {
+void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
 	// Если пришли из родителя - идем в верхнего ребенка
-	if( from == parent.lock() ) {
-		firstChild->GoRight( shared_from_this(), caret );
+	if( from == parent.lock().get() ) {
+		firstChild->MoveCaretRight( this, caret );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->GoRight( shared_from_this(), caret );
+		parent.lock()->MoveCaretRight( this, caret );
 	}
 }

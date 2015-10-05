@@ -4,12 +4,6 @@
 
 #include <string>
 
-CDegrControlModel::CDegrControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) 
-{
-	this->parent = parent;
-	this->rect = rect;
-}
-
 void CDegrControlModel::Resize()
 {
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth();
@@ -46,11 +40,11 @@ int CDegrControlModel::GetMiddle() const
 void CDegrControlModel::InitializeChildren()
 {
 	CRect firstChildRect = CRect( 0, 0, 0, 3 * getExponentHeight( rect.GetHeight() ) );
-	firstChild = std::make_shared<CExprControlModel>( CExprControlModel( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
 	CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	secondChild = std::make_shared<CExprControlModel>( CExprControlModel( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) ) );
+	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
 
 	Resize();
@@ -62,7 +56,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() cons
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CDegrControlModel::SetRect(CRect rect) 
+void CDegrControlModel::SetRect(const CRect& rect) 
 {
 	this->rect = rect;
 }
@@ -78,33 +72,33 @@ void CDegrControlModel::MoveBy(int dx, int dy)
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CDegrControlModel::GoLeft( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const 
 {
 	// Если пришли из показателя - идём в основание
-	if( from == firstChild) {
-		secondChild->GoLeft( shared_from_this( ), caret );
+	if( from == firstChild.get() ) {
+		secondChild->MoveCaretLeft( this, caret );
 	}
 	//если пришли из родителя - идём в показатель
-	else if (from == parent.lock()) {
-		firstChild->GoLeft(shared_from_this(), caret);
+	else if ( from == parent.lock().get() ) {
+		firstChild->MoveCaretLeft( this, caret );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->GoLeft( shared_from_this(), caret );
+		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CDegrControlModel::GoRight( std::shared_ptr<const IBaseExprModel> from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const 
 {
 	// Если пришли из родителя - идем в основание
-	if( from == parent.lock() ) {
-		secondChild->GoRight( shared_from_this( ), caret );
+	if( from == parent.lock().get() ) {
+		secondChild->MoveCaretRight( this, caret );
 	}
 	//если из основания - в показатель
-	else if (from == secondChild) {
-		firstChild->GoRight(shared_from_this(), caret);
+	else if( from == secondChild.get() ) {
+		firstChild->MoveCaretRight( this, caret );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->GoRight( shared_from_this( ), caret );
+		parent.lock()->MoveCaretRight( this, caret );
 	}
 }
 

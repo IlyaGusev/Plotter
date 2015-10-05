@@ -39,11 +39,15 @@ typedef void* yyscan_t;
  
 %left '+' TOKEN_PLUS
 %left '*' TOKEN_MULTIPLY
+%left '/' TOKEN_DIVIDE
+%left '-' TOKEN_MINUS
  
 %token TOKEN_LPAREN
 %token TOKEN_RPAREN
 %token TOKEN_PLUS
 %token TOKEN_MULTIPLY
+%token TOKEN_MINUS
+%token TOKEN_DIVIDE
 %token <value> TOKEN_NUMBER
 
 %type <expression> expr
@@ -57,6 +61,8 @@ input
 expr
     : expr[L] TOKEN_PLUS expr[R] { $$ = createOperation( ePLUS, $L, $R ); }
     | expr[L] TOKEN_MULTIPLY expr[R] { $$ = createOperation( eMULTIPLY, $L, $R ); }
+	| expr[L] TOKEN_DIVIDE expr[R] { $$ = createOperation( eDIVIDE, $L, $R ); }
+	| expr[L] TOKEN_MINUS expr[R] { $$ = createOperation ( eMINUS, $L, $R ); }
     | TOKEN_LPAREN expr[E] TOKEN_RPAREN { $$ = $E; }
     | TOKEN_NUMBER { $$ = createNumber($1); }
     ;

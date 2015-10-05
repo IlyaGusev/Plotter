@@ -12,8 +12,12 @@ typedef enum tagEOperationType
 {
 	eVALUE,
 	eMULTIPLY,
-	ePLUS
+	ePLUS,
+	eMINUS,
+	eDIVIDE,
+	eCOUNT
 } EOperationType;
+static_assert(eCOUNT == 5, "OH SHIT");
 
 /**
 * @brief The expression structure

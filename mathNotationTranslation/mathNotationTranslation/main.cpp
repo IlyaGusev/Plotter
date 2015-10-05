@@ -43,6 +43,10 @@ int evaluate(SExpression *e)
 		return evaluate(e->left) * evaluate(e->right);
 	case ePLUS:
 		return evaluate(e->left) + evaluate(e->right);
+	case eMINUS:
+		return evaluate(e->left) - evaluate(e->right);
+	case eDIVIDE:
+		return evaluate(e->left) / evaluate(e->right);
 	default:
 		// shouldn't be here
 		return 0;
@@ -52,7 +56,7 @@ int evaluate(SExpression *e)
 int main()
 {
 	SExpression *e = NULL;
-	char test[] = " 4 + 2*10 + 3*( 5 + 1 )";
+	char test[] = "<mn>5</mn> <mo>+</mo> <mn>5</mn> <mo>/</mo> <mn>5</mn>";
 	int result = 0;
 
 	e = getAST(test);

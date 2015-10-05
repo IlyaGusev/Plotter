@@ -62,9 +62,11 @@ typedef void* yyscan_t;
    enum yytokentype {
      TOKEN_PLUS = 258,
      TOKEN_MULTIPLY = 259,
-     TOKEN_LPAREN = 260,
-     TOKEN_RPAREN = 261,
-     TOKEN_NUMBER = 262
+     TOKEN_DIVIDE = 260,
+     TOKEN_MINUS = 261,
+     TOKEN_LPAREN = 262,
+     TOKEN_RPAREN = 263,
+     TOKEN_NUMBER = 264
    };
 #endif
 
@@ -80,7 +82,7 @@ typedef union YYSTYPE
 
 
 /* Line 2058 of yacc.c  */
-#line 84 "Parser.h"
+#line 86 "Parser.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

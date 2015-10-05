@@ -1,9 +1,13 @@
-#include <stdio.h>
+#include <iostream>
+#include <fstream>  
 #include "lex.yy.cc"
+
 
 int main(int argc, char** argv) {
 	filebuf fb;
-	istream is(fb.open("input.txt", ios::in));
-	lexer->yylex(&is, &cout);
-	std::cout << "EOF" << std::endl;
+	argv[1] = "input.txt";
+	istream is(fb.open(argv[1], ios::in));
+	int tok;
+	while (tok = lexer->yylex(&is, &cout)) {
+	}
 }

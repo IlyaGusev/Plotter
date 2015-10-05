@@ -9,41 +9,123 @@
 using namespace std;
 
 FlexLexer* lexer = new yyFlexLexer();
-int curLineNum = 0;
-int curPosInLine = 0;
 
-void incrCurPos(int symNumber) {
-    curPosInLine += symNumber;
-}
+enum yytokentype {
+	NUMBER,
+	ID,
+	ADD,
+	MUL,
+	SUB,
+	DIV,
+	LOPER,
+	ROPER,
+	LNUM,
+	RNUM,
+	LID,
+	RID,
+	LROW,
+	RROW,
+	LROOT,
+	RROOT,
+	LFRAC,
+	RFRAC,
+	LSQRT,
+	RSQRT,
+	LSUP,
+	RSUP
+   };
 
 %}
 
 IDENT   [A-Za-z_][A-Za-z0-9_]*
-INT     [0-9]+
-FLOAT	[0-9]+(\.[0-9]+)?
-SPACE   [ \t]+
-LINE_SEPARATOR [\n]+
+NUMBER	[0-9]+(\.[0-9]+)?
+WHITESPACE  [ \t\f\r]
+
+ADD		"+"
+MUL		"*"
+SUB		"-"
+DIV		"/"
+LOPER	"<mo>"
+ROPER	"</mo>"
+LNUM	"<mn>"
+RNUM	"</mn>"
+LID		"<mi>"
+RID		"</mi>"
+LROW	"<mrow>"
+RROW	"</mrow>"
+LROOT	"<mroot>"
+RROOT	"</mroot>"
+LFRAC	"<mfrac>"
+RFRAC	"</mfrac>"
+LSQRT	"<msqrt>"
+RSQRT	"</msqrt>"
+LSUP	"<msup>"
+RSUP	"</msup>"
 
 
 %%
 
-{INT}       {
-                std::cout << "INT(" << atoi(yytext) << ") ";
-            }
+{ADD}	{
+                return ADD;
+			}
 
+{MUL} {
+				return MUL;
+			}
 
-{FLOAT}		{
-                std::cout << "FLOAT(" << atof(yytext) << ") ";
+{SUB} {
+                return SUB;
+			}
+
+{DIV} {
+                return DIV;
+			}
+
+{NUMBER}		{
+                return NUMBER;
 			}
 
 {IDENT}     {   
-                curPosInLine += yyleng;
-                std::cout << "IDENT(" << yytext << ") ";
+                return ID;
+            }
+{LOPER}     {   
+                return LOPER;
+            }
+{ROPER}     {   
+                return ROPER;
+            }
+{LID}     {   
+                return LID;
+            }
+{RID}     {   
+                return RID;
+            }
+{LROW}     {   
+                return LROW;
+            }
+{RROW}     {   
+                return RROW;
+            }
+{LFRAC}     {   
+                return LFRAC;
+            }
+{RFRAC}     {   
+                return RFRAC;
+            }
+{LSQRT}     {   
+                return LSQRT;
+            }
+{RSQRT}     {   
+                return RSQRT;
+            }
+{LSUP}     {   
+                return LSUP;
+            }
+{RSUP}     {   
+                return RSUP;
             }
 
-{SPACE}     {   ++curPosInLine;    }
-
-{LINE_SEPARATOR}    {}
-.           { }       
+{WHITESPACE}     {}
+.           { }    
 
 %%

@@ -150,23 +150,19 @@
     <None Include="lexer.l" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="addNode.cpp" />
-    <ClCompile Include="divNode.cpp" />
-    <ClCompile Include="Lexer.c" />
+    <ClCompile Include="arithmeticNode.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="multNode.cpp" />
     <ClCompile Include="Node.cpp" />
-    <ClCompile Include="subNode.cpp" />
     <ClCompile Include="variableNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="addNode.h" />
-    <ClInclude Include="divNode.h" />
+    <ClInclude Include="arithmeticNode.h" />
     <ClInclude Include="FlexLexer.h" />
-    <ClInclude Include="multNode.h" />
     <ClInclude Include="Node.h" />
-    <ClInclude Include="subNode.h" />
     <ClInclude Include="variableNode.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

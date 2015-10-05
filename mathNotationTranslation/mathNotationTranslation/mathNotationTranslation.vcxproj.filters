@@ -19,45 +19,21 @@
     <None Include="lexer.l" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="addNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="divNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="multNode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Node.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="subNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="variableNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer.c">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="arithmeticNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="addNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="divNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="multNode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="subNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="variableNode.h">
@@ -66,5 +42,11 @@
     <ClInclude Include="FlexLexer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="arithmeticNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
   </ItemGroup>
 </Project>

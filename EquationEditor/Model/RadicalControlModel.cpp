@@ -42,21 +42,20 @@ void CRadicalControlModel::PlaceChildren()
 
 int CRadicalControlModel::GetMiddle() const
 {
-	return rect.GetHeight() - secondChild->GetRect().GetHeight() / 2;//rect.GetHeight() - 0.5 * MAX(secondChild->GetRect().GetHeight(), rect.Bottom() - secondChild->GetRect().Top());
+	return rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle();
 
 }
 
 void CRadicalControlModel::InitializeChildren()
 {
-	CRect childRect = CRect(0, 0, 5, rect.GetHeight());
+	CRect childRect = CRect(0, 0, 0, rect.GetHeight());
 	firstChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
 	firstChild->InitializeChildren();
 
 	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
 	secondChild->InitializeChildren();
 
-	CRect newRect = CRect(rect.Left(), rect.Top(), rect.Left()+ 2*childRect.GetWidth() + 15, rect.Top() + childRect.GetHeight() + 7);
-	SetRect(newRect);
+	Resize();
 	PlaceChildren();
 }
 

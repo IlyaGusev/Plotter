@@ -149,8 +149,7 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent )
 	parent->AddChildAfter( newEditControl, degrModel );
 
 	updateTreeAfterSizeChange();
-	//degrModel->SetRect(degrModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
-
+	
 	view.Redraw();
 }
 
@@ -161,12 +160,10 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	parent->AddChildAfter( subscriptModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
-//	newEditControl->MoveBy( subscriptModel->GetRect().GetWidth(), 0 );
 	parent->AddChildAfter( newEditControl, subscriptModel );
 
 	updateTreeAfterSizeChange();
-	//subscriptModel->SetRect(subscriptModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
-
+	
 	view.Redraw();
 }
 
@@ -178,12 +175,10 @@ void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
 	parent->AddChildAfter( radicalModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
-	newEditControl->MoveBy( radicalModel->GetRect().GetWidth(), 0 );
 	parent->AddChildAfter( newEditControl, radicalModel );
 
 	updateTreeAfterSizeChange();
-	//radicalModel->SetRect(radicalModel->GetRect());		// Костыль: при обходе графа в PlaceChildren у детей еще не задано верное расположение
-
+	
 	view.Redraw();
 }
 

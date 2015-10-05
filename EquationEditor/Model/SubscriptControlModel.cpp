@@ -21,7 +21,6 @@ void CSubscriptControlModel::Resize()
 void CSubscriptControlModel::PlaceChildren()
 {
 	CRect newRect;
-	int middle = (rect.Right() + rect.Left()) / 2;
 
 	CRect oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
@@ -41,21 +40,20 @@ void CSubscriptControlModel::PlaceChildren()
 
 int CSubscriptControlModel::GetMiddle() const
 {
-	return firstChild->GetRect().GetHeight() / 2;
+	return firstChild->GetMiddle();
 
 }
 
 void CSubscriptControlModel::InitializeChildren()
 {
-	CRect childRect = CRect(0, 0, 5, rect.GetHeight());
+	CRect childRect = CRect(0, 0, 0, rect.GetHeight());
 	firstChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
 	firstChild->InitializeChildren();
 
 	secondChild = std::make_shared<CExprControlModel>(CExprControlModel(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
 	secondChild->InitializeChildren();
 
-	CRect newRect = CRect(rect.Left(), rect.Top(), rect.Left()+ 2*childRect.GetWidth() + 5, rect.Top() + 2 * childRect.GetHeight() - 15);
-	SetRect(newRect);
+	Resize();
 	PlaceChildren();
 }
 

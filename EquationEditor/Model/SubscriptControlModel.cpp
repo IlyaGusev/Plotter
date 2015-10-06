@@ -11,8 +11,16 @@ CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseEx
 
 void CSubscriptControlModel::Resize()
 {
+	// стараемся держать мидл индекса на высоте низа индексируемого выражения.
+	// если индекс слишком большой (больше основания), то верх показателя упирается в мидл основания
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth();
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - getSubscriptHeight( 4 * secondChild->GetRect().GetHeight() / 3 );
+	int height = 0;
+	if( firstChild->GetRect().GetHeight() <= secondChild->GetRect().GetHeight() ) {
+		height = firstChild->GetMiddle() + secondChild->GetRect().GetHeight();
+	}
+	else {
+		height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle();
+	}
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -24,18 +32,17 @@ void CSubscriptControlModel::PlaceChildren()
 
 	CRect oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
 	newRect.Left() = rect.Left();
-	newRect.Right() = rect.Left() + oldRect.GetWidth();
+	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
 	
 	oldRect = secondChild->GetRect();
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
+	newRect.Top() = newRect.Bottom() - oldRect.GetHeight();
 	newRect.Left() = firstChild->GetRect().Right();
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	secondChild->SetRect(newRect);
-
 }
 
 int CSubscriptControlModel::GetMiddle() const
@@ -112,5 +119,5 @@ void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& 
 
 // Высота выступающего снизу индекса
 int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
-	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
+	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
 }

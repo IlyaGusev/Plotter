@@ -27,11 +27,10 @@ public:
 	void MoveBy(int dx, int dy);
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+
 private:
 	int getExponentHeight(int rectHeight);
 
-	// Показатель
-	//std::shared_ptr<CExprControlModel> child;
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;
 	// Нижний ребенок

@@ -38,10 +38,12 @@ public:
 
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+
+	static const int MINIMAL_WIDTH = 10;
+	static const int MINIMAL_HEIGHT = 5;
+
 private:
 	// Ширина каждого символа
 	std::vector<int> symbolsWidths;
 	std::list< std::shared_ptr<IBaseExprModel> > children;
-
-	static const int MINIMAL_WIDTH = 10;
 };

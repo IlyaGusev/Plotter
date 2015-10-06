@@ -11,8 +11,8 @@ CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprM
 
 void CEditControlModel::Resize()
 {
-	if( params.text.length() == 0 ) {
-		rect.Right() = rect.Left() + 10;
+	if( params.isHightlighted ) {
+		rect.Right() = rect.Left() + MINIMAL_WIDTH;
 	}
 	else {
 		auto sum = 0;

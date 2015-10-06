@@ -20,6 +20,8 @@ private:
 	std::function<void( Node )> _afterEachChild;
 	std::function<void( Node )> _beforeExit;
 
+	mutable std::queue<Node> internalQueue;
+
 public:
 	// при вызове process процессор начинает обход в ширину с startingNode вниз
 	// при входе в вершину node вызывается afterEnter(node)

@@ -6,8 +6,16 @@
 
 void CDegrControlModel::Resize()
 {
+	// стараемся держать мидл показателя на высоте верха основания.
+	// если показатель слишком большой (больше основания), то низ показателя ложится на мидл основания
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth();
-	int height = firstChild->GetRect().GetHeight() - getExponentHeight( 4 * firstChild->GetRect().GetHeight() / 3 ) + secondChild->GetRect().GetHeight();
+	int height = 0;
+	if( firstChild->GetRect().GetHeight() <= secondChild->GetRect().GetHeight() ) {
+		height = firstChild->GetMiddle() + secondChild->GetRect().GetHeight();
+	}
+	else {
+		height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle();
+	}
 	
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -26,7 +34,7 @@ void CDegrControlModel::PlaceChildren()
 	
 	oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
 	newRect.Left() = secondChild->GetRect().Right();
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
@@ -34,7 +42,7 @@ void CDegrControlModel::PlaceChildren()
 
 int CDegrControlModel::GetMiddle() const
 {
-	return (rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle());
+	return rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle();
 }
 
 void CDegrControlModel::InitializeChildren()
@@ -105,5 +113,5 @@ void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 // Высота выступающего над основанием показателя степени
 int CDegrControlModel::getExponentHeight( int rectHeight )
 {
-	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
+	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
 }

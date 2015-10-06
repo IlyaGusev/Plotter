@@ -30,8 +30,9 @@ public:
 
 	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const;
 
-	int getSubscriptHeight( int rectHeight );
 private:
+	int getSubscriptHeight( int rectHeight );
+
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;
 	// Нижний ребенок

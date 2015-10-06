@@ -55,18 +55,20 @@ std::shared_ptr<IBaseExprModel> CTreeBfsProcessor::Find( const std::function<boo
 		throw std::exception( "starting node is not initialized" );
 	}
 	
-	std::queue<Node> nodeQueue;
-	nodeQueue.push( _startingNode );
+	while( internalQueue.size() > 0 ) {
+		internalQueue.pop();
+	}
+	internalQueue.push( _startingNode );
 	
-	while( nodeQueue.size() > 0 ) {
-		auto currentNode = nodeQueue.front( );
-		nodeQueue.pop( );
+	while( internalQueue.size() > 0 ) {
+		auto currentNode = internalQueue.front();
+		internalQueue.pop();
 		if( predicate( currentNode ) ) {
 			return currentNode;
 		}
 		for( auto child : currentNode->GetChildren( ) ) {
 			if( hint( child ) ) {
-				nodeQueue.push( child );
+				internalQueue.push( child );
 			}
 		}
 	}
@@ -81,18 +83,20 @@ std::list<std::shared_ptr<IBaseExprModel>> CTreeBfsProcessor::FindAll( const std
 	}
 	
 	std::list<Node> result;
-	std::queue<Node> nodeQueue;
-	nodeQueue.push( _startingNode );
+	while( internalQueue.size( ) > 0 ) {
+		internalQueue.pop( );
+	}
+	internalQueue.push( _startingNode );
 
-	while( nodeQueue.size( ) > 0 ) {
-		auto currentNode = nodeQueue.front( );
-		nodeQueue.pop( );
+	while( internalQueue.size( ) > 0 ) {
+		auto currentNode = internalQueue.front( );
+		internalQueue.pop( );
 		if( predicate( currentNode ) ) {
 			result.push_back(currentNode);
 		}
 		for( auto child : currentNode->GetChildren( ) ) {
 			if( hint( child ) ) {
-				nodeQueue.push( child );
+				internalQueue.push( child );
 			}
 		}
 	}
@@ -106,16 +110,18 @@ void CTreeBfsProcessor::Process( ) const
 		throw std::exception( "starting node is not initialized" );
 	}
 
-	std::queue<Node> nodeQueue;
-	nodeQueue.push( _startingNode );
-	while( nodeQueue.size( ) > 0 ) {
-		auto currentNode = nodeQueue.front( );
-		nodeQueue.pop( );
+	while( internalQueue.size( ) > 0 ) {
+		internalQueue.pop( );
+	}
+	internalQueue.push( _startingNode );
+	while( internalQueue.size( ) > 0 ) {
+		auto currentNode = internalQueue.front( );
+		internalQueue.pop( );
 		_afterEnter( currentNode );
 		for( auto child : currentNode->GetChildren( ) ) {
 			_beforeEachChild( child );
 			if( _condition( child ) ) {
-				nodeQueue.push( child );
+				internalQueue.push( child );
 			}
 			_afterEachChild( child );
 		}

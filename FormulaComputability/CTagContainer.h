@@ -14,7 +14,8 @@ class CTagContainer
 {
 public:
     static CTag* getTag(const string& name);
-    static const map< string, unique_ptr< CTag > > tags;
+    static map< string, unique_ptr< CTag > > tags;
+	static void addTag(const string&, CTag*, int);
 private:
 	static map< string, unique_ptr< CTag > > CTagContainerBuild();
 };

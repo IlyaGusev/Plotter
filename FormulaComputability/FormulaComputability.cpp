@@ -1,10 +1,11 @@
-#include "FormulaComputability.h"
+#ifndef _FORMULACOMPUTALILITY_CPP
+#define _FORMULACOMPUTALILITY_CPP
 
+#include "FormulaComputability.h"
 
 FormulaComputability::FormulaComputability()
 {
 }
-
 
 FormulaComputability::~FormulaComputability()
 {
@@ -22,3 +23,5 @@ bool FormulaComputability::checkComputability( const CNode& rootNode )
     }
     return true;
 }
+
+#endif

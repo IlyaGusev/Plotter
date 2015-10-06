@@ -2,7 +2,7 @@
 #include "Tag.h"
 #include "TagQualifiers.h"
 #include "TagFunctions.h"
-
+#include "TagCi.h"
 
 map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 {
@@ -11,7 +11,7 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
     /***********insert here tags*********************/
 
     tagsToFill.emplace( "apply", unique_ptr<CTag>( ( CTag* ) new CTagApply() ) );
-    tagsToFill.emplace( "plus", unique_ptr<CTag>( ( CTag* ) new CTagVarArgFunction<NUMBER, NUMBER>() ) );
+    tagsToFill.emplace( "plus", unique_ptr<CTag>( ( CTag* ) new CTagNArgFunction<NUMBER, NUMBER,2>() ) );
     tagsToFill.emplace( "cn", unique_ptr<CTag>( (CTag*) new CTagCn() ) );
     tagsToFill.emplace( "ci", unique_ptr<CTag>( (CTag*) new CTagCi() ) );
     tagsToFill.emplace( "degree", unique_ptr<CTag>( (CTag*) new CTagQualifiers( DEGREE ) ) );
@@ -25,7 +25,7 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 	return tagsToFill;
 };
 
-const map< string, unique_ptr< CTag > > CTagContainer::tags = CTagContainer::CTagContainerBuild();
+map< string, unique_ptr< CTag > > CTagContainer::tags = CTagContainer::CTagContainerBuild();
 
 
 CTag* CTagContainer::getTag(const string& name)
@@ -35,3 +35,10 @@ CTag* CTagContainer::getTag(const string& name)
 		throw invalid_argument( ( string( "no such tag: " ) + name ) );
 	return foundTagIterator->second.get();
 };
+
+void CTagContainer::addTag(const string& name, CTag* tag, int)
+{
+	if (tags.find(name) != tags.end())
+		throw invalid_argument("identifier " + name + "has already exist");
+	tags[name] = unique_ptr<CTag>(tag);
+}

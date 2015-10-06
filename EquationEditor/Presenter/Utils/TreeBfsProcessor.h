@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <memory>
+#include <queue>
 #include <list>
 
 class IBaseExprModel;

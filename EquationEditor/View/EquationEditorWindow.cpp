@@ -9,6 +9,9 @@ CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
 }
 
 CEquationEditorWindow::~CEquationEditorWindow() {
+	for( auto it = fonts.begin(); it != fonts.end(); ++it ) {
+		::DeleteObject( it->second );
+	}
 }
 
 bool CEquationEditorWindow::RegisterClassW() {
@@ -54,7 +57,7 @@ void CEquationEditorWindow::Redraw() {
 
 int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) {
 	HDC hdc = GetDC( hwnd );
-	::SelectObject( hdc, fonts[symbolHeight] );
+	::SelectObject( hdc, getFont(symbolHeight) );
 	
 	int symbolWidth = 0;
 	::GetCharWidth32( hdc, symbol, symbol, &symbolWidth );
@@ -124,6 +127,13 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 	}
 }
 
+HFONT CEquationEditorWindow::getFont( int height ) {
+	if( fonts[height] == 0 ) {
+		fonts[height] = ::CreateFont( height, 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET,
+			OUT_OUTLINE_PRECIS, CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
+	}
+	return fonts[height];
+}
 
 void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& textRect ) {
 	RECT rect;
@@ -131,11 +141,8 @@ void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& t
 	rect.top = textRect.Top( );
 	rect.left = textRect.Left( );
 	rect.right = textRect.Right( );
-	if( fonts[textRect.GetHeight( )] == 0 ) {
-		fonts[textRect.GetHeight()] = ::CreateFont( textRect.GetHeight( ), 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET, 
-			OUT_OUTLINE_PRECIS, CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
-	}
-	::SelectObject( hdc, fonts[textRect.GetHeight()] );
+	HFONT font = getFont( textRect.GetHeight() );
+	::SelectObject( hdc, font );
 
 	::DrawText( hdc, text.c_str(), text.size(), &rect, DT_LEFT );
 }
@@ -150,10 +157,11 @@ void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon ) {
 }
 
 void CEquationEditorWindow::DrawHightlightedRect( const CRect& controlRect ) {
-	HBRUSH ballHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
-	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, ballHBrush ) );
-	::SetBkMode( hdc, TRANSPARENT );
+	HBRUSH hightlightedHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
+	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, hightlightedHBrush ) );
 	::Rectangle( hdc, controlRect.Left(), controlRect.Bottom(), controlRect.Right(), controlRect.Top() );
+	::SelectObject( hdc, oldBrush );
+	::DeleteObject( hightlightedHBrush );
 }
 
 void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) {

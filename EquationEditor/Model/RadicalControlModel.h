@@ -3,7 +3,7 @@
 #include "Model/ExprControlModel.h"
 
 
-// Модель для степени
+// Модель для корня n-й степени
 class CRadicalControlModel : public IBaseExprModel {
 public:
 	CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent); 
@@ -27,10 +27,12 @@ public:
 
 	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const;
 
-	int getIndexHeight( int rectHeight );
+	int getDegreeHeight( int rectHeight );
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;
 	// Нижний ребенок
 	std::shared_ptr<CExprControlModel> secondChild;
+
+	void updatePolygons();
 };

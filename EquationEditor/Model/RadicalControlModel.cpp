@@ -3,8 +3,6 @@
 #include "Model/Utils/GeneralFunct.h"
 
 
-#include <string>
-
 CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
 	IBaseExprModel(rect, parent)
 {
@@ -12,8 +10,8 @@ CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprMo
 
 void CRadicalControlModel::Resize()
 {
-	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 15; //+15 для знака дроби
-	int height = MAX(secondChild->GetRect().GetHeight(), firstChild->GetRect().GetHeight() + 0.5 * secondChild->GetRect().GetHeight()) + 15; 
+	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 10; // 10 пикселей - ширина галочки
+	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle(), secondChild->GetRect().GetHeight() + 3 ); // 3 - отступ над подкоренным выражением
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -24,18 +22,20 @@ void CRadicalControlModel::PlaceChildren()
 	CRect newRect;
 
 	CRect oldRect = firstChild->GetRect();
-	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Bottom() - 0.5 * secondChild->GetRect().GetHeight();
+	newRect.Bottom() = rect.Top() + GetMiddle() - 3;
+	newRect.Top() = newRect.Bottom() - oldRect.GetHeight();
 	newRect.Left() = rect.Left();
-	newRect.Right() = rect.Left() + oldRect.GetWidth();
+	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
 	
 	oldRect = secondChild->GetRect();
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight();//rect.Bottom() - oldRect.GetHeight();
-	newRect.Left() = firstChild->GetRect().Right() + 15;
+	newRect.Top() = newRect.Bottom() - oldRect.GetHeight();
+	newRect.Left() = firstChild->GetRect().Right() + 10; // 10 - расстояние для галочки
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
-	secondChild->SetRect(newRect);
+	secondChild->SetRect( newRect );
+
+	updatePolygons();
 }
 
 int CRadicalControlModel::GetMiddle() const
@@ -45,7 +45,7 @@ int CRadicalControlModel::GetMiddle() const
 
 void CRadicalControlModel::InitializeChildren()
 {
-	CRect firstChildRect = CRect( 0, 0, 0, 3 * getIndexHeight( rect.GetHeight() ) );
+	CRect firstChildRect = CRect( 0, 0, 0, 3 * getDegreeHeight( rect.GetHeight() ) );
 	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
@@ -65,10 +65,8 @@ std::list<std::shared_ptr<IBaseExprModel>> CRadicalControlModel::GetChildren() c
 void CRadicalControlModel::SetRect(const CRect& rect) 
 {
 	this->rect = rect;
-	this->params.polygon.clear();
-	this->params.polygon.push_back( CLine(firstChild->GetRect().Right() + 15, rect.Top(), rect.Right(), rect.Top()) );
-	this->params.polygon.push_back( CLine(firstChild->GetRect().Right() - 10, rect.Bottom() - 0.5 * rect.GetHeight(), firstChild->GetRect().Right(), rect.Bottom()) );
-	this->params.polygon.push_back( CLine(firstChild->GetRect().Right(), rect.Bottom(), firstChild->GetRect().Right() + 15, rect.Top()) );
+
+	updatePolygons();
 }
 
 ViewType CRadicalControlModel::GetType() const 
@@ -79,18 +77,16 @@ ViewType CRadicalControlModel::GetType() const
 void CRadicalControlModel::MoveBy(int dx, int dy) 
 {
 	rect.MoveBy(dx, dy);
-	for (CLine line : this->params.polygon) {
-		line.MoveBy(dx, dy);
-	}
+	updatePolygons();
 }
 
 void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
 {
-	// Если пришли из индекса - идём в основание
+	// Если пришли из подкоренного выражения - идём в показатель
 	if( from == secondChild.get() ) {
 		firstChild->MoveCaretLeft( this, caret );
 	}
-	//если пришли из родителя - идём в индекс
+	//если пришли из родителя - идём в подкоренное выражение
 	else if( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret );
 	}
@@ -102,11 +98,11 @@ void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& car
 
 void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const 
 {
-	// Если пришли из родителя - идем в основание
+	// Если пришли из родителя - идем в показатель
 	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret );
 	}
-	//если из основания - в индекс
+	// если из показателя - в подкоренное выражение
 	else if( from == firstChild.get() ) {
 		secondChild->MoveCaretRight( this, caret );
 	}
@@ -116,7 +112,22 @@ void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& ca
 	}
 }
 
-// Высота выступающего над основанием показателя степени
-int CRadicalControlModel::getIndexHeight( int rectHeight ) {
-	return rectHeight / 4 > 3 ? rectHeight / 4 : 3;
+// высота показателя степени
+int CRadicalControlModel::getDegreeHeight( int rectHeight )
+{
+	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CRadicalControlModel::updatePolygons()
+{
+	params.polygon.clear();
+	auto firstRect = firstChild->GetRect();
+	auto secondRect = secondChild->GetRect();
+
+	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
+//	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
+	params.polygon.push_back( CLine( firstRect.Right(), firstRect.Bottom(), firstRect.Right() + 5, rect.Bottom() ) );
+	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), rect.Top() + 2 ) );
+	params.polygon.push_back( CLine( secondRect.Left(), rect.Top() + 2, rect.Right(), rect.Top() + 2 ) );
+	params.polygon.push_back( CLine( rect.Right(), rect.Top() + 2, rect.Right(), rect.Top() + 5 ) );
 }

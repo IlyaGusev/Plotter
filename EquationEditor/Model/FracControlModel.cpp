@@ -37,7 +37,8 @@ void CFracControlModel::PlaceChildren()
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
-	params.polygon.front( ).Set( rect.Left( ), rect.Top( ) + GetMiddle( ), rect.Right( ), rect.Top( ) + GetMiddle( ) );
+
+	updatePolygons();
 }
 
 int CFracControlModel::GetMiddle( ) const
@@ -64,7 +65,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() cons
 
 void CFracControlModel::SetRect( const CRect& rect ) {
 	this->rect = rect;
-	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+	updatePolygons();
 	::OutputDebugString( std::to_wstring( GetRect().Top() + GetMiddle() ).c_str() );
 	::OutputDebugString( (LPCWSTR) " " );
 	::OutputDebugString( std::to_wstring( firstChild->GetRect().Bottom() ).c_str() );
@@ -81,7 +82,7 @@ ViewType CFracControlModel::GetType() const {
 
 void CFracControlModel::MoveBy( int dx, int dy ) {
 	rect.MoveBy( dx, dy );
-	params.polygon.front().MoveBy( dx, dy );
+	updatePolygons();
 }
 
 void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
@@ -102,4 +103,9 @@ void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+void CFracControlModel::updatePolygons( )
+{
+	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
 }

@@ -12,6 +12,21 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	caret.SetCurEdit( root->GetChildren().front() );
 
 	// initialize tree invalidate processors
+	auto highlightingCheckFunction( []( CTreeBfsProcessor::Node n )
+	{
+		if( n->GetType() == EXPR ) {
+			if( n->GetChildren().size() == 1 && n->GetChildren().front()->GetText().size() == 0 ) {
+				n->GetChildren().front()->HighlightingOn();
+			}
+			else {
+				for( auto child : n->GetChildren() ) {
+					child->HighlightingOff();
+				}
+			}
+		}
+	} );
+	highlightingProcessor = CTreeBfsProcessor( root, highlightingCheckFunction );
+
 	auto resizeFunction( []( CTreeDfsProcessor::Node n )
 	{
 		n->Resize( );
@@ -35,7 +50,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 		if( !node->GetText( ).empty( ) ) {
 			view.DrawString( node->GetText( ), node->GetRect( ) );
 		}
-		if( node->IsHightlighted( ) ) {
+		if( node->IsHighlighted( ) ) {
 			view.DrawHightlightedRect( node->GetRect( ) );
 		}
 	};
@@ -50,7 +65,7 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
 
-	updateTreeAfterSizeChange();
+	invalidateTree();
 
 	view.Redraw();
 }
@@ -61,7 +76,7 @@ void CEquationPresenter::DeleteSymbol()
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
 
-		updateTreeAfterSizeChange();
+		invalidateTree();
 
 		view.Redraw();
 	}
@@ -77,7 +92,7 @@ void CEquationPresenter::OnDraw()
 		if( !node->GetText().empty() ) {
 			view.DrawString( node->GetText(), node->GetRect() );
 		}
-		if( node->IsHightlighted() ) {
+		if( node->IsHighlighted() ) {
 			view.DrawHightlightedRect( node->GetRect() );
 		}
 	};
@@ -147,7 +162,7 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, fracModel );
 
-	updateTreeAfterSizeChange();
+	invalidateTree();
 
 	view.Redraw();
 }
@@ -161,7 +176,7 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent )
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
 	parent->AddChildAfter( newEditControl, degrModel );
 
-	updateTreeAfterSizeChange();
+	invalidateTree();
 	
 	view.Redraw();
 }
@@ -175,7 +190,7 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, subscriptModel );
 
-	updateTreeAfterSizeChange();
+	invalidateTree();
 	
 	view.Redraw();
 }
@@ -190,7 +205,7 @@ void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, radicalModel );
 
-	updateTreeAfterSizeChange();
+	invalidateTree();
 	
 	view.Redraw();
 }
@@ -222,8 +237,17 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	}
 }
 
-void CEquationPresenter::updateTreeAfterSizeChange()
-{	
+void CEquationPresenter::invalidateTree( )
+{
+	invalidateBranch( root );
+}
+
+void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode ) {
+	highlightingProcessor.SetStartingNode( startingNode );
+	resizeProcessor.SetStartingNode( startingNode );
+	placeProcessor.SetStartingNode( startingNode );
+
+	highlightingProcessor.Process();
 	resizeProcessor.Process();
 	placeProcessor.Process();
 }

@@ -68,6 +68,7 @@ private:
 	CCaret caret;
 
 	// processors
+	CTreeBfsProcessor highlightingProcessor;
 	CTreeBfsProcessor placeProcessor;
 	CTreeDfsProcessor resizeProcessor;
 	CTreeBfsProcessor drawer;
@@ -83,6 +84,7 @@ private:
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 
-	// не подавайте сюда корень дерева, всё сломается
-	void updateTreeAfterSizeChange();
+	void invalidateTree();
+
+	void invalidateBranch(std::shared_ptr<IBaseExprModel> startingNode);
 };

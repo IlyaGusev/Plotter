@@ -3,7 +3,7 @@
 CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) :
 	IBaseExprModel(rect, parent)
 {
-	this->params.isHightlighted = isHightlighted;
+	this->params.isHighlighted = isHightlighted;
 	if( rect.GetWidth() < 10 ) {
 		rect.Right() = rect.Left() + 10;
 	}
@@ -11,7 +11,7 @@ CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprM
 
 void CEditControlModel::Resize()
 {
-	if( params.isHightlighted ) {
+	if( params.isHighlighted ) {
 		rect.Right() = rect.Left() + MINIMAL_WIDTH;
 	}
 	else {
@@ -40,8 +40,8 @@ std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() co
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) 
 {
 	params.text.insert( offset, 1, symbol );
-	if( params.isHightlighted ) {
-		params.isHightlighted = false;
+	if( params.isHighlighted ) {
+		params.isHighlighted = false;
 		rect.Right() = rect.Left() + symbolWidth;
 	} else {
 		rect.Right() += symbolWidth;
@@ -55,7 +55,7 @@ int CEditControlModel::DeleteSymbol( int offset )
 	int symbolsWidth = symbolsWidths[offset];
 	symbolsWidths.erase( symbolsWidths.begin() + offset );
 	if( symbolsWidths.empty() ) {
-		params.isHightlighted = true;
+		params.isHighlighted = true;
 	} else {
 		rect.Right() -= symbolsWidth;
 	}

@@ -21,11 +21,12 @@ void CExprControlModel::Resize()
 	int underMiddle = 0;	// Расстояние от низа до середины
 	for( auto child : children ) {
 		auto childRect = child->GetRect();
-		width += childRect.GetWidth();
+		width += childRect.GetWidth() + 2; // отступ 2 пикселя между соседними детьми внутри выражения
 
 		aboveMiddle = MAX( aboveMiddle, child->GetMiddle() );
 		underMiddle = MAX( underMiddle, childRect.GetHeight() - child->GetMiddle() );
 	}
+	width -= 2;
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + aboveMiddle + underMiddle;
 	middle = aboveMiddle;
@@ -44,7 +45,7 @@ void CExprControlModel::PlaceChildren()
 		newRect.Bottom() = rect.Top() + middle + (oldRect.GetHeight() - child->GetMiddle());
 		child->SetRect( newRect );
 
-		currentX = newRect.Right() + 2;
+		currentX = newRect.Right() + 2; // отступ в 2 пикселя между дочерними моделями
 	}
 }
 

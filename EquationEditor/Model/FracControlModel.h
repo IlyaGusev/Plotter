@@ -34,4 +34,6 @@ private:
 	std::shared_ptr<CExprControlModel> firstChild;
 	// Нижний ребенок
 	std::shared_ptr<CExprControlModel> secondChild;
+
+	void updatePolygons();
 };

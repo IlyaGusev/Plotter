@@ -16,17 +16,17 @@ enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
 struct CDrawParams {
 	std::wstring text;
 	std::list<CLine> polygon;
-	bool isHightlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
+	bool isHighlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
 
 	CDrawParams() :
-		isHightlighted( false )
+		isHighlighted( false )
 	{
 	}
 
 	CDrawParams( const std::wstring& _text, std::list<CLine> _polygon, bool _isHightlighted ) :
 		text( _text ),
 		polygon( _polygon ),
-		isHightlighted( _isHightlighted )
+		isHighlighted( _isHightlighted )
 	{
 	}
 };
@@ -79,7 +79,9 @@ public:
 	virtual std::list<CLine> GetLines() const;
 
 	// Говорит, подсвечен ли прямоугольник этого контрола
-	virtual bool IsHightlighted() const;
+	virtual bool IsHighlighted() const;
+	virtual void HighlightingOff();
+	virtual void HighlightingOn();
 	
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
@@ -124,6 +126,17 @@ inline std::list<CLine> IBaseExprModel::GetLines() const
 	return params.polygon;
 }
 
-inline bool IBaseExprModel::IsHightlighted() const {
-	return params.isHightlighted;
+inline bool IBaseExprModel::IsHighlighted() const
+{
+	return params.isHighlighted;
+}
+
+inline void IBaseExprModel::HighlightingOff()
+{
+	params.isHighlighted = false;
+}
+
+inline void IBaseExprModel::HighlightingOn()
+{
+	params.isHighlighted = true;
 }

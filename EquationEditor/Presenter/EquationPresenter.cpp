@@ -235,6 +235,8 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	default:
 		break;
 	}
+
+	MoveCaretRight();
 }
 
 void CEquationPresenter::invalidateTree( )

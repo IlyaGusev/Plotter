@@ -16,7 +16,7 @@ CTagCi::CTagCi()
 
 void CTagCi::operator()(const CNode& node) const
 {
-	string ident(node.text().as_string());
+	string ident(deleteSpaces(node.text().as_string()));
 	if (ident.empty()) {
 		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	}
@@ -30,19 +30,20 @@ void CTagCi::AddIdentifier(const CNode& node, CType Type)
 	if (ident.empty()) {
 		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	};
-	AddIdentifier(node.text().as_string(), Type, node.name(), node.offset_debug());
+	AddIdentifier(ident, Type, node.name(), node.offset_debug());
 }
 
 void CTagCi::AddIdentifier(const string& name, CType Type, const string& nameNode, int position)
 {
-	if (identifiers.find(name) != identifiers.end())
+	string _name = deleteSpaces(name);
+	if (identifiers.find(_name) != identifiers.end())
 		throwException(nameNode, position, IDENTIFIER_ALREADY_EXIST);
-	identifiers[name] = Type;
+	identifiers[_name] = Type;
 }
 
 void CTagCi::deleteIdentifier(const string name)
 {
-	identifiers.erase(name);
+	identifiers.erase(deleteSpaces(name));
 }
 
 #endif

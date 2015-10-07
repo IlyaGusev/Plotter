@@ -63,18 +63,21 @@ void CTagDeclare::addFunction(const CNode& node) const
 		throwException(node.name(), node.offset_debug(), INVALID_ATTRIBUTE_ARGUMENT);
 
 	int CountTempIdentifiers = node.attribute("nargs").as_int();
+	string functionName = deleteSpaces(node.first_child().first_child().text().as_string());
+	if (functionName.empty())
+		throwException(node.first_child().name(), node.first_child().offset_debug(), UNEXPECTED_VALUE);
 	switch (CountTempIdentifiers) {
 	case 1:
-		CTagContainer::addTag(node.first_child().first_child().text().as_string(), new CTagNArgFunction<NUMBER, NUMBER, 1>(), node.offset_debug());
+		CTagContainer::addTag(functionName, new CTagNArgFunction<NUMBER, NUMBER, 1>(), node.offset_debug());
 		break;
 	case 2:
-		CTagContainer::addTag(node.first_child().first_child().text().as_string(), new CTagNArgFunction<NUMBER, NUMBER, 2>(), node.offset_debug());
+		CTagContainer::addTag(functionName, new CTagNArgFunction<NUMBER, NUMBER, 2>(), node.offset_debug());
 		break;
 	case 3:
-		CTagContainer::addTag(node.first_child().first_child().text().as_string(), new CTagNArgFunction<NUMBER, NUMBER, 3>(), node.offset_debug());
+		CTagContainer::addTag(functionName, new CTagNArgFunction<NUMBER, NUMBER, 3>(), node.offset_debug());
 		break;
 	case 4:
-		CTagContainer::addTag(node.first_child().first_child().text().as_string(), new CTagNArgFunction<NUMBER, NUMBER, 4>(), node.offset_debug());
+		CTagContainer::addTag(functionName, new CTagNArgFunction<NUMBER, NUMBER, 4>(), node.offset_debug());
 		break;
 	};
 	//add function arguments as identifiers

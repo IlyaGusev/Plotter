@@ -51,6 +51,7 @@ public:
 	const string name;
 	CType type;
 protected:
+	static string deleteSpaces(const string& s);//delete white spaces in the begin and end of the string
 	static void enterToAllChilds(const CNode& node);//call operator() of all child tags
 	static void throwException(const string& tagName, int position, ErrorType errType);
 	static void hasNoChilds(const CNode& node);

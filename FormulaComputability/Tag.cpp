@@ -8,6 +8,16 @@ CTag::~CTag()
 {
 }
 
+string CTag::deleteSpaces(const string& s)//delete white spaces in the begin and end of the string
+{
+	int begin = 0, end = s.length()-1;
+	while (s[begin] == ' ')
+		++begin;
+	while (s[end] == ' ')
+		--end;
+	return s.substr(begin, end - begin + 1);
+}
+
 void CTag::enterToAllChilds(const CNode& node)
 {
 	auto child = node.first_child();

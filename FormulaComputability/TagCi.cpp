@@ -16,8 +16,7 @@ CTagCi::CTagCi()
 
 void CTagCi::operator()(const CNode& node) const
 {
-	hasNoChilds(node);
-	string ident(node.value());
+	string ident(node.text().as_string());
 	if (ident.empty()) {
 		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	}
@@ -27,12 +26,11 @@ void CTagCi::operator()(const CNode& node) const
 
 void CTagCi::AddIdentifier(const CNode& node, CType Type)
 {
-	hasNoChilds(node);
-	string ident(node.value());
+	string ident(node.text().as_string());
 	if (ident.empty()) {
 		throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
 	};
-	AddIdentifier(node.value(), Type, node.name(), node.offset_debug());
+	AddIdentifier(node.text().as_string(), Type, node.name(), node.offset_debug());
 }
 
 void CTagCi::AddIdentifier(const string& name, CType Type, const string& nameNode, int position)

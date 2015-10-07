@@ -22,7 +22,7 @@ private:
 
 int main(int argc, char** argv) {
     try {
-		char* pathToFile = argv[1];
+		char* pathToFile = "test.xml";// argv[1];
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_file(pathToFile);
         if ( !result ) {

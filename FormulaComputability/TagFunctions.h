@@ -56,7 +56,7 @@ const CNode CTagVarArgFunction<TArg, TRes>::checkSignature(const CNode& node)con
 	auto arg = CTagFunction<TArg, TRes>::checkArgument(node.next_sibling());
 	while (!arg.empty())
 	{
-		arg = CTagFunction<TArg, TRes>::checkArgument(arg.next_sibling());
+		arg = CTagFunction<TArg, TRes>::checkArgument(arg);
 	};
 	return arg;
 };

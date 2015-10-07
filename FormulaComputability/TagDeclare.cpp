@@ -6,13 +6,13 @@
 void CTagDeclare::operator ()(const CNode& node) const
 {
 	checkAttributes(node, { "type","nargs" });
-	if (node.first_child().name() != "ci")//first child must be ci
+	if (strcmp(node.first_child().name(),"ci") != 0)//first child must be ci
 		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
-	if (node.first_child().value() == "")//ci must contain name of identifier
+	if (strcmp(node.first_child().value(), "") != 0)//ci must contain name of identifier
 		throwException(node.first_child().name(), node.first_child().offset_debug(), UNEXPECTED_CHILD);
-	if (node.attribute("type").as_string() != "")
+	if (node.attribute("type").as_string() != string(""))
 	{
-		if (node.attribute("type").as_string() == "fn")
+		if (node.attribute("type").as_string() == string("fn"))
 			addFunction(node);
 		else
 			addIdentifier(node);
@@ -59,7 +59,7 @@ void CTagDeclare::ereaseTempIdentifiers(int count) const
 void CTagDeclare::addFunction(const CNode& node) const
 {
 	//nargs must be daclated
-	if (node.attribute("nargs").as_string() == "")
+	if (node.attribute("nargs").as_string() == string(""))
 		throwException(node.name(), node.offset_debug(), INVALID_ATTRIBUTE_ARGUMENT);
 
 	int CountTempIdentifiers = node.attribute("nargs").as_int();
@@ -77,18 +77,20 @@ void CTagDeclare::addFunction(const CNode& node) const
 		CTagContainer::addTag(node.first_child().first_child().text().as_string(), new CTagNArgFunction<NUMBER, NUMBER, 4>(), node.offset_debug());
 		break;
 	};
+	//add function arguments as identifiers
 	addTempIdentifiers(CountTempIdentifiers, node.name(), node.offset_debug());
-	if (CTagContainer::getTag(node.first_child().next_sibling().name())->type & NUMBER)
+	if (!(CTagContainer::getTag(node.first_child().next_sibling().name())->type & NUMBER))
 		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
 	//check coputability the body of function
 	(*CTagContainer::getTag(node.first_child().next_sibling().name()))(node.first_child().next_sibling());
+	//delete function args
 	ereaseTempIdentifiers(CountTempIdentifiers);
 }
 
 void CTagDeclare::addIdentifier(const CNode& node) const
 {
 	CTagCi::AddIdentifier(node.first_child(), NUMBER);
-	if (CTagContainer::getTag(node.first_child().next_sibling().name())->type & NUMBER)
+	if (!(CTagContainer::getTag(node.first_child().next_sibling().name())->type & NUMBER))
 		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
 	(*CTagContainer::getTag(node.first_child().next_sibling().name()))(node.first_child().next_sibling());
 }

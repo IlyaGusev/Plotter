@@ -52,9 +52,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -67,9 +69,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
@@ -77,6 +80,41 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\DegrControlModel.cpp" />
+    <ClCompile Include="Model\EditControlModel.cpp" />
+    <ClCompile Include="Model\ExprControlModel.cpp" />
+    <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\RadicalControlModel.cpp" />
+    <ClCompile Include="Model\SubscriptControlModel.cpp" />
+    <ClCompile Include="Model\Utils\Caret.cpp" />
+    <ClCompile Include="Model\Utils\GeneralFunct.cpp" />
+    <ClCompile Include="Model\Utils\Line.cpp" />
+    <ClCompile Include="Model\Utils\Rect.cpp" />
+    <ClCompile Include="Presenter\EquationPresenter.cpp" />
+    <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp" />
+    <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp" />
+    <ClCompile Include="View\EquationEditorWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Model\DegrControlModel.h" />
+    <ClInclude Include="Model\EditControlModel.h" />
+    <ClInclude Include="Model\ExprControlModel.h" />
+    <ClInclude Include="Model\FracControlModel.h" />
+    <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\RadicalControlModel.h" />
+    <ClInclude Include="Model\SubscriptControlModel.h" />
+    <ClInclude Include="Model\Utils\Caret.h" />
+    <ClInclude Include="Model\Utils\GeneralFunct.h" />
+    <ClInclude Include="Model\Utils\Line.h" />
+    <ClInclude Include="Model\Utils\Rect.h" />
+    <ClInclude Include="Presenter\EquationPresenter.h" />
+    <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h" />
+    <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="View\EquationEditorWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EquationEditor.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

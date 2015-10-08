@@ -12,7 +12,7 @@ public:
 	string getType(int pos);
 	void addNode();
 	unique_ptr <Node> prev;
-	void arithmeticOperation(istream& is, string oper, unique_ptr <Node>& position);
+	void arithmeticOperation(istream& is, int oper, unique_ptr <Node>& position);
 
 private:
 	string fileType[2];

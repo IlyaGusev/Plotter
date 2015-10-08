@@ -1,5 +1,4 @@
 #include "Node.h"
-
 Node::~Node() {}
 
 string Node::toMathML()

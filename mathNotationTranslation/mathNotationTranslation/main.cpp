@@ -13,4 +13,5 @@ int main(int argc, char** argv) {
 	parser.processText(is, move(tree));
 	parser.processText(is, move(tree));
 	parser.processText(is, move(tree));
+	cout << parser.prev.get()->toMathML();
 }

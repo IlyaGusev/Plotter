@@ -10,13 +10,13 @@ public:
 	virtual string toMathML();
 	virtual string toOpenMath();
 	virtual string toTeX();
-	void setLeft(unique_ptr<Node> left);
-	void setRight(unique_ptr<Node> right);
-	unique_ptr<Node> getLeft();
-	unique_ptr<Node> getRight();
+	void setLeft(unique_ptr <Node> left);
+	void setRight(unique_ptr <Node> right);
+	unique_ptr <Node> getLeft();
+	unique_ptr <Node> getRight();
 
-protected:
-	unique_ptr<Node> left;
-	unique_ptr<Node> right;
+//protected:
+	unique_ptr <Node> left;
+	unique_ptr <Node> right;
 };
 

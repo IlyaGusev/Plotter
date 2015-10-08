@@ -5,12 +5,13 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <string>
 
 using namespace std;
 
 FlexLexer* lexer = new yyFlexLexer();
 
-double value;
+string value;
 
 enum yytokentype {
 	NUMBER = 258,
@@ -39,12 +40,8 @@ enum yytokentype {
 
 %}
 
-IDENT   [A-Za-z_][A-Za-z0-9_]*
-NUMBER	[0-9]+(\.[0-9]+)?
 WHITESPACE  [ \t\f\r]
 
-ADD		"+"
-MUL		"*"
 SUB		"-"
 DIV		"/"
 LOPER	"<mo>"
@@ -63,34 +60,37 @@ LSQRT	"<msqrt>"
 RSQRT	"</msqrt>"
 LSUP	"<msup>"
 RSUP	"</msup>"
+ID	[a-zA-Z][a-zA-Z0-9]*
+NUMBER	([0-9]+)(\.[0-9]+)?
 
 
 %%
+{ID}	{
+			value = yytext;
+			return ID;
+		}
 
-{ADD}	{
-                return ADD;
-			}
+"+"		{
+			return ADD;
+		}
 
-{MUL} {
+"*"		{
 				return MUL;
-			}
+		}
 
-{SUB} {
+{SUB}	{
                 return SUB;
 			}
 
-{DIV} {
+{DIV}	{
                 return DIV;
 			}
 
 {NUMBER}	{
-                value = atof(yytext);
+                value = yytext;
 				return NUMBER;
 			}
 
-{IDENT}     {   
-                return ID;
-            }
 {LOPER}     {   
                 return LOPER;
             }
@@ -126,6 +126,12 @@ RSUP	"</msup>"
             }
 {RSUP}     {   
                 return RSUP;
+            }
+{LNUM}     {   
+                return LNUM;
+            }
+{RNUM}     {   
+                return RNUM;
             }
 
 {WHITESPACE}     {}

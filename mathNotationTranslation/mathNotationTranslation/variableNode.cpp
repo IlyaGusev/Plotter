@@ -1,6 +1,6 @@
 #include "variableNode.h"
 
-variableNode::variableNode(double num) :num(num){}
+variableNode::variableNode(string num): num(num) { }
 
 variableNode::variableNode(){}
 
@@ -10,6 +10,6 @@ string variableNode::toMathML() { return ""; };
 string variableNode::toOpenMath() { return ""; };
 string variableNode::toTeX() { return ""; };
 
-double variableNode::getValue() {
+string variableNode::getValue() {
 	return this->num;
 }

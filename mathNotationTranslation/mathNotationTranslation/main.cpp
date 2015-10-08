@@ -7,6 +7,10 @@ int main(int argc, char** argv) {
 	argv[2] = "MathML";
 	argv[3] = "MathML";
 	istream is(fb.open(argv[1], ios::in));
-	Parser parser(argv[2], argv[3]);
-	parser.processText(is, 0);
+	unique_ptr<Node> tree;
+	Parser parser(argv[2], argv[3]); tree.reset();
+
+	parser.processText(is, move(tree));
+	parser.processText(is, move(tree));
+	parser.processText(is, move(tree));
 }

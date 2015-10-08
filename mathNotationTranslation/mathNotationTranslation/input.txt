@@ -1,1 +1,1 @@
-<mrow><msqrt><mn>5</mn><mo>-</mo><mn>1</mn></msqrt></mrow>
+<mrow> <mn> 5 </mn> <mo> + </mo> <mn> 1 </mn> <mo> * </mo> <mn> 3 </mn> </mrow>

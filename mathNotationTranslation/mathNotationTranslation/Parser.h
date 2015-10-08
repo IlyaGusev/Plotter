@@ -8,12 +8,13 @@ public:
 	Parser();
 	Parser(string input, string output);
 	~Parser();
-	bool processText(istream& is, int operation, unique_ptr<Node> position);
+	bool processText(istream& is, unique_ptr <Node>& position);
 	string getType(int pos);
 	void addNode();
+	unique_ptr <Node> prev;
+	void arithmeticOperation(istream& is, string oper, unique_ptr <Node>& position);
 
 private:
 	string fileType[2];
-	unique_ptr<Node> Tree;
 };
 

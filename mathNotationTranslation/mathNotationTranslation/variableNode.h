@@ -5,14 +5,14 @@ class variableNode :
 {
 public:
 	variableNode();
-	variableNode(double num);
+	variableNode(string num);
 	~variableNode();
-	double getValue();
+	string getValue();
 	string toMathML();
 	string toOpenMath();
 	string toTeX();
 
 private:
-	double num;
+	string num;
 };
 

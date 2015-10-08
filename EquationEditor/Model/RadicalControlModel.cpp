@@ -3,7 +3,7 @@
 #include "Model/Utils/GeneralFunct.h"
 
 
-CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+CRadicalControlModel::CRadicalControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
 }
@@ -80,7 +80,7 @@ void CRadicalControlModel::MoveBy(int dx, int dy)
 	updatePolygons();
 }
 
-void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */) 
 {
 	// Если пришли из подкоренного выражения - идём в показатель
 	if( from == secondChild.get() ) {
@@ -96,7 +96,7 @@ void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& car
 	}
 }
 
-void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */) 
 {
 	// Если пришли из родителя - идем в показатель
 	if( from == parent.lock().get() ) {
@@ -112,6 +112,10 @@ void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& ca
 	}
 }
 
+bool CRadicalControlModel::IsEmpty() const {
+	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
+}
+
 // высота показателя степени
 int CRadicalControlModel::getDegreeHeight( int rectHeight )
 {
@@ -124,8 +128,8 @@ void CRadicalControlModel::updatePolygons()
 	auto firstRect = firstChild->GetRect();
 	auto secondRect = secondChild->GetRect();
 
-	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
-//	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
+//	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
+	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
 	params.polygon.push_back( CLine( firstRect.Right(), firstRect.Bottom(), firstRect.Right() + 5, rect.Bottom() ) );
 	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), rect.Top() + 2 ) );
 	params.polygon.push_back( CLine( secondRect.Left(), rect.Top() + 2, rect.Right(), rect.Top() + 2 ) );

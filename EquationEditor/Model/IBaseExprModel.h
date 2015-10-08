@@ -7,26 +7,20 @@
 #include "Model/Utils/Line.h"
 #include "Model/Utils/Caret.h"
 
-#define MIN(x, y) x < y ? x : y;
-#define MAX(x, y) x > y ? x : y;
-
 enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
 	std::wstring text;
+	std::pair<int, int> selectedPositions;		// Номера первой и следующей за последней выбранной буквы
+
 	std::list<CLine> polygon;
 	bool isHighlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
+	bool isSelected;	// Выделена ли вьюшка
 
 	CDrawParams() :
-		isHighlighted( false )
-	{
-	}
-
-	CDrawParams( const std::wstring& _text, std::list<CLine> _polygon, bool _isHightlighted ) :
-		text( _text ),
-		polygon( _polygon ),
-		isHighlighted( _isHightlighted )
+		isHighlighted( false ),
+		isSelected( false )
 	{
 	}
 };
@@ -73,7 +67,8 @@ public:
 	virtual int GetMiddle() const = 0;
 
 	// Возвращает текст, хранящийся в этой модели
-	virtual std::wstring GetText() const;
+	virtual std::list<std::pair<std::wstring, CRect>> GetSelectedText() const;
+	virtual std::list<std::pair<std::wstring, CRect>> GetUnselectedText() const;
 
 	// Возвращает набор линий, которые нужно провести на вьюшке, относящейся к этой модели
 	virtual std::list<CLine> GetLines() const;
@@ -83,12 +78,18 @@ public:
 	virtual void HighlightingOff();
 	virtual void HighlightingOn();
 	
+	// Говорит, выделен ли прямоугольник
+	virtual bool IsSelected() const;
+	virtual void UpdateSelection( const CRect& selectionRect ) = 0;
+
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
 
 	// Сдвигает каретку в нужную сторону относительно from
-	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const = 0;
-	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const = 0;
+	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
+	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
+
+	virtual bool IsEmpty() const = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -116,11 +117,6 @@ inline void IBaseExprModel::MoveBy( int dx, int dy )
 	rect.MoveBy( dx, dy );
 }
 
-inline std::wstring IBaseExprModel::GetText() const 
-{
-	return params.text;
-}
-
 inline std::list<CLine> IBaseExprModel::GetLines() const 
 {
 	return params.polygon;
@@ -139,4 +135,18 @@ inline void IBaseExprModel::HighlightingOff()
 inline void IBaseExprModel::HighlightingOn()
 {
 	params.isHighlighted = true;
+}
+
+inline bool IBaseExprModel::IsSelected() const {
+	return params.isSelected;
+}
+
+inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetSelectedText( ) const 
+{
+	return std::list<std::pair<std::wstring, CRect>>();
+}
+
+inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetUnselectedText( ) const 
+{
+	return std::list<std::pair<std::wstring, CRect>>();
 }

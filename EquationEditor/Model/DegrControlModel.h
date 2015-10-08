@@ -6,7 +6,7 @@
 // Модель для степени
 class CDegrControlModel : public IBaseExprModel {
 public:
-	CDegrControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
+	CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 		IBaseExprModel( rect, parent ) 
 	{
 	}
@@ -20,14 +20,15 @@ public:
 
 	int GetMiddle() const;
 
-	void SetRect( const CRect& rect );
-
 	ViewType GetType( ) const;
+	
+	void UpdateSelection( const CRect& selectionRect ) {}
 
 	void MoveBy(int dx, int dy);
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
+	bool IsEmpty() const;
 private:
 	int getExponentHeight(int rectHeight);
 

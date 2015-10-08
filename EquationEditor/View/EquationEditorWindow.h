@@ -25,11 +25,13 @@ public:
 
 	void OnDraw();
 
-	void DrawString( const std::wstring& text, const CRect& rect );
+	void DrawSelectedRect( const CRect& rect );
 
-	void DrawPolygon( const std::list<CLine>& polygon );
+	void DrawString( const std::wstring& text, const CRect& rect, bool isSelected );
 
-	void DrawHightlightedRect( const CRect& rect );
+	void DrawPolygon( const std::list<CLine>& polygon, bool isSelected );
+
+	void DrawHighlightedRect( const CRect& rect, bool isSelected );
 
 	void SetCaret( int caretPointX, int caretPointY, int height );
 
@@ -42,13 +44,20 @@ public:
 	void OnWmCommand( WPARAM wParam, LPARAM lParam );
 
 	void OnKeyDown( WPARAM wParam );
+
+	void OnMouseMove( WPARAM wParam, int x, int y );
 protected:
     void OnDestroy();
 
 private:
-    HWND hwnd; // хэндл окна
-	HDC hdc;
+    HWND hwnd;		// хэндл окна
+	HDC hdc;		// канва для рисования
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
+
+	COLORREF symbolSelectedColorref;
+	COLORREF symbolUnselectedColorref;
+	COLORREF bkSelectedColorref;
+	COLORREF bkUnselectedColorref;
 
     static const wchar_t* const className;
 	

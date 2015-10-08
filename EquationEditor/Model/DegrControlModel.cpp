@@ -2,8 +2,6 @@
 #include "Model/EditControlModel.h"
 #include "Model/Utils/GeneralFunct.h"
 
-#include <string>
-
 void CDegrControlModel::Resize()
 {
 	// стараемся держать мидл показателя на высоте верха основания.
@@ -64,11 +62,6 @@ std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() cons
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CDegrControlModel::SetRect(const CRect& rect) 
-{
-	this->rect = rect;
-}
-
 ViewType CDegrControlModel::GetType() const 
 {
 	return DEGR;
@@ -80,7 +73,7 @@ void CDegrControlModel::MoveBy(int dx, int dy)
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
 	// Если пришли из показателя - идём в основание
 	if( from == firstChild.get() ) {
@@ -95,7 +88,7 @@ void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	}
 }
 
-void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) 
 {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
@@ -108,6 +101,10 @@ void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+bool CDegrControlModel::IsEmpty() const {
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
 // Высота выступающего над основанием показателя степени

@@ -2,9 +2,7 @@
 #include "Model/EditControlModel.h"
 #include "Model/Utils/GeneralFunct.h"
 
-#include <string>
-
-CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+CSubscriptControlModel::CSubscriptControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
 }
@@ -70,11 +68,6 @@ std::list<std::shared_ptr<IBaseExprModel>> CSubscriptControlModel::GetChildren()
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CSubscriptControlModel::SetRect(const CRect& rect) 
-{
-	this->rect = rect;
-}
-
 ViewType CSubscriptControlModel::GetType() const 
 {
 	return SUBSCRIPT;
@@ -86,7 +79,7 @@ void CSubscriptControlModel::MoveBy(int dx, int dy)
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
+void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */) 
 {
 	// Если пришли из индекса - идём в основание
 	if( from == secondChild.get() ) {
@@ -102,7 +95,7 @@ void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& c
 	}
 }
 
-void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const {
+void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */) {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret );
@@ -115,6 +108,10 @@ void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& 
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+bool CSubscriptControlModel::IsEmpty() const {
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
 // Высота выступающего снизу индекса

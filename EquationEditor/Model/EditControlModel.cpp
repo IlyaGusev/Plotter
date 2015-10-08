@@ -1,12 +1,10 @@
 ﻿#include "Model/EditControlModel.h"
 
-CEditControlModel::CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) :
+CEditControlModel::CEditControlModel( const CRect& rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted ) :
 	IBaseExprModel(rect, parent)
 {
 	this->params.isHighlighted = isHightlighted;
-	if( rect.GetWidth() < 10 ) {
-		rect.Right() = rect.Left() + 10;
-	}
+	Resize();
 }
 
 void CEditControlModel::Resize()
@@ -102,7 +100,25 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 	return offset;
 }
 
-void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
+void CEditControlModel::UpdateSelection( const CRect& selectionRect ) {
+	selectionStart = selectionEnd = -1;
+	int offset = rect.Left();
+	for( size_t i = 0; i < symbolsWidths.size( ); ++i, offset += symbolsWidths[i] ) {
+		if( offset > selectionRect.Left() && selectionStart == -1 ) {
+			selectionStart = i;
+		}
+		if( offset > selectionRect.Right() && selectionEnd == -1 ) {
+			selectionEnd = i + 1;
+		}
+	}
+	if( selectionStart = 0 && selectionEnd == symbolsWidths.size() ) {
+		params.isSelected = true;
+	} else {
+		params.isSelected = false;
+	}
+}
+
+void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) {
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом конце
 	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>( shared_from_this() ) );
@@ -111,13 +127,26 @@ void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	}
 	// Если тот - двигаемся вдоль него
 	if( caret.Offset() > 0 ) {
+		if( isInSelectionMode ) {
+			// Позиции могут совпадать, только если еще не начали выделение
+			if( params.selectedPositions.first == params.selectedPositions.second ) {
+				params.selectedPositions.first = caret.Offset() - 1;
+				params.selectedPositions.second = caret.Offset();
+			} else {
+				if( params.selectedPositions.first > caret.Offset() - 1 ) {
+					--params.selectedPositions.first;
+				} else {
+					--params.selectedPositions.second;
+				}
+			}
+		}
 		--caret.Offset();
 	} else {
 		parent.lock()->MoveCaretLeft( this, caret );
 	}
 }
 
-void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
+void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) {
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом начале
 	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>(shared_from_this()) );
@@ -126,8 +155,45 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 	// Если тот - двигаемся вдоль него
 	if( caret.Offset() < symbolsWidths.size() ) {
+		if( isInSelectionMode ) {
+			// Позиции могут совпадать, только если еще не начали выделение
+			if( params.selectedPositions.first == params.selectedPositions.second ) {
+				params.selectedPositions.first = caret.Offset();
+				params.selectedPositions.second = caret.Offset() + 1;
+			} else {
+				if( params.selectedPositions.second < caret.Offset() + 1 ) {
+					++params.selectedPositions.second;
+				} else {
+					++params.selectedPositions.first;
+				}
+			}
+		}
 		++caret.Offset();
 	} else {
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+bool CEditControlModel::IsEmpty() const {
+	return params.text.empty();
+}
+
+std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetSelectedText() const 
+{
+	std::wstring selectedString( params.text.begin() + params.selectedPositions.first, params.text.begin() + params.selectedPositions.second );
+	return std::list<std::pair<std::wstring, CRect>> { std::make_pair( selectedString, CRect(
+		GetSymbolPointByNumber( params.selectedPositions.first ),
+		rect.Top(),
+		GetSymbolPointByNumber( params.selectedPositions.second ),
+		rect.Bottom() ) ) };
+}
+
+std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( ) const 
+{
+	std::wstring firstUnselectedString( params.text.begin(), params.text.begin() + params.selectedPositions.first );
+	CRect firstRect( rect.Left(), rect.Top(), GetSymbolPointByNumber(params.selectedPositions.first), rect.Bottom() );
+	std::wstring secondUnselectedString( params.text.begin() + params.selectedPositions.second, params.text.end() );
+	CRect secondRect( GetSymbolPointByNumber( params.selectedPositions.second ), rect.Top(), rect.Right(), rect.Bottom() );
+	return std::list<std::pair<std::wstring, CRect>> { std::make_pair( firstUnselectedString, firstRect ), 
+													   std::make_pair( secondUnselectedString, secondRect ) };
 }

@@ -1,7 +1,7 @@
 ﻿#include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
 
-CExprControlModel::CExprControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent ) :
+CExprControlModel::CExprControlModel( const CRect& rect, const std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
 {
 	middle = rect.GetHeight() / 2;
@@ -75,7 +75,7 @@ ViewType CExprControlModel::GetType() const
 	return EXPR;
 }
 
-void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
+void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) {
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый левый ребенок - поднимаемся наверх
 	if( from == children.front().get() ) {
@@ -95,7 +95,7 @@ void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	children.back()->MoveCaretLeft( this, caret );
 }
 
-void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
+void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) {
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый правый ребенок - поднимаемся наверх
 	if( from == children.back().get() ) {
@@ -113,4 +113,8 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 	// Иначе - он пришел извне, ставим каретку в самое начало
 	children.front()->MoveCaretRight( this, caret );
+}
+
+bool CExprControlModel::IsEmpty() const {
+	return children.size() == 1 && children.front()->IsEmpty();
 }

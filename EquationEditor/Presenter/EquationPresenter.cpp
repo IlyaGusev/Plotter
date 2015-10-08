@@ -12,49 +12,46 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	caret.SetCurEdit( root->GetChildren().front() );
 
 	// initialize tree invalidate processors
-	auto highlightingCheckFunction( []( CTreeBfsProcessor::Node n )
-	{
-		if( n->GetType() == EXPR ) {
-			if( n->GetChildren().size() == 1 && n->GetChildren().front()->GetText().size() == 0 ) {
-				n->GetChildren().front()->HighlightingOn();
-			}
-			else {
-				for( auto child : n->GetChildren() ) {
+	highlightingProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+		// Если у exprControl единственный ребенок - это текст. Если текст пустой - соответствующий editControl надо подсветить
+		if( node->GetType() == EXPR ) {
+			if( node->IsEmpty() ) {
+				node->GetChildren().front()->HighlightingOn();
+			} else {
+				for( auto child : node->GetChildren() ) {
 					child->HighlightingOff();
 				}
 			}
 		}
 	} );
-	highlightingProcessor = CTreeBfsProcessor( root, highlightingCheckFunction );
 
-	auto resizeFunction( []( CTreeDfsProcessor::Node n )
-	{
-		n->Resize( );
-	} );
 	resizeProcessor = CTreeDfsProcessor( root );
-	resizeProcessor.SetExitProcessFunc( resizeFunction );
-
-	auto placeFunction( []( CTreeBfsProcessor::Node n )
-	{
-		n->PlaceChildren( );
+	resizeProcessor.SetExitProcessFunc( [] ( CTreeDfsProcessor::Node node ) {
+		node->Resize();
 	} );
 
-	placeProcessor = CTreeBfsProcessor( root, placeFunction );
+	placeProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+		node->PlaceChildren();
+	} );
 
 	// initialize draw processor
-	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
-	{
-		if( !node->GetLines( ).empty( ) ) {
-			view.DrawPolygon( node->GetLines( ) );
+	drawer = CTreeBfsProcessor( root, [=] ( CTreeBfsProcessor::Node node ) {
+		if( node->IsSelected() ) {
+			view.DrawSelectedRect( node->GetRect() );
 		}
-		if( !node->GetText( ).empty( ) ) {
-			view.DrawString( node->GetText( ), node->GetRect( ) );
+		if( !node->GetLines().empty() ) {
+			view.DrawPolygon( node->GetLines(), node->IsSelected() );
 		}
-		if( node->IsHighlighted( ) ) {
-			view.DrawHightlightedRect( node->GetRect( ) );
+		for( std::pair<std::wstring, CRect> selectedText : node->GetSelectedText() ) {
+			view.DrawString( selectedText.first, selectedText.second, true );
 		}
-	};
-	drawer = CTreeBfsProcessor( root, drawingFuction );
+		for( std::pair<std::wstring, CRect> selectedText : node->GetUnselectedText() ) {
+			view.DrawString( selectedText.first, selectedText.second, false );
+		}
+		if( node->IsHighlighted() ) {
+			view.DrawHighlightedRect( node->GetRect(), node->IsSelected() );
+		}
+	} );
 }
 
 CEquationPresenter::~CEquationPresenter() {}
@@ -84,19 +81,6 @@ void CEquationPresenter::DeleteSymbol()
 
 void CEquationPresenter::OnDraw() 
 {
-	auto drawingFuction = [=]( CTreeBfsProcessor::Node node )
-	{
-		if( !node->GetLines().empty() ) {
-			view.DrawPolygon( node->GetLines() );
-		}
-		if( !node->GetText().empty() ) {
-			view.DrawString( node->GetText(), node->GetRect() );
-		}
-		if( node->IsHighlighted() ) {
-			view.DrawHightlightedRect( node->GetRect() );
-		}
-	};
-	CTreeBfsProcessor drawer( root, drawingFuction );
 	drawer.Process();
 	
 	// Рисует каретку
@@ -118,12 +102,11 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 	return std::make_pair(length, offset);
 }
 
-void CEquationPresenter::SetCaret( int x, int y ) 
-{
-	auto predicate = [=]( CTreeBfsProcessor::Node node ) -> bool {
+void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) {
+	auto predicate = [=] ( CTreeBfsProcessor::Node node ) -> bool {
 		return node->GetRect().IsContain( x, y ) && node->GetType() == TEXT;
 	};
-	auto hint = [=]( CTreeBfsProcessor::Node child ) -> bool {
+	auto hint = [=] ( CTreeBfsProcessor::Node child ) -> bool {
 		return child->GetRect().IsContain( x, y );
 	};
 
@@ -132,13 +115,36 @@ void CEquationPresenter::SetCaret( int x, int y )
 	if( firstCandidate == nullptr ) {
 		return;
 	}
-	if( caret.GetCurEdit() != firstCandidate ) {
-		caret.SetCurEdit( firstCandidate );
+	if( curCaret.GetCurEdit() != firstCandidate ) {
+		curCaret.SetCurEdit( firstCandidate );
 	}
 
-	std::pair<int, int> newCaretPos = findCaretPos( caret.GetCurEdit(), x );
-	caret.Offset() = newCaretPos.second;
+	std::pair<int, int> newCaretPos = findCaretPos( curCaret.GetCurEdit( ), x );
+	curCaret.Offset() = newCaretPos.second;
+}
 
+void CEquationPresenter::SetCaret( int x, int y ) 
+{
+	setCaretPos( x, y, caret );
+	view.Redraw();
+}
+
+void CEquationPresenter::SetSelection( int x, int y ) {
+	CCaret selectionCaret;
+	setCaretPos( x, y, selectionCaret );
+	if( selectionCaret.GetCurEdit() != nullptr && 
+		( selectionCaret.GetCurEdit() != caret.GetCurEdit( ) ||
+		selectionCaret.GetCurEdit() == caret.GetCurEdit() && selectionCaret.Offset() != caret.Offset() ) ) 
+	{
+		// Если правее или ниже - двигаемся вправо
+		if( selectionCaret.GetPointX() > caret.GetPointX() || selectionCaret.GetPointY() < caret.GetPointY() ) {
+			caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
+		} else {
+			caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );
+		}
+
+		caret = selectionCaret;
+	}
 	view.Redraw();
 }
 
@@ -245,11 +251,11 @@ void CEquationPresenter::invalidateTree( )
 }
 
 void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode ) {
-	highlightingProcessor.SetStartingNode( startingNode );
 	resizeProcessor.SetStartingNode( startingNode );
 	placeProcessor.SetStartingNode( startingNode );
+	highlightingProcessor.SetStartingNode( startingNode );
 
-	highlightingProcessor.Process();
 	resizeProcessor.Process();
 	placeProcessor.Process();
+	highlightingProcessor.Process( );
 }

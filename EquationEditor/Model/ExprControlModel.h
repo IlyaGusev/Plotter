@@ -5,8 +5,7 @@
 class CExprControlModel : public IBaseExprModel {
 public:
 	// Прямоугольник соседнего текстового поля, высота которого будет совпадать с высотой каждого текстового поля дроби
-	CExprControlModel( CRect newRect, const std::weak_ptr<IBaseExprModel> newParent );
-	~CExprControlModel() {}
+	CExprControlModel( const CRect& newRect, const std::weak_ptr<IBaseExprModel> newParent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 	void InitializeChildren();
@@ -23,8 +22,12 @@ public:
 
 	ViewType GetType() const;
 
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void UpdateSelection( const CRect& selectionRect ) {}
+
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+
+	bool IsEmpty() const;
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

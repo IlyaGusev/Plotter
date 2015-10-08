@@ -21,14 +21,17 @@ class IEditorView {
 public:
 	virtual ~IEditorView() {}
 
+	// Отображает прямоугольник выделения вокруг вьюшки
+	virtual void DrawSelectedRect( const CRect& rect ) = 0;
+
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawString( const std::wstring& text, const CRect& rect ) = 0;
+	virtual void DrawString( const std::wstring& text, const CRect& rect, bool isSelected ) = 0;
 
 	// Нарисовать ломаную
-	virtual void DrawPolygon( const std::list<CLine>& polygon ) = 0;
+	virtual void DrawPolygon( const std::list<CLine>& polygon, bool isSelected ) = 0;
 
 	// Нарисовать подсветку вокруг прямоугольника
-	virtual void DrawHightlightedRect( const CRect& rect ) = 0;
+	virtual void DrawHighlightedRect( const CRect& rect, bool isSelected ) = 0;
 
 	// Установить положение каретки
 	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;
@@ -57,6 +60,8 @@ public:
 	
 	void SetCaret( int x, int y );
 
+	void SetSelection( int x, int y );
+
 	// Обработка движений каретки стрелками
 	void MoveCaretLeft();
 	void MoveCaretRight();
@@ -84,6 +89,7 @@ private:
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 
+	void setCaretPos( int x, int y, CCaret& curCaret );
 	void invalidateTree();
 
 	void invalidateBranch(std::shared_ptr<IBaseExprModel> startingNode);

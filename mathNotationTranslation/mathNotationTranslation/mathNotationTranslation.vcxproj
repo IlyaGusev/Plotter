@@ -153,12 +153,14 @@
     <ClCompile Include="arithmeticNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
+    <ClCompile Include="Parser.cpp" />
     <ClCompile Include="variableNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="arithmeticNode.h" />
     <ClInclude Include="FlexLexer.h" />
     <ClInclude Include="Node.h" />
+    <ClInclude Include="Parser.h" />
     <ClInclude Include="variableNode.h" />
   </ItemGroup>
   <ItemGroup>

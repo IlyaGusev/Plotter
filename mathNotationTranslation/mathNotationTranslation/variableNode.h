@@ -7,6 +7,7 @@ public:
 	variableNode();
 	variableNode(double num);
 	~variableNode();
+	double getValue();
 	string toMathML();
 	string toOpenMath();
 	string toTeX();

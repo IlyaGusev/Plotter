@@ -10,8 +10,10 @@ using namespace std;
 
 FlexLexer* lexer = new yyFlexLexer();
 
+double value;
+
 enum yytokentype {
-	NUMBER,
+	NUMBER = 258,
 	ID,
 	ADD,
 	MUL,
@@ -81,8 +83,9 @@ RSUP	"</msup>"
                 return DIV;
 			}
 
-{NUMBER}		{
-                return NUMBER;
+{NUMBER}	{
+                value = atof(yytext);
+				return NUMBER;
 			}
 
 {IDENT}     {   

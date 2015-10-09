@@ -81,11 +81,11 @@ private:
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
 	void addRadical(std::shared_ptr<CExprControlModel> parent);
-
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
-
 	void addSubscript(std::shared_ptr<CExprControlModel> parent);
 	
+	bool isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2 );
+
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );

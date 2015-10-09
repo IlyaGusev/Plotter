@@ -22,6 +22,7 @@ struct CDrawParams {
 		isHighlighted( false ),
 		isSelected( false )
 	{
+		selectedPositions.first = selectedPositions.second = 0;
 	}
 };
 
@@ -31,10 +32,12 @@ protected:
 	std::weak_ptr<IBaseExprModel> parent;
 	CRect rect;
 	CDrawParams params;
+	int depth;		// Расстояние до корня в дереве
 
-	IBaseExprModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent, int depth = 0 ) :
 		parent( parent ),
-		rect( rect ) 
+		rect( rect ),
+		depth( depth )
 	{
 	}
 public:
@@ -88,10 +91,13 @@ public:
 	// Сдвигает каретку в нужную сторону относительно from
 	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
 	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
-	// Возращает направление, в котором нужно двигаться, чтобы встретить caret
-	virtual bool HasInverseDirection() const = 0;
+
+	// Говорит, нужно ли двигаться вправо, чтобы попасть от первой модели ко второй
+	virtual bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const = 0;
 
 	virtual bool IsEmpty() const = 0;
+
+	virtual int GetDepth() const;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -155,4 +161,8 @@ inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetUnselectedTe
 
 inline void IBaseExprModel::DeleteSelection() {
 	params.isSelected = false;
+}
+
+inline int IBaseExprModel::GetDepth() const {
+	return depth;
 }

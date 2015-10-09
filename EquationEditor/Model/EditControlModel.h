@@ -40,12 +40,12 @@ public:
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
-	bool HasInverseDirection() const;
-
 	bool IsEmpty() const;
 
 	std::list<std::pair<std::wstring, CRect>> GetSelectedText() const;
 	std::list<std::pair<std::wstring, CRect>> GetUnselectedText() const;
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;

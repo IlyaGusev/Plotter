@@ -135,17 +135,34 @@ void CEquationPresenter::SetCaret( int x, int y )
 	view.Redraw();
 }
 
+bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2 ) {
+	while( model1->GetDepth() > model2->GetDepth() ) {
+		model1 = model1->GetParent().lock().get();
+	}
+	while( model2->GetDepth() > model1->GetDepth() ) {
+		model2 = model2->GetParent().lock().get();
+	}
+	while( model1->GetParent().lock() != model2->GetParent().lock() ) {
+		model1 = model1->GetParent().lock().get();
+		model2 = model2->GetParent().lock().get();
+	}
+	return model1->GetParent().lock()->IsSecondModelFarther( model1, model2 );
+}
+
 void CEquationPresenter::SetSelection( int x, int y ) {
 	CCaret selectionCaret;
 	setCaretPos( x, y, selectionCaret );
 	while( selectionCaret.GetCurEdit() != nullptr && 
-		( selectionCaret.GetCurEdit() != caret.GetCurEdit( ) ||
+		( selectionCaret.GetCurEdit() != caret.GetCurEdit() ||
 		selectionCaret.GetCurEdit() == caret.GetCurEdit() && selectionCaret.Offset() != caret.Offset() ) ) 
 	{
-		// Если правее или ниже - двигаемся вправо, иначе - влево
-		if( selectionCaret.GetPointX() >= caret.GetPointX() || 
-			selectionCaret.GetPointY() < caret.GetPointY() && caret.GetCurEdit()->HasInverseDirection() ) 
-		{
+		if( selectionCaret.GetCurEdit() == caret.GetCurEdit() ) {
+			if( selectionCaret.Offset() > caret.Offset() ) {
+				caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
+			} else {
+				caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );
+			}
+		} else if( isRightDirection( caret.GetCurEdit().get(), selectionCaret.GetCurEdit().get() ) ) {
 			caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
 		} else {
 			caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );

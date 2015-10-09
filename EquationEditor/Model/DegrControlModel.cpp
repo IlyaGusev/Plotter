@@ -2,6 +2,12 @@
 #include "Model/EditControlModel.h"
 #include "Model/Utils/GeneralFunct.h"
 
+CDegrControlModel::CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( rect, parent ) 
+{
+	depth = parent.lock()->GetDepth() + 1;
+}
+
 void CDegrControlModel::Resize()
 {
 	// стараемся держать мидл показателя на высоте верха основания.
@@ -57,7 +63,7 @@ void CDegrControlModel::InitializeChildren()
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const 
+std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const
 {
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
@@ -103,13 +109,12 @@ void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
-bool CDegrControlModel::HasInverseDirection() const
-{
-	return false;
-}
-
 bool CDegrControlModel::IsEmpty() const {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == secondChild.get();
 }
 
 // Высота выступающего над основанием показателя степени

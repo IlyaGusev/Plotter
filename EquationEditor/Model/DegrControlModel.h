@@ -6,10 +6,7 @@
 // Модель для степени
 class CDegrControlModel : public IBaseExprModel {
 public:
-	CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
-		IBaseExprModel( rect, parent ) 
-	{
-	}
+	CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
 	void InitializeChildren( );
@@ -26,9 +23,9 @@ public:
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
-	bool HasInverseDirection() const;
-
 	bool IsEmpty() const;
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 private:
 	static const int MARGIN = 1;		// Отступ между показателем и основанием
 

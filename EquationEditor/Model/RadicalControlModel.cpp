@@ -6,6 +6,7 @@
 CRadicalControlModel::CRadicalControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CRadicalControlModel::Resize()
@@ -112,13 +113,13 @@ void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& ca
 	}
 }
 
-bool CRadicalControlModel::HasInverseDirection() const {
-	return false;
-}
-
 bool CRadicalControlModel::IsEmpty() const 
 {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CRadicalControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == firstChild.get();
 }
 
 // высота показателя степени

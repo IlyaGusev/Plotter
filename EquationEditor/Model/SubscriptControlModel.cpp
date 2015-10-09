@@ -5,6 +5,7 @@
 CSubscriptControlModel::CSubscriptControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CSubscriptControlModel::Resize()
@@ -110,12 +111,14 @@ void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& 
 	}
 }
 
-bool CSubscriptControlModel::HasInverseDirection() const {
-	return false;
-}
-
 bool CSubscriptControlModel::IsEmpty() const {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CSubscriptControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+{
+	// Если первая - действительно первая
+	return model1 == firstChild.get();
 }
 
 // Высота выступающего снизу индекса

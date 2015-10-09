@@ -5,6 +5,7 @@ CEditControlModel::CEditControlModel( const CRect& rect, const std::weak_ptr<IBa
 {
 	this->params.isHighlighted = isHightlighted;
 	Resize();
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CEditControlModel::Resize()
@@ -164,11 +165,6 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
-bool CEditControlModel::HasInverseDirection() const
-{
-	return parent.lock()->HasInverseDirection();
-}
-
 bool CEditControlModel::IsEmpty() const {
 	return params.text.empty();
 }
@@ -191,4 +187,8 @@ std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( 
 	CRect secondRect( GetSymbolPointByNumber( params.selectedPositions.second ), rect.Top(), rect.Right(), rect.Bottom() );
 	return std::list<std::pair<std::wstring, CRect>> { std::make_pair( firstUnselectedString, firstRect ), 
 													   std::make_pair( secondUnselectedString, secondRect ) };
+}
+
+bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return false;
 }

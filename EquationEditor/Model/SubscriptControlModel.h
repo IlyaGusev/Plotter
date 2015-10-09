@@ -25,9 +25,9 @@ public:
 
 	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
 
-	bool HasInverseDirection() const;
-
 	bool IsEmpty() const;
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 private:
 	int getSubscriptHeight( int rectHeight );
 

@@ -5,6 +5,9 @@ CExprControlModel::CExprControlModel( const CRect& rect, const std::weak_ptr<IBa
 	IBaseExprModel( rect, parent )
 {
 	middle = rect.GetHeight() / 2;
+	if( !parent.expired() ) {
+		depth = parent.lock()->GetDepth() + 1;
+	}
 }
 
 void CExprControlModel::InitializeChildren() 
@@ -115,14 +118,20 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	children.front()->MoveCaretRight( this, caret );
 }
 
-bool CExprControlModel::HasInverseDirection( ) const {
-	if( !parent.expired() ) {
-		return parent.lock()->HasInverseDirection();
-	} else {
-		return false;
-	}
-}
-
 bool CExprControlModel::IsEmpty() const {
 	return children.size() == 1 && children.front()->IsEmpty();
+}
+
+bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	int first, second;
+	int i = 0;
+	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
+		if( (*it).get() == model1 ) {
+			first = i;
+		}
+		if( (*it).get() == model2 ) {
+			second = i;
+		}
+	}
+	return first < second;
 }

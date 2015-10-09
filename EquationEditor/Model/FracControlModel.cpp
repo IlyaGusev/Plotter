@@ -6,6 +6,8 @@ CFracControlModel::CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExpr
 {
 	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
+
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CFracControlModel::Resize()
@@ -106,13 +108,13 @@ void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
-bool CFracControlModel::HasInverseDirection() const {
-	return true;
-}
-
 bool CFracControlModel::IsEmpty() const 
 {
 	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
+}
+
+bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == firstChild.get();
 }
 
 void CFracControlModel::updatePolygons()

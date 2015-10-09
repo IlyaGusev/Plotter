@@ -15,7 +15,7 @@ void CDegrControlModel::Resize()
 		height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle();
 	}
 	
-	rect.Right() = rect.Left() + width;
+	rect.Right() = rect.Left() + width + MARGIN;
 	rect.Bottom() = rect.Top() + height;
 }
 
@@ -33,7 +33,7 @@ void CDegrControlModel::PlaceChildren()
 	oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
 	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
-	newRect.Left() = secondChild->GetRect().Right();
+	newRect.Left() = secondChild->GetRect().Right() + MARGIN;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
 }
@@ -101,6 +101,11 @@ void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+bool CDegrControlModel::HasInverseDirection() const
+{
+	return false;
 }
 
 bool CDegrControlModel::IsEmpty() const {

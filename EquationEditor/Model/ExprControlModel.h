@@ -22,10 +22,10 @@ public:
 
 	ViewType GetType() const;
 
-	void UpdateSelection( const CRect& selectionRect ) {}
-
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+
+	bool HasInverseDirection() const;
 
 	bool IsEmpty() const;
 private:

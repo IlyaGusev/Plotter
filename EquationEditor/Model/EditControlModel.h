@@ -35,10 +35,12 @@ public:
 	// Возвращает позицию символа на экране по его номеру
 	int GetSymbolPointByNumber( int number ) const;
 
-	void UpdateSelection( const CRect& selectionRect );
+	void DeleteSelection();
 
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+
+	bool HasInverseDirection() const;
 
 	bool IsEmpty() const;
 
@@ -47,7 +49,6 @@ public:
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
-
 private:
 	std::vector<int> symbolsWidths;	// Ширина каждого символа
 	std::list< std::shared_ptr<IBaseExprModel> > children;	// Заглушка-пустой список

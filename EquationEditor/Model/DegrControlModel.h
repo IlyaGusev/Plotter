@@ -21,15 +21,17 @@ public:
 	int GetMiddle() const;
 
 	ViewType GetType( ) const;
-	
-	void UpdateSelection( const CRect& selectionRect ) {}
 
 	void MoveBy(int dx, int dy);
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
+	bool HasInverseDirection() const;
+
 	bool IsEmpty() const;
 private:
+	static const int MARGIN = 1;		// Отступ между показателем и основанием
+
 	int getExponentHeight(int rectHeight);
 
 	// Верхний ребенок

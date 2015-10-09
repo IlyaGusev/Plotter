@@ -35,7 +35,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	} );
 
 	// initialize draw processor
-	drawer = CTreeBfsProcessor( root, [=] ( CTreeBfsProcessor::Node node ) {
+	drawProcessor = CTreeBfsProcessor( root, [=] ( CTreeBfsProcessor::Node node ) {
 		if( node->IsSelected() ) {
 			view.DrawSelectedRect( node->GetRect() );
 		}
@@ -51,6 +51,10 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 		if( node->IsHighlighted() ) {
 			view.DrawHighlightedRect( node->GetRect(), node->IsSelected() );
 		}
+	} );
+
+	deleteSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+		node->DeleteSelection();
 	} );
 }
 
@@ -81,7 +85,7 @@ void CEquationPresenter::DeleteSymbol()
 
 void CEquationPresenter::OnDraw() 
 {
-	drawer.Process();
+	drawProcessor.Process();
 	
 	// Рисует каретку
 	// +1 - чтобы был небольшой пробел между кареткой и символом
@@ -102,7 +106,8 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 	return std::make_pair(length, offset);
 }
 
-void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) {
+void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) 
+{
 	auto predicate = [=] ( CTreeBfsProcessor::Node node ) -> bool {
 		return node->GetRect().IsContain( x, y ) && node->GetType() == TEXT;
 	};
@@ -126,24 +131,25 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) {
 void CEquationPresenter::SetCaret( int x, int y ) 
 {
 	setCaretPos( x, y, caret );
+	deleteSelectionProcessor.Process();
 	view.Redraw();
 }
 
 void CEquationPresenter::SetSelection( int x, int y ) {
 	CCaret selectionCaret;
 	setCaretPos( x, y, selectionCaret );
-	if( selectionCaret.GetCurEdit() != nullptr && 
+	while( selectionCaret.GetCurEdit() != nullptr && 
 		( selectionCaret.GetCurEdit() != caret.GetCurEdit( ) ||
 		selectionCaret.GetCurEdit() == caret.GetCurEdit() && selectionCaret.Offset() != caret.Offset() ) ) 
 	{
-		// Если правее или ниже - двигаемся вправо
-		if( selectionCaret.GetPointX() > caret.GetPointX() || selectionCaret.GetPointY() < caret.GetPointY() ) {
+		// Если правее или ниже - двигаемся вправо, иначе - влево
+		if( selectionCaret.GetPointX() >= caret.GetPointX() || 
+			selectionCaret.GetPointY() < caret.GetPointY() && caret.GetCurEdit()->HasInverseDirection() ) 
+		{
 			caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
 		} else {
 			caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );
 		}
-
-		caret = selectionCaret;
 	}
 	view.Redraw();
 }

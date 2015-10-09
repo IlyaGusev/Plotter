@@ -112,8 +112,13 @@ void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& ca
 	}
 }
 
-bool CRadicalControlModel::IsEmpty() const {
-	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
+bool CRadicalControlModel::HasInverseDirection() const {
+	return false;
+}
+
+bool CRadicalControlModel::IsEmpty() const 
+{
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
 // высота показателя степени

@@ -80,7 +80,7 @@ public:
 	
 	// Говорит, выделен ли прямоугольник
 	virtual bool IsSelected() const;
-	virtual void UpdateSelection( const CRect& selectionRect ) = 0;
+	virtual void DeleteSelection();
 
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
@@ -88,6 +88,8 @@ public:
 	// Сдвигает каретку в нужную сторону относительно from
 	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
 	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
+	// Возращает направление, в котором нужно двигаться, чтобы встретить caret
+	virtual bool HasInverseDirection() const = 0;
 
 	virtual bool IsEmpty() const = 0;
 };
@@ -149,4 +151,8 @@ inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetSelectedText
 inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetUnselectedText( ) const 
 {
 	return std::list<std::pair<std::wstring, CRect>>();
+}
+
+inline void IBaseExprModel::DeleteSelection() {
+	params.isSelected = false;
 }

@@ -110,6 +110,10 @@ void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& 
 	}
 }
 
+bool CSubscriptControlModel::HasInverseDirection() const {
+	return false;
+}
+
 bool CSubscriptControlModel::IsEmpty() const {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }

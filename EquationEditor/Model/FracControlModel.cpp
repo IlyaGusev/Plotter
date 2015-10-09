@@ -57,25 +57,30 @@ void CFracControlModel::InitializeChildren()
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( const CRect& rect ) {
+void CFracControlModel::SetRect( const CRect& rect ) 
+{
 	this->rect = rect;
 	updatePolygons();
 }
 
-ViewType CFracControlModel::GetType() const {
+ViewType CFracControlModel::GetType() const 
+{
 	return FRAC;
 }
 
-void CFracControlModel::MoveBy( int dx, int dy ) {
+void CFracControlModel::MoveBy( int dx, int dy ) 
+{
 	rect.MoveBy( dx, dy );
 	updatePolygons();
 }
 
-void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) {
+void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
 	// Если пришли из родителя - идем в нижнего ребенка
 	if( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret );
@@ -101,7 +106,12 @@ void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
-bool CFracControlModel::IsEmpty() const {
+bool CFracControlModel::HasInverseDirection() const {
+	return true;
+}
+
+bool CFracControlModel::IsEmpty() const 
+{
 	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
 }
 

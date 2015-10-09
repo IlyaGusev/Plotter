@@ -115,6 +115,14 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	children.front()->MoveCaretRight( this, caret );
 }
 
+bool CExprControlModel::HasInverseDirection( ) const {
+	if( !parent.expired() ) {
+		return parent.lock()->HasInverseDirection();
+	} else {
+		return false;
+	}
+}
+
 bool CExprControlModel::IsEmpty() const {
 	return children.size() == 1 && children.front()->IsEmpty();
 }

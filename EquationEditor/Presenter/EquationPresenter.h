@@ -76,7 +76,8 @@ private:
 	CTreeBfsProcessor highlightingProcessor;
 	CTreeBfsProcessor placeProcessor;
 	CTreeDfsProcessor resizeProcessor;
-	CTreeBfsProcessor drawer;
+	CTreeBfsProcessor drawProcessor;
+	CTreeBfsProcessor deleteSelectionProcessor;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
 	void addRadical(std::shared_ptr<CExprControlModel> parent);

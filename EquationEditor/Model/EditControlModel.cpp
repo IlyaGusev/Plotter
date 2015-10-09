@@ -100,25 +100,14 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 	return offset;
 }
 
-void CEditControlModel::UpdateSelection( const CRect& selectionRect ) {
-	selectionStart = selectionEnd = -1;
-	int offset = rect.Left();
-	for( size_t i = 0; i < symbolsWidths.size( ); ++i, offset += symbolsWidths[i] ) {
-		if( offset > selectionRect.Left() && selectionStart == -1 ) {
-			selectionStart = i;
-		}
-		if( offset > selectionRect.Right() && selectionEnd == -1 ) {
-			selectionEnd = i + 1;
-		}
-	}
-	if( selectionStart = 0 && selectionEnd == symbolsWidths.size() ) {
-		params.isSelected = true;
-	} else {
-		params.isSelected = false;
-	}
+void CEditControlModel::DeleteSelection() 
+{
+	params.isSelected = false;
+	params.selectedPositions.first = params.selectedPositions.second = 0;
 }
 
-void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) {
+void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом конце
 	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>( shared_from_this() ) );
@@ -146,7 +135,8 @@ void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	}
 }
 
-void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) {
+void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) 
+{
 	// Если это не тот эдит, с которого начали движение - останавливаемся на нем в самом начале
 	if( from != this ) {
 		caret.SetCurEdit( std::const_pointer_cast<IBaseExprModel>(shared_from_this()) );
@@ -172,6 +162,11 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	} else {
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+bool CEditControlModel::HasInverseDirection() const
+{
+	return parent.lock()->HasInverseDirection();
 }
 
 bool CEditControlModel::IsEmpty() const {

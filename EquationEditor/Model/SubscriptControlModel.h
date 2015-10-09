@@ -21,14 +21,13 @@ public:
 	
 	void MoveBy(int dx, int dy);
 
-	void UpdateSelection( const CRect& selectionRect ) {}
-
 	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
 
 	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
 
-	bool IsEmpty() const;
+	bool HasInverseDirection() const;
 
+	bool IsEmpty() const;
 private:
 	int getSubscriptHeight( int rectHeight );
 

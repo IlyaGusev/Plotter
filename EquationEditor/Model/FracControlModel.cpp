@@ -85,12 +85,12 @@ void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 {
 	// Если пришли из родителя - идем в нижнего ребенка
 	if( from == parent.lock().get() ) {
-		secondChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else if( from == secondChild.get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
@@ -98,13 +98,13 @@ void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 {
 	// Если пришли из родителя - идем в верхнего ребенка
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else if( from == firstChild.get() ) {
 		// Если пришли из верхнего - идем в нижнего
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
@@ -120,4 +120,13 @@ bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, cons
 void CFracControlModel::updatePolygons()
 {
 	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+}
+
+void CFracControlModel::UpdateSelection()
+{
+	if( firstChild->IsSelected() && secondChild->IsSelected() ) {
+		params.isSelected = true;
+	} else {
+		params.isSelected = false;
+	}
 }

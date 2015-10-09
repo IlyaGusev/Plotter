@@ -71,6 +71,7 @@ private:
     std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
 	CCaret caret;
+	bool isInSelectionMode;
 
 	// processors
 	CTreeBfsProcessor highlightingProcessor;
@@ -78,13 +79,14 @@ private:
 	CTreeDfsProcessor resizeProcessor;
 	CTreeBfsProcessor drawProcessor;
 	CTreeBfsProcessor deleteSelectionProcessor;
+	CTreeBfsProcessor updateSelectionProcessor;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
 	void addRadical(std::shared_ptr<CExprControlModel> parent);
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
 	void addSubscript(std::shared_ptr<CExprControlModel> parent);
 	
-	bool isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2 );
+	bool isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2, int offset1, int offset2 );
 
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>

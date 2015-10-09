@@ -98,6 +98,8 @@ public:
 	virtual bool IsEmpty() const = 0;
 
 	virtual int GetDepth() const;
+
+	virtual void UpdateSelection() = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const

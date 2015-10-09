@@ -21,7 +21,7 @@ void CDegrControlModel::Resize()
 		height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle();
 	}
 	
-	rect.Right() = rect.Left() + width + MARGIN;
+	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
 }
 
@@ -39,7 +39,7 @@ void CDegrControlModel::PlaceChildren()
 	oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
 	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
-	newRect.Left() = secondChild->GetRect().Right() + MARGIN;
+	newRect.Left() = secondChild->GetRect().Right();
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	firstChild->SetRect(newRect);
 }
@@ -98,14 +98,14 @@ void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	//если из основания - в показатель
 	else if( from == secondChild.get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
@@ -121,4 +121,13 @@ bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, cons
 int CDegrControlModel::getExponentHeight( int rectHeight )
 {
 	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CDegrControlModel::UpdateSelection()
+{
+	if( firstChild->IsSelected() && secondChild->IsSelected() ) {
+		params.isSelected = true;
+	} else {
+		params.isSelected = false;
+	}
 }

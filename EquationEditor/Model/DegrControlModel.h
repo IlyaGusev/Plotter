@@ -26,9 +26,9 @@ public:
 	bool IsEmpty() const;
 
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
-private:
-	static const int MARGIN = 1;		// Отступ между показателем и основанием
 
+	void UpdateSelection();
+private:
 	int getExponentHeight(int rectHeight);
 
 	// Верхний ребенок

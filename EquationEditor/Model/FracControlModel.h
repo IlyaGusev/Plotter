@@ -32,6 +32,8 @@ public:
 	bool IsEmpty() const;
 
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

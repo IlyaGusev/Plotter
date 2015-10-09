@@ -103,19 +103,19 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	// Если это был самый правый ребенок - поднимаемся наверх
 	if( from == children.back().get() ) {
 		if( !parent.expired() ) {
-			parent.lock()->MoveCaretRight( this, caret );
+			parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 		}
 		return;
 	}
 	// Если он где-то посередине - we need to go deeper
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		if( (*it).get() == from ) {
-			(*++it)->MoveCaretRight( this, caret );
+			(*++it)->MoveCaretRight( this, caret, isInSelectionMode );
 			return;
 		}
 	}
 	// Иначе - он пришел извне, ставим каретку в самое начало
-	children.front()->MoveCaretRight( this, caret );
+	children.front()->MoveCaretRight( this, caret, isInSelectionMode );
 }
 
 bool CExprControlModel::IsEmpty() const {
@@ -134,4 +134,15 @@ bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, cons
 		}
 	}
 	return first < second;
+}
+
+void CExprControlModel::UpdateSelection()
+{
+	for( std::shared_ptr<IBaseExprModel> child : children ) {
+		if( !child->IsSelected() ) {
+			params.isSelected = false;
+			return;
+		}
+	}
+	params.isSelected = true;
 }

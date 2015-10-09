@@ -47,6 +47,8 @@ public:
 
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
+	void UpdateSelection();
+
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
 private:

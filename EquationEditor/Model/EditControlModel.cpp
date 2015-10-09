@@ -132,7 +132,7 @@ void CEditControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 		}
 		--caret.Offset();
 	} else {
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
@@ -161,7 +161,7 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 		}
 		++caret.Offset();
 	} else {
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
@@ -172,11 +172,11 @@ bool CEditControlModel::IsEmpty() const {
 std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetSelectedText() const 
 {
 	std::wstring selectedString( params.text.begin() + params.selectedPositions.first, params.text.begin() + params.selectedPositions.second );
-	return std::list<std::pair<std::wstring, CRect>> { std::make_pair( selectedString, CRect(
-		GetSymbolPointByNumber( params.selectedPositions.first ),
-		rect.Top(),
-		GetSymbolPointByNumber( params.selectedPositions.second ),
-		rect.Bottom() ) ) };
+	return std::list< std::pair<std::wstring, CRect> > { std::make_pair( selectedString, 
+		CRect( GetSymbolPointByNumber( params.selectedPositions.first ),
+			   rect.Top(),
+			   GetSymbolPointByNumber( params.selectedPositions.second ),
+			   rect.Bottom() ) ) };
 }
 
 std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( ) const 
@@ -191,4 +191,13 @@ std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( 
 
 bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
 	return false;
+}
+
+void CEditControlModel::UpdateSelection()
+{
+	if( params.selectedPositions.first == 0 && params.selectedPositions.second == symbolsWidths.size() ) {
+		params.isSelected = true;
+	} else {
+		params.isSelected = false;
+	}
 }

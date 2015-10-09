@@ -3,7 +3,8 @@
 #include "Presenter/Utils/TreeDfsProcessor.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
-	view( newView )
+	view( newView ),
+	isInSelectionMode( false )
 {
 	CRect rect(20, 20, 30, 40);
 
@@ -56,12 +57,17 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	deleteSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
 		node->DeleteSelection();
 	} );
+
+	updateSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+		node->UpdateSelection();
+	} );
 }
 
 CEquationPresenter::~CEquationPresenter() {}
 
 void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
 {
+	isInSelectionMode = false;
 	int symbolWidth = view.GetSymbolWidth( symbol, caret.GetCurEdit()->GetRect().GetHeight() );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
@@ -73,6 +79,7 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 
 void CEquationPresenter::DeleteSymbol() 
 {
+	isInSelectionMode = false;
 	if( caret.Offset() != 0 ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
@@ -130,12 +137,17 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 
 void CEquationPresenter::SetCaret( int x, int y ) 
 {
-	setCaretPos( x, y, caret );
+	isInSelectionMode = false;
 	deleteSelectionProcessor.Process();
+	setCaretPos( x, y, caret );
 	view.Redraw();
 }
 
-bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2 ) {
+bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2, int offset1, int offset2 )
+{
+	if( model1 == model2 ) {
+		return offset1 < offset2;
+	}
 	while( model1->GetDepth() > model2->GetDepth() ) {
 		model1 = model1->GetParent().lock().get();
 	}
@@ -149,25 +161,22 @@ bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const I
 	return model1->GetParent().lock()->IsSecondModelFarther( model1, model2 );
 }
 
-void CEquationPresenter::SetSelection( int x, int y ) {
+void CEquationPresenter::SetSelection( int x, int y ) 
+{
+	isInSelectionMode = true;
+
 	CCaret selectionCaret;
 	setCaretPos( x, y, selectionCaret );
-	while( selectionCaret.GetCurEdit() != nullptr && 
-		( selectionCaret.GetCurEdit() != caret.GetCurEdit() ||
-		selectionCaret.GetCurEdit() == caret.GetCurEdit() && selectionCaret.Offset() != caret.Offset() ) ) 
-	{
-		if( selectionCaret.GetCurEdit() == caret.GetCurEdit() ) {
-			if( selectionCaret.Offset() > caret.Offset() ) {
-				caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
-			} else {
-				caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );
-			}
-		} else if( isRightDirection( caret.GetCurEdit().get(), selectionCaret.GetCurEdit().get() ) ) {
+	while( selectionCaret.GetCurEdit() != nullptr && selectionCaret != caret ) {
+		if( isRightDirection( caret.GetCurEdit().get(), selectionCaret.GetCurEdit().get(), caret.Offset(), selectionCaret.Offset() ) ) {
 			caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
 		} else {
 			caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret, true );
 		}
 	}
+
+	updateSelectionProcessor.Process();
+
 	view.Redraw();
 }
 
@@ -241,6 +250,7 @@ void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
 
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
+	isInSelectionMode = false;
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
 	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast<CExprControlModel>( caret.GetCurEdit()->GetParent().lock() ) );

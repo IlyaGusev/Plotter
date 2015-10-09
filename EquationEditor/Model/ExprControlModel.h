@@ -8,6 +8,7 @@ public:
 	CExprControlModel( const CRect& newRect, const std::weak_ptr<IBaseExprModel> newParent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
+
 	void InitializeChildren();
 
 	void Resize( );
@@ -28,6 +29,8 @@ public:
 	bool IsEmpty() const;
 
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

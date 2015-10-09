@@ -21,14 +21,16 @@ public:
 
 	ViewType GetType( ) const;
 	
-	void MoveBy(int dx, int dy);
+	void MoveBy( int dx, int dy );
 
-	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
-	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode=false);
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
 	bool IsEmpty() const;
 
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

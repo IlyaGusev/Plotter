@@ -84,30 +84,30 @@ void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& c
 {
 	// Если пришли из индекса - идём в основание
 	if( from == secondChild.get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	//если пришли из родителя - идём в индекс
 	else if( from == parent.lock().get() ) {
-		secondChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
 void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */) {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	//если из основания - в индекс
 	else if( from == firstChild.get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
@@ -124,4 +124,13 @@ bool CSubscriptControlModel::IsSecondModelFarther( const IBaseExprModel* model1,
 // Высота выступающего снизу индекса
 int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
 	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CSubscriptControlModel::UpdateSelection()
+{
+	if( firstChild->IsSelected() && secondChild->IsSelected() ) {
+		params.isSelected = true;
+	} else {
+		params.isSelected = false;
+	}
 }

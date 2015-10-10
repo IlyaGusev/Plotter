@@ -1,17 +1,21 @@
 #include "Node.h"
 Node::~Node() {}
 
-string Node::toMathML()
+void Node::computeResult(string & result, int operation, int notation)
+{
+}
+
+string Node::toMathML(int notation)
 {
 	return string();
 }
 
-string Node::toOpenMath()
+string Node::toOpenMath(int notation)
 {
 	return string();
 }
 
-string Node::toTeX()
+string Node::toTeX(int notation)
 {
 	return string();
 }

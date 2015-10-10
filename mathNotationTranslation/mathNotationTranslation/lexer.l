@@ -2,13 +2,6 @@
 %option noyywrap
 
 %{
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <string>
-
-using namespace std;
-
 FlexLexer* lexer = new yyFlexLexer();
 
 string value;
@@ -20,6 +13,7 @@ enum yytokentype {
 	MUL,
 	SUB,
 	DIV,
+	EQ,
 	LOPER,
 	ROPER,
 	LNUM,
@@ -42,8 +36,6 @@ enum yytokentype {
 
 WHITESPACE  [ \t\f\r]
 
-SUB		"-"
-DIV		"/"
 LOPER	"<mo>"
 ROPER	"</mo>"
 LNUM	"<mn>"
@@ -78,13 +70,17 @@ NUMBER	([0-9]+)(\.[0-9]+)?
 				return MUL;
 		}
 
-{SUB}	{
+"-"		{
                 return SUB;
-			}
+		}
 
-{DIV}	{
+"/"		{
                 return DIV;
-			}
+		}
+
+"="		{
+				return EQ;
+		}
 
 {NUMBER}	{
                 value = yytext;

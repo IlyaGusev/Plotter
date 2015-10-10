@@ -7,22 +7,39 @@ variableNode::variableNode(){}
 
 variableNode::~variableNode(){}
 
-string variableNode::toMathML() { 
+string variableNode::toMathML(int notation) {
+	string result;
+	computeResult(result, notation);
+	return result;
+};
+string variableNode::toOpenMath(int notation) { return ""; };
+string variableNode::toTeX(int notation) { return ""; }
+void variableNode::computeResult(string& result, int notation)
+{
 	char* endptr = 0;
 	strtod(num.c_str(), &endptr);
-	string result;
 
 	if (*endptr != '\0' || endptr == num) {
-		result = " <mi> " + num + " </mi> ";
-		return result;
+		switch (notation) {
+		case mathml:
+			result = " <mi> " + num + " </mi> ";
+		case tex:
+			result = num;
+		case openmath:
+			result = num;
+		}
 	}
 	else {
-		result = " <mn> " + num + " </mn> ";
-		return result;
+		switch (notation) {
+		case mathml:
+			result = " <mn> " + num + " </mn> ";
+		case tex:
+			result = num;
+		case openmath:
+			result = num;
+		}
 	}
 };
-string variableNode::toOpenMath() { return ""; };
-string variableNode::toTeX() { return ""; };
 
 string variableNode::getValue() {
 	return this->num;

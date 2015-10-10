@@ -6,15 +6,20 @@ class Parser
 {
 public:
 	Parser();
-	Parser(string input, string output);
+	//Parser(string input, string output);
 	~Parser();
 	bool processText(istream& is, unique_ptr <Node>& position);
-	string getType(int pos);
+	//int getType(int pos);
 	void addNode();
 	unique_ptr <Node> prev;
 	void arithmeticOperation(istream& is, int oper, unique_ptr <Node>& position);
 
 private:
-	string fileType[2];
+	/*int fileType[2];
+	enum layout {
+		mathml,
+		openmath,
+		tex
+	};*/
 };
 

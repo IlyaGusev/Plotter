@@ -1,1 +1,1 @@
-<mrow> <mn> 5 </mn> <mo> + </mo> <mn> 1 </mn> <mo> * </mo> <mn> 3 </mn> </mrow>
+<mrow> <mn> 5 </mn> <mo> + </mo> <mn> 1 </mn> <mo> * </mo> <mn> 3 </mn> <mo> = </mo> <mi> x </mi> </mrow>

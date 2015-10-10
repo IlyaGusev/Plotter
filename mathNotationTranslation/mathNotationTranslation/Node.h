@@ -9,9 +9,7 @@ class Node
 public:
 	virtual ~Node();
 	void computeResult(string& result, int operation, int notation);
-	virtual string toMathML(int notation);
-	virtual string toOpenMath(int notation);
-	virtual string toTeX(int notation);
+	virtual string Translate(int notation);
 	void setLeft(unique_ptr <Node> left);
 	void setRight(unique_ptr <Node> right);
 	unique_ptr <Node> getLeft();

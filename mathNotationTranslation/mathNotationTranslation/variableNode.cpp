@@ -7,13 +7,12 @@ variableNode::variableNode(){}
 
 variableNode::~variableNode(){}
 
-string variableNode::toMathML(int notation) {
+string variableNode::Translate(int notation) {
 	string result;
 	computeResult(result, notation);
 	return result;
-};
-string variableNode::toOpenMath(int notation) { return ""; };
-string variableNode::toTeX(int notation) { return ""; }
+}
+
 void variableNode::computeResult(string& result, int notation)
 {
 	char* endptr = 0;

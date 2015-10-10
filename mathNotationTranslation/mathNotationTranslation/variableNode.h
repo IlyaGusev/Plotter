@@ -8,9 +8,7 @@ public:
 	variableNode(string num);
 	~variableNode();
 	string getValue();
-	string toMathML(int notation);
-	string toOpenMath(int notation);
-	string toTeX(int notation);
+	string Translate(int notation);
 	void computeResult(string& result, int notation);
 
 private:

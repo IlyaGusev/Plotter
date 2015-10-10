@@ -11,10 +11,6 @@ int main(int argc, char** argv) {
 	Parser parser; 
 	tree.reset();
 
-	parser.processText(is, move(tree));
-	parser.processText(is, move(tree));
-	parser.processText(is, move(tree));
-	parser.processText(is, move(tree));
-	cout << parser.prev.get()->toMathML( 2 );
-	//TODO: ?????? ?????? ?????? ??? ????????
+	while (!parser.processText(is, move(tree)));
+	cout << parser.prev.get()->Translate( 2 );
 }

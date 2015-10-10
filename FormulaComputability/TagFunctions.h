@@ -20,7 +20,7 @@ CNode CTagFunction<TArg, TRes>::checkArgument(const CNode& node)const
 {
 	if (node.empty())
 		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	CType argType = CTagContainer::getTag(node.name())->type;
+	CType argType = CTagContainer::getTag(node.name()).getType();
 	if ((!(argType & TArg)) || (argType & (~TArg)))
 		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
 	return node.next_sibling();

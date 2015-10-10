@@ -28,10 +28,10 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 const map< string, unique_ptr< CTag > > CTagContainer::tags = CTagContainer::CTagContainerBuild();
 
 
-CTag* CTagContainer::getTag(const string& name)
+CTag& CTagContainer::getTag(const string& name)
 {
     auto foundTagIterator = tags.find( name );
 	if ( foundTagIterator == tags.end() )
 		throw invalid_argument( ( string( "no such tag: " ) + name ) );
-	return foundTagIterator->second.get();
+	return *(foundTagIterator->second);
 };

@@ -8,6 +8,16 @@ CTag::~CTag()
 {
 }
 
+string CTag::deleteSpaces(const string& s)//delete white spaces in the begin and end of the string
+{
+	int begin = 0, end = s.length()-1;
+	while (s[begin] == ' ')
+		++begin;
+	while (s[end] == ' ')
+		--end;
+	return s.substr(begin, end - begin + 1);
+}
+
 void CTag::enterToAllChilds(const CNode& node)
 {
 	auto child = node.first_child();
@@ -46,7 +56,7 @@ void CTag::hasNoText(const CNode& node) const
     }
 }
 
-void CTag::hasNoChilds(const CNode& node) const
+void CTag::hasNoChilds(const CNode& node)
 {
 	if (node.children().begin() != node.children().end())
 		throwException(node.name(), node.offset_debug(), UNEXPECTED_CHILD);
@@ -78,8 +88,9 @@ const CNode CTag::checkArgumentType(const CNode& node, int requiredType) const
     return curArgTag.checkSignature(node);
 }
 
-void CTag::throwException(const string& tagName, int position, ErrorType errType) const
+void CTag::throwException(const string& tagName, int position, ErrorType errType)
 {   
+	static_assert(ATTRIBUTE_REQUiRED == 8, "add new enum value to throwException");
     string errorMsg;
     switch (errType) {
         case INVALID_ARGUMENT:
@@ -100,8 +111,24 @@ void CTag::throwException(const string& tagName, int position, ErrorType errType
         case UNEXPECTED_CHILD:
             errorMsg += "this tag can't have any child";
             break;
+		case INVALID_ATTRIBUTE_ARGUMENT:
+			errorMsg += "invalid attribute value";
+			break;			
+		case ATTRIBUTE_REQUiRED:
+			errorMsg += "attribute requered";
+			break;
+		case IDENTIFIER_ALREADY_EXIST:
+			errorMsg += "identifier has already exist";
+			break;
+		case UNKNOWN_IDENTIFIER:
+			errorMsg += "unknown identifier";
+			break;
         default:
+#ifdef _DEBUG
+			throw invalid_argument("invalid enum value in throwException");
+#else
             break;
+#endif
     }
     errorMsg += " in tag " + tagName + "\nposition: " + to_string(position);
 
@@ -141,34 +168,7 @@ void CTagApply::operator ()(const CNode& node)const
 		throwException(node.name(), child.offset_debug(), INVALID_ARGUMENT);
 	enterToAllChilds(node);
 }
-/*
-CTagBinaryNumFunction::CTagBinaryNumFunction() 
-{
-    type = NUMBER | FUNCTION | CALCULATEBLE;
-};
 
-void CTagBinaryNumFunction::operator ()(const CNode& node)const
-{
-	hasNoAttributes(node);
-	hasNoChilds(node);
-	hasNoText(node);
-}
-const CNode  CTagBinaryNumFunction::checkSignature(const CNode& node)const
-{
-	auto arg = node.next_sibling();
-	if (arg.empty())
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	CType argType = CTagContainer::getTag(arg.name())->type;
-	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	arg = arg.next_sibling();
-	if (arg.empty())
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	return arg.next_sibling();
-};
-*/
 CTagCn::CTagCn()
 {
      type = NUMBER;
@@ -239,59 +239,10 @@ void CTagCn::operator ()(const CNode& node)const
 	throwException(node.name(), node.offset_debug(), UNKNOWN_ATTRIBUTE);
 }
 
-CTagCi::CTagCi() 
-{
-    type = VARIABLE;
-}
-
-void CTagCi::operator()(const CNode& node) const
-{
-    hasNoChilds(node);
-    string ident(node.value());
-    if (ident.empty()) {
-        throwException(node.name(), node.offset_debug(), INCORRECT_VALUE);
-    }
-}
-
-/*
-CTagVarArgFunction::CTagVarArgFunction() 
-{
-	type = NUMBER | FUNCTION | CALCULATEBLE;
-}
-
-void CTagVarArgFunction::operator ()(const CNode& node)const 
-{
-
-}
-
-const CNode CTagVarArgFunction::checkSignature(const CNode& node)const 
-{
-	auto arg = node.next_sibling();
-	if (arg.empty())
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	CType argType = CTagContainer::getTag(arg.name())->type;
-	if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-		throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-	arg = arg.next_sibling();
-
-	while (!arg.empty())
-	{
-		if (arg.empty())
-			throwException(node.name(), node.offset_debug(), INVALID_ARGUMENT);
-		CType argType = CTagContainer::getTag(arg.name())->type;
-		if ((!(argType & NUMBER)) || (argType & (~NUMBER)))
-			break;
-		arg = arg.next_sibling();
-	};
-
-	return arg;
-}
-*/
 CTagBVar::CTagBVar()
 {
     type = BOUND;
 }
-
 
 void CTagBVar::operator()(const CNode& node) const 
 {
@@ -361,6 +312,3 @@ void CTagLimitable::operator()(const CNode& node) const
     hasNoChilds(node);
     hasNoText(node);
 }
-
-
-

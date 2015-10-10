@@ -8,7 +8,7 @@ template< CType TArg,CType TRes>
 class CTagFunction : public CTag
 {
 public:
-	CNode checkArgument(const CNode& node)const;
+	CNode checkArgument(const CNode& node)const;//check that node is correct argument and return node.next_sibling()
 	virtual void operator ()(const CNode& node)const;
 	CTagFunction() {
 		type = TArg | FUNCTION | CALCULATEBLE;
@@ -34,7 +34,7 @@ void CTagFunction<TArg, TRes>::operator ()(const CNode& node)const
 	hasNoText(node);
 };
 
-
+//function with various arguments
 template< CType TArg,CType TRes>
 class CTagVarArgFunction : public CTagFunction<TArg, TRes>
 {
@@ -42,21 +42,12 @@ public:
 	virtual const CNode checkSignature(const CNode& node)const;
 };
 
-template< CType TArg,CType TRes>
-class CTagBinaryFunction : public CTagFunction<TArg, TRes>
+//function with CountArg arguments
+template< CType TArg, CType TRes, int CountArg>
+class CTagNArgFunction : public CTagFunction<TArg, TRes>
 {
 public:
-	virtual const CNode checkSignature(const CNode& node)const {
-		return CTagFunction<TArg, TRes>::checkArgument(CTagFunction<TArg, TRes>::checkArgument(node.next_sibling()));
-	};
-};
-
-template< CType TArg,CType TRes>
-class CTagUnaryFunction : public CTagFunction<TArg, TRes>
-{
-	virtual const CNode checkSignature(const CNode& node)const {
-		return CTagFunction<TArg, TRes>::checkArgument(node.next_sibling());
-	};
+	virtual const CNode checkSignature(const CNode& node)const;
 };
 
 template< CType TArg,CType TRes>
@@ -65,10 +56,20 @@ const CNode CTagVarArgFunction<TArg, TRes>::checkSignature(const CNode& node)con
 	auto arg = CTagFunction<TArg, TRes>::checkArgument(node.next_sibling());
 	while (!arg.empty())
 	{
-		arg = CTagFunction<TArg, TRes>::checkArgument(arg.next_sibling());
+		arg = CTagFunction<TArg, TRes>::checkArgument(arg);
 	};
 	return arg;
 };
 
+template< CType TArg, CType TRes, int CountArg>
+const CNode CTagNArgFunction<TArg, TRes, CountArg>::checkSignature(const CNode& node)const
+{
+	auto arg = node;
+	for (int i = 0; i < CountArg; ++i)
+	{
+		arg = CTagFunction<TArg, TRes>::checkArgument(arg.next_sibling());
+	};
+	return arg;
+};
 
 #endif

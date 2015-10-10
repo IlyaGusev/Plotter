@@ -14,8 +14,6 @@ public:
 	void setRight(unique_ptr <Node> right);
 	unique_ptr <Node> getLeft();
 	unique_ptr <Node> getRight();
-
-//protected:
 	unique_ptr <Node> left;
 	unique_ptr <Node> right;
 	enum yytokentype {
@@ -49,4 +47,3 @@ public:
 		tex
 	};
 };
-

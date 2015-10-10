@@ -2,8 +2,8 @@
 #include <iostream>
 #include <map>
 
-#define thisLeft ((Node*) this)->left 
-#define thisRight ((Node*) this)->right 
+#define thisLeft ((Node*) this)->left
+#define thisRight ((Node*) this)->right
 
 const map<int, array<string, 3>> arithmeticNode::notations = createMap();
 
@@ -29,11 +29,3 @@ string arithmeticNode::Translate(int notation) {
 	computeResult(result, notation);
 	return result;
 };
-
-//void arithmeticNode::setLeft(unique_ptr <Node> left) {
-//	this->left = left;
-//}
-//
-//void arithmeticNode::setRight(unique_ptr <Node> right) {
-//	this->right = right;
-//}

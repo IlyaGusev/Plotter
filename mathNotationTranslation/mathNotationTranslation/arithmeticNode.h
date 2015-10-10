@@ -2,6 +2,7 @@
 #include "Node.h"
 #include <map>
 #include <array>
+
 class arithmeticNode :
 	public Node
 {
@@ -9,14 +10,10 @@ public:
 	void computeResult(string& result, int notation);
 	arithmeticNode();
 	~arithmeticNode();
-	string Translate(int notation);/*
-	void setLeft(unique_ptr <Node> left);
-	void setRight(unique_ptr <Node> right);*/
-
-//private:
+	string Translate(int notation);
 	unique_ptr <Node> left;
 	unique_ptr <Node> right;
-	int operation; 
+	int operation;
 	static map<int, array<string, 3>> createMap()
 	{
 		map<int, array<string, 3>> m;
@@ -34,4 +31,3 @@ public:
 
 	static const map<int, array<string, 3>> notations;
 };
-

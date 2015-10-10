@@ -5,26 +5,6 @@
 
 Parser::Parser() { prev.reset(); }
 Parser::~Parser() {}
-//Parser::Parser(string input, string output) {
-//	if (input == "mathml")
-//		fileType[0] = mathml;
-//	if (input == "openmath")
-//		fileType[0] = openmath;
-//	if (input == "tex")
-//		fileType[0] = tex;	
-//
-//	if (output == "mathml")
-//		fileType[1] = mathml;
-//	if (output == "openmath")
-//		fileType[1] = openmath;
-//	if (output == "tex")
-//		fileType[1] = tex;
-//}
-//
-//int Parser::getType(int id) {
-//	return fileType[id];
-//}
-
 void Parser::addNode(){}
 
 void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& position)
@@ -41,6 +21,7 @@ void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& positi
 
 bool Parser::processText(istream& is, unique_ptr <Node>& position) {
 	int tok = lexer->yylex(&is, &cout);
+	cout<<tok<<endl;
 	switch (tok) {
 	case ID:
 	case NUMBER:

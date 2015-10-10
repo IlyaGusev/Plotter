@@ -5,7 +5,6 @@
 class CEquationEditorWindow : public IEditorView {
 public:
     CEquationEditorWindow();
-	~CEquationEditorWindow();
 
     // Зарегистрировать класс окна
     // Если true, то зарегистрировали успешно

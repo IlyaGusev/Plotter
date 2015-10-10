@@ -7,6 +7,7 @@
 #include "Model/Utils/Line.h"
 #include "Model/Utils/Caret.h"
 
+// Реализованные типы вьюшек
 enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
 
 // Что из этой модельки нужно отрисовать на экране
@@ -84,6 +85,12 @@ public:
 	// Говорит, выделен ли прямоугольник
 	virtual bool IsSelected() const;
 	virtual void DeleteSelection();
+	// Обновляет поле selection в соответствии со своими детьми: если все дети выделены, то и их родитель выделен
+	virtual void UpdateSelection() = 0;
+
+	// Удаляет тот кусок, который помечен, как isSelected
+	// Возвращает false, когда требуется дополнительная обработка от родителя
+	virtual bool DeleteSelectedPart();
 
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
@@ -98,8 +105,7 @@ public:
 	virtual bool IsEmpty() const = 0;
 
 	virtual int GetDepth() const;
-
-	virtual void UpdateSelection() = 0;
+	virtual void UpdateDepth();
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -167,4 +173,23 @@ inline void IBaseExprModel::DeleteSelection() {
 
 inline int IBaseExprModel::GetDepth() const {
 	return depth;
+}
+
+inline bool IBaseExprModel::DeleteSelectedPart() {
+	auto children = GetChildren();
+	bool result = true;
+	for( auto it = children.begin(); it != children.end(); ++it ) {
+		// Если нужно дополнительное вмешательство
+		result &= (*it)->DeleteSelectedPart();
+	}
+	return result;
+}
+
+inline void IBaseExprModel::UpdateDepth() {
+	if( !parent.expired() ) {
+		depth = parent.lock()->depth + 1;
+	}
+	for( auto child : GetChildren() ) {
+		child->UpdateDepth();
+	}
 }

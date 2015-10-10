@@ -1,6 +1,5 @@
 ﻿#include "Model/DegrControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
 CDegrControlModel::CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent ) 

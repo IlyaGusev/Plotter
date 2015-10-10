@@ -73,7 +73,17 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 	}
 }
 
-ViewType CExprControlModel::GetType() const 
+void CExprControlModel::AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) {
+	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
+	if( currentChildIterator == children.begin() ) {
+		children.push_front( newChild );
+	} else {
+		--currentChildIterator;
+		children.insert( currentChildIterator, newChild );
+	}
+}
+
+ViewType CExprControlModel::GetType() const
 {
 	return EXPR;
 }
@@ -145,4 +155,29 @@ void CExprControlModel::UpdateSelection()
 		}
 	}
 	params.isSelected = true;
+}
+
+bool CExprControlModel::DeleteSelectedPart() {
+	for( auto it = children.begin(); it != children.end(); ++it ) {
+		// Если нужно дополнительное вмешательство
+		// Первым идет EditControl, его оставляем
+		if( !(*it)->DeleteSelectedPart() && it != children.begin() ) {
+			// Если пустой - удаляем
+			if( !(*it)->IsEmpty() ) {
+				// Иначе переносим наверх все непустые контролы
+				for( auto childExpr : (*it)->GetChildren() ) {
+					if( !childExpr->IsEmpty() ) {
+						for( auto child : childExpr->GetChildren() ) {
+							children.insert( it, child );
+							child->SetParent( shared_from_this() );
+							child->UpdateDepth();
+						}
+					}
+				}
+			}
+			it = --children.erase( it );
+		}
+	}
+	// Если остался один пустой EditControl
+	return !IsEmpty();
 }

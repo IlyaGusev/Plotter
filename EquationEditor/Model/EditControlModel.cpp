@@ -189,7 +189,8 @@ std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( 
 													   std::make_pair( secondUnselectedString, secondRect ) };
 }
 
-bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+{
 	return false;
 }
 
@@ -200,4 +201,12 @@ void CEditControlModel::UpdateSelection()
 	} else {
 		params.isSelected = false;
 	}
+}
+
+bool CEditControlModel::DeleteSelectedPart() 
+{
+	params.text.erase( params.text.begin() + params.selectedPositions.first, params.text.begin() + params.selectedPositions.second );
+	symbolsWidths.erase( symbolsWidths.begin() + params.selectedPositions.first, symbolsWidths.begin() + params.selectedPositions.second );
+	params.selectedPositions.first = params.selectedPositions.second = 0;
+	return !IsEmpty();
 }

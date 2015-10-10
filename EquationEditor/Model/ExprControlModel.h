@@ -20,6 +20,7 @@ public:
 	// Вставляет нового ребенка после curChild
 	// Если curChild == nullptr, вставляет в конец списка
 	void AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild );
+	void AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild );
 
 	ViewType GetType() const;
 
@@ -31,6 +32,8 @@ public:
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	void UpdateSelection();
+
+	bool DeleteSelectedPart();
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

@@ -4,17 +4,13 @@
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
-CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) {
+CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) 
+{
 	presenter = std::make_shared<CEquationPresenter>(*this);
 }
 
-CEquationEditorWindow::~CEquationEditorWindow() {
-	for( auto it = fonts.begin(); it != fonts.end(); ++it ) {
-		::DeleteObject( it->second );
-	}
-}
-
-bool CEquationEditorWindow::RegisterClassW() {
+bool CEquationEditorWindow::RegisterClassW() 
+{
 	WNDCLASSEX wnd;
 	ZeroMemory( &wnd, sizeof(wnd) );
 	wnd.cbSize = sizeof(wnd);
@@ -27,7 +23,8 @@ bool CEquationEditorWindow::RegisterClassW() {
 	return ::RegisterClassEx( &wnd ) != 0;
 }
 
-bool CEquationEditorWindow::Create() {
+bool CEquationEditorWindow::Create() 
+{
 	symbolSelectedColorref = RGB( 0xFF, 0xFF, 0xFF );	// Белый
 	symbolUnselectedColorref = RGB( 0, 0, 0 );			// Черный
 	bkSelectedColorref = RGB( 0x1F, 0xAE, 0xE9 );		// Голубой
@@ -37,15 +34,21 @@ bool CEquationEditorWindow::Create() {
 		nullptr, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 
-void CEquationEditorWindow::Show( int cmdShow ) {
+void CEquationEditorWindow::Show( int cmdShow ) 
+{
 	::ShowWindow( hwnd, cmdShow );
 }
 
-void CEquationEditorWindow::OnDestroy() {
+void CEquationEditorWindow::OnDestroy() 
+{
+	for( auto it = fonts.begin(); it != fonts.end(); ++it ) {
+		::DeleteObject( it->second );
+	}
 	::PostQuitMessage( 0 );
 }
 
-void CEquationEditorWindow::OnCreate() {
+void CEquationEditorWindow::OnCreate() 
+{
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 	
 	// Добавляем меню
@@ -53,14 +56,17 @@ void CEquationEditorWindow::OnCreate() {
 	::SetMenu( hwnd, hMenu );
 }
 
-void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
+void CEquationEditorWindow::OnSize( int cxSize, int cySize ) 
+{
 }
 
-void CEquationEditorWindow::Redraw() {
+void CEquationEditorWindow::Redraw() 
+{
 	::InvalidateRect( hwnd, nullptr, TRUE );
 }
 
-int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) {
+int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) 
+{
 	HDC hdc = GetDC( hwnd );
 	HGDIOBJ oldObject = ::SelectObject( hdc, getFont(symbolHeight) );
 	
@@ -71,11 +77,13 @@ int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) {
 	return symbolWidth;
 }
 
-void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) {
+void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos ) 
+{
 	presenter->SetCaret( xMousePos, yMousePos );
 }
 
-void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
+void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) 
+{
 	if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
 		case ID_ADD_FRAC:
@@ -94,7 +102,8 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) {
 	}
 }
 
-void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) {
+void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) 
+{
 	switch( wParam ) {
 	case VK_LEFT:   // LEFT ARROW 
 		presenter->MoveCaretLeft();
@@ -110,13 +119,15 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) {
 	}
 }
 
-void CEquationEditorWindow::OnMouseMove( WPARAM wParam, int x, int y ) {
+void CEquationEditorWindow::OnMouseMove( WPARAM wParam, int x, int y ) 
+{
 	if( wParam == MK_LBUTTON ) {
 		presenter->SetSelection( x, y );
 	}
 }
 
-void CEquationEditorWindow::OnChar( WPARAM wParam ) {
+void CEquationEditorWindow::OnChar( WPARAM wParam ) 
+{
 	switch( wParam ) {
 	case 0x08:  // backspace
 		presenter->DeleteSymbol();
@@ -140,15 +151,18 @@ void CEquationEditorWindow::OnChar( WPARAM wParam ) {
 	}
 }
 
-HFONT CEquationEditorWindow::getFont( int height ) {
+HFONT CEquationEditorWindow::getFont( int height ) 
+{
 	if( fonts[height] == 0 ) {
-		fonts[height] = ::CreateFont( height, 0, 0, 0, 300, false, false, false, DEFAULT_CHARSET,
-			OUT_OUTLINE_PRECIS, CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, (LPCWSTR) "Courier New" );
+		fonts[height] = ::CreateFont( height, 0, 0, 0, 300, /*TRUE*/ false, false, false, DEFAULT_CHARSET,
+			OUT_OUTLINE_PRECIS, CLIP_STROKE_PRECIS, CLEARTYPE_QUALITY, /*FF_ROMAN*/ FF_SCRIPT, (LPCWSTR) /*"Cambria Math"*/ "Script" );
+		// Cambria Math
 	}
 	return fonts[height];
 }
 
-void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& textRect, bool isSelected ) {
+void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& textRect, bool isSelected ) 
+{
 	RECT rect;
 	rect.bottom = textRect.Bottom( );
 	rect.top = textRect.Top( );
@@ -168,7 +182,8 @@ void CEquationEditorWindow::DrawString( const std::wstring& text, const CRect& t
 	::SelectObject( hdc, oldObject );
 }
 
-void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon, bool isSelected ) {
+void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon, bool isSelected ) 
+{
 	HGDIOBJ oldPen = ::SelectObject( hdc, ::GetStockObject( DC_PEN ) );
 	if( isSelected ) {
 		::SetDCPenColor( hdc, symbolSelectedColorref );
@@ -184,7 +199,8 @@ void CEquationEditorWindow::DrawPolygon( const std::list<CLine>& polygon, bool i
 	::SelectObject( hdc, oldPen );
 }
 
-void CEquationEditorWindow::DrawSelectedRect( const CRect& selectedRect ) {
+void CEquationEditorWindow::DrawSelectedRect( const CRect& selectedRect ) 
+{
 	RECT rect;
 	rect.bottom = selectedRect.Bottom();
 	rect.top = selectedRect.Top();
@@ -196,7 +212,8 @@ void CEquationEditorWindow::DrawSelectedRect( const CRect& selectedRect ) {
 	::DeleteObject( selectedHBrush );
 }
 
-void CEquationEditorWindow::DrawHighlightedRect( const CRect& controlRect, bool isSelected ) {
+void CEquationEditorWindow::DrawHighlightedRect( const CRect& controlRect, bool isSelected ) 
+{
 	HBRUSH highlightedHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
 	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, highlightedHBrush ) );
 	::Rectangle( hdc, controlRect.Left(), controlRect.Bottom(), controlRect.Right(), controlRect.Top() );
@@ -204,14 +221,16 @@ void CEquationEditorWindow::DrawHighlightedRect( const CRect& controlRect, bool 
 	::DeleteObject( highlightedHBrush );
 }
 
-void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) {
+void CEquationEditorWindow::SetCaret( int caretPointX, int caretPointY, int height ) 
+{
 	::DestroyCaret();
 	::CreateCaret( hwnd, (HBITMAP) nullptr, -1, height );
 	::SetCaretPos( caretPointX, caretPointY );
 	::ShowCaret( hwnd );
 }
 
-void CEquationEditorWindow::OnDraw() {
+void CEquationEditorWindow::OnDraw() 
+{
 	PAINTSTRUCT ps;
 	HDC curhdc = ::BeginPaint( hwnd, &ps );
 
@@ -232,8 +251,8 @@ void CEquationEditorWindow::OnDraw() {
 	::EndPaint( hwnd, &ps );
 }
 
-
-LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam ) {
+LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam ) 
+{
 	CEquationEditorWindow *wnd = nullptr;
 
 	if( message == WM_NCCREATE ) {

@@ -49,6 +49,8 @@ public:
 
 	void UpdateSelection();
 
+	bool DeleteSelectedPart();
+
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
 private:

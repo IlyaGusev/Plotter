@@ -1,6 +1,5 @@
 ﻿#include "Model/SubscriptControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
 CSubscriptControlModel::CSubscriptControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)

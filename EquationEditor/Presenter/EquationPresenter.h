@@ -7,10 +7,6 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/FracControlModel.h"
-#include "Model/DegrControlModel.h"
-#include "Model/SubscriptControlModel.h"
-#include "Model/RadicalControlModel.h"
 #include "Model/Utils/Caret.h"
 
 #include "Presenter/Utils/TreeBfsProcessor.h"
@@ -47,7 +43,6 @@ public:
 class CEquationPresenter {
 public:
 	CEquationPresenter( IEditorView& newView );
-	~CEquationPresenter();
 
 	void AddControlView( ViewType viewType );
 
@@ -71,6 +66,7 @@ private:
     std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
 	CCaret caret;
+	CCaret beginSelectionCaret;
 	bool isInSelectionMode;
 
 	// processors
@@ -86,6 +82,9 @@ private:
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
 	void addSubscript(std::shared_ptr<CExprControlModel> parent);
 	
+	void deleteSelectedParts();
+
+	// Говорит, правее ли model1 находится model2
 	bool isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2, int offset1, int offset2 );
 
 	// Ищет позицию каретки с таким x

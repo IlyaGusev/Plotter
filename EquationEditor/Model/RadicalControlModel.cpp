@@ -1,7 +1,5 @@
 ﻿#include "Model/RadicalControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
-
 
 CRadicalControlModel::CRadicalControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
@@ -12,7 +10,8 @@ CRadicalControlModel::CRadicalControlModel( const CRect& rect, std::weak_ptr<IBa
 void CRadicalControlModel::Resize()
 {
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 10; // 10 пикселей - ширина галочки
-	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle(), secondChild->GetRect().GetHeight() + 3 ); // 3 - отступ над подкоренным выражением
+	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle() + 2, // 2 - отступ
+		secondChild->GetRect().GetHeight() + 3 ); // 3 - отступ над подкоренным выражением
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -137,9 +136,9 @@ void CRadicalControlModel::updatePolygons()
 //	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
 	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
 	params.polygon.push_back( CLine( firstRect.Right(), firstRect.Bottom(), firstRect.Right() + 5, rect.Bottom() ) );
-	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), rect.Top() + 2 ) );
-	params.polygon.push_back( CLine( secondRect.Left(), rect.Top() + 2, rect.Right(), rect.Top() + 2 ) );
-	params.polygon.push_back( CLine( rect.Right(), rect.Top() + 2, rect.Right(), rect.Top() + 5 ) );
+	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), secondRect.Top() - 2 ) );
+	params.polygon.push_back( CLine( secondRect.Left(), secondRect.Top() - 2, secondRect.Right(), secondRect.Top() - 2 ) );
+	params.polygon.push_back( CLine( rect.Right(), secondRect.Top() - 2, rect.Right(), secondRect.Top() + 1 ) );
 }
 
 void CRadicalControlModel::UpdateSelection()

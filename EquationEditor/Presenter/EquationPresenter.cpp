@@ -1,6 +1,8 @@
 ﻿#include "Presenter/EquationPresenter.h"
-#include "Presenter/Utils/TreeBfsProcessor.h"
-#include "Presenter/Utils/TreeDfsProcessor.h"
+#include "Model/FracControlModel.h"
+#include "Model/DegrControlModel.h"
+#include "Model/SubscriptControlModel.h"
+#include "Model/RadicalControlModel.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView ),
@@ -63,31 +65,49 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	} );
 }
 
-CEquationPresenter::~CEquationPresenter() {}
+void CEquationPresenter::deleteSelectedParts() {
+	// Ставим каретку левее
+	caret = (isRightDirection( caret.GetCurEdit().get(), beginSelectionCaret.GetCurEdit().get(),
+		caret.Offset(), beginSelectionCaret.Offset() ))
+		? caret : beginSelectionCaret;
+	// Уходим из зоны удаления
+	if( root->GetChildren().front()->IsSelected() ) {
+		root->AddChildBefore( std::make_shared<CEditControlModel>( root->GetChildren().front()->GetRect(), root ),
+			root->GetChildren().front() );
+	}
+	while( caret.GetCurEdit()->IsSelected() ) {
+		caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret );
+	}
+
+	root->DeleteSelectedPart();	// processor
+}
 
 void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
 {
-	isInSelectionMode = false;
+	if( isInSelectionMode ) {
+		deleteSelectedParts();
+		isInSelectionMode = false;
+	}
 	int symbolWidth = view.GetSymbolWidth( symbol, caret.GetCurEdit()->GetRect().GetHeight() );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
 	++caret.Offset();
 
 	invalidateTree();
-
 	view.Redraw();
 }
 
 void CEquationPresenter::DeleteSymbol() 
 {
-	isInSelectionMode = false;
-	if( caret.Offset() != 0 ) {
+	if( isInSelectionMode ) {
+		deleteSelectedParts();
+		isInSelectionMode = false;
+	} else if( caret.Offset() != 0 ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
-
-		invalidateTree();
-
-		view.Redraw();
 	}
+
+	invalidateTree();
+	view.Redraw();
 }
 
 void CEquationPresenter::OnDraw() 
@@ -163,7 +183,10 @@ bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const I
 
 void CEquationPresenter::SetSelection( int x, int y ) 
 {
-	isInSelectionMode = true;
+	if( !isInSelectionMode ) {
+		beginSelectionCaret = caret;
+		isInSelectionMode = true;
+	}
 
 	CCaret selectionCaret;
 	setCaretPos( x, y, selectionCaret );
@@ -176,16 +199,17 @@ void CEquationPresenter::SetSelection( int x, int y )
 	}
 
 	updateSelectionProcessor.Process();
-
 	view.Redraw();
 }
 
-void CEquationPresenter::MoveCaretLeft() {
+void CEquationPresenter::MoveCaretLeft() 
+{
 	caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret );
 	view.Redraw();
 }
 
-void CEquationPresenter::MoveCaretRight() {
+void CEquationPresenter::MoveCaretRight() 
+{
 	caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret );
 	view.Redraw();
 }
@@ -233,7 +257,7 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	view.Redraw();
 }
 
-void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
+void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent )
 {
 
 	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( caret.GetCurEdit()->GetRect(), parent ) );
@@ -283,12 +307,13 @@ void CEquationPresenter::invalidateTree( )
 	invalidateBranch( root );
 }
 
-void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode ) {
+void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode ) 
+{
+	highlightingProcessor.SetStartingNode( startingNode );
 	resizeProcessor.SetStartingNode( startingNode );
 	placeProcessor.SetStartingNode( startingNode );
-	highlightingProcessor.SetStartingNode( startingNode );
 
+	highlightingProcessor.Process( );
 	resizeProcessor.Process();
 	placeProcessor.Process();
-	highlightingProcessor.Process( );
 }

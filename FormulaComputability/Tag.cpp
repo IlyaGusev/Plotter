@@ -304,8 +304,11 @@ void CTagBVar::operator()(const CNode& node) const
     if ( !( identTag.getType() & VARIABLE ) ) {
         throwException( node, ident.offset_debug(), INVALID_ARGUMENT );
     }
-    //инициируем проверку дочерних тэгов
-    identTag(ident);
+    //проверка дочерних тэгов
+    string identName(deleteSpaces(ident.text().as_string()));
+    if (identName.empty()) {
+        throwException(node, node.offset_debug(), INCORRECT_VALUE);
+    }
     ident = identTag.checkSignature(ident);
     //проверям, что если существует второй дочерний тэг, то им может быть только degree
     if ( !ident.empty() ) {

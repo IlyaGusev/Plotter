@@ -20,7 +20,7 @@ void CTagCi::operator()(const CNode& node) const
 	if (ident.empty()) {
 		throwException(node, node.offset_debug(), INCORRECT_VALUE);
 	}
-	if( identifiers.find(ident) == identifiers.end() && ( node.parent().empty() || !( CTagContainer::getTag(node.parent().name() ).getType() & BOUND ) ) ) {
+	if( identifiers.find(ident) == identifiers.end() ) {
 		throwException(node, node.offset_debug(), UNKNOWN_IDENTIFIER);
 	}
 }

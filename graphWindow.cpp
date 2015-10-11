@@ -78,14 +78,35 @@ void GraphWindow::OnClose() {
 
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
-		case VK_SPACE:
-			graphInPoints.turnClockwise();
+		case VK_RIGHT:
+			graphInPoints.turnClockwise(1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case VK_LEFT:
+			graphInPoints.turnClockwise(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		case VK_UP:
 			graphInPoints.turnFromTheTopToDown(1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		case VK_DOWN:
 			graphInPoints.turnFromTheTopToDown(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case 0x57:
+			//graphInPoints.moveStraight();
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case 0x53:
+			//graphInPoints.moveBack();
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		}
 }

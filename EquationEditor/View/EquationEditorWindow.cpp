@@ -1,5 +1,5 @@
 ﻿#include "resource.h"
-
+#include "../RibbonFramework.h"
 #include "View/EquationEditorWindow.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
@@ -44,15 +44,16 @@ void CEquationEditorWindow::OnCreate() {
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(::GetWindowLong( hwnd, GWL_HINSTANCE ));
 	
 	// Добавляем меню
-	HMENU hMenu = ::LoadMenu( hInstance, MAKEINTRESOURCE( IDR_MENU1 ) );
-	::SetMenu( hwnd, hMenu );
+//	HMENU hMenu = ::LoadMenu( hInstance, MAKEINTRESOURCE( IDR_MENU1 ) );
+//	::SetMenu( hwnd, hMenu );
 }
 
 void CEquationEditorWindow::OnSize( int cxSize, int cySize ) {
 }
 
 void CEquationEditorWindow::Redraw() {
-	::InvalidateRect( hwnd, nullptr, TRUE );
+	RECT rctB = { 0, 180, 1800, 1800 };
+	::InvalidateRect( hwnd, &rctB, TRUE );
 }
 
 int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) {
@@ -206,10 +207,12 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 
 	switch( message ) {
 	case WM_DESTROY:
+		DestroyFramework();
 		wnd->OnDestroy();
 		return 0;
 
 	case WM_CREATE:
+		InitializeFramework(handle);
 		wnd->OnCreate();
 		return 0;
 

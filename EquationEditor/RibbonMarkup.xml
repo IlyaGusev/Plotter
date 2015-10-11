@@ -1,0 +1,104 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
+  <Application.Commands>
+    
+    <Command Name="cmdButtonFrac"
+             Symbol="ID_CMD_FRAC"
+             LabelTitle="Дробь"
+             LabelDescription="Дробь"
+             TooltipDescription="Создание новой дроби">
+      <Command.LargeImages>
+        <Image>Res\frac.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    
+    <Command Name="cmdButtonDegr"
+             Symbol="ID_CMD_DEGR"
+             LabelTitle="Степень"
+             LabelDescription="Степень"
+             TooltipDescription="Создание новой степени">
+      <Command.LargeImages>
+        <Image>Res\degr.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonSubscript"
+             Symbol="ID_CMD_SUBSCRIPT"
+             LabelTitle="Нижний индекс"
+             LabelDescription="Нижний индекс"
+             TooltipDescription="Создание нижнего индекса">
+      <Command.LargeImages>
+        <Image>Res\subscript.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonRadical"
+             Symbol="ID_CMD_RADICAL"
+             LabelTitle="Корень"
+             LabelDescription="Корень"
+             TooltipDescription="Создание корня">
+      <Command.LargeImages>
+        <Image>Res\radical.bmp</Image>
+      </Command.LargeImages>
+    </Command>    
+
+    <Command Name="cmdButtonExit"
+             Symbol="ID_CMD_EXIT"
+             LabelTitle="Выход"
+             LabelDescription="Выход"
+             TooltipDescription="Закрытие приложения">
+      <Command.LargeImages>
+        <Image>Res/Exit32.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdTabMain"
+             Symbol="ID_CMD_TAB_MAIN"
+             LabelTitle="Главная">
+    </Command>
+
+    <Command Name="cmdTabMore"
+             Symbol="ID_CMD_TAB_MORE"
+             LabelTitle="Больше">
+    </Command>
+
+    <Command Name="cmdGroupActions"
+             Symbol="ID_CMD_GROUP_FILE"
+             LabelTitle="Действия">
+    </Command>
+
+    <Command Name="cmdGroupExit"
+             Symbol="ID_CMD_GROUP_EXIT"
+             LabelTitle="Выход">
+    </Command>
+
+    <Command Name="cmdGroupMore"
+             Symbol="ID_CMD_MORE"
+             LabelTitle="Выход">
+    </Command>
+  </Application.Commands>
+
+	<Application.Views>
+		<Ribbon>
+      <Ribbon.Tabs>
+        
+        <Tab CommandName="cmdTabMain">
+          
+          <Group CommandName="cmdGroupActions" SizeDefinition="FourButtons">
+            <Button CommandName="cmdButtonFrac" />
+            <Button CommandName="cmdButtonDegr" />
+            <Button CommandName="cmdButtonSubscript" />
+            <Button CommandName="cmdButtonRadical" />
+          </Group>
+        
+          <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonExit" />
+          </Group>
+          
+        </Tab>
+        
+        
+      </Ribbon.Tabs>
+		</Ribbon>
+	</Application.Views>
+</Application>

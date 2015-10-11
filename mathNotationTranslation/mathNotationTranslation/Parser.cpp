@@ -2,23 +2,25 @@
 #include "arithmeticNode.h"
 #include "variableNode.h"
 
-Parser::Parser() { prev.reset(); }
-Parser::~Parser() {}
-void Parser::addNode(){}
-
-void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& position)
-{
-	position = unique_ptr<arithmeticNode>(new arithmeticNode());
-	unique_ptr<arithmeticNode> pDerived(static_cast<arithmeticNode*>(position.release()));
-	pDerived->setOperation(oper);
-	position = move(pDerived);
-	position.get()->setLeft(move(prev));
-	processText(is, position->getRight());
-	position.get()->setRight(move(prev));
-	prev = move(position);
+Parser::Parser() {
+	// prev.reset();
 }
+Parser::~Parser() {}
+// void Parser::addNode(){}
 
-bool Parser::processText(istream& is, unique_ptr <Node>& position) {
+// void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& position)
+// {
+	// position = unique_ptr<arithmeticNode>(new arithmeticNode());
+	// unique_ptr<arithmeticNode> pDerived(static_cast<arithmeticNode*>(position.release()));
+	// pDerived->setOperation(oper);
+	// position = move(pDerived);
+	// position.get()->setLeft(move(prev));
+	// processText(is, position->getRight());
+	// position.get()->setRight(move(prev));
+	// prev = move(position);
+// }
+
+// bool Parser::processText(istream& is, unique_ptr <Node>& position) {
 	// int tok = lexer->yylex(&is, &cout);
 	// switch (tok) {
 	// case ID:
@@ -41,4 +43,5 @@ bool Parser::processText(istream& is, unique_ptr <Node>& position) {
 	// 	return false;
 	// }
 	// return true;
-}
+// }
+//

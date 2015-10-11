@@ -13,11 +13,10 @@ extern FILE *yyin;
 
 int main(int argc, char** argv) {
 	try{
-
 		filebuf fb;
 		string filename, from, to;
 		if (argc == 1){
-			filename = "C:\\Users\\anata_000\\Source\\Repos\\mathNotationTranslation\\mathNotationTranslation\\mathNotationTranslation\\Examples\\ml.txt";
+			// filename = "C:\\Users\\anata_000\\Source\\Repos\\mathNotationTranslation\\mathNotationTranslation\\mathNotationTranslation\\Examples\\ml.txt";
 			from = "mathml";
 			to = "tex";
 		}

@@ -166,10 +166,10 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 			int minDistance = std::numeric_limits<int>::max();
 			for( auto candidate : candidates ) {
 				int distance =
-					std::fabs( float( candidate->GetRect().Top() - y ) ) +
-					std::fabs( float( candidate->GetRect().Bottom() - y ) ) +
-					std::fabs( float( candidate->GetRect().Right() - x ) ) +
-					std::fabs( float( candidate->GetRect().Left() - x ) );
+					std::abs( candidate->GetRect().Top() - y ) +
+					std::abs( candidate->GetRect().Bottom() - y ) +
+					std::abs( candidate->GetRect().Right() - x ) +
+					std::abs( candidate->GetRect().Left() - x );
 				if( distance < minDistance ) {
 					minDistance = distance;
 					chosenCandidate = candidate;
@@ -180,8 +180,8 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 			int minDistance = std::numeric_limits<int>::max( );
 			for( auto candidate : candidates ) {
 				int distance =
-					std::fabs( float( candidate->GetRect().Top() - y ) ) +
-					std::fabs( float( candidate->GetRect().Bottom() - y ) );
+					std::abs( candidate->GetRect().Top() - y ) +
+					std::abs( candidate->GetRect().Bottom() - y );
 				if( distance < minDistance ) {
 					minDistance = distance;
 					chosenCandidate = candidate;
@@ -193,8 +193,8 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 		int minDistance = std::numeric_limits<int>::max( );
 		for( auto candidate : candidates ) {
 			int distance =
-				std::fabs( float( candidate->GetRect().Right() - x ) ) +
-				std::fabs( float( candidate->GetRect().Left() - x ) );
+				std::abs( candidate->GetRect().Right() - x ) +
+				std::abs( candidate->GetRect().Left() - x );
 			if( distance < minDistance ) {
 				minDistance = distance;
 				chosenCandidate = candidate;

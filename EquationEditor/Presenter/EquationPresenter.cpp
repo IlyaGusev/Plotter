@@ -135,7 +135,7 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 	return std::make_pair(length, offset);
 }
 
-void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) 
+void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 {
 	auto selectX = [=]( CTreeBfsProcessor::Node node ) -> bool
 	{
@@ -165,36 +165,42 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 #undef max  // передаю пламенный привет ребятам из microsoft, которые перегрузили max в minwindef.h
 			int minDistance = std::numeric_limits<int>::max();
 			for( auto candidate : candidates ) {
+				if( candidate->GetRect().IsContain( x, y ) ) {
+					chosenCandidate = candidate;
+					break;
+				}
 				int distance =
-					std::abs( candidate->GetRect().Top() - y ) +
-					std::abs( candidate->GetRect().Bottom() - y ) +
-					std::abs( candidate->GetRect().Right() - x ) +
-					std::abs( candidate->GetRect().Left() - x );
+					MIN( std::abs( candidate->GetRect().Top() - y ), std::abs( candidate->GetRect().Bottom() - y ) ) +
+					MIN( std::abs( candidate->GetRect().Right() - x ), std::abs( candidate->GetRect().Left() - x ) );
 				if( distance < minDistance ) {
 					minDistance = distance;
 					chosenCandidate = candidate;
 				}
 			}
-		}
-		else {
+		} else {
 			int minDistance = std::numeric_limits<int>::max( );
 			for( auto candidate : candidates ) {
-				int distance =
-					std::abs( candidate->GetRect().Top() - y ) +
-					std::abs( candidate->GetRect().Bottom() - y );
+				auto rect = candidate->GetRect( );
+				if( rect.Top( ) <= y && rect.Bottom( ) >= y ) {
+					chosenCandidate = candidate;
+					break;
+				}
+				int distance = MIN( std::abs( rect.Top( ) - y ), std::abs( rect.Bottom( ) - y ) );
 				if( distance < minDistance ) {
 					minDistance = distance;
 					chosenCandidate = candidate;
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		int minDistance = std::numeric_limits<int>::max( );
 		for( auto candidate : candidates ) {
-			int distance =
-				std::abs( candidate->GetRect().Right() - x ) +
-				std::abs( candidate->GetRect().Left() - x );
+			auto rect = candidate->GetRect( );
+			if( rect.Right( ) >= x && rect.Left( ) <= x ) {
+				chosenCandidate = candidate;
+				break;
+			}
+			int distance = MIN( std::abs( rect.Right( ) - x ), std::abs( rect.Left( ) - x ) );
 			if( distance < minDistance ) {
 				minDistance = distance;
 				chosenCandidate = candidate;
@@ -206,7 +212,7 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 		curCaret.SetCurEdit( chosenCandidate );
 	}
 
-	std::pair<int, int> newCaretPos = findCaretPos( curCaret.GetCurEdit( ), x );
+	std::pair<int, int> newCaretPos = findCaretPos( curCaret.GetCurEdit(), x );
 	curCaret.Offset() = newCaretPos.second;
 }
 

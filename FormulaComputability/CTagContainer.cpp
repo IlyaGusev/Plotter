@@ -4,6 +4,8 @@
 #include "TagCi.h"
 #include "TagDeclare.h"
 #include "CTagContainer.h"
+#include "TagCn.h"
+#include "CTagApplyReln.h"
 
 map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 {
@@ -11,7 +13,8 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 
 	/***********insert here tags*********************/
 
-	tagsToFill.emplace( "apply", unique_ptr<CTag>(  new CTagApply() ) );
+	tagsToFill.emplace( "apply", unique_ptr<CTag>(  new CTagApplyReln<NUMBER>() ) );
+	tagsToFill.emplace("reln", unique_ptr<CTag>(new CTagApplyReln<BOOL>()));
 
 	tagsToFill.emplace( "plus", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );
 	tagsToFill.emplace( "times", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );
@@ -70,6 +73,23 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
     /* limitable functions*/
     tagsToFill.emplace( "sum", unique_ptr<CTag>( new CTagLimitable() ) );
     tagsToFill.emplace( "product", unique_ptr<CTag>( new CTagLimitable() ));
+
+
+	/*compare*/
+	tagsToFill.emplace("eq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '='
+	tagsToFill.emplace("neq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '!='
+	tagsToFill.emplace("lt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '<'
+	tagsToFill.emplace("gt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '>'
+	tagsToFill.emplace("leq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '<='
+	tagsToFill.emplace("geq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '>='
+	tagsToFill.emplace("equivalent", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>())); // 	triple =
+	tagsToFill.emplace("approx", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// 	'~=' approximately equal
+	tagsToFill.emplace("factorof", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));	//	| (a|b is true when b mod a = 0)
+
+	/*logical*/
+	tagsToFill.emplace("and", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
+	tagsToFill.emplace("or", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
+	tagsToFill.emplace("xor", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
 
 	/**********************************************/
 

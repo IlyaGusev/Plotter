@@ -10,7 +10,7 @@ void CTagDeclare::operator ()(const CNode& node) const
 	checkAttributes(node, { "type","nargs" });
 	if (strcmp(node.first_child().name(),"ci") != 0)//first child must be ci
 		throwException(node, node.offset_debug(), UNEXPECTED_CHILD);
-	if (strcmp(node.first_child().value(), "") == 0)//ci must contain name of identifier
+	if (node.first_child().text().as_string() == "")//ci must contain name of identifier
 		throwException(node.first_child(), node.first_child().offset_debug(), INCORRECT_VALUE);
 	if ( node.attribute("type").as_string() == string("fn") ) {
 		addFunction(node);

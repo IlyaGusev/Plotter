@@ -11,7 +11,7 @@ public:
 	CNode checkArgument(const CNode node)const;//check that node is correct argument and return node.next_sibling()
 	virtual void operator ()(const CNode& node)const;
 	CTagFunction() {
-		type = TArg | FUNCTION | CALCULATEBLE;
+		type = TRes | FUNCTION | CALCULATEBLE;
 	};
 };
 

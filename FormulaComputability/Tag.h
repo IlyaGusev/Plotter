@@ -70,23 +70,6 @@ public:
 	virtual const CNode  checkSignature(const CNode& node) const;
 };
 
-class CTagApply : public CTagAtamar
-{
-public:
-	CTagApply();
-	virtual void operator ()(const CNode& node)const;
-protected:
-	static void enterToAllLimitableArgs(const CNode& node);
-};
-
-class CTagCn : public CTagAtamar
-{
-	void nodeIsInteger(const CNode& node)const;
-	void nodeIsReal(const CNode& node)const;
-public:
-	CTagCn();
-	virtual void operator ()(const CNode& node)const;
-};
 
 class CTagBVar : public CTagAtamar 
 {

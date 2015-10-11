@@ -4,6 +4,8 @@
 #include "TagCi.h"
 #include "TagDeclare.h"
 #include "CTagContainer.h"
+#include "TagCn.h"
+#include "CTagApplyReln.h"
 
 map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 {
@@ -11,7 +13,8 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 
 	/***********insert here tags*********************/
 
-	tagsToFill.emplace( "apply", unique_ptr<CTag>(  new CTagApply() ) );
+	tagsToFill.emplace( "apply", unique_ptr<CTag>(  new CTagApplyReln<NUMBER>() ) );
+	tagsToFill.emplace("reln", unique_ptr<CTag>(new CTagApplyReln<BOOL>()));
 
 	tagsToFill.emplace( "plus", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );
 	tagsToFill.emplace( "times", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );
@@ -70,6 +73,13 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
     /* limitable functions*/
     tagsToFill.emplace( "sum", unique_ptr<CTag>( new CTagLimitable() ) );
     tagsToFill.emplace( "product", unique_ptr<CTag>( new CTagLimitable() ));
+
+
+	/*compare*/
+	tagsToFill.emplace("eq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));
+
+	/*logical*/
+	tagsToFill.emplace("xor", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
 
 	/**********************************************/
 

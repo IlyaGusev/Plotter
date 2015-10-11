@@ -13,13 +13,13 @@ void CTagQualifiers::operator()( const CNode& node ) const
     CTag& argTag = CTagContainer::getTag( arg.name() );
     int argType = argTag.getType();
     if ( !( argType & NUMBER | argType & VARIABLE ) ) {
-        throwException( node, arg.offset_debug(), INVALID_ARGUMENT );
+        throwException( arg, arg.offset_debug(), INVALID_ARGUMENT );
     }
     //инициируем проверку дочерних тэгов
     argTag(arg);
     //проверяем, что больше детей нет
     arg = argTag.checkSignature(arg);
     if ( !arg.empty() ) {
-        throwException( node, arg.offset_debug(), INVALID_ARGUMENT );
+        throwException( arg, arg.offset_debug(), INVALID_ARGUMENT );
     }
 }

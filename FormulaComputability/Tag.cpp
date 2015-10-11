@@ -21,7 +21,6 @@ string CTag::deleteSpaces(const string& s)//delete white spaces in the begin and
 
 void CTag::enterToAllChilds(const CNode& node)
 {
-	
     auto child = node.first_child();
     CNode boundNode;
 	while (! child.empty())
@@ -44,20 +43,16 @@ void CTag::enterToAllChilds(const CNode& node)
 void CTag::hasNoAttributes(const CNode& node) const
 {
 	if ( node.attributes().begin() != node.attributes().end() ) {
-        throwException(node, node.offset_debug(), INVALID_ATTRIBUTE);
+        throwException(node, node.offset_debug(), UNEXPECTED_ATTRIBUTE);
     }
 }
 
 void CTag::checkAttributes(const CNode& node, const set<string>& attributes) const
 {
-	string errorMessage;
 	for ( auto it = node.attributes_begin(); it != node.attributes_end(); ++it ) {
 		if ( attributes.find(it->name()) == attributes.end() ) {
-			errorMessage += string( it->name() ) + ' ';
+            throwException(node, node.offset_debug(), UNKNOWN_ATTRIBUTE);
         }
-    }
-	if ( !errorMessage.empty() ) {
-        throwException(node, node.offset_debug(), UNKNOWN_ATTRIBUTE);
     }
 }
 
@@ -72,7 +67,7 @@ void CTag::hasNoText(const CNode& node) const
 void CTag::hasNoChilds(const CNode& node)
 {
 	if (node.children().begin() != node.children().end()) {
-		throwException(node, node.offset_debug(), UNEXPECTED_CHILD);
+		throwException(node, node.children().begin()->offset_debug(), UNEXPECTED_CHILD);
     }
 }
 
@@ -110,20 +105,21 @@ void CTag::throwException(const CNode& errorTag, int position, ErrorType errType
     //по умолчанию это errorTag, специальные случаи обрабатываются в switch
     switch (errType) {
         case INVALID_ARGUMENT:
-            errorMsg += "invalid argument";
+            rootErrorTag = errorTag.parent();
+            errorMsg += "invalid argument \" " + errorTag.name() + "\" ";
             break;
         case NO_ARGUMENT:
             errorMsg += "arguments are required after operation-tag " + string( errorTag.name() );
             rootErrorTag = errorTag.parent();
             break;
         case UNKNOWN_ATTRIBUTE:
-            errorMsg += "unknown attribute(s): ";
+            errorMsg += "unknown attribute ";
             break;
         case INCORRECT_VALUE:
-            errorMsg += "incorrect value ";
+            errorMsg += "incorrect value \" " + errorTag.text.as_string() + "\"";
             break;
-        case INVALID_ATTRIBUTE:
-            errorMsg += "invalid attribute";
+        case UNEXPECTED_ATTRIBUTE:
+            errorMsg += "unexpected attribute ";
             break;
         case UNEXPECTED_VALUE:
             errorMsg += "this tag can't have any value";
@@ -223,7 +219,7 @@ void CTagApply::enterToAllLimitableArgs(const CNode& node)
 CTagCn::CTagCn()
 {
      type = NUMBER;
-};
+}
 
 
 void CTagCn::nodeIsInteger(const CNode& node)const 
@@ -302,26 +298,26 @@ void CTagBVar::operator()(const CNode& node) const
     CTag& identTag = CTagContainer::getTag( ident.name() );
     //проверяем, что первый дочерний тэг - переменная
     if ( !( identTag.getType() & VARIABLE ) ) {
-        throwException( node, ident.offset_debug(), INVALID_ARGUMENT );
+        throwException( ident, ident.offset_debug(), INVALID_ARGUMENT );
     }
     //проверка дочерних тэгов
     string identName(deleteSpaces(ident.text().as_string()));
     if (identName.empty()) {
-        throwException(node, node.offset_debug(), INCORRECT_VALUE);
+        throwException( ident, ident.offset_debug(), INCORRECT_VALUE);
     }
     ident = identTag.checkSignature(ident);
     //проверям, что если существует второй дочерний тэг, то им может быть только degree
     if ( !ident.empty() ) {
         CTag& argTag = CTagContainer::getTag( ident.name() );
         if ( !( argTag.getType() & DEGREE ) ) {
-            throwException( node, ident.offset_debug(), INVALID_ARGUMENT );
+            throwException( ident, ident.offset_debug(), INVALID_ARGUMENT );
         }
         //инициируем проверку дочерних тэгов
         argTag(ident); 
         //проверяем, что больше дочерних тэгов нет
         ident = argTag.checkSignature(ident);
         if ( !ident.empty() ) {
-            throwException(node, ident.offset_debug(), INVALID_ARGUMENT );
+            throwException( ident , ident.offset_debug(), INVALID_ARGUMENT );
         }
     }
 
@@ -337,7 +333,7 @@ void CTagCondition::operator()(const CNode& node) const
     hasNoText(node);
     auto lastChild = checkArgumentType(node.first_child(), SPECIAL);
     if ( !lastChild.empty() ) {
-        throwException(node, lastChild.offset_debug(), INVALID_ARGUMENT);
+        throwException(lastChild, lastChild.offset_debug(), INVALID_ARGUMENT);
     }
     enterToAllChilds(node);
 }
@@ -367,3 +363,4 @@ void CTagLimitable::operator()(const CNode& node) const
     hasNoChilds(node);
     hasNoText(node);
 }
+

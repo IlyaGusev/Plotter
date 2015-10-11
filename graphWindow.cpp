@@ -82,9 +82,15 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 			graphInPoints.turnAroundY(1);
 			::InvalidateRect(handle, NULL, FALSE);
 			::UpdateWindow(handle);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
+
 		case VK_LEFT:
 			graphInPoints.turnAroundY(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
 			::InvalidateRect(handle, NULL, FALSE);
 			::UpdateWindow(handle);
 			break;
@@ -92,9 +98,13 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 			graphInPoints.turnAroundZ(1);
 			::InvalidateRect(handle, NULL, FALSE);
 			::UpdateWindow(handle);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		case VK_DOWN:
 			graphInPoints.turnAroundZ(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			::InvalidateRect(handle, NULL, FALSE);
 			::UpdateWindow(handle);
 			break;

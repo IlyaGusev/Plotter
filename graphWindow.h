@@ -1,10 +1,11 @@
 #pragma once
 #include <windows.h>
+#include "mathCore.h"
 #include "GP.h"
 
 class GraphWindow {
 public:
-	GraphWindow(int width, int height);
+	GraphWindow(int width, int height, MathCore& mathCore);
 	~GraphWindow();
 
 	static bool RegisterClass(HINSTANCE hInstance);
@@ -23,8 +24,8 @@ protected:
 	void OnDestroy();
 
 private:
-	static wchar_t* nameClassWindow;
-	static wchar_t* nameWindow;
+	const static wchar_t* nameClassWindow;
+	const static wchar_t* nameWindow;
 
 	int windowWidth;
 	int windowHeight;

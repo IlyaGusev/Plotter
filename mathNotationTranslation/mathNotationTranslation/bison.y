@@ -45,7 +45,7 @@ stm: LNUM stm RNUM {$$ = $2;}
  | binop {$$ = $1;}
  | NUMBER {$$ = new NumNode(yylval.intValue);}
  | ID {$$ = new IdNode(yylval.identName);}
- | LSUP list RSUP { $$ = $2; cout<<$$->Translate(0);}
+ | LSUP list RSUP { $$ = $2; cout<<$$->translate(NOTATION);}
 ;
 
 binop: stm LOPER ADD ROPER stm { $$ = new BinOpNode($1, $5, "+");}

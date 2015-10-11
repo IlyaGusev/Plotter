@@ -1,19 +1,16 @@
 #include <iostream>
 #include <memory>
 #include <utility>
+#include <string>
 #include <stdexcept>
-#include "Parser.h"
-using std::cout;
-using std::endl;
-using std::unique_ptr;
-using std::invalid_argument;
+using namespace std;
+
+extern int NOTATION;
 extern int yyparse();
 extern FILE *yyin;
 
-
 int main(int argc, char** argv) {
 	try{
-		filebuf fb;
 		string filename, from, to;
 		if (argc == 1){
 			// filename = "C:\\Users\\anata_000\\Source\\Repos\\mathNotationTranslation\\mathNotationTranslation\\mathNotationTranslation\\Examples\\ml.txt";
@@ -42,18 +39,11 @@ int main(int argc, char** argv) {
 		else if (to == "tex")
 			notation = 2;
 
-		// istream is(fb.open(filename, ios::in));
-		// unique_ptr<Node> tree;
-		// Parser parser;
-		// tree.reset();
-		//
-		// while (!parser.processText(is, tree));
+		NOTATION = notation;
+
 		yyin = fopen(filename.c_str(), "r");
 		yyparse();
 		cout<<endl;
-		// cout << parser.prev.get()->Translate( notation );
-
-		fb.close();
 	}
 	catch (invalid_argument* e){
 		cout << e->what() << endl;

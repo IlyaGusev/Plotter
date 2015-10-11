@@ -3,6 +3,7 @@
 #define _TacCn_H
 #include "Tag.h"
 
+//класс для работы с тегом <cn>
 class CTagCn : public CTagAtamar
 {
 	void nodeIsInteger(const CNode& node)const;

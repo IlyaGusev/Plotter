@@ -4,10 +4,11 @@
 
 #include "Tag.h"
 
+//класс для работы с тегами degree, lowlimit, uplimit
 class CTagQualifiers : public CTagAtamar
 {
 public:
-    CTagQualifiers(int _type);
+    CTagQualifiers(int _type); //_type определяет конкретный тип тега
     virtual void operator()(const CNode& node) const;
 };
 

@@ -3,7 +3,7 @@
 #define _TAGCI_H
 #include "Tag.h"
 
-
+//класс для работы с тегом <ci>
 class CTagCi : public CTagAtamar
 {
 public:

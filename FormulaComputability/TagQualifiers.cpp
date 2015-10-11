@@ -10,9 +10,13 @@ CTagQualifiers::CTagQualifiers(int _type)
 void CTagQualifiers::operator()( const CNode& node ) const
 {
     auto arg = node.first_child();
+    if (arg.empty()) {
+        throwException(arg, arg.offset_debug(), MISSED_ARGUMENT);
+    }
     CTag& argTag = CTagContainer::getTag( arg.name() );
     int argType = argTag.getType();
-    if ( !( argType & NUMBER | argType & VARIABLE ) ) {
+    //проверяем тип первого тега
+    if ( !( argType & (NUMBER | VARIABLE |SPECIAL) ) ) {
         throwException( arg, arg.offset_debug(), INVALID_ARGUMENT );
     }
     //инициируем проверку дочерних тэгов

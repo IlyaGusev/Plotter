@@ -9,11 +9,13 @@
 
 using namespace pugi;
 
+//основной класс, проверяющмй вычислимость формулы
 class FormulaComputability
 {
 public:
 	FormulaComputability();
-    static bool checkComputability(const CNode& rootNode);
+    static bool checkComputability(const CNode& rootNode);//проверяет вычислимость формулы, 
+                                                        //rootNode - корневой элемент xml-документа
 	~FormulaComputability();
 };
 

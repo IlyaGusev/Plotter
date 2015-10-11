@@ -99,7 +99,7 @@ const CNode CTag::checkArgumentType(const CNode& node, const CNode& parentNode, 
 
 void CTag::throwException(const CNode& errorTag, int position, ErrorType errType)
 {   
-	static_assert(ATTRIBUTE_REQUiRED == 10, "add new enum value to throwException");
+	static_assert(ATTRIBUTE_REQUIRED == 10, "add new enum value to throwException");
     string errorMsg;
     CNode rootErrorTag = errorTag;//родитель тега, где обнаружена ошибка
     //по умолчанию это errorTag, специальные случаи обрабатываются в switch
@@ -134,7 +134,7 @@ void CTag::throwException(const CNode& errorTag, int position, ErrorType errType
 		case INVALID_ATTRIBUTE_ARGUMENT:
 			errorMsg += "invalid attribute value";
 			break;			
-		case ATTRIBUTE_REQUiRED:
+		case ATTRIBUTE_REQUIRED:
 			errorMsg += "attribute requered";
 			break;
 		case IDENTIFIER_ALREADY_EXIST:
@@ -171,7 +171,7 @@ const CNode CTagAtamar::checkSignature(const CNode& node) const
 
 CTagBVar::CTagBVar()
 {
-    type = BOUND;
+    type = BOUND | QUALIFIER;
 }
 
 void CTagBVar::operator()(const CNode& node) const 
@@ -234,11 +234,24 @@ CTagLimitable::CTagLimitable()
 
 const CNode CTagLimitable::checkSignature(const CNode& node) const
 {
+    /*
+    проверяется соотвествие сигнатуры одному из двух видов
+    <limitable_op/>
+    <bvar>...</bvar>
+    <condition>...</condition>
+    <NUMBER|VALUE|SPECIAL>...</NUMBER|VALUE|SPECIAL>
+    ________________________________________________
+    <limitable_op/>
+    <bvar>...</bvar>
+    <lowlimit>...</lowlimit>
+    <uplimit>...</uplimit>
+    <NUMBER|VALUE|SPECIAL>...</NUMBER|VALUE|SPECIAL>
+    */
     CNode nextArg = checkArgumentType(node.next_sibling(), node.parent(), BOUND);
     CTag& nextArgTag = CTagContainer::getTag(nextArg.name());
     if ( !( nextArgTag.getType() & CONDITION ) ) {
-        nextArg = checkArgumentType( checkArgumentType( nextArg, node.parent(), LIMIT_LO ),  node.parent(), 
-                                                                                                LIMIT_UP );
+        nextArg = checkArgumentType( checkArgumentType( nextArg, node.parent(), LIMIT_LO ),  
+                                                                            node.parent(), LIMIT_UP );
     } else {
         nextArg = nextArg.next_sibling();
     }

@@ -1,8 +1,4 @@
 ﻿#include "Presenter/EquationPresenter.h"
-#include "Model/FracControlModel.h"
-#include "Model/DegrControlModel.h"
-#include "Model/SubscriptControlModel.h"
-#include "Model/RadicalControlModel.h"
 
 #include "Model/FracControlModel.h"
 #include "Model/DegrControlModel.h"
@@ -141,20 +137,73 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 
 void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret ) 
 {
-	auto predicate = [=] ( CTreeBfsProcessor::Node node ) -> bool {
-		return node->GetRect().IsContain( x, y ) && node->GetType() == TEXT;
+	auto selectX = [=]( CTreeBfsProcessor::Node node ) -> bool
+	{
+		auto rect = node->GetRect();
+		return node->GetType() == TEXT && (rect.Top() <= y) && (y <= rect.Bottom());
 	};
-	auto hint = [=] ( CTreeBfsProcessor::Node child ) -> bool {
-		return child->GetRect().IsContain( x, y );
+	auto selectY = [=]( CTreeBfsProcessor::Node node ) -> bool
+	{
+		auto rect = node->GetRect();
+		return node->GetType() == TEXT && (rect.Left() <= x) && (x <= rect.Right());
+	};
+	auto selectAll = [=]( CTreeBfsProcessor::Node node )->bool
+	{
+		return node->GetType() == TEXT;
 	};
 
 	CTreeBfsProcessor processor( root );
-	auto firstCandidate = processor.Find( predicate, hint );
-	if( firstCandidate == nullptr ) {
-		return;
+	CTreeBfsProcessor::Node chosenCandidate = nullptr;
+	auto candidates = processor.FindAll( selectX );
+	if( candidates.size() == 0 ) {
+		candidates = processor.FindAll( selectY );
+		if( candidates.size() == 0 ) {
+			candidates = processor.FindAll( selectAll );
+			if( candidates.size() == 0 ) {
+				throw std::runtime_error( "Tree has no edit controls, something went wrong." );
+			}
+#undef max  // передаю пламенный привет ребятам из microsoft, которые перегрузили max в minwindef.h
+			int minDistance = std::numeric_limits<int>::max();
+			for( auto candidate : candidates ) {
+				int distance =
+					std::fabs( float( candidate->GetRect().Top() - y ) ) +
+					std::fabs( float( candidate->GetRect().Bottom() - y ) ) +
+					std::fabs( float( candidate->GetRect().Right() - x ) ) +
+					std::fabs( float( candidate->GetRect().Left() - x ) );
+				if( distance < minDistance ) {
+					minDistance = distance;
+					chosenCandidate = candidate;
+				}
+			}
+		}
+		else {
+			int minDistance = std::numeric_limits<int>::max( );
+			for( auto candidate : candidates ) {
+				int distance =
+					std::fabs( float( candidate->GetRect().Top() - y ) ) +
+					std::fabs( float( candidate->GetRect().Bottom() - y ) );
+				if( distance < minDistance ) {
+					minDistance = distance;
+					chosenCandidate = candidate;
+				}
+			}
+		}
 	}
-	if( curCaret.GetCurEdit() != firstCandidate ) {
-		curCaret.SetCurEdit( firstCandidate );
+	else {
+		int minDistance = std::numeric_limits<int>::max( );
+		for( auto candidate : candidates ) {
+			int distance =
+				std::fabs( float( candidate->GetRect().Right() - x ) ) +
+				std::fabs( float( candidate->GetRect().Left() - x ) );
+			if( distance < minDistance ) {
+				minDistance = distance;
+				chosenCandidate = candidate;
+			}
+		}
+	}
+
+	if( curCaret.GetCurEdit() != chosenCandidate ) {
+		curCaret.SetCurEdit( chosenCandidate );
 	}
 
 	std::pair<int, int> newCaretPos = findCaretPos( curCaret.GetCurEdit( ), x );
@@ -317,7 +366,11 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		addSubscript( parent );
 		break;
 	case RADICAL:
+		addRadical( parent );
+		break;
+	case PARENTHESES:
 		addParentheses( parent );
+		break;
 	default:
 		break;
 	}

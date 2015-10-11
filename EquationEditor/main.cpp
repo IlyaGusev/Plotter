@@ -1,9 +1,10 @@
 ﻿#include <Windows.h>
-
+#include "RibbonFramework.h"
 #include "View/EquationEditorWindow.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+	HRESULT hr = CoInitialize(NULL);
     CEquationEditorWindow::RegisterClass();
     CEquationEditorWindow wnd;
     wnd.Create();

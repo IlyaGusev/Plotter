@@ -79,6 +79,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CommandHandler.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model\DegrControlModel.cpp" />
     <ClCompile Include="Model\EditControlModel.cpp" />
@@ -93,9 +95,12 @@
     <ClCompile Include="Presenter\EquationPresenter.cpp" />
     <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp" />
     <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp" />
+    <ClCompile Include="RibbonFramework.cpp" />
     <ClCompile Include="View\EquationEditorWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="CommandHandler.h" />
     <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />
@@ -111,10 +116,24 @@
     <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h" />
     <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RibbonFramework.h" />
+    <ClInclude Include="RibbonIDs.h" />
     <ClInclude Include="View\EquationEditorWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EquationEditor.rc" />
+    <ResourceCompile Include="RibbonResource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="RibbonMarkup.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RibbonUI.bml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\bitmap1.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

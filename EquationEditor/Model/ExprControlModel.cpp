@@ -174,21 +174,44 @@ bool CExprControlModel::DeleteSelectedPart()
 		// Первым идет EditControl, его оставляем
 		if( !(*it)->DeleteSelectedPart() && it != children.begin() ) {
 			// Если пустой - удаляем
-			if( !(*it)->IsEmpty() ) {
-				// Иначе переносим наверх все непустые контролы
-				for( auto childExpr : (*it)->GetChildren() ) {
-					if( !childExpr->IsEmpty() ) {
-						for( auto child : childExpr->GetChildren() ) {
-							children.insert( it, child );
-							child->SetParent( shared_from_this() );
-							child->UpdateDepth();
-						}
-					}
-				}
+			if( (*it)->IsEmpty() ) {
+				it = --children.erase( it );
 			}
-			it = --children.erase( it );
+//			if( !(*it)->IsEmpty() ) {
+//				// Иначе переносим наверх все непустые контролы
+//				for( auto childExpr : (*it)->GetChildren() ) {
+//					if( !childExpr->IsEmpty() ) {
+//						for( auto child : childExpr->GetChildren() ) {
+//							children.insert( it, child );
+//							child->SetParent( shared_from_this() );
+//							child->UpdateDepth();
+//						}
+//					}
+//				}
+//			}
+//			it = --children.erase( it );
 		}
 	}
+
+	if( children.size() == 1 ) {
+		return !IsEmpty();
+	}
+	std::vector<std::shared_ptr<IBaseExprModel>> copy;
+	for( auto child : children ) {
+		copy.push_back( child );
+	}
+	children.clear();
+	for( int i = 0; i < copy.size() - 1; ++i ) {
+		if( copy[i]->GetType() == TEXT && copy[i + 1]->GetType() == TEXT ) {
+			std::dynamic_pointer_cast<CEditControlModel>(copy[i])->MergeWith( *(std::dynamic_pointer_cast<CEditControlModel>(copy[i + 1])) );
+			++i;
+			copy[i] = copy[i - 1];
+		} else {
+			children.push_back( copy[i] );
+		}
+	}
+	children.push_back( copy.back() );
+
 	// Если остался один пустой EditControl
 	return !IsEmpty();
 }

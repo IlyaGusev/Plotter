@@ -213,3 +213,10 @@ bool CEditControlModel::DeleteSelectedPart()
 	params.selectedPositions.first = params.selectedPositions.second = 0;
 	return !IsEmpty();
 }
+
+void CEditControlModel::MergeWith( const CEditControlModel& edit ) {
+	params.text += edit.params.text;
+	for( auto symbol : edit.symbolsWidths ) {
+		symbolsWidths.push_back( symbol );
+	}
+}

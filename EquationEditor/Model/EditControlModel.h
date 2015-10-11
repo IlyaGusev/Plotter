@@ -51,6 +51,8 @@ public:
 
 	bool DeleteSelectedPart();
 
+	void MergeWith( const CEditControlModel& edit );
+
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
 private:

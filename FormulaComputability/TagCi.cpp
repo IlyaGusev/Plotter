@@ -11,7 +11,7 @@ map<string, CType> CTagCi::identifiers = CTagCi::buildIdentifiers();
 
 CTagCi::CTagCi()
 {
-	type = NUMBER;
+	type = NUMBER | VARIABLE;
 }
 
 void CTagCi::operator()(const CNode& node) const
@@ -20,7 +20,7 @@ void CTagCi::operator()(const CNode& node) const
 	if (ident.empty()) {
 		throwException(node, node.offset_debug(), INCORRECT_VALUE);
 	}
-	if(identifiers.find(ident) == identifiers.end()) {
+	if( identifiers.find(ident) == identifiers.end() && ( node.parent().empty() || !( CTagContainer::getTag(node.parent().name() ).getType() & BOUND ) ) ) {
 		throwException(node, node.offset_debug(), UNKNOWN_IDENTIFIER);
 	}
 }

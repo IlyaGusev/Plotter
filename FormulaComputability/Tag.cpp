@@ -21,21 +21,22 @@ string CTag::deleteSpaces(const string& s)//delete white spaces in the begin and
 
 void CTag::enterToAllChilds(const CNode& node)
 {
-	auto child = node.first_child();
+	
+    auto child = node.first_child();
     CNode boundNode;
 	while (! child.empty())
 	{
         CTag& childTag = CTagContainer::getTag( child.name() );
         if ( childTag.getType() & BOUND ) {
-            CTagCi::AddIdentifier(child, BOUND);
-            boundNode = child;
+            CTagCi::AddIdentifier(child.first_child(), BOUND);
+            boundNode = child.first_child();
         } else {
            ( childTag )( child ); 
         }
 		child = child.next_sibling();
 	} 
     if ( !boundNode.empty() ) {
-        CTagCi::deleteIdentifier( boundNode.first_child().text().as_string() );
+        CTagCi::deleteIdentifier( boundNode.text().as_string() );
     }
 }
 
@@ -63,15 +64,16 @@ void CTag::checkAttributes(const CNode& node, const set<string>& attributes) con
 void CTag::hasNoText(const CNode& node) const
 {
     //this tag can't have any value
-	if (node.text().as_string() != "") {
+	if ( !node.text().empty() ) {
 		throwException(node, node.offset_debug(), UNEXPECTED_VALUE );
     }
 }
 
 void CTag::hasNoChilds(const CNode& node)
 {
-	if (node.children().begin() != node.children().end())
+	if (node.children().begin() != node.children().end()) {
 		throwException(node, node.offset_debug(), UNEXPECTED_CHILD);
+    }
 }
 
 void CTag::hasNChilds(const CNode& node, int N)const
@@ -177,6 +179,7 @@ void CTagApply::operator ()(const CNode& node)const
 	hasNoAttributes(node);
 	hasNoText(node);
 
+
 	auto child = node.first_child();
 	const CTag& func = CTagContainer::getTag(child.name());
 	if (!((func.type & CALCULATEBLE) && (func.type & NUMBER))) {
@@ -187,8 +190,9 @@ void CTagApply::operator ()(const CNode& node)const
 		throwException(node, child.offset_debug(), INVALID_ARGUMENT);
     }
     if ( func.getType() & LIMITABLE ) {
-        enterToAllLimitableArgs(node);    
+        enterToAllLimitableArgs(node);   
     } else {
+
         enterToAllChilds(node);
     }
 }
@@ -197,20 +201,23 @@ void CTagApply::operator ()(const CNode& node)const
 void CTagApply::enterToAllLimitableArgs(const CNode& node)
 {
     //предполагаем, что все теги корректно заданы
+
+
     CNode child = node.first_child();
-    CTag& childTag = CTagContainer::getTag(child.name());
-    while ( !( childTag.getType() & ( NUMBER | VARIABLE| SPECIAL ) ) )  {
-        childTag(child);
-        child = child.next_sibling();
-        CTag& childTag = CTagContainer::getTag(child.name());
-    }  
-    string boundVarName( child.first_child().text().as_string() );
-    CTagCi::AddIdentifier( child, BOUND | VARIABLE );
+
+    CNode bVar = child.next_sibling().first_child();
     while ( !child.empty() ) {
-        (CTagContainer::getTag(child.name()))(child);
+        CTag& childTag = CTagContainer::getTag(child.name());
+        if (childTag.getType() & CONDITION) {
+            CTagCi::AddIdentifier(bVar, BOUND | VARIABLE | NUMBER);
+        }
+        childTag(child);
+        if (childTag.getType() & LIMIT_UP) {
+            CTagCi::AddIdentifier(bVar, BOUND | VARIABLE | NUMBER);
+        }
         child = child.next_sibling();
     }
-    CTagCi::deleteIdentifier(boundVarName);
+    CTagCi::deleteIdentifier(bVar.text().as_string());
 }
 
 CTagCn::CTagCn()
@@ -290,8 +297,7 @@ CTagBVar::CTagBVar()
 
 void CTagBVar::operator()(const CNode& node) const 
 {
-    hasNoText(node);
-
+    //hasNoText(node);
     CNode ident = node.first_child();
     CTag& identTag = CTagContainer::getTag( ident.name() );
     //проверяем, что первый дочерний тэг - переменная
@@ -335,7 +341,7 @@ void CTagCondition::operator()(const CNode& node) const
 
 CTagLimitable::CTagLimitable()
 {
-    type = LIMITABLE | CALCULATEBLE;
+    type = LIMITABLE | CALCULATEBLE | NUMBER;
 }
 
 const CNode CTagLimitable::checkSignature(const CNode& node) const

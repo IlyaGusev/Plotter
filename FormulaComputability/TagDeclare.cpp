@@ -17,20 +17,6 @@ void CTagDeclare::operator ()(const CNode& node) const
 	} else {
 		addIdentifier(node);
 	}
-	/*
-	if (node.attribute("type").as_string() != string(""))
-	{
-		if (node.attribute("type").as_string() == string("fn")) {
-			addFunction(node);
-		} else {
-			addIdentifier(node);
-		}
-	}
-	else
-	{
-		addIdentifier(node);
-	}
-	*/
 }
 
 void CTagDeclare::addTempIdentifiers(int count, const CNode& node, int position) const

@@ -19,7 +19,7 @@ template< CType TArg,CType TRes>
 CNode CTagFunction<TArg, TRes>::checkArgument(const CNode node)const
 {
 	CType argType = CTagContainer::getTag(node.name()).getType();
-	if ((!(argType & TArg)) || (argType & (~TArg))) {
+	if (!(argType & TArg)) {
 		throwException(node, node.offset_debug(), INVALID_ARGUMENT);
 	}
 	return node.next_sibling();
@@ -56,11 +56,13 @@ const CNode CTagVarArgFunction<TArg, TRes>::checkSignature(const CNode& node)con
 	if ( arg.empty() ) {
 		CTag::throwException(node, node.offset_debug(), NO_ARGUMENT);
 	}
+
 	arg = CTagFunction<TArg, TRes>::checkArgument(arg);
 	while (!arg.empty())
 	{
 		arg = CTagFunction<TArg, TRes>::checkArgument(arg);
 	}
+
 	return arg;
 };
 

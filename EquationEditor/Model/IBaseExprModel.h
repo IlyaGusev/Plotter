@@ -7,10 +7,10 @@
 #include "Model/Utils/Line.h"
 #include "Model/Utils/Caret.h"
 
-#define MIN(x, y) x < y ? x : y;
-#define MAX(x, y) x > y ? x : y;
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
 
-enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
+enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL, PARENTHESES };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {

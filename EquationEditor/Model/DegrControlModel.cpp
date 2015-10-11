@@ -77,7 +77,6 @@ ViewType CDegrControlModel::GetType() const
 void CDegrControlModel::MoveBy(int dx, int dy) 
 {
 	rect.MoveBy(dx, dy);
-	params.polygon.front().MoveBy(dx, dy);
 }
 
 void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const 

@@ -7,10 +7,6 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/FracControlModel.h"
-#include "Model/DegrControlModel.h"
-#include "Model/SubscriptControlModel.h"
-#include "Model/RadicalControlModel.h"
 #include "Model/Utils/Caret.h"
 
 #include "Presenter/Utils/TreeBfsProcessor.h"
@@ -74,11 +70,10 @@ private:
 	CTreeBfsProcessor drawer;
 
 	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void addRadical(std::shared_ptr<CExprControlModel> parent);
-
+	void addRadical( std::shared_ptr<CExprControlModel> parent );
 	void addDegr( std::shared_ptr<CExprControlModel> parent );
-
-	void addSubscript(std::shared_ptr<CExprControlModel> parent);
+	void addSubscript( std::shared_ptr<CExprControlModel> parent );
+	void addParentheses( std::shared_ptr<CExprControlModel> parent );
 	
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>

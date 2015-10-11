@@ -2,6 +2,12 @@
 #include "Presenter/Utils/TreeBfsProcessor.h"
 #include "Presenter/Utils/TreeDfsProcessor.h"
 
+#include "Model/FracControlModel.h"
+#include "Model/DegrControlModel.h"
+#include "Model/SubscriptControlModel.h"
+#include "Model/RadicalControlModel.h"
+#include "Model/ParenthesesControlModel.h"
+
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView )
 {
@@ -195,6 +201,20 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	view.Redraw();
 }
 
+void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> parent )
+{
+	std::shared_ptr<CParenthesesControlModel> parenthesesModel( new CParenthesesControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	parenthesesModel->InitializeChildren();
+	parent->AddChildAfter( parenthesesModel, caret.GetCurEdit( ) );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
+	parent->AddChildAfter( newEditControl, parenthesesModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
 void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
 {
 
@@ -222,16 +242,16 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	// Создаем новую вьюшку с выбранным типом
 	switch( viewType ) {
 	case FRAC:
-		addFrac( std::shared_ptr<CExprControlModel>( parent ) );
+		addFrac( parent );
 		break;
 	case DEGR:
-		addDegr( std::shared_ptr<CExprControlModel>( parent ) );
+		addDegr( parent );
 		break;
 	case SUBSCRIPT: 
-		addSubscript(std::shared_ptr<CExprControlModel>(parent));
+		addSubscript( parent );
 		break;
 	case RADICAL:
-		addRadical(std::shared_ptr<CExprControlModel>(parent));
+		addRadical( parent );
 	default:
 		break;
 	}

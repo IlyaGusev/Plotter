@@ -3,19 +3,19 @@
 #include "graphWindow.h"
 #include "GP.h"
 
-GraphWindow::GraphWindow(int width, int height) :
+GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 	windowWidth(width),
 	windowHeight(height)
 {
-	GP graphInPoints = GP();
+	GP graphInPoints = GP(/*mathCore*/);
 }
 
 GraphWindow::~GraphWindow()
 {
 }
 
-wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
-wchar_t* GraphWindow::nameWindow = L"GraphWindow";
+const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
+const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
 
 bool GraphWindow::RegisterClass(HINSTANCE hInstance) {
 	WNDCLASSEX tag;
@@ -78,47 +78,37 @@ void GraphWindow::OnClose() {
 
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
-		case VK_RIGHT:
-			graphInPoints.turnAroundY(1);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-
-		case VK_LEFT:
-			graphInPoints.turnAroundY(-1);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-		case VK_UP:
-			graphInPoints.turnAroundZ(1);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-		case VK_DOWN:
-			graphInPoints.turnAroundZ(-1);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-		case 0x57:
-			//graphInPoints.moveStraight();
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-		case 0x53:
-			//graphInPoints.moveBack();
-			::InvalidateRect(handle, NULL, FALSE);
-			::UpdateWindow(handle);
-			break;
-		}
+	case VK_RIGHT:
+		graphInPoints.turnAroundY(1);
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case VK_LEFT:
+		graphInPoints.turnAroundY(-1);
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case VK_UP:
+		graphInPoints.turnAroundZ(1);
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case VK_DOWN:
+		graphInPoints.turnAroundZ(-1);
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x57:
+		//graphInPoints.moveStraight();
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x53:
+		//graphInPoints.moveBack();
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	}
 }
 
 void GraphWindow::OnPaint() {
@@ -131,9 +121,8 @@ void GraphWindow::OnPaint() {
 	HBITMAP bitmap = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
 	HGDIOBJ oldbitmap = ::SelectObject(newHdc, bitmap);
 
-	
-	drawGraph( newHdc );
-	drawAxes( newHdc );
+	drawGraph(newHdc);
+	drawAxes(newHdc);
 
 	::BitBlt( hdc, 0, 0, rect.right, rect.bottom, newHdc, 0, 0, SRCCOPY );
 
@@ -155,24 +144,24 @@ void GraphWindow::drawGraph(HDC dc) {
 	::FillRect(dc, &clientRect, clientRectBrush);
 	::DeleteObject(clientRectBrush);
 
-	HPEN linePen = ::CreatePen( PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	::SelectObject(dc, linePen);
 
 	std:vector< std::vector < std::pair<double, double> > > points = graphInPoints.GetRelativePoints();
 
 	for (size_t i = 0; i < points.size(); ++i) {
-		::MoveToEx( dc, points[i][0].first, points[i][0].second, NULL );
+		::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
 		for (size_t j = 1; j < points.size(); ++j) {
-			::LineTo( dc, std::round(points[i][j].first), std::round(points[i][j].second) );
-			::MoveToEx( dc, std::round(points[i][j].first), std::round(points[i][j].second), NULL );
+			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+			::MoveToEx(dc, round(points[i][j].first), round(points[i][j].second), NULL);
 		}
 	}
 
 	for (size_t j = 0; j < points.size(); ++j) {
-		::MoveToEx( dc, points[0][j].first, points[0][j].second, NULL );
+		::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
 		for (size_t i = 1; i < points.size(); ++i) {
-			::LineTo( dc, std::round(points[i][j].first), std::round(points[i][j].second) );
-			::MoveToEx( dc, std::round(points[i][j].first), std::round(points[i][j].second), NULL );
+			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+			::MoveToEx(dc, round(points[i][j].first), round(points[i][j].second), NULL);
 		}
 	}
 
@@ -180,23 +169,23 @@ void GraphWindow::drawGraph(HDC dc) {
 }
 
 void GraphWindow::drawAxes(HDC dc) {
-	pair<double, double> xAxis = graphInPoints.getAxisVectorVisual( 0 );
-	pair<double, double> yAxis = graphInPoints.getAxisVectorVisual( 1 );
-	pair<double, double> zAxis = graphInPoints.getAxisVectorVisual( 2 );
+	pair<double, double> xAxis = graphInPoints.getAxisVectorVisual(0);
+	pair<double, double> yAxis = graphInPoints.getAxisVectorVisual(1);
+	pair<double, double> zAxis = graphInPoints.getAxisVectorVisual(2);
 
 	pair<double, double> origin = graphInPoints.getOriginCoordinates();
 
-	HPEN linePen = ::CreatePen( PS_SOLID, 1, RGB(100, 100, 220) );
+	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 100, 220));
 	::SelectObject(dc, linePen);
 
-	::MoveToEx( dc, round(origin.first), round(origin.second), NULL );
-	::LineTo( dc, round(xAxis.first * 10000000000)/1000, round(xAxis.second * 10000000000 )/1000 );
+	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
+	::LineTo(dc, round(xAxis.first * 10000000000) / 1000, round(xAxis.second * 10000000000) / 1000);
 
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo( dc, round(yAxis.first * 10000000000 )/1000, round(yAxis.second * 10000000000 )/1000 );
+	::LineTo(dc, round(yAxis.first * 10000000000) / 1000, round(yAxis.second * 10000000000) / 1000);
 
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo( dc, round(zAxis.first * 10000000000 )/1000, round(zAxis.second * 10000000000 )/1000 );
+	::LineTo(dc, round(zAxis.first * 10000000000) / 1000, round(zAxis.second * 10000000000) / 1000);
 
 	::DeleteObject(linePen);
 }

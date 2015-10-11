@@ -1,22 +1,21 @@
 #pragma once
 #include <string>
-//#include "calculator.h"
+#include "calculator.h"
+#include "calculator.h"
 
 class MathCore {
 public:
-	MathCore( const std::string& formula ) {};
-	MathCore() {};
-	~MathCore() {};
+	MathCore(const std::string &formula);
+	~MathCore();
 
-	double calculate( double x, double y ) {};
+	double calculate(double x, double y);
 
-	void changeWindowCoordinates( double x, double y, double z ) {};
-	void operator = ( const MathCore& inputMCore ) {};
+	void changeWindowCoordinates(double x, double y, double z);
+
 private:
-	const std::string formula;
-	//Calculator calc;
+	Calculator calc;
 
-	//Number globalXShift;
-	//Number globalYShift;
-	//Number globalZShift;
+	double globalXShift;
+	double globalYShift;
+	double globalZShift;
 };

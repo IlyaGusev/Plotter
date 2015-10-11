@@ -118,12 +118,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="calculator.cpp" />
     <ClCompile Include="GP.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="graphWindow.cpp" />
     <ClCompile Include="RotationLib.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="calculator.h" />
     <ClInclude Include="GP.h" />
     <ClInclude Include="graphWindow.h" />
     <ClInclude Include="mathCore.h" />

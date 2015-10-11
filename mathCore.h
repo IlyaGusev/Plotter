@@ -5,7 +5,7 @@
 
 class MathCore {
 public:
-	MathCore(const std::string &formula);
+	MathCore( const std::string &formula );
 	~MathCore();
 
 	double calculate(double x, double y);
@@ -14,7 +14,6 @@ public:
 
 private:
 	Calculator calc;
-
 	double globalXShift;
 	double globalYShift;
 	double globalZShift;

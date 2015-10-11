@@ -11,7 +11,7 @@ public:
 	double countExpression(double xArgument, double yArgument);
 	
 private:
-	const std::string formula;
+	std::string formula;
 	std::stack<double> numbers; //стек для чисел
 	std::stack<std::string> operations; //стек для операций
 

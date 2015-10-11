@@ -13,10 +13,9 @@ using namespace std;
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( MathCore inputMCore, double inputLengthOfSection = 1, 
+	GP( const MathCore& inputMCore, double inputLengthOfSection = 10, 
 		const vector<double>& inputAnglesOfAxis = { 0, 45, 90 }, 
 		pair<double, double> inputWindowSize = pair<double, double>(700, 700) );
-	GP();
 	// Поворот вокруг оси Z
 	void turnAroundZ( int angle = 1 );
 	// Поворот вокруг оси Y

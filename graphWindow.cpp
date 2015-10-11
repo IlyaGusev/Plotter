@@ -5,9 +5,9 @@
 
 GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 	windowWidth(width),
-	windowHeight(height)
+	windowHeight(height),
+	graphInPoints(mathCore)
 {
-	GP graphInPoints = GP(/*mathCore*/);
 }
 
 GraphWindow::~GraphWindow()

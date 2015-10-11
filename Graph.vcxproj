@@ -122,6 +122,7 @@
     <ClCompile Include="GP.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="graphWindow.cpp" />
+    <ClCompile Include="mathCore.cpp" />
     <ClCompile Include="RotationLib.cpp" />
   </ItemGroup>
   <ItemGroup>

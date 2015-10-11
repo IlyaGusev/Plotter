@@ -6,11 +6,11 @@ using namespace std;
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP( MathCore inputMCore, double inputLengthOfSection, const vector<double>& inputAnglesOfAxis, pair<double, double> inputWindowSize ) {
+GP::GP(const MathCore& inputMCore, double inputLengthOfSection, const vector<double>& inputAnglesOfAxis, pair<double, double> inputWindowSize )
+	: mCore( inputMCore ) {
 	windowSize = inputWindowSize;
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;
-	mCore = inputMCore;
 	lengthOfSection = inputLengthOfSection;
 	anglesOfAxis.resize( 3 );
 	for( int i = 0; i < 3; i++ ) {
@@ -24,22 +24,7 @@ GP::GP( MathCore inputMCore, double inputLengthOfSection, const vector<double>& 
 	calculateRelativePoints();
 }
 
-GP::GP() {
-	// По умолчанию инициализируем сеткой 40 на 40
-	windowSize.first = 700;
-	windowSize.second = 700;
-	origin.first = 350;
-	origin.second = 350;
-	anglesOfAxis.resize( 3 );
-	anglesOfAxis = { -30, 35, 90 };
-	relativeAxis.resize( 3 );
-	relativeAxis[0] = Vector( 1, 0, 0 );
-	relativeAxis[1] = Vector( 0, 1, 0 );
-	relativeAxis[2] = Vector( 0, 0, 1 );
-	lengthOfSection = 20;
-	generateNet();
-	calculateRelativePoints();
-}
+
 
 void GP::generateNet() {
 	double size;
@@ -57,8 +42,8 @@ void GP::generateNet() {
 		points[i].resize( netSize );
 		relativePoints[i].resize( netSize );
 		for( int j = 0; j < netSize; j++ ) {
-			//points[i][j] = mCore.calculate( origin.first - windowSize.first / 2, origin.second - windowSize.second / 2 );
-			points[i][j] = 5;
+			points[i][j] = mCore.calculate( i, j );
+			//points[i][j] = 5;
 		}
 	}
 }

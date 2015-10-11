@@ -7,12 +7,21 @@ class arithmeticNode :
 	public Node
 {
 public:
-	void computeResult(string& result, int notation);
 	arithmeticNode();
 	~arithmeticNode();
-	string Translate(int notation);
+	string Translate(int notation);	
+	void setOperation( int oper );
+	void setLeft(unique_ptr <Node> left);
+	void setRight(unique_ptr <Node> right);
+	unique_ptr <Node> getLeft();
+	unique_ptr <Node> getRight();
+
+protected:
 	unique_ptr <Node> left;
 	unique_ptr <Node> right;
+	
+private:
+	void computeResult(string& result, int notation);
 	int operation;
 	static map<int, array<string, 3>> createMap()
 	{

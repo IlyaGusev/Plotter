@@ -9,9 +9,9 @@ public:
 	~variableNode();
 	string getValue();
 	string Translate(int notation);
-	void computeResult(string& result, int notation);
 
 private:
+	void computeResult(string& result, int notation);
 	string num;
 };
 

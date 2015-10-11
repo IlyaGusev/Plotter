@@ -12,38 +12,41 @@ public:
 	virtual string Translate(int notation);
 	void setLeft(unique_ptr <Node> left);
 	void setRight(unique_ptr <Node> right);
-	unique_ptr <Node> getLeft();
-	unique_ptr <Node> getRight();
-	unique_ptr <Node> left;
-	unique_ptr <Node> right;
+	unique_ptr<Node> getLeft();
+	unique_ptr<Node> getRight();
+	
+
+protected:
 	enum yytokentype {
-		NUMBER = 258,
-		ID,
-		ADD,
-		MUL,
-		SUB,
-		DIV,
-		EQ,
-		LOPER,
-		ROPER,
-		LNUM,
-		RNUM,
-		LID,
-		RID,
-		LROW,
-		RROW,
-		LROOT,
-		RROOT,
-		LFRAC,
-		RFRAC,
-		LSQRT,
-		RSQRT,
-		LSUP,
-		RSUP
+	NUMBER = 258,
+	ID,
+	ADD,
+	MUL,
+	SUB,
+	DIV,
+	EQ,
+	LOPER,
+	ROPER,
+	LNUM,
+	RNUM,
+	LID,
+	RID,
+	LROW,
+	RROW,
+	LROOT,
+	RROOT,
+	LFRAC,
+	RFRAC,
+	LSQRT,
+	RSQRT,
+	LSUP,
+	RSUP
 	};
 	enum layout {
 		mathml,
 		openmath,
 		tex
 	};
+	unique_ptr <Node> left;
+	unique_ptr <Node> right;
 };

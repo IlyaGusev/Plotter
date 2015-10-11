@@ -2,17 +2,17 @@
 #include <iostream>
 #include <map>
 
-#define thisLeft ((Node*) this)->left
-#define thisRight ((Node*) this)->right
-
 const map<int, array<string, 3>> arithmeticNode::notations = createMap();
 
 void arithmeticNode::computeResult(string& result, int notation) {
-	if (thisLeft != NULL)
-		result += thisLeft->Translate(notation);
+	unique_ptr<Node> tmpLeft = getLeft();
+	unique_ptr<Node> tmpRight = getRight();
+
+	if (tmpLeft != NULL)
+		result += tmpLeft->Translate(notation);
 	result += notations.at(operation)[notation];
-	if (thisRight != NULL)
-		result += thisRight->Translate(notation);
+	if (tmpRight != NULL)
+		result += tmpRight->Translate(notation);
 }
 
 arithmeticNode::arithmeticNode()
@@ -29,3 +29,24 @@ string arithmeticNode::Translate(int notation) {
 	computeResult(result, notation);
 	return result;
 };
+
+
+void arithmeticNode::setLeft(unique_ptr <Node> left) {
+	this->left = move(left);
+}
+
+void arithmeticNode::setRight(unique_ptr <Node> right) {
+	this->right = move(right);
+}
+
+unique_ptr <Node> arithmeticNode::getLeft() {
+	return move(((Node*)this)->getLeft());
+}
+
+unique_ptr <Node> arithmeticNode::getRight() {
+	return move(((Node*)this)->getRight());
+}
+
+void arithmeticNode::setOperation(int oper) {
+	this->operation = oper;
+}

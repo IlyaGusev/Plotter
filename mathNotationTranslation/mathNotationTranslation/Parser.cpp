@@ -11,11 +11,11 @@ void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& positi
 {
 	position = unique_ptr<arithmeticNode>(new arithmeticNode());
 	unique_ptr<arithmeticNode> pDerived(static_cast<arithmeticNode*>(position.release()));
-	pDerived->operation = oper;
+	pDerived->setOperation(oper);
 	position = move(pDerived);
-	position.get()->left = move(prev);
-	processText(is, position->right);
-	position.get()->right = move(prev);
+	position.get()->setLeft(move(prev));
+	processText(is, position->getRight());
+	position.get()->setRight(move(prev));
 	prev = move(position);
 }
 

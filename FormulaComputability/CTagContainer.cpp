@@ -76,9 +76,19 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 
 
 	/*compare*/
-	tagsToFill.emplace("eq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));
+	tagsToFill.emplace("eq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '='
+	tagsToFill.emplace("neq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '!='
+	tagsToFill.emplace("lt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '<'
+	tagsToFill.emplace("gt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '>'
+	tagsToFill.emplace("leq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '<='
+	tagsToFill.emplace("geq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '>='
+	tagsToFill.emplace("equivalent", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>())); // 	triple =
+	tagsToFill.emplace("approx", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// 	'~=' approximately equal
+	tagsToFill.emplace("factorof", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));	//	| (a|b is true when b mod a = 0)
 
 	/*logical*/
+	tagsToFill.emplace("and", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
+	tagsToFill.emplace("or", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
 	tagsToFill.emplace("xor", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
 
 	/**********************************************/

@@ -6,7 +6,7 @@
 // Модель для корня n-й степени
 class CRadicalControlModel : public IBaseExprModel {
 public:
-	CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent); 
+	CRadicalControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
 	void InitializeChildren( );
@@ -21,13 +21,16 @@ public:
 
 	ViewType GetType( ) const;
 	
-	void MoveBy(int dx, int dy);
+	void MoveBy( int dx, int dy );
 
-	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
-	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const;
+	bool IsEmpty() const;
 
-	int getDegreeHeight( int rectHeight );
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;
@@ -35,4 +38,5 @@ private:
 	std::shared_ptr<CExprControlModel> secondChild;
 
 	void updatePolygons();
+	int getDegreeHeight( int rectHeight );
 };

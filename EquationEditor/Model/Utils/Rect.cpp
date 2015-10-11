@@ -37,6 +37,13 @@ bool CRect::IsContain( int x, int y ) const
 	return top <= y && y <= bottom && left <= x && x <= right;
 }
 
+bool CRect::isIntersect( const CRect& other ) const {
+	return MIN(left, right) < MAX(other.left, other.right) && 
+		MAX(left, right) > MIN(other.left, other.right) &&
+		MIN(top, bottom) < MAX(other.top, other.bottom) && 
+		MAX(top, bottom) > MIN(other.top, other.bottom);
+}
+
 void CRect::Resize( int dx, int dy )
 {
 	right += dx;

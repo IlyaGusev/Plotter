@@ -20,6 +20,10 @@ public:
 	std::shared_ptr<CEditControlModel> GetCurEdit( ) const;
 
 	int& Offset();
+
+	bool operator==(const CCaret& other) const;
+
+	bool operator!=(const CCaret& other) const;
 private:
 	// Текущий edit control, на котором стоит каретка
 	std::shared_ptr<CEditControlModel> curEdit;

@@ -5,8 +5,7 @@
 // Модель для дроби
 class CFracControlModel : public IBaseExprModel {
 public:
-	CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
-	~CFracControlModel() {}
+	CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
@@ -15,7 +14,7 @@ public:
 	// Высота дроби - две высоты соседнего текстового поля + 5
 	void InitializeChildren();
 
-	virtual void SetRect( const CRect& rect );
+	void SetRect( const CRect& rect );
 
 	void Resize();
 
@@ -27,8 +26,14 @@ public:
 
 	void MoveBy( int dx, int dy );
 
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	
+	bool IsEmpty() const;
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	// Верхний ребенок
 	std::shared_ptr<CExprControlModel> firstChild;

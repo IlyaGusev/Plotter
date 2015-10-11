@@ -1,13 +1,13 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
 
-#include <string>
-
-CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
+CFracControlModel::CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
 	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
+
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CFracControlModel::Resize()
@@ -59,53 +59,70 @@ void CFracControlModel::InitializeChildren()
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( const CRect& rect ) {
+void CFracControlModel::SetRect( const CRect& rect ) 
+{
 	this->rect = rect;
 	updatePolygons();
-	::OutputDebugString( std::to_wstring( GetRect().Top() + GetMiddle() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( firstChild->GetRect().Bottom() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( secondChild->GetRect().Top() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( rect.Top() ).c_str() );
-	::OutputDebugString( (LPCWSTR) "\n" );
 }
 
-ViewType CFracControlModel::GetType() const {
+ViewType CFracControlModel::GetType() const 
+{
 	return FRAC;
 }
 
-void CFracControlModel::MoveBy( int dx, int dy ) {
+void CFracControlModel::MoveBy( int dx, int dy ) 
+{
 	rect.MoveBy( dx, dy );
 	updatePolygons();
 }
 
-void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
-	// Если пришли из родителя - идем в верхнего ребенка
+void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
+	// Если пришли из родителя - идем в нижнего ребенка
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
+	} else if( from == secondChild.get() ) {
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
-void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
+void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
+{
 	// Если пришли из родителя - идем в верхнего ребенка
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
+	} else if( from == firstChild.get() ) {
+		// Если пришли из верхнего - идем в нижнего
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
-void CFracControlModel::updatePolygons( )
+bool CFracControlModel::IsEmpty() const 
+{
+	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
+}
+
+bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == firstChild.get();
+}
+
+void CFracControlModel::updatePolygons()
 {
 	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+}
+
+void CFracControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
 }

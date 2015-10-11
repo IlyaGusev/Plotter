@@ -6,10 +6,7 @@
 // Модель для степени
 class CSubscriptControlModel : public IBaseExprModel {
 public:
-	CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent);
-	~CSubscriptControlModel()
-	{
-	}
+	CSubscriptControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
 	void InitializeChildren( );
@@ -20,16 +17,19 @@ public:
 
 	int GetMiddle() const;
 
-	void SetRect(const CRect& rect);
-
 	ViewType GetType( ) const;
 	
 	void MoveBy(int dx, int dy);
 
-	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const;
+	void MoveCaretLeft(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
 
-	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const;
+	void MoveCaretRight(const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false);
 
+	bool IsEmpty() const;
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	void UpdateSelection();
 private:
 	int getSubscriptHeight( int rectHeight );
 

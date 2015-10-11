@@ -1,12 +1,10 @@
 ﻿#include "Model/SubscriptControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
-#include <string>
-
-CSubscriptControlModel::CSubscriptControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+CSubscriptControlModel::CSubscriptControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CSubscriptControlModel::Resize()
@@ -70,11 +68,6 @@ std::list<std::shared_ptr<IBaseExprModel>> CSubscriptControlModel::GetChildren()
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CSubscriptControlModel::SetRect(const CRect& rect) 
-{
-	this->rect = rect;
-}
-
 ViewType CSubscriptControlModel::GetType() const 
 {
 	return SUBSCRIPT;
@@ -86,38 +79,54 @@ void CSubscriptControlModel::MoveBy(int dx, int dy)
 	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CSubscriptControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
+void CSubscriptControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
 	// Если пришли из индекса - идём в основание
 	if( from == secondChild.get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	//если пришли из родителя - идём в индекс
 	else if( from == parent.lock().get() ) {
-		secondChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
-void CSubscriptControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const {
+void CSubscriptControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
+{
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	//если из основания - в индекс
 	else if( from == firstChild.get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
+}
+
+bool CSubscriptControlModel::IsEmpty() const {
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CSubscriptControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+{
+	// Если первая - действительно первая
+	return model1 == firstChild.get();
 }
 
 // Высота выступающего снизу индекса
 int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
 	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CSubscriptControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
 }

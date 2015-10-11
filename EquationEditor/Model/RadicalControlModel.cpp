@@ -1,16 +1,17 @@
 ﻿#include "Model/RadicalControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
+#include "Model/EditControlModel.h"
 
-
-CRadicalControlModel::CRadicalControlModel(CRect rect, std::weak_ptr<IBaseExprModel> parent) :
+CRadicalControlModel::CRadicalControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CRadicalControlModel::Resize()
 {
 	int width = firstChild->GetRect().GetWidth() + secondChild->GetRect().GetWidth() + 10; // 10 пикселей - ширина галочки
-	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle(), secondChild->GetRect().GetHeight() + 3 ); // 3 - отступ над подкоренным выражением
+	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() - secondChild->GetMiddle() + 2, // 2 - отступ
+		secondChild->GetRect().GetHeight() + 3 ); // 3 - отступ над подкоренным выражением
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -79,36 +80,45 @@ void CRadicalControlModel::MoveBy(int dx, int dy)
 	updatePolygons();
 }
 
-void CRadicalControlModel::MoveCaretLeft(const IBaseExprModel* from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
 	// Если пришли из подкоренного выражения - идём в показатель
 	if( from == secondChild.get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	//если пришли из родителя - идём в подкоренное выражение
 	else if( from == parent.lock().get() ) {
-		secondChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
-void CRadicalControlModel::MoveCaretRight(const IBaseExprModel* from, CCaret& caret) const 
+void CRadicalControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
 	// Если пришли из родителя - идем в показатель
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	// если из показателя - в подкоренное выражение
 	else if( from == firstChild.get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
+}
+
+bool CRadicalControlModel::IsEmpty() const 
+{
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CRadicalControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == firstChild.get();
 }
 
 // высота показателя степени
@@ -123,10 +133,15 @@ void CRadicalControlModel::updatePolygons()
 	auto firstRect = firstChild->GetRect();
 	auto secondRect = secondChild->GetRect();
 
-	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
-//	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
+//	params.polygon.push_back( CLine( firstRect.Left(), firstRect.Bottom(), firstRect.Right(), firstRect.Bottom() ) );  // вариант с чертой под степенью корня
+	params.polygon.push_back( CLine( firstRect.Right() - 3, firstRect.Bottom() + 3, firstRect.Right(), firstRect.Bottom() ) ); // вариант с небольшим крючком под степенью корня
 	params.polygon.push_back( CLine( firstRect.Right(), firstRect.Bottom(), firstRect.Right() + 5, rect.Bottom() ) );
-	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), rect.Top() + 2 ) );
-	params.polygon.push_back( CLine( secondRect.Left(), rect.Top() + 2, rect.Right(), rect.Top() + 2 ) );
-	params.polygon.push_back( CLine( rect.Right(), rect.Top() + 2, rect.Right(), rect.Top() + 5 ) );
+	params.polygon.push_back( CLine( secondRect.Left() - 5, rect.Bottom(), secondRect.Left(), secondRect.Top() - 2 ) );
+	params.polygon.push_back( CLine( secondRect.Left(), secondRect.Top() - 2, secondRect.Right(), secondRect.Top() - 2 ) );
+	params.polygon.push_back( CLine( rect.Right(), secondRect.Top() - 2, rect.Right(), secondRect.Top() + 1 ) );
+}
+
+void CRadicalControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
 }

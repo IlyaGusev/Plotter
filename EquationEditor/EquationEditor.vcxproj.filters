@@ -57,9 +57,6 @@
     <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp">
       <Filter>Source Files\Presenter\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Utils\GeneralFunct.cpp">
-      <Filter>Source Files\Model\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Utils\Rect.cpp">
       <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
@@ -109,9 +106,6 @@
     </ClInclude>
     <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h">
       <Filter>Source Files\Presenter\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Model\Utils\GeneralFunct.h">
-      <Filter>Source Files\Model\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Model\Utils\Rect.h">
       <Filter>Source Files\Model\Utils</Filter>

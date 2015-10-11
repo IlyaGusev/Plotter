@@ -1,7 +1,12 @@
 #include "Model/ParenthesesControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
 #include <string>
+
+CParenthesesControlModel::CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( rect, parent )
+{
+	depth = parent.lock( )->GetDepth( ) + 1;
+}
 
 void CParenthesesControlModel::Resize()
 {
@@ -63,7 +68,7 @@ void CParenthesesControlModel::MoveBy( int dx, int dy )
 	updatePolygons();
 }
 
-void CParenthesesControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const
+void CParenthesesControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
 	// Если пришли из родителя - идем внутрь скобок
 	if( from == parent.lock().get() ) {
@@ -75,7 +80,7 @@ void CParenthesesControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret
 	}
 }
 
-void CParenthesesControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const
+void CParenthesesControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
 	// Если пришли из родителя - идем внутрь скобок
 	if( from == parent.lock().get() ) {
@@ -85,6 +90,21 @@ void CParenthesesControlModel::MoveCaretRight( const IBaseExprModel* from, CCare
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret );
 	}
+}
+
+void CParenthesesControlModel::UpdateSelection()
+{
+	params.isSelected = content->IsSelected();
+}
+
+bool CParenthesesControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const
+{
+	return model1 == content.get( );
+}
+
+bool CParenthesesControlModel::IsEmpty() const
+{
+	return content->IsEmpty();
 }
 
 void CParenthesesControlModel::updatePolygons()

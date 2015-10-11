@@ -29,3 +29,11 @@ std::shared_ptr<CEditControlModel> CCaret::GetCurEdit( ) const {
 int& CCaret::Offset() {
 	return offset;
 }
+
+bool CCaret::operator!=(const CCaret& other) const {
+	return !(other == *this);
+}
+
+bool CCaret::operator==(const CCaret& other) const {
+	return curEdit == other.curEdit && offset == other.offset;
+}

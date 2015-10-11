@@ -1,8 +1,11 @@
 ﻿#include "Model/DegrControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
-#include <string>
+CDegrControlModel::CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( rect, parent ) 
+{
+	depth = parent.lock()->GetDepth() + 1;
+}
 
 void CDegrControlModel::Resize()
 {
@@ -59,14 +62,9 @@ void CDegrControlModel::InitializeChildren()
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const 
+std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const
 {
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
-}
-
-void CDegrControlModel::SetRect(const CRect& rect) 
-{
-	this->rect = rect;
 }
 
 ViewType CDegrControlModel::GetType() const 
@@ -79,7 +77,7 @@ void CDegrControlModel::MoveBy(int dx, int dy)
 	rect.MoveBy(dx, dy);
 }
 
-void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
 	// Если пришли из показателя - идём в основание
 	if( from == firstChild.get() ) {
@@ -94,23 +92,36 @@ void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	}
 }
 
-void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /* =false */ ) 
 {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	//если из основания - в показатель
 	else if( from == secondChild.get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
+}
+
+bool CDegrControlModel::IsEmpty() const {
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+	return model1 == secondChild.get();
 }
 
 // Высота выступающего над основанием показателя степени
 int CDegrControlModel::getExponentHeight( int rectHeight )
 {
 	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CDegrControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
 }

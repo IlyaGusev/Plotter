@@ -6,10 +6,7 @@
 // Модель для круглых скобок
 class CParenthesesControlModel : public IBaseExprModel {
 public:
-	CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
-		IBaseExprModel( rect, parent )
-	{
-	}
+	CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 	void InitializeChildren();
@@ -25,8 +22,14 @@ public:
 	ViewType GetType() const;
 
 	void MoveBy( int dx, int dy );
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+
+	void UpdateSelection();
+
+	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+
+	bool IsEmpty() const;
 
 private:
 	void updatePolygons();

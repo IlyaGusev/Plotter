@@ -1,5 +1,8 @@
 #pragma once
 
+#define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define MAX(x, y) ((x) > (y) ? (x) : (y))
+
 class CRect {
 public:
 	CRect();
@@ -14,7 +17,11 @@ public:
 	// смещает правую грань на dx вправо, а нижнюю на dy вниз
 	void Resize( int dx, int dy );
 
+	// Содержит ли точку
 	bool IsContain( int x, int y ) const;
+
+	// Пересекаются ли два прямоугольника
+	bool isIntersect( const CRect& other ) const;
 
 	CRect& CRect::operator= (const CRect& rect );
 

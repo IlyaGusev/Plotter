@@ -1,10 +1,13 @@
 ﻿#include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
 
-CExprControlModel::CExprControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent ) :
+CExprControlModel::CExprControlModel( const CRect& rect, const std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
 {
 	middle = rect.GetHeight() / 2;
+	if( !parent.expired() ) {
+		depth = parent.lock()->GetDepth() + 1;
+	}
 }
 
 void CExprControlModel::InitializeChildren() 
@@ -70,12 +73,24 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 	}
 }
 
-ViewType CExprControlModel::GetType() const 
+void CExprControlModel::AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) 
+{
+	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
+	if( currentChildIterator == children.begin() ) {
+		children.push_front( newChild );
+	} else {
+		--currentChildIterator;
+		children.insert( currentChildIterator, newChild );
+	}
+}
+
+ViewType CExprControlModel::GetType() const
 {
 	return EXPR;
 }
 
-void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
+void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый левый ребенок - поднимаемся наверх
 	if( from == children.front().get() ) {
@@ -95,22 +110,85 @@ void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	children.back()->MoveCaretLeft( this, caret );
 }
 
-void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
+void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /* =false */ ) 
+{
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый правый ребенок - поднимаемся наверх
 	if( from == children.back().get() ) {
 		if( !parent.expired() ) {
-			parent.lock()->MoveCaretRight( this, caret );
+			parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 		}
 		return;
 	}
 	// Если он где-то посередине - we need to go deeper
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		if( (*it).get() == from ) {
-			(*++it)->MoveCaretRight( this, caret );
+			(*++it)->MoveCaretRight( this, caret, isInSelectionMode );
 			return;
 		}
 	}
 	// Иначе - он пришел извне, ставим каретку в самое начало
-	children.front()->MoveCaretRight( this, caret );
+	children.front()->MoveCaretRight( this, caret, isInSelectionMode );
+}
+
+bool CExprControlModel::IsEmpty() const 
+{
+	return children.size() == 1 && children.front()->IsEmpty();
+}
+
+bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+{
+	int first, second;
+	int i = 0;
+	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
+		if( (*it).get() == model1 ) {
+			first = i;
+		}
+		if( (*it).get() == model2 ) {
+			second = i;
+		}
+	}
+	return first < second;
+}
+
+void CExprControlModel::UpdateSelection()
+{
+	for( std::shared_ptr<IBaseExprModel> child : children ) {
+		if( !child->IsSelected() ) {
+			params.isSelected = false;
+			return;
+		}
+	}
+	params.isSelected = true;
+}
+
+bool CExprControlModel::DeleteSelectedPart() 
+{
+	// Если уже пустой - ничего не трогаем
+	if( IsEmpty() ) {
+		return true;
+	}
+
+	for( auto it = children.begin(); it != children.end(); ++it ) {
+		// Если нужно дополнительное вмешательство
+		// Первым идет EditControl, его оставляем
+		if( !(*it)->DeleteSelectedPart() && it != children.begin() ) {
+			// Если пустой - удаляем
+			if( !(*it)->IsEmpty() ) {
+				// Иначе переносим наверх все непустые контролы
+				for( auto childExpr : (*it)->GetChildren() ) {
+					if( !childExpr->IsEmpty() ) {
+						for( auto child : childExpr->GetChildren() ) {
+							children.insert( it, child );
+							child->SetParent( shared_from_this() );
+							child->UpdateDepth();
+						}
+					}
+				}
+			}
+			it = --children.erase( it );
+		}
+	}
+	// Если остался один пустой EditControl
+	return !IsEmpty();
 }

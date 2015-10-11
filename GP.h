@@ -13,8 +13,8 @@ using namespace std;
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( const MathCore& inputMCore, double inputLengthOfSection = 10, 
-		const vector<double>& inputAnglesOfAxis = { 0, 45, 90 }, 
+	GP( const MathCore& inputMCore, double inputLengthOfSection = 5, 
+		const vector<double>& inputAnglesOfAxis = { -30, 40, 90 }, 
 		pair<double, double> inputWindowSize = pair<double, double>(700, 700) );
 	// ѕоворот вокруг оси Z
 	void turnAroundZ( int angle = 1 );
@@ -28,8 +28,10 @@ public:
 	void moveOverX( int num );
 	// —мещение по горизонтали
 	void moveOverY( int num );
+	// измен€ет масштаб
+	void changeScale( int num );
 	// ¬озвращает положение относительных точек
-	vector<vector<pair<double, double>>> GetRelativePoints();
+	vector<vector<pair<double, double>>> getRelativePoints();
 	// возвращает направл€ющий вектор Ќомера осей X - 0, Y - 1, Z - 2
 	pair<double, double> getAxisVector( int axisNum );
 	// возвращает направл€ющий вектор в подстроенный под ориентацию WinApi

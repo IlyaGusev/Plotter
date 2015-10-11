@@ -2,6 +2,9 @@
 #include <vector> 
 #include <math.h>
 using namespace std;
+#define MinLenthOfSection 5
+#define MaxLengthOfSection 50
+
 
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
@@ -42,8 +45,7 @@ void GP::generateNet() {
 		points[i].resize( netSize );
 		relativePoints[i].resize( netSize );
 		for( int j = 0; j < netSize; j++ ) {
-			points[i][j] = mCore.calculate( i, j );
-			//points[i][j] = 5;
+			points[i][j] = mCore.calculate( i - netSize /2 , j - netSize / 2 );
 		}
 	}
 }
@@ -79,7 +81,7 @@ void GP::turnRoundVector( int angle, Vector vector ) {
 	}
 }
 
-vector<vector<pair<double, double>>> GP::GetRelativePoints() {
+vector<vector<pair<double, double>>> GP::getRelativePoints() {
 	return relativePoints;
 }
 
@@ -114,6 +116,15 @@ void GP::moveOverY( int num ) {
 	origin.first += num*lengthOfSection * cos( M_PI * anglesOfAxis[1] / 180 );
 	origin.second += num*lengthOfSection * sin( M_PI * anglesOfAxis[1] / 180 );
 	mCore.changeWindowCoordinates( 0, num, 0 );
+}
+
+void GP::changeScale( int num ) {
+	if( lengthOfSection + num > MinLenthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
+		lengthOfSection += num;
+		generateNet();
+		calculateRelativePoints();
+	}
+	
 }
 
 pair<double, double> GP::getOriginCoordinates() {

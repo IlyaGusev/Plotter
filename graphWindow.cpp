@@ -99,12 +99,12 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		::UpdateWindow(handle);
 		break;
 	case 0x57:
-		//graphInPoints.moveStraight();
+		graphInPoints.changeScale(-2 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x53:
-		//graphInPoints.moveBack();
+		graphInPoints.changeScale( 2 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
@@ -147,7 +147,7 @@ void GraphWindow::drawGraph(HDC dc) {
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	::SelectObject(dc, linePen);
 
-	std:vector< std::vector < std::pair<double, double> > > points = graphInPoints.GetRelativePoints();
+	std:vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
 
 	for (size_t i = 0; i < points.size(); ++i) {
 		::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);

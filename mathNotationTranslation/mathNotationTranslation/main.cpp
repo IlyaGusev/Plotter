@@ -7,9 +7,13 @@ using std::cout;
 using std::endl;
 using std::unique_ptr;
 using std::invalid_argument;
+extern int yyparse();
+extern FILE *yyin;
+
 
 int main(int argc, char** argv) {
 	try{
+
 		filebuf fb;
 		string filename, from, to;
 		if (argc == 1){
@@ -31,13 +35,6 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		istream is(fb.open(filename, ios::in));
-		unique_ptr<Node> tree;
-		Parser parser;
-		tree.reset();
-
-		while (!parser.processText(is, tree));
-
 		int notation = 0;
 		if (to == "mathml")
 			notation = 0;
@@ -45,8 +42,18 @@ int main(int argc, char** argv) {
 			notation = 1;
 		else if (to == "tex")
 			notation = 2;
-		cout << parser.prev.get()->Translate( notation );
-		
+
+		// istream is(fb.open(filename, ios::in));
+		// unique_ptr<Node> tree;
+		// Parser parser;
+		// tree.reset();
+		//
+		// while (!parser.processText(is, tree));
+		yyin = fopen(filename.c_str(), "r");
+		yyparse();
+		cout<<endl;
+		// cout << parser.prev.get()->Translate( notation );
+
 		fb.close();
 	}
 	catch (invalid_argument* e){

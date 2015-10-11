@@ -1,40 +1,13 @@
-%option c++
 %option noyywrap
 
 %{
-FlexLexer* lexer = new yyFlexLexer();
-
-string value;
-
-enum yytokentype {
-	NUMBER = 258,
-	ID,
-	ADD,
-	MUL,
-	SUB,
-	DIV,
-	EQ,
-	LOPER,
-	ROPER,
-	LNUM,
-	RNUM,
-	LID,
-	RID,
-	LROW,
-	RROW,
-	LROOT,
-	RROOT,
-	LFRAC,
-	RFRAC,
-	LSQRT,
-	RSQRT,
-	LSUP,
-	RSUP
-   };
-
+#include "bison.tab.h"
+//FlexLexer* lexer = new yyFlexLexer();
+void yyerror(const char *);
 %}
 
 WHITESPACE  [ \t\f\r]
+LINE_SEPARATOR [\n]+
 
 LOPER	"<mo>"
 ROPER	"</mo>"
@@ -58,7 +31,7 @@ NUMBER	([0-9]+)(\.[0-9]+)?
 
 %%
 {ID}	{
-			value = yytext;
+			strcpy(yylval.identName, yytext);
 			return ID;
 		}
 
@@ -83,7 +56,7 @@ NUMBER	([0-9]+)(\.[0-9]+)?
 		}
 
 {NUMBER}	{
-                value = yytext;
+        yylval.intValue = atoi(yytext);
 				return NUMBER;
 			}
 

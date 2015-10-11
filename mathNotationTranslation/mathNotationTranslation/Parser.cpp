@@ -1,7 +1,6 @@
 #include "Parser.h"
 #include "arithmeticNode.h"
 #include "variableNode.h"
-#include "lex.yy.cc"
 
 Parser::Parser() { prev.reset(); }
 Parser::~Parser() {}
@@ -20,26 +19,26 @@ void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& positi
 }
 
 bool Parser::processText(istream& is, unique_ptr <Node>& position) {
-	int tok = lexer->yylex(&is, &cout);
-	switch (tok) {
-	case ID:
-	case NUMBER:
-		position.reset(new variableNode(value));
-		prev = move(position);
-		return false;
-	case LOPER:
-	case ROPER:
-	case LNUM:
-	case RNUM:
-	case LID:
-	case RID:
-		processText(is, position);
-		return false;
-	case 0:
-		return true;
-	default:
-		arithmeticOperation(is, tok, position);
-		return false;
-	}
-	return true;
+	// int tok = lexer->yylex(&is, &cout);
+	// switch (tok) {
+	// case ID:
+	// case NUMBER:
+	// 	position.reset(new variableNode(value));
+	// 	prev = move(position);
+	// 	return false;
+	// case LOPER:
+	// case ROPER:
+	// case LNUM:
+	// case RNUM:
+	// case LID:
+	// case RID:
+	// 	processText(is, position);
+	// 	return false;
+	// case 0:
+	// 	return true;
+	// default:
+	// 	arithmeticOperation(is, tok, position);
+	// 	return false;
+	// }
+	// return true;
 }

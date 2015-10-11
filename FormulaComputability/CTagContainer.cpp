@@ -14,7 +14,7 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 	/***********insert here tags*********************/
 
 	tagsToFill.emplace( "apply", unique_ptr<CTag>(  new CTagApplyReln<NUMBER>() ) );
-	tagsToFill.emplace("reln", unique_ptr<CTag>(new CTagApplyReln<BOOL>()));
+	tagsToFill.emplace( "reln", unique_ptr<CTag>( new CTagApplyReln<BOOL>()) );
 
 	tagsToFill.emplace( "plus", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );
 	tagsToFill.emplace( "times", unique_ptr<CTag>(  new CTagVarArgFunction<NUMBER, NUMBER>() ) );

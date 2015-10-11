@@ -67,7 +67,7 @@ void CTag::hasNoText(const CNode& node) const
 void CTag::hasNoChilds(const CNode& node)
 {
 	if (node.children().begin() != node.children().end()) {
-		throwException(node, node.children().begin()->offset_debug(), UNEXPECTED_CHILD);
+		throwException(*node.children().begin(), node.children().begin()->offset_debug(), UNEXPECTED_CHILD);
     }
 }
 
@@ -81,13 +81,13 @@ void CTag::hasNChilds(const CNode& node, int N)const
 		child = child.next_sibling();
 	}
 	if (i != N)
-		throwException(node, child.offset_debug(), UNEXPECTED_CHILD);
+		throwException(child, child.offset_debug(), UNEXPECTED_CHILD);
 }
 
-const CNode CTag::checkArgumentType(const CNode& node, int requiredType) const
+const CNode CTag::checkArgumentType(const CNode& node, const CNode& parentNode, int requiredType) const
 {
-    if ( node.empty() ) {
-        throwException(node.parent(), node.offset_debug(), INVALID_ARGUMENT);
+    if (node.empty()) {
+        throwException(parentNode, parentNode.offset_debug(), MISSED_ARGUMENT);
     }
     CTag& curArgTag = CTagContainer::getTag(node.name());
     //проверяем, что заявлена переменная требуемого типа
@@ -99,24 +99,27 @@ const CNode CTag::checkArgumentType(const CNode& node, int requiredType) const
 
 void CTag::throwException(const CNode& errorTag, int position, ErrorType errType)
 {   
-	static_assert(ATTRIBUTE_REQUiRED == 9, "add new enum value to throwException");
+	static_assert(ATTRIBUTE_REQUiRED == 10, "add new enum value to throwException");
     string errorMsg;
     CNode rootErrorTag = errorTag;//родитель тега, где обнаружена ошибка
     //по умолчанию это errorTag, специальные случаи обрабатываются в switch
     switch (errType) {
         case INVALID_ARGUMENT:
             rootErrorTag = errorTag.parent();
-            errorMsg += "invalid argument \" " + errorTag.name() + "\" ";
+            errorMsg += "invalid argument \" " + string(errorTag.name()) + string("\" ");
             break;
         case NO_ARGUMENT:
             errorMsg += "arguments are required after operation-tag " + string( errorTag.name() );
             rootErrorTag = errorTag.parent();
             break;
+        case MISSED_ARGUMENT:
+            errorMsg += "missed child tag";
+            break;
         case UNKNOWN_ATTRIBUTE:
             errorMsg += "unknown attribute ";
             break;
         case INCORRECT_VALUE:
-            errorMsg += "incorrect value \" " + errorTag.text.as_string() + "\"";
+            errorMsg += "incorrect value \" " + string(errorTag.text().as_string()) + string("\"");
             break;
         case UNEXPECTED_ATTRIBUTE:
             errorMsg += "unexpected attribute ";
@@ -125,7 +128,8 @@ void CTag::throwException(const CNode& errorTag, int position, ErrorType errType
             errorMsg += "this tag can't have any value";
             break;
         case UNEXPECTED_CHILD:
-            errorMsg += "this tag can't have any child";
+            errorMsg += "this tag can't have child \"" + string(errorTag.name()) + string("\" ");
+            rootErrorTag = errorTag.parent();
             break;
 		case INVALID_ATTRIBUTE_ARGUMENT:
 			errorMsg += "invalid attribute value";
@@ -172,8 +176,11 @@ CTagBVar::CTagBVar()
 
 void CTagBVar::operator()(const CNode& node) const 
 {
-    //hasNoText(node);
+    hasNoText(node);
     CNode ident = node.first_child();
+    if ( ident.empty() ) {
+        throwException(node, node.offset_debug(), MISSED_ARGUMENT);
+    }
     CTag& identTag = CTagContainer::getTag( ident.name() );
     //проверяем, что первый дочерний тэг - переменная
     if ( !( identTag.getType() & VARIABLE ) ) {
@@ -210,7 +217,10 @@ CTagCondition::CTagCondition()
 void CTagCondition::operator()(const CNode& node) const
 {
     hasNoText(node);
-    auto lastChild = checkArgumentType(node.first_child(), SPECIAL);
+    if ( node.first_child().empty() ) {
+        throwException(node, node.offset_debug(), MISSED_ARGUMENT);
+    }
+    auto lastChild = checkArgumentType(node.first_child(), node.parent(), SPECIAL);
     if ( !lastChild.empty() ) {
         throwException(lastChild, lastChild.offset_debug(), INVALID_ARGUMENT);
     }
@@ -224,15 +234,15 @@ CTagLimitable::CTagLimitable()
 
 const CNode CTagLimitable::checkSignature(const CNode& node) const
 {
-
-    CNode nextArg = checkArgumentType(node.next_sibling(), BOUND);
+    CNode nextArg = checkArgumentType(node.next_sibling(), node.parent(), BOUND);
     CTag& nextArgTag = CTagContainer::getTag(nextArg.name());
     if ( !( nextArgTag.getType() & CONDITION ) ) {
-        nextArg = checkArgumentType( checkArgumentType( nextArg, LIMIT_LO ), LIMIT_UP );
+        nextArg = checkArgumentType( checkArgumentType( nextArg, node.parent(), LIMIT_LO ),  node.parent(), 
+                                                                                                LIMIT_UP );
     } else {
         nextArg = nextArg.next_sibling();
     }
-    nextArg = checkArgumentType(nextArg, SPECIAL | NUMBER | VARIABLE);
+    nextArg = checkArgumentType(nextArg, node.parent(), SPECIAL | NUMBER | VARIABLE);
     return nextArg;
 }
 

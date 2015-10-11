@@ -35,7 +35,7 @@ typedef pugi::xml_node CNode;
 enum ErrorType 
 {
 	UNKNOWN_IDENTIFIER,
-	INVALID_ARGUMENT, NO_ARGUMENT, UNKNOWN_ATTRIBUTE, INCORRECT_VALUE, UNEXPECTED_ATTRIBUTE, UNEXPECTED_VALUE,
+	INVALID_ARGUMENT, NO_ARGUMENT, MISSED_ARGUMENT, UNKNOWN_ATTRIBUTE, INCORRECT_VALUE, UNEXPECTED_ATTRIBUTE, UNEXPECTED_VALUE,
 	UNEXPECTED_CHILD, INVALID_ATTRIBUTE_ARGUMENT, ATTRIBUTE_REQUiRED, IDENTIFIER_ALREADY_EXIST,
 };
 
@@ -59,7 +59,7 @@ protected:
 	void checkAttributes(const CNode& node,const set<string>& attributes) const;
 	void hasNoText(const CNode& node) const;
 	void hasNChilds(const CNode& node,int N)const;
-	const CNode checkArgumentType(const CNode& node, int requieredType) const;
+	const CNode checkArgumentType(const CNode& node, const CNode& parentNode, int requieredType) const;
 	const string& getName() const;
 };
 

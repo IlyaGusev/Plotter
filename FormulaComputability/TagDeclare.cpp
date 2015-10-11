@@ -8,11 +8,13 @@
 void CTagDeclare::operator ()(const CNode& node) const
 {
 	checkAttributes(node, { "type","nargs" });
-	if (strcmp(node.first_child().name(),"ci") != 0)//first child must be ci
+	if (strcmp(node.first_child().name(),"ci") != 0) {//first child must be ci
 		throwException(node, node.offset_debug(), UNEXPECTED_CHILD);
-	if (node.first_child().text().as_string() == "")//ci must contain name of identifier
+	}
+	if ( strcmp(node.first_child().text().as_string(), "") == 0 ) {//ci must contain name of identifier
 		throwException(node.first_child(), node.first_child().offset_debug(), INCORRECT_VALUE);
-	if ( node.attribute("type").as_string() == string("fn") ) {
+	}
+	if ( deleteSpaces( string(node.attribute("type").as_string()) ) == "fn" ) {
 		addFunction(node);
 	} else {
 		addIdentifier(node);
@@ -94,10 +96,15 @@ void CTagDeclare::addFunction(const CNode& node) const
 
 void CTagDeclare::addIdentifier(const CNode& node) const
 {
-	CTagCi::AddIdentifier(node.first_child(), NUMBER);
-	if ( !(CTagContainer::getTag(node.first_child().next_sibling().name() ).type & NUMBER))
-		throwException(node, node.offset_debug(), UNEXPECTED_CHILD);
-	( CTagContainer::getTag(node.first_child().next_sibling().name()) )(node.first_child().next_sibling());
+	CTagCi::AddIdentifier(node.first_child(), NUMBER | VARIABLE);
+	auto lastChildNode = node.first_child().next_sibling();
+	if ( lastChildNode.empty() ) {
+		throwException(node, node.first_child().offset_debug(), MISSED_ARGUMENT);
+	}
+	if ( !(CTagContainer::getTag( lastChildNode.name() ).getType() & NUMBER)) {
+		throwException(lastChildNode, lastChildNode.offset_debug(), UNEXPECTED_CHILD);
+	}
+	CTagContainer::getTag( lastChildNode.name() )( lastChildNode );
 }
 
 #endif

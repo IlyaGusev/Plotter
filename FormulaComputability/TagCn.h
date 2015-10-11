@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef _TacCn_H
 #define _TacCn_H
 #include "Tag.h"

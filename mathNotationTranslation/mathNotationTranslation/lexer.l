@@ -42,11 +42,11 @@ LNUM	"<mn>"
 RNUM	"</mn>"
 LID		"<mi>"
 RID		"</mi>"
-LROW	"<mrow>"
-RROW	"</mrow>"
+LROW	("<mrow>"|"{")
+RROW	("</mrow>"|"}")
 LROOT	"<mroot>"
 RROOT	"</mroot>"
-LFRAC	"<mfrac>"
+LFRAC	("<mfrac>"|"\\frac")
 RFRAC	"</mfrac>"
 LSQRT	"<msqrt>"
 RSQRT	"</msqrt>"
@@ -87,50 +87,50 @@ NUMBER	([0-9]+)(\.[0-9]+)?
 				return NUMBER;
 			}
 
-{LOPER}     {   
+{LOPER}     {
                 return LOPER;
             }
-{ROPER}     {   
+{ROPER}     {
                 return ROPER;
             }
-{LID}     {   
+{LID}     {
                 return LID;
             }
-{RID}     {   
+{RID}     {
                 return RID;
             }
-{LROW}     {   
+{LROW}     {
                 return LROW;
             }
-{RROW}     {   
+{RROW}     {
                 return RROW;
             }
-{LFRAC}     {   
+{LFRAC}     {
                 return LFRAC;
             }
-{RFRAC}     {   
+{RFRAC}     {
                 return RFRAC;
             }
-{LSQRT}     {   
+{LSQRT}     {
                 return LSQRT;
             }
-{RSQRT}     {   
+{RSQRT}     {
                 return RSQRT;
             }
-{LSUP}     {   
+{LSUP}     {
                 return LSUP;
             }
-{RSUP}     {   
+{RSUP}     {
                 return RSUP;
             }
-{LNUM}     {   
+{LNUM}     {
                 return LNUM;
             }
-{RNUM}     {   
+{RNUM}     {
                 return RNUM;
             }
 
 {WHITESPACE}     {}
-.           { }    
+.           { }
 
 %%

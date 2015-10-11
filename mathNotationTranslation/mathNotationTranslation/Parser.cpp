@@ -21,7 +21,6 @@ void Parser::arithmeticOperation(istream& is, int oper, unique_ptr<Node>& positi
 
 bool Parser::processText(istream& is, unique_ptr <Node>& position) {
 	int tok = lexer->yylex(&is, &cout);
-	cout<<tok<<endl;
 	switch (tok) {
 	case ID:
 	case NUMBER:

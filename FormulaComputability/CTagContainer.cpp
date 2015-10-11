@@ -43,7 +43,8 @@ CTag& CTagContainer::getTag(const string& name)
 
 void CTagContainer::addTag(const string& name, CTag* tag, int)
 {
-	if (tags.find(name) != tags.end())
+	if (tags.find(name) != tags.end()) {
 		throw invalid_argument("identifier " + name + "has already exist");
-	tags[name] = unique_ptr<CTag>(tag);
+    }
+    tags.emplace( name, unique_ptr<CTag>( tag ) );
 }

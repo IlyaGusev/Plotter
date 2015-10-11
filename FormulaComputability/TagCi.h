@@ -6,14 +6,16 @@
 
 class CTagCi : public CTagAtamar
 {
-	static map<string, CType> identifiers;
-	static map<string, CType> buildIdentifiers();
 public:
 	CTagCi();
 	virtual void operator()(const CNode& node) const;
-	static void AddIdentifier(const CNode& node, CType Type);//if this tag define new identifier call this function not operator()
-	static void AddIdentifier(const string& name, CType Type, const string& nameNode, int position);
-	static void deleteIdentifier(const string name);
+	static void AddIdentifier(const CNode& node, CType Type);//if this tag define new identifier
+                                                            // call this function not operator()
+	static void AddIdentifier(const string& name, CType Type, const CNode& node, int position);
+	static void deleteIdentifier(const string& name);
+private:
+    static map<string, CType> identifiers;
+    static map<string, CType> buildIdentifiers();
 };
 
 #endif

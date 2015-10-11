@@ -35,7 +35,7 @@ typedef pugi::xml_node CNode;
 enum ErrorType 
 {
 	UNKNOWN_IDENTIFIER,
-	INVALID_ARGUMENT, UNKNOWN_ATTRIBUTE, INCORRECT_VALUE, INVALID_ATTRIBUTE, UNEXPECTED_VALUE,
+	INVALID_ARGUMENT, NO_ARGUMENT, UNKNOWN_ATTRIBUTE, INCORRECT_VALUE, INVALID_ATTRIBUTE, UNEXPECTED_VALUE,
 	UNEXPECTED_CHILD, INVALID_ATTRIBUTE_ARGUMENT, ATTRIBUTE_REQUiRED, IDENTIFIER_ALREADY_EXIST,
 };
 
@@ -53,7 +53,7 @@ public:
 protected:
 	static string deleteSpaces(const string& s);//delete white spaces in the begin and end of the string
 	static void enterToAllChilds(const CNode& node);//call operator() of all child tags
-	static void throwException(const string& tagName, int position, ErrorType errType);
+	static void throwException(const CNode& errorTag, int position, ErrorType errType);
 	static void hasNoChilds(const CNode& node);
 	void hasNoAttributes(const CNode& node) const;
 	void checkAttributes(const CNode& node,const set<string>& attributes) const;
@@ -66,7 +66,8 @@ protected:
 //tag doesn't requier any siblings
 class CTagAtamar : public CTag 
 {
-	virtual const CNode  checkSignature(const CNode& Node) const;
+public:
+	virtual const CNode  checkSignature(const CNode& node) const;
 };
 
 class CTagApply : public CTagAtamar
@@ -74,6 +75,8 @@ class CTagApply : public CTagAtamar
 public:
 	CTagApply();
 	virtual void operator ()(const CNode& node)const;
+protected:
+	static void enterToAllLimitableArgs(const CNode& node);
 };
 
 class CTagCn : public CTagAtamar

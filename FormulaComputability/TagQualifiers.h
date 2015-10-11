@@ -1,6 +1,6 @@
 #pragma once
-//#ifndef _TAG_QUALIFIER_H
-//#define _TAG_QUALIFIER_H
+#ifndef _TAG_QUALIFIER_H
+#define _TAG_QUALIFIER_H
 
 #include "Tag.h"
 
@@ -11,4 +11,4 @@ public:
     virtual void operator()(const CNode& node) const;
 };
 
-//#endif
+#endif

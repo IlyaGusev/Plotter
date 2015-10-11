@@ -5,6 +5,7 @@
 #include <vector> 
 #include <math.h>
 #include "RotationLib.h"
+#include "mathCore.h"
 using namespace std;
 
 // Graph in Points
@@ -12,7 +13,9 @@ using namespace std;
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP(  const vector<vector<double>>& inputPoints, double inputLengthOfSection = 1, const vector<double>& inputAnglesOfAxis = { 0, 45, 90 } );
+	GP( MathCore inputMCore, double inputLengthOfSection = 1, 
+		const vector<double>& inputAnglesOfAxis = { 0, 45, 90 }, 
+		pair<double, double> inputWindowSize = pair<double, double>(700, 700) );
 	GP();
 	// Поворот вокруг оси Z
 	void turnAroundZ( int angle = 1 );
@@ -23,9 +26,9 @@ public:
 	// Поворот вокруг произвольного вектора
 	void turnRoundVector( int angle, Vector vector );
 	// Смещение по вертикали
-	void moveVertically( int num );
+	void moveOverX( int num );
 	// Смещение по горизонтали
-	void moveHorizontally( int num );
+	void moveOverY( int num );
 	// Возвращает положение относительных точек
 	vector<vector<pair<double, double>>> GetRelativePoints();
 	// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
@@ -38,7 +41,8 @@ public:
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();
-	
+	// создает сетку в зависимости от размера ячейки
+	void generateNet();
 	
 	
 	// точки изначальные, в качестве индексов - узлы сетки XY
@@ -54,5 +58,7 @@ private:
 	// координаты пересечения осей в 2D
 	pair<double, double> origin;
 	// координаты центра окна
-	pair<double, double> centre_of_window_coordinates;
+	pair<double, double> windowSize;
+	// пересчитывает координаты в зависимисти от удаления от центра окна
+	MathCore mCore;
 };

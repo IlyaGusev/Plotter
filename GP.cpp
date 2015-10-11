@@ -6,16 +6,12 @@ using namespace std;
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP( const vector<vector<double>>& inputPoints, double inputLengthOfSection, const vector<double>& inputAnglesOfAxis ) {
-	points.resize( inputPoints.size() );
-	relativePoints.resize( inputPoints.size() );
-	for( int i = 0; i < inputPoints.size(); i++ ) {
-		points[i].resize( inputPoints[i].size() );
-		relativePoints[i].resize( inputPoints[i].size() );
-		for( int j = 0; j < inputPoints[i].size(); j++ ) {
-			points[i][j] = inputPoints[i][j];
-		}
-	}
+GP::GP( MathCore inputMCore, double inputLengthOfSection, const vector<double>& inputAnglesOfAxis, pair<double, double> inputWindowSize ) {
+	windowSize = inputWindowSize;
+	origin.first = windowSize.first / 2;
+	origin.second = windowSize.second / 2;
+	mCore = inputMCore;
+	lengthOfSection = inputLengthOfSection;
 	anglesOfAxis.resize( 3 );
 	for( int i = 0; i < 3; i++ ) {
 		anglesOfAxis[i] = inputAnglesOfAxis[i];
@@ -24,33 +20,47 @@ GP::GP( const vector<vector<double>>& inputPoints, double inputLengthOfSection, 
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
-	lengthOfSection = inputLengthOfSection;
-	origin.first = 350;
-	origin.second = 350;
+	generateNet();
 	calculateRelativePoints();
 }
 
 GP::GP() {
 	// По умолчанию инициализируем сеткой 40 на 40
-	points.resize( 40 );
-	relativePoints.resize( 40 );
-	for( int i = 0; i < 40; i++ ) {
-		points[i].resize( 40 );
-		relativePoints[i].resize( 40 );
-		for( int j = 0; j < 40; j++ ) {
-			points[i][j] = 10;
-		}
-	}
+	windowSize.first = 700;
+	windowSize.second = 700;
+	origin.first = 350;
+	origin.second = 350;
 	anglesOfAxis.resize( 3 );
 	anglesOfAxis = { -30, 35, 90 };
 	relativeAxis.resize( 3 );
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
-	lengthOfSection = 10;
-	origin.first = 350;
-	origin.second = 350;
-    calculateRelativePoints();
+	lengthOfSection = 20;
+	generateNet();
+	calculateRelativePoints();
+}
+
+void GP::generateNet() {
+	double size;
+	if( windowSize.first > windowSize.second ){
+		size = windowSize.first;
+	}
+	else {
+		size = windowSize.second;
+	}
+	int netSize = (int)(size / lengthOfSection) / 2 * 2;
+
+	points.resize( netSize );
+	relativePoints.resize( netSize );
+	for( int i = 0; i < netSize; i++ ) {
+		points[i].resize( netSize );
+		relativePoints[i].resize( netSize );
+		for( int j = 0; j < netSize; j++ ) {
+			//points[i][j] = mCore.calculate( origin.first - windowSize.first / 2, origin.second - windowSize.second / 2 );
+			points[i][j] = 5;
+		}
+	}
 }
 
 void GP::turnAroundZ( int angle ) {
@@ -110,11 +120,15 @@ pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
 
 }
 
-void GP::moveVertically( int num ) {
-	origin.first += num;
+void GP::moveOverX( int num ) {
+	origin.first += num*lengthOfSection * cos( M_PI * anglesOfAxis[0] / 180 );
+	origin.second += num*lengthOfSection *  sin( M_PI * anglesOfAxis[0] / 180 );
+	mCore.changeWindowCoordinates( num, 0, 0 );
 }
-void GP::moveHorizontally( int num ) {
-	origin.second += num;
+void GP::moveOverY( int num ) {
+	origin.first += num*lengthOfSection * cos( M_PI * anglesOfAxis[1] / 180 );
+	origin.second += num*lengthOfSection * sin( M_PI * anglesOfAxis[1] / 180 );
+	mCore.changeWindowCoordinates( 0, num, 0 );
 }
 
 pair<double, double> GP::getOriginCoordinates() {
@@ -125,11 +139,11 @@ void GP::calculateRelativePoints() {
 	pair<double, double> x = getAxisVectorVisual( 0 );
 	pair<double, double> y = getAxisVectorVisual( 1 );
 	pair<double, double> z = getAxisVectorVisual( 2 );
-	
+	double size = relativePoints.size();
 	for( int i = 0; i < relativePoints.size(); i++ ) {
 		for( int j = 0; j < relativePoints[i].size(); j++ ) {
-			double xRel = origin.first + x.first * i * lengthOfSection + y.first * j * lengthOfSection + z.first * points[i][j] * lengthOfSection;
-			double yRel = origin.second + x.second * i * lengthOfSection + y.second * j * lengthOfSection + z.second * points[i][j] * lengthOfSection;
+			double xRel = origin.first + x.first * ( i - size / 2 ) * lengthOfSection + y.first * (j - size / 2 ) * lengthOfSection + z.first * points[i][j] * lengthOfSection;
+			double yRel = origin.second + x.second * ( i - size / 2 ) * lengthOfSection + y.second * (j - size / 2 ) * lengthOfSection + z.second * points[i][j] * lengthOfSection;
 			relativePoints[i][j] = pair<double, double>( xRel, yRel );
 		}
 	}

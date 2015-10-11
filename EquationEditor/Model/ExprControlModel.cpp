@@ -73,7 +73,8 @@ void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild,
 	}
 }
 
-void CExprControlModel::AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) {
+void CExprControlModel::AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) 
+{
 	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
 	if( currentChildIterator == children.begin() ) {
 		children.push_front( newChild );
@@ -88,7 +89,8 @@ ViewType CExprControlModel::GetType() const
 	return EXPR;
 }
 
-void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) {
+void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый левый ребенок - поднимаемся наверх
 	if( from == children.front().get() ) {
@@ -108,7 +110,8 @@ void CExprControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	children.back()->MoveCaretLeft( this, caret );
 }
 
-void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) {
+void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode/*=false */ ) 
+{
 	// from может быть одним из детей, тогда вставляем каретку в ребенка перед ним
 	// Если это был самый правый ребенок - поднимаемся наверх
 	if( from == children.back().get() ) {
@@ -128,11 +131,13 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	children.front()->MoveCaretRight( this, caret, isInSelectionMode );
 }
 
-bool CExprControlModel::IsEmpty() const {
+bool CExprControlModel::IsEmpty() const 
+{
 	return children.size() == 1 && children.front()->IsEmpty();
 }
 
-bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+{
 	int first, second;
 	int i = 0;
 	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
@@ -157,7 +162,13 @@ void CExprControlModel::UpdateSelection()
 	params.isSelected = true;
 }
 
-bool CExprControlModel::DeleteSelectedPart() {
+bool CExprControlModel::DeleteSelectedPart() 
+{
+	// Если уже пустой - ничего не трогаем
+	if( IsEmpty() ) {
+		return true;
+	}
+
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		// Если нужно дополнительное вмешательство
 		// Первым идет EditControl, его оставляем

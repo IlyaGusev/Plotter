@@ -274,7 +274,10 @@ void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent )
 
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
-	isInSelectionMode = false;
+	if( isInSelectionMode ) {
+		deleteSelectedParts();
+		isInSelectionMode = false;
+	}
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
 	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast<CExprControlModel>( caret.GetCurEdit()->GetParent().lock() ) );

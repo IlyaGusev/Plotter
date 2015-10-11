@@ -205,6 +205,9 @@ void CEditControlModel::UpdateSelection()
 
 bool CEditControlModel::DeleteSelectedPart() 
 {
+	if( params.selectedPositions.first == params.selectedPositions.second ) {
+		return true;
+	}
 	params.text.erase( params.text.begin() + params.selectedPositions.first, params.text.begin() + params.selectedPositions.second );
 	symbolsWidths.erase( symbolsWidths.begin() + params.selectedPositions.first, symbolsWidths.begin() + params.selectedPositions.second );
 	params.selectedPositions.first = params.selectedPositions.second = 0;

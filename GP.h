@@ -1,6 +1,6 @@
 #pragma once
 
-#define M_PI       3.14159265358979323846
+#define M_PI       3,1415926535897932384626433
 
 #include <vector> 
 #include <math.h>
@@ -12,18 +12,29 @@ using namespace std;
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( const vector<vector<double>>& inputPoints, double inputLengthOfSection = 1, const vector<double>& inputAnglesOfAxis = { 0, 45, 90 } );
+	GP(  const vector<vector<double>>& inputPoints, double inputLengthOfSection = 1, const vector<double>& inputAnglesOfAxis = { 0, 45, 90 } );
 	GP();
-	void turnFromTheTopToDown( int angle = 1 );
-	void turnClockwise( int angle = 1 );
+	// Поворот вокруг оси Z
+	void turnAroundZ( int angle = 1 );
+	// Поворот вокруг оси Y
+	void turnAroundY( int angle = 1 );
+	// поворот вокруг оси X
+	void turnAroundX( int angle = 1 );
+	// Поворот вокруг произвольного вектора
 	void turnRoundVector( int angle, Vector vector );
+	// Смещение по вертикали
+	void moveVertically( int num );
+	// Смещение по горизонтали
+	void moveHorizontally( int num );
 	// Возвращает положение относительных точек
 	vector<vector<pair<double, double>>> GetRelativePoints();
 	// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
 	pair<double, double> getAxisVector( int axisNum );
+	// возвращает направляющий вектор в подстроенный под ориентацию WinApi
+	pair<double, double> getAxisVectorVisual( int axisNum );
 	// возвращает координаты пересечения осей в 2d
 	pair<double, double> getOriginCoordinates();
-	
+	// проставляет значения начала координат
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();
@@ -42,4 +53,6 @@ private:
 	double lengthOfSection;
 	// координаты пересечения осей в 2D
 	pair<double, double> origin;
+	// координаты центра окна
+	pair<double, double> centre_of_window_coordinates;
 };

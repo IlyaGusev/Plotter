@@ -78,14 +78,35 @@ void GraphWindow::OnClose() {
 
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
-		case VK_SPACE:
-			graphInPoints.turnClockwise();
+		case VK_RIGHT:
+			graphInPoints.turnAroundY(1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case VK_LEFT:
+			graphInPoints.turnAroundY(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		case VK_UP:
-			graphInPoints.turnFromTheTopToDown(1);
+			graphInPoints.turnAroundZ(1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		case VK_DOWN:
-			graphInPoints.turnFromTheTopToDown(-1);
+			graphInPoints.turnAroundZ(-1);
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case 0x57:
+			//graphInPoints.moveStraight();
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
+			break;
+		case 0x53:
+			//graphInPoints.moveBack();
+			::InvalidateRect(handle, NULL, FALSE);
+			::UpdateWindow(handle);
 			break;
 		}
 }
@@ -100,8 +121,9 @@ void GraphWindow::OnPaint() {
 	HBITMAP bitmap = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
 	HGDIOBJ oldbitmap = ::SelectObject(newHdc, bitmap);
 
-	drawGraph(newHdc);
-	drawAxes(newHdc);
+	
+	drawGraph( newHdc );
+	drawAxes( newHdc );
 
 	::BitBlt( hdc, 0, 0, rect.right, rect.bottom, newHdc, 0, 0, SRCCOPY );
 
@@ -148,9 +170,9 @@ void GraphWindow::drawGraph(HDC dc) {
 }
 
 void GraphWindow::drawAxes(HDC dc) {
-	pair<double, double> xAxis = graphInPoints.getAxisVector( 0 );
-	pair<double, double> yAxis = graphInPoints.getAxisVector( 1 );
-	pair<double, double> zAxis = graphInPoints.getAxisVector( 2 );
+	pair<double, double> xAxis = graphInPoints.getAxisVectorVisual( 0 );
+	pair<double, double> yAxis = graphInPoints.getAxisVectorVisual( 1 );
+	pair<double, double> zAxis = graphInPoints.getAxisVectorVisual( 2 );
 
 	pair<double, double> origin = graphInPoints.getOriginCoordinates();
 
@@ -158,13 +180,13 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SelectObject(dc, linePen);
 
 	::MoveToEx( dc, round(origin.first), round(origin.second), NULL );
-	::LineTo( dc, round(xAxis.first * 1000), round(xAxis.second * 1000) );
+	::LineTo( dc, round(xAxis.first * 10000000000)/1000, round(xAxis.second * 10000000000 )/1000 );
 
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo( dc, round(yAxis.first * 1000), round(yAxis.second * 1000) );
+	::LineTo( dc, round(yAxis.first * 10000000000 )/1000, round(yAxis.second * 10000000000 )/1000 );
 
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo( dc, round(zAxis.first * 1000), round(zAxis.second * 1000) );
+	::LineTo( dc, round(zAxis.first * 10000000000 )/1000, round(zAxis.second * 10000000000 )/1000 );
 
 	::DeleteObject(linePen);
 }

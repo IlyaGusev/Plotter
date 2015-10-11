@@ -1,5 +1,5 @@
 #pragma once
-#define M_PI       3.14159265358979323846
+#define M_PI       3.1415926535897932384
 
 class Vector{
 public:	
@@ -26,7 +26,6 @@ public:
 	void Quaternion::initialize( double inputAngle, double inputX, double inputY, double inputZ );
 	void operator =( const Quaternion& quat );
 	Quaternion operator *( const Quaternion& quat );
-
 	double w;
 	double x;
 	double y;

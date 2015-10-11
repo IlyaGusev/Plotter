@@ -25,40 +25,52 @@ GP::GP( const vector<vector<double>>& inputPoints, double inputLengthOfSection, 
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
 	lengthOfSection = inputLengthOfSection;
+	origin.first = 350;
+	origin.second = 350;
 	calculateRelativePoints();
 }
 
 GP::GP() {
-	// ѕо умолчанию инициализируем сеткой 20 на 20
-	points.resize( 20 );
-	relativePoints.resize( 20 );
-	for( int i = 0; i < 20; i++ ) {
-		points[i].resize( 20 );
-		relativePoints[i].resize( 20 );
-		for( int j = 0; j < 20; j++ ) {
-			points[i][j] = 5;
+	// ѕо умолчанию инициализируем сеткой 40 на 40
+	points.resize( 40 );
+	relativePoints.resize( 40 );
+	for( int i = 0; i < 40; i++ ) {
+		points[i].resize( 40 );
+		relativePoints[i].resize( 40 );
+		for( int j = 0; j < 40; j++ ) {
+			points[i][j] = 10;
 		}
 	}
 	anglesOfAxis.resize( 3 );
-	anglesOfAxis = { 0, 45, 90 };
+	anglesOfAxis = { -30, 35, 90 };
 	relativeAxis.resize( 3 );
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
-	lengthOfSection = 1;
-	calculateRelativePoints();
+	lengthOfSection = 10;
+	origin.first = 350;
+	origin.second = 350;
+    calculateRelativePoints();
 }
 
-void GP::turnFromTheTopToDown( int angle ) {
-	Quaternion q( angle, -1, 0, 0 );
+void GP::turnAroundZ( int angle ) {
+	Quaternion q( angle, relativeAxis[2] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
 	}
 	calculateRelativePoints();
 }
 
-void GP::turnClockwise( int angle ) {
-	Quaternion q( angle, 0, -1, 0 );
+void GP::turnAroundY( int angle ) {
+	Quaternion q( angle, relativeAxis[1] );
+	for( int i = 0; i < 3; i++ ) {
+		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+	}
+	calculateRelativePoints();
+}
+
+void GP::turnAroundX( int angle ) {
+	Quaternion q( angle, relativeAxis[0] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
 	}
@@ -91,22 +103,33 @@ pair<double, double> GP::getAxisVector( int axisNum ) {
 	return pair<double, double>( relX, relY );
 }
 
+pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
+	pair<double, double> axis = getAxisVector( axisNum );
+	axis.second = -axis.second;
+	return axis;
 
+}
+
+void GP::moveVertically( int num ) {
+	origin.first += num;
+}
+void GP::moveHorizontally( int num ) {
+	origin.second += num;
+}
 
 pair<double, double> GP::getOriginCoordinates() {
-	origin.first = 0;
-	origin.second = 0;
 	return origin;
 }
 
 void GP::calculateRelativePoints() {
-	pair<double, double> x = getAxisVector( 0 );
-	pair<double, double> y = getAxisVector( 1 );
-	pair<double, double> z = getAxisVector( 2 );
+	pair<double, double> x = getAxisVectorVisual( 0 );
+	pair<double, double> y = getAxisVectorVisual( 1 );
+	pair<double, double> z = getAxisVectorVisual( 2 );
+	
 	for( int i = 0; i < relativePoints.size(); i++ ) {
 		for( int j = 0; j < relativePoints[i].size(); j++ ) {
-			double xRel = x.first * i * lengthOfSection + y.first * j * lengthOfSection + z.first * points[i][j];
-			double yRel = x.second * i * lengthOfSection + y.second * j * lengthOfSection + z.second * points[i][j];
+			double xRel = origin.first + x.first * i * lengthOfSection + y.first * j * lengthOfSection + z.first * points[i][j] * lengthOfSection;
+			double yRel = origin.second + x.second * i * lengthOfSection + y.second * j * lengthOfSection + z.second * points[i][j] * lengthOfSection;
 			relativePoints[i][j] = pair<double, double>( xRel, yRel );
 		}
 	}

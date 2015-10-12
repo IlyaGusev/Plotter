@@ -37,8 +37,8 @@ void GP::generateNet() {
 	else {
 		size = windowSize.second;
 	}
-	int netSize = (int)(size / lengthOfSection) / 2 * 2;
-
+	//int netSize = (int)(size / lengthOfSection) / 2 * 2;
+	int netSize = 40;
 	points.resize( netSize );
 	relativePoints.resize( netSize );
 	for( int i = 0; i < netSize; i++ ) {

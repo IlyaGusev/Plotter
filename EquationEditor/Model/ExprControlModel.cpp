@@ -204,8 +204,7 @@ bool CExprControlModel::DeleteSelectedPart()
 	for( int i = 0; i < copy.size() - 1; ++i ) {
 		if( copy[i]->GetType() == TEXT && copy[i + 1]->GetType() == TEXT ) {
 			std::dynamic_pointer_cast<CEditControlModel>(copy[i])->MergeWith( *(std::dynamic_pointer_cast<CEditControlModel>(copy[i + 1])) );
-			++i;
-			copy[i] = copy[i - 1];
+			copy[i + 1] = copy[i];
 		} else {
 			children.push_back( copy[i] );
 		}

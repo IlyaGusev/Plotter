@@ -98,7 +98,7 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 	view.Redraw();
 }
 
-void CEquationPresenter::DeleteSymbol() 
+void CEquationPresenter::DeleteSymbol( bool withCtrl ) 
 {
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
@@ -106,6 +106,38 @@ void CEquationPresenter::DeleteSymbol()
 	} else if( caret.Offset() != 0 ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
+		if( withCtrl ) {
+			while (caret.Offset() != 0) {
+				caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
+				--caret.Offset();
+			};
+		}
+	} else if( !withCtrl ) {
+		do {
+			MoveCaretLeft();
+		} while( caret.GetCurEdit() != root->GetChildren().front() && caret.Offset() == 0 );
+	}
+
+	invalidateTree();
+	view.Redraw();
+}
+
+void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
+{
+	if( isInSelectionMode ) {
+		deleteSelectedParts();
+		isInSelectionMode = false;
+	} else if( caret.Offset() != caret.GetCurEdit()->GetSymbolsWidths().size() ) {
+		caret.GetCurEdit()->DeleteSymbol( caret.Offset() );
+		if( withCtrl ) {
+			while( caret.Offset() != caret.GetCurEdit()->GetSymbolsWidths().size() ) {
+				caret.GetCurEdit()->DeleteSymbol( caret.Offset() );
+			}
+		}
+	} else if( !withCtrl ) {
+		do {
+			MoveCaretRight();
+		} while( caret.GetCurEdit() != root->GetChildren().back() && caret.GetCurEdit()->GetSymbolsWidths().size() == 0 );
 	}
 
 	invalidateTree();

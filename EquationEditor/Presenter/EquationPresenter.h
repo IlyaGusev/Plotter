@@ -48,7 +48,9 @@ public:
 
 	void InsertSymbol( wchar_t symbol );
 
-	void DeleteSymbol();
+	void DeleteSymbol( bool withCtrl = false );
+
+	void DeleteNextSymbol( bool withCtrl = false );
 
 	// Отправляет во вьюшку всё, что нужно на ней нарисовать
 	void OnDraw();

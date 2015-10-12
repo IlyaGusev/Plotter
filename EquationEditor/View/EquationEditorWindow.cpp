@@ -108,6 +108,13 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) 
 {
 	switch( wParam ) {
+	case VK_DELETE:
+		presenter->DeleteNextSymbol( GetKeyState( VK_CONTROL ) < 0 );
+		break;
+
+	case VK_BACK:
+		presenter->DeleteSymbol( GetKeyState( VK_CONTROL ) < 0 );
+
 	case VK_LEFT:   // LEFT ARROW 
 		presenter->MoveCaretLeft();
 		break;
@@ -149,6 +156,9 @@ void CEquationEditorWindow::OnChar( WPARAM wParam )
 		return;
 
 	default:    // displayable character
+		if( GetKeyState( VK_CONTROL ) < 0 ) {
+			break;
+		}
 		presenter->InsertSymbol( (wchar_t) wParam );
 		break;
 	}

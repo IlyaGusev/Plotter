@@ -6,7 +6,7 @@
 GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints(mathCore)
+	graphInPoints(mathCore, 40)
 {
 }
 
@@ -109,22 +109,22 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		::UpdateWindow(handle);
 		break;
 	case 0x51:
-		graphInPoints.moveAlongX( 10 );
+		graphInPoints.moveAlongX( 1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x41:
-		graphInPoints.moveAlongX( -10 );
+		graphInPoints.moveAlongX( -1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x57:
-		graphInPoints.moveAlongY( 10 );
+		graphInPoints.moveAlongY( 1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x53:
-		graphInPoints.moveAlongY( -10 );
+		graphInPoints.moveAlongY( -1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
@@ -162,13 +162,12 @@ void GraphWindow::drawGraph(HDC dc) {
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	::SelectObject(dc, linePen);
 
-	std:vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
+	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
 
 	for (size_t i = 0; i < points.size(); ++i) {
 		::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
 		for (size_t j = 1; j < points.size(); ++j) {
 			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
-			::MoveToEx(dc, round(points[i][j].first), round(points[i][j].second), NULL);
 		}
 	}
 
@@ -176,7 +175,6 @@ void GraphWindow::drawGraph(HDC dc) {
 		::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
 		for (size_t i = 1; i < points.size(); ++i) {
 			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
-			::MoveToEx(dc, round(points[i][j].first), round(points[i][j].second), NULL);
 		}
 	}
 
@@ -184,11 +182,11 @@ void GraphWindow::drawGraph(HDC dc) {
 }
 
 void GraphWindow::drawAxes(HDC dc) {
-	pair<double, double> xAxis = graphInPoints.getAxisVectorVisual(0);
-	pair<double, double> yAxis = graphInPoints.getAxisVectorVisual(1);
-	pair<double, double> zAxis = graphInPoints.getAxisVectorVisual(2);
+	std::pair<double, double> xAxis = graphInPoints.getAxisVectorVisual(0);
+	std::pair<double, double> yAxis = graphInPoints.getAxisVectorVisual(1);
+	std::pair<double, double> zAxis = graphInPoints.getAxisVectorVisual(2);
 
-	pair<double, double> origin = graphInPoints.getOriginCoordinates();
+	std::pair<double, double> origin = graphInPoints.getOriginCoordinates();
 
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 100, 200));
 	::SelectObject(dc, linePen);

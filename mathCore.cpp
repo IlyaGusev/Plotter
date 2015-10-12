@@ -28,3 +28,9 @@ void MathCore::changeWindowCoordinates(double x, double y, double z) {
 	globalYShift = globalYShift + y;
 	globalZShift = globalZShift + z;
 }
+
+void MathCore::changeScale(double factor) {
+	globalXShift *= factor;
+	globalYShift *= factor;
+	globalZShift *= factor;
+}

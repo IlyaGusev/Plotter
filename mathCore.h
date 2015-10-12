@@ -11,6 +11,7 @@ public:
 	double calculate(double x, double y);
 
 	void changeWindowCoordinates(double x, double y, double z);
+	void changeScale(double factor);
 
 private:
 	Calculator calc;

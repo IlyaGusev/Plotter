@@ -47,12 +47,12 @@ public:
 	}
 
 	virtual std::weak_ptr<IBaseExprModel> GetParent() const;
-	virtual void SetParent( std::weak_ptr<IBaseExprModel> parent );
+	virtual void SetParent( const std::weak_ptr<IBaseExprModel> parent );
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const = 0;
 
 	// Прикрепляет детей к свежесозданной модели. Имеет смысл вызывать эту функцию после каждого конструктора
-	virtual void InitializeChildren() = 0;
+	virtual void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 ) = 0;
 
 	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
 	virtual void SetRect( const CRect& rect );
@@ -106,6 +106,8 @@ public:
 
 	virtual int GetDepth() const;
 	virtual void UpdateDepth();
+
+	virtual std::shared_ptr<IBaseExprModel> CopySelected() const = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -113,7 +115,7 @@ inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
 	return parent;
 }
 
-inline void IBaseExprModel::SetParent( std::weak_ptr<IBaseExprModel> parent )
+inline void IBaseExprModel::SetParent( const std::weak_ptr<IBaseExprModel> parent )
 {
 	this->parent = parent;
 }

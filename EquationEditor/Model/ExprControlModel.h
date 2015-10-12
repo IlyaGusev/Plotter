@@ -9,7 +9,7 @@ public:
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	void InitializeChildren();
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void Resize( );
 
@@ -34,6 +34,8 @@ public:
 	void UpdateSelection();
 
 	bool DeleteSelectedPart();
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

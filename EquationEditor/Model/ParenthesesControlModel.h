@@ -9,7 +9,7 @@ public:
 	CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
-	void InitializeChildren();
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void Resize();
 
@@ -31,9 +31,10 @@ public:
 
 	bool IsEmpty() const;
 
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	void updatePolygons();
 
 	// Содержимое скобок
-	std::shared_ptr<CExprControlModel> content;
+	std::shared_ptr<IBaseExprModel> content;
 };

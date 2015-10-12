@@ -10,9 +10,15 @@ CExprControlModel::CExprControlModel( const CRect& rect, const std::weak_ptr<IBa
 	}
 }
 
-void CExprControlModel::InitializeChildren() 
+void CExprControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
 	children.push_back( std::make_shared<CEditControlModel>( rect, shared_from_this() ) );
+	if( initChild ) {
+		children.push_back( initChild );
+		children.back()->SetParent( shared_from_this() );
+		children.back()->UpdateDepth();
+		children.push_back( std::make_shared<CEditControlModel>( rect, shared_from_this() ) );
+	}
 	Resize();
 	PlaceChildren();
 }
@@ -133,7 +139,7 @@ void CExprControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 
 bool CExprControlModel::IsEmpty() const 
 {
-	return children.size() == 1 && children.front()->IsEmpty();
+	return children.empty() || children.size() == 1 && children.front()->IsEmpty();
 }
 
 bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
@@ -172,7 +178,7 @@ bool CExprControlModel::DeleteSelectedPart()
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		// Если нужно дополнительное вмешательство
 		// Первым идет EditControl, его оставляем
-		if( !(*it)->DeleteSelectedPart() && it != children.begin() ) {
+		if( !(*it)->DeleteSelectedPart() && it != children.begin() && it != --children.end() ) {
 			// Если пустой - удаляем
 			if( (*it)->IsEmpty() ) {
 				it = --children.erase( it );
@@ -213,4 +219,26 @@ bool CExprControlModel::DeleteSelectedPart()
 
 	// Если остался один пустой EditControl
 	return !IsEmpty();
+}
+
+std::shared_ptr<IBaseExprModel> CExprControlModel::CopySelected() const
+{
+	std::shared_ptr<CExprControlModel> exprModel( new CExprControlModel( rect, parent ) );
+	
+	for( auto child : children ) {
+		std::shared_ptr<IBaseExprModel> copy = child->CopySelected();
+		if( copy != 0 && !copy->IsEmpty() ) {
+			if( copy->GetType() == EXPR ) {
+				for( std::shared_ptr<IBaseExprModel> child : copy->GetChildren() ) {
+					exprModel->children.push_back( child );
+					child->SetParent( exprModel );
+				}
+			} else {
+				exprModel->children.push_back( copy );
+				copy->SetParent( exprModel );
+			}
+		}
+	}
+
+	return exprModel;
 }

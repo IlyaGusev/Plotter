@@ -48,15 +48,21 @@ int CDegrControlModel::GetMiddle() const
 	return rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle();
 }
 
-void CDegrControlModel::InitializeChildren()
+void CDegrControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
 	CRect firstChildRect = CRect( 0, 0, 0, 3 * getExponentHeight( rect.GetHeight() ) );
 	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
-	CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	secondChild->InitializeChildren();
+	if( initChild != 0 ) {
+		secondChild = initChild;
+		secondChild->SetParent( shared_from_this() );
+		secondChild->UpdateDepth();
+	} else {
+		CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+		secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		secondChild->InitializeChildren();
+	}
 
 	Resize();
 	PlaceChildren();
@@ -64,7 +70,7 @@ void CDegrControlModel::InitializeChildren()
 
 std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const
 {
-	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
+	return std::list<std::shared_ptr<IBaseExprModel>> { secondChild, firstChild };
 }
 
 ViewType CDegrControlModel::GetType() const 
@@ -124,4 +130,23 @@ int CDegrControlModel::getExponentHeight( int rectHeight )
 void CDegrControlModel::UpdateSelection()
 {
 	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CDegrControlModel::CopySelected() const
+{
+	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return ( firstModel != 0 && !firstModel->IsEmpty() ) ? firstModel : (( secondModel != 0 && !secondModel->IsEmpty() ) ? secondModel : 0);
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		degrModel->firstChild = firstModel;
+		degrModel->firstChild->SetParent( degrModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		degrModel->secondChild = secondChild->CopySelected();
+		degrModel->secondChild->SetParent( degrModel );
+	}
+	return degrModel;
 }

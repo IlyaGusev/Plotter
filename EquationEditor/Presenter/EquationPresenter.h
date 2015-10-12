@@ -79,11 +79,11 @@ private:
 	CTreeBfsProcessor deleteSelectionProcessor;
 	CTreeBfsProcessor updateSelectionProcessor;
 
-	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void addRadical( std::shared_ptr<CExprControlModel> parent );
-	void addDegr( std::shared_ptr<CExprControlModel> parent );
-	void addSubscript( std::shared_ptr<CExprControlModel> parent );
-	void addParentheses( std::shared_ptr<CExprControlModel> parent );
+	void addFrac( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addRadical( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addSubscript( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	
 	void deleteSelectedParts();
 

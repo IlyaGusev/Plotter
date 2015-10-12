@@ -43,15 +43,21 @@ int CRadicalControlModel::GetMiddle() const
 	return rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle();
 }
 
-void CRadicalControlModel::InitializeChildren()
+void CRadicalControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
 	CRect firstChildRect = CRect( 0, 0, 0, 3 * getDegreeHeight( rect.GetHeight() ) );
-	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this( ) ) );
 	firstChild->InitializeChildren();
 
-	CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	secondChild->InitializeChildren();
+	if( initChild ) {
+		secondChild = initChild;
+		secondChild->SetParent( shared_from_this( ) );
+		secondChild->UpdateDepth();
+	} else {
+		CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+		secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		secondChild->InitializeChildren();
+	}
 
 	Resize();
 	PlaceChildren();
@@ -144,4 +150,23 @@ void CRadicalControlModel::updatePolygons()
 void CRadicalControlModel::UpdateSelection()
 {
 	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CRadicalControlModel::CopySelected() const
+{
+	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		radicalModel->firstChild = firstModel;
+		radicalModel->firstChild->SetParent( radicalModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		radicalModel->secondChild = secondChild->CopySelected( );
+		radicalModel->secondChild->SetParent( radicalModel );
+	}
+	return radicalModel;
 }

@@ -129,6 +129,7 @@ void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
+		deleteSelectionProcessor.Process( );
 	} else if( caret.Offset() != caret.GetCurEdit()->GetSymbolsWidths().size() ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() );
 		if( withCtrl ) {

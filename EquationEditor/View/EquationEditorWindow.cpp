@@ -116,6 +116,7 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 
 	case VK_BACK:
 		presenter->DeleteSymbol( GetKeyState( VK_CONTROL ) < 0 );
+		break;
 
 	case VK_LEFT:   // LEFT ARROW 
 		presenter->MoveCaretLeft();
@@ -142,7 +143,6 @@ void CEquationEditorWindow::OnChar( WPARAM wParam )
 {
 	switch( wParam ) {
 	case 0x08:  // backspace
-		presenter->DeleteSymbol();
 		return;
 	case 0x0A:  // linefeed 
 	case 0x0D:  // enter

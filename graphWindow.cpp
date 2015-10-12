@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <vector>
 #include "graphWindow.h"
 #include "GP.h"
@@ -98,13 +98,33 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
-	case 0x57:
+	case 0x5A:
 		graphInPoints.changeScale(-2 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
-	case 0x53:
+	case 0x58:
 		graphInPoints.changeScale( 2 );
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x51:
+		graphInPoints.xMoveStaight();
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x41:
+		graphInPoints.xMoveBack();
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x57:
+		graphInPoints.yMoveStaight();
+		::InvalidateRect(handle, NULL, FALSE);
+		::UpdateWindow(handle);
+		break;
+	case 0x53:
+		graphInPoints.yMoveBack();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;

@@ -57,6 +57,8 @@ private:
 	COLORREF symbolUnselectedColorref;
 	COLORREF bkSelectedColorref;
 	COLORREF bkUnselectedColorref;
+	COLORREF bkSelectedHighlightColorref;
+	COLORREF bkUnselectedHightlightColorref;
 
     static const wchar_t* const className;
 	

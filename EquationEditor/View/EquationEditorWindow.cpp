@@ -29,6 +29,8 @@ bool CEquationEditorWindow::Create()
 	symbolUnselectedColorref = RGB( 0, 0, 0 );			// Черный
 	bkSelectedColorref = RGB( 0x1F, 0xAE, 0xE9 );		// Голубой
 	bkUnselectedColorref = RGB( 0xFF, 0xFF, 0xFF );		// Белый
+	bkSelectedHighlightColorref = RGB( 0x44, 0x4b, 0x52 );
+	bkUnselectedHightlightColorref = RGB(0xF0, 0xF0, 0xF0);
 
 	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED, 0, 0, 500, 400,
 		nullptr, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
@@ -217,7 +219,7 @@ void CEquationEditorWindow::DrawSelectedRect( const CRect& selectedRect )
 
 void CEquationEditorWindow::DrawHighlightedRect( const CRect& controlRect, bool isSelected ) 
 {
-	HBRUSH highlightedHBrush = ::CreateSolidBrush( RGB( 0xF0, 0xF0, 0xF0 ) );
+	HBRUSH highlightedHBrush = ::CreateSolidBrush( isSelected ? bkSelectedHighlightColorref : bkUnselectedHightlightColorref );
 	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, highlightedHBrush ) );
 	::Rectangle( hdc, controlRect.Left(), controlRect.Bottom(), controlRect.Right(), controlRect.Top() );
 	::SelectObject( hdc, oldBrush );

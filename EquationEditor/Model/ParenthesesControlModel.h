@@ -27,7 +27,7 @@ public:
 
 	void UpdateSelection();
 
-	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
+	//bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	bool IsEmpty() const;
 

@@ -274,7 +274,18 @@ bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const I
 		model1 = model1->GetParent().lock().get();
 		model2 = model2->GetParent().lock().get();
 	}
-	return model1->GetParent().lock()->IsSecondModelFarther( model1, model2 );
+	int first, second;
+	int i = 0;
+	auto children = model1->GetParent().lock()->GetChildren();
+	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
+		if( (*it).get() == model1 ) {
+			first = i;
+		}
+		if( (*it).get() == model2 ) {
+			second = i;
+		}
+	}
+	return first < second;
 }
 
 void CEquationPresenter::SetSelection( int x, int y ) 

@@ -100,7 +100,7 @@ public:
 	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
 
 	// Говорит, нужно ли двигаться вправо, чтобы попасть от первой модели ко второй
-	virtual bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const = 0;
+	//virtual bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const = 0;
 
 	virtual bool IsEmpty() const = 0;
 

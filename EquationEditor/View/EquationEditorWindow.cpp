@@ -231,7 +231,7 @@ void CEquationEditorWindow::DrawSelectedRect( const CRect& selectedRect )
 
 void CEquationEditorWindow::DrawHighlightedRect( const CRect& controlRect, bool isSelected ) 
 {
-	HBRUSH highlightedHBrush = ::CreateSolidBrush( isSelected ? bkSelectedHighlightColorref : bkUnselectedHightlightColorref );
+	HBRUSH highlightedHBrush = ::CreateSolidBrush( /*isSelected ? bkSelectedHighlightColorref :*/ bkUnselectedHightlightColorref );
 	HBRUSH oldBrush = static_cast<HBRUSH>( ::SelectObject( hdc, highlightedHBrush ) );
 	::Rectangle( hdc, controlRect.Left(), controlRect.Bottom(), controlRect.Right(), controlRect.Top() );
 	::SelectObject( hdc, oldBrush );

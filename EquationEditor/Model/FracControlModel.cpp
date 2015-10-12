@@ -119,9 +119,9 @@ bool CFracControlModel::IsEmpty() const
 	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
 }
 
-bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
-	return model1 == firstChild.get();
-}
+//bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+//	return model1 == firstChild.get();
+//}
 
 void CFracControlModel::updatePolygons()
 {

@@ -142,20 +142,20 @@ bool CExprControlModel::IsEmpty() const
 	return children.empty() || children.size() == 1 && children.front()->IsEmpty();
 }
 
-bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
-{
-	int first, second;
-	int i = 0;
-	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
-		if( (*it).get() == model1 ) {
-			first = i;
-		}
-		if( (*it).get() == model2 ) {
-			second = i;
-		}
-	}
-	return first < second;
-}
+//bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+//{
+//	int first, second;
+//	int i = 0;
+//	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
+//		if( (*it).get() == model1 ) {
+//			first = i;
+//		}
+//		if( (*it).get() == model2 ) {
+//			second = i;
+//		}
+//	}
+//	return first < second;
+//}
 
 void CExprControlModel::UpdateSelection()
 {

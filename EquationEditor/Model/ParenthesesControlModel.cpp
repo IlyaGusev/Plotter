@@ -5,7 +5,7 @@
 CParenthesesControlModel::CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
 {
-	depth = parent.lock( )->GetDepth( ) + 1;
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CParenthesesControlModel::Resize()
@@ -103,10 +103,10 @@ void CParenthesesControlModel::UpdateSelection()
 	params.isSelected = content->IsSelected();
 }
 
-bool CParenthesesControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const
-{
-	return model1 == content.get( );
-}
+//bool CParenthesesControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const
+//{
+//	return model1 == content.get( );
+//}
 
 bool CParenthesesControlModel::IsEmpty() const
 {
@@ -128,13 +128,14 @@ void CParenthesesControlModel::updatePolygons()
 
 std::shared_ptr<IBaseExprModel> CParenthesesControlModel::CopySelected() const
 {
-	std::shared_ptr<CParenthesesControlModel> parModel( new CParenthesesControlModel( rect, parent ) );
-	std::shared_ptr<IBaseExprModel> contentModel = content->CopySelected();
-	if( contentModel != 0 && !contentModel->IsEmpty() ) {
-		parModel->content = contentModel;
-		parModel->content->SetParent( parModel );
-		return parModel;
-	} else {
-		return 0;
-	}
+	//std::shared_ptr<CParenthesesControlModel> parModel( new CParenthesesControlModel( rect, parent ) );
+	//std::shared_ptr<IBaseExprModel> contentModel = content->CopySelected();
+	//if( contentModel != 0 && !contentModel->IsEmpty() ) {
+	//	parModel->content = contentModel;
+	//	parModel->content->SetParent( parModel );
+	//	return parModel;
+	//} else {
+	//	return 0;
+	//}
+	return content->CopySelected();
 }

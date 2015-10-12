@@ -117,9 +117,9 @@ bool CDegrControlModel::IsEmpty() const {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
-bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
-	return model1 == secondChild.get();
-}
+//bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+//	return model1 == secondChild.get();
+//}
 
 // Высота выступающего над основанием показателя степени
 int CDegrControlModel::getExponentHeight( int rectHeight )

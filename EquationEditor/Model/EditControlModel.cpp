@@ -189,10 +189,10 @@ std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( 
 													   std::make_pair( secondUnselectedString, secondRect ) };
 }
 
-bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
-{
-	return false;
-}
+//bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+//{
+//	return false;
+//}
 
 void CEditControlModel::UpdateSelection()
 {

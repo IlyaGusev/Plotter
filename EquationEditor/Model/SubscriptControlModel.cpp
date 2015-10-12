@@ -121,11 +121,11 @@ bool CSubscriptControlModel::IsEmpty() const {
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
-bool CSubscriptControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
-{
-	// Если первая - действительно первая
-	return model1 == firstChild.get();
-}
+//bool CSubscriptControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
+//{
+//	// Если первая - действительно первая
+//	return model1 == firstChild.get();
+//}
 
 // Высота выступающего снизу индекса
 int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {

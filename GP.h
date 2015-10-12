@@ -8,19 +8,6 @@
 #include "mathCore.h"
 
 
-struct Angle {
-	Angle(int _x, int _y, int _z) :
-		x(_x),
-		y(_y),
-		z(_z)
-	{
-	}	
-	
-	int x;
-	int y;
-	int z;
-};
-
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 class GP {
@@ -68,6 +55,7 @@ private:
 	std::vector< double > anglesOfAxis;
 	// относительные( подвижные ) оси вращающейся фигуры или графика функции
 	std::vector< Vector > relativeAxis;
+	std::vector< Vector > prevRelativeAxis;
 	// относительные точки уже в 2D, в качестве индексов изначальная сетка X, Y 
 	std::vector<std::vector<std::pair<double, double>>> relativePoints;
 	// длина отрезка сетки
@@ -78,5 +66,4 @@ private:
 	std::pair<double, double> windowSize;
 	// пересчитывает координаты в зависимисти от удаления от центра окна
 	MathCore mCore;
-	Angle currentAngle;
 };

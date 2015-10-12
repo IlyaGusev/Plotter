@@ -12,8 +12,7 @@
 GP::GP(const MathCore& inputMCore, double inputLengthOfSection, const std::vector<double>& inputAnglesOfAxis, 
 	std::pair<double, double> inputWindowSize )
 
-	: mCore( inputMCore ),
-	currentAngle(0, 0, 0)
+	: mCore( inputMCore )
 {
 	windowSize = inputWindowSize;
 	origin.first = windowSize.first / 2;
@@ -27,6 +26,7 @@ GP::GP(const MathCore& inputMCore, double inputLengthOfSection, const std::vecto
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
+	prevRelativeAxis = relativeAxis;
 	generateGrid();
 	calculateRelativePoints();
 }
@@ -53,7 +53,6 @@ void GP::generateGrid() {
 }
 
 void GP::turnAroundZ( int angle ) {
-	currentAngle.z += angle;
 	Quaternion q( angle, relativeAxis[2] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
@@ -62,7 +61,6 @@ void GP::turnAroundZ( int angle ) {
 }
 
 void GP::turnAroundY( int angle ) {
-	currentAngle.y += angle;
 	Quaternion q( angle, relativeAxis[1] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
@@ -71,7 +69,6 @@ void GP::turnAroundY( int angle ) {
 }
 
 void GP::turnAroundX( int angle ) {
-	currentAngle.x += angle;
 	Quaternion q( angle, relativeAxis[0] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
@@ -113,27 +110,14 @@ std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
 }
 
 void GP::rotateToStartAngle() {
-	if (currentAngle.x != 0) {
-		turnAroundX(-currentAngle.x);
-	}
-	if (currentAngle.y != 0) {
-		turnAroundY(-currentAngle.y);
-	}
-	if (currentAngle.z != 0) {
-		turnAroundZ(-currentAngle.z);
-	}
+	prevRelativeAxis = relativeAxis;
+	relativeAxis[0] = Vector(1, 0, 0);
+	relativeAxis[1] = Vector(0, 1, 0);
+	relativeAxis[2] = Vector(0, 0, 1);
 }
 
 void GP::rotateToCurrentAngle() {
-	if (currentAngle.x != 0) {
-		turnAroundX(currentAngle.x);
-	}
-	if (currentAngle.y != 0) {
-		turnAroundY(currentAngle.y);
-	}
-	if (currentAngle.z != 0) {
-		turnAroundZ(currentAngle.z);
-	}
+	relativeAxis = prevRelativeAxis;
 }
 
 void GP::moveAlongX( int num ) {

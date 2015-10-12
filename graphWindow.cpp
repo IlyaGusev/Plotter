@@ -137,12 +137,7 @@ void GraphWindow::OnPaint() {
 }
 
 void GraphWindow::drawGraph(HDC dc) {
-	RECT clientRect;
-	::GetClientRect(handle, &clientRect);
-
-	HBRUSH clientRectBrush = ::CreateSolidBrush(RGB(0, 0, 0));
-	::FillRect(dc, &clientRect, clientRectBrush);
-	::DeleteObject(clientRectBrush);
+	::SetBkColor(dc, RGB(0, 0, 0));
 
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	::SelectObject(dc, linePen);
@@ -175,20 +170,39 @@ void GraphWindow::drawAxes(HDC dc) {
 
 	pair<double, double> origin = graphInPoints.getOriginCoordinates();
 
-	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 100, 220));
+	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 100, 200));
 	::SelectObject(dc, linePen);
-
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
 	::LineTo(dc, round(xAxis.first * 10000000000) / 1000, round(xAxis.second * 10000000000) / 1000);
+	::DeleteObject(linePen);
 
+	std::string text = "X";
+	::SetTextColor(dc, RGB(100, 100, 200));
+	::TextOut(dc, round(origin.first + xAxis.first * 200), round(origin.second + xAxis.second * 200),
+		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+
+	linePen = ::CreatePen(PS_SOLID, 1, RGB(200, 100, 200));
+	::SelectObject(dc, linePen);
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
 	::LineTo(dc, round(yAxis.first * 10000000000) / 1000, round(yAxis.second * 10000000000) / 1000);
 
+	text = "Y";
+	::SetTextColor(dc, RGB(200, 100, 200));
+	::TextOut(dc, round(origin.first + yAxis.first * 200), round(origin.second + yAxis.second * 200),
+		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+
+	linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 200, 200));
+	::SelectObject(dc, linePen);
 	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
 	::LineTo(dc, round(zAxis.first * 10000000000) / 1000, round(zAxis.second * 10000000000) / 1000);
-
 	::DeleteObject(linePen);
+
+	text = "Z";
+	::SetTextColor(dc, RGB(100, 200, 200));
+	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
+		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
 }
+
 
 LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
 	if (message == WM_NCCREATE) {

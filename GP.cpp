@@ -108,21 +108,25 @@ pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
 
 }
 
-void GP::moveOverX( int num ) {
+void GP::moveAlongX( int num ) {
 	origin.first += num*lengthOfSection * cos( M_PI * anglesOfAxis[0] / 180 );
 	origin.second += num*lengthOfSection *  sin( M_PI * anglesOfAxis[0] / 180 );
 	mCore.changeWindowCoordinates( num, 0, 0 );
+	//generateNet();
+	calculateRelativePoints();
 }
-void GP::moveOverY( int num ) {
+void GP::moveAlongY( int num ) {
 	origin.first += num*lengthOfSection * cos( M_PI * anglesOfAxis[1] / 180 );
 	origin.second += num*lengthOfSection * sin( M_PI * anglesOfAxis[1] / 180 );
 	mCore.changeWindowCoordinates( 0, num, 0 );
+	//generateNet();
+	calculateRelativePoints();
 }
 
 void GP::changeScale( int num ) {
 	if( lengthOfSection + num > MinLenthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
 		lengthOfSection += num;
-		generateNet();
+		//generateNet();
 		calculateRelativePoints();
 	}
 	

@@ -25,9 +25,9 @@ public:
 	// Поворот вокруг произвольного вектора
 	void turnRoundVector( int angle, Vector vector );
 	// Смещение по вертикали
-	void moveOverX( int num );
+	void moveAlongX( int num );
 	// Смещение по горизонтали
-	void moveOverY( int num );
+	void moveAlongY( int num );
 	// изменяет масштаб
 	void changeScale( int num );
 	// Возвращает положение относительных точек

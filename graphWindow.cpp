@@ -109,22 +109,22 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		::UpdateWindow(handle);
 		break;
 	case 0x51:
-		graphInPoints.xMoveStaight();
+		graphInPoints.moveAlongX( 10 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x41:
-		graphInPoints.xMoveBack();
+		graphInPoints.moveAlongX( -10 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x57:
-		graphInPoints.yMoveStaight();
+		graphInPoints.moveAlongY( 10 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case 0x53:
-		graphInPoints.yMoveBack();
+		graphInPoints.moveAlongY( -10 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;

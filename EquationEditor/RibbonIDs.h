@@ -41,9 +41,10 @@
 #define ID_CMD_TAB_MORE_LabelTitle_RESID 60026
 #define ID_CMD_GROUP_FILE 10 
 #define ID_CMD_GROUP_FILE_LabelTitle_RESID 60027
-#define ID_CMD_GROUP_EXIT 11 
-#define ID_CMD_GROUP_EXIT_LabelTitle_RESID 60028
-#define ID_CMD_MORE 12 
-#define ID_CMD_MORE_LabelTitle_RESID 60029
-#define cmdGroupBracket_LabelTitle_RESID 60030
+#define ID_CMD_GROUP_BRACKET 11 
+#define ID_CMD_GROUP_BRACKET_LabelTitle_RESID 60028
+#define ID_CMD_GROUP_EXIT 12 
+#define ID_CMD_GROUP_EXIT_LabelTitle_RESID 60029
+#define ID_CMD_MORE 13 
+#define ID_CMD_MORE_LabelTitle_RESID 60030
 #define InternalCmd2_LabelTitle_RESID 60031

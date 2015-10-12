@@ -51,6 +51,8 @@ public:
 
 	bool DeleteSelectedPart();
 
+	void MergeWith( const CEditControlModel& edit );
+
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 
 	static const int MINIMAL_WIDTH = 10;

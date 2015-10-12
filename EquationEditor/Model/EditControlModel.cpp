@@ -214,6 +214,13 @@ bool CEditControlModel::DeleteSelectedPart()
 	return !IsEmpty();
 }
 
+void CEditControlModel::MergeWith( const CEditControlModel& edit ) {
+	params.text += edit.params.text;
+	for( auto symbol : edit.symbolsWidths ) {
+		symbolsWidths.push_back( symbol );
+	}
+}
+
 std::shared_ptr<IBaseExprModel> CEditControlModel::CopySelected() const
 {
 	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock(), false ) );

@@ -37,11 +37,17 @@ int CParenthesesControlModel::GetMiddle( ) const
 	return rect.GetHeight() / 2;
 }
 
-void CParenthesesControlModel::InitializeChildren()
+void CParenthesesControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
-	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
-	content = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	content->InitializeChildren();
+	if( initChild ) {
+		content = initChild;
+		content->SetParent( shared_from_this() );
+		content->UpdateDepth();
+	} else {
+		CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
+		content = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		content->InitializeChildren( 0 );
+	}
 
 	Resize();
 	PlaceChildren();
@@ -118,4 +124,17 @@ void CParenthesesControlModel::updatePolygons()
 	params.polygon.push_back( CLine( rect.Right() - 2, rect.Top() + 5, rect.Right() - 2, rect.Bottom() - 5 ) ); // середина
 	params.polygon.push_back( CLine( rect.Right() - 2, rect.Top() + 5, rect.Right() - 5, rect.Top() + 2 ) ); // верх
 	params.polygon.push_back( CLine( rect.Right() - 2, rect.Bottom() - 5, rect.Right() - 5, rect.Bottom() - 2 ) ); // низ
+}
+
+std::shared_ptr<IBaseExprModel> CParenthesesControlModel::CopySelected() const
+{
+	std::shared_ptr<CParenthesesControlModel> parModel( new CParenthesesControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> contentModel = content->CopySelected();
+	if( contentModel != 0 && !contentModel->IsEmpty() ) {
+		parModel->content = contentModel;
+		parModel->content->SetParent( parModel );
+		return parModel;
+	} else {
+		return 0;
+	}
 }

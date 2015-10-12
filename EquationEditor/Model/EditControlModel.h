@@ -10,7 +10,7 @@ public:
 	CEditControlModel( const CRect& rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted = true );
 
 	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;
-	void InitializeChildren() {}
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 ) {}
 
 	void Resize();
 
@@ -50,6 +50,8 @@ public:
 	void UpdateSelection();
 
 	bool DeleteSelectedPart();
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;

@@ -9,7 +9,7 @@ public:
 	CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren( ) const;
-	void InitializeChildren( );
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void Resize( );
 
@@ -28,11 +28,13 @@ public:
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	void UpdateSelection();
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	int getExponentHeight(int rectHeight);
 
 	// Верхний ребенок
-	std::shared_ptr<CExprControlModel> firstChild;
+	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
-	std::shared_ptr<CExprControlModel> secondChild;
+	std::shared_ptr<IBaseExprModel> secondChild;
 };

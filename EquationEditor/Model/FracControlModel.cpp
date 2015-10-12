@@ -46,11 +46,17 @@ int CFracControlModel::GetMiddle( ) const
 	return (firstChild->GetRect().GetHeight() + (rect.GetHeight() - secondChild->GetRect().GetHeight())) / 2;
 }
 
-void CFracControlModel::InitializeChildren()
+void CFracControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
-	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
-	firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	firstChild->InitializeChildren();
+	CRect childRect = CRect( 0, 0, 0, rect.GetHeight( ) );
+	if( initChild ) {
+		firstChild = initChild;
+		firstChild->SetParent( shared_from_this() );
+		firstChild->UpdateDepth();
+	} else {
+		firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		firstChild->InitializeChildren();
+	}
 
 	secondChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
@@ -125,4 +131,23 @@ void CFracControlModel::updatePolygons()
 void CFracControlModel::UpdateSelection()
 {
 	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CFracControlModel::CopySelected() const
+{
+	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		fracModel->firstChild = firstModel;
+		fracModel->firstChild->SetParent( fracModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		fracModel->secondChild = secondChild->CopySelected( );
+		fracModel->secondChild->SetParent( fracModel );
+	}
+	return fracModel;
 }

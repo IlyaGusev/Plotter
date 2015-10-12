@@ -89,6 +89,7 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
+		deleteSelectionProcessor.Process();
 	}
 	int symbolWidth = view.GetSymbolWidth( symbol, caret.GetCurEdit()->GetRect().GetHeight() );
 	caret.GetCurEdit()->InsertSymbol( symbol, caret.Offset(), symbolWidth );
@@ -103,6 +104,7 @@ void CEquationPresenter::DeleteSymbol()
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
+		deleteSelectionProcessor.Process();
 	} else if( caret.Offset() != 0 ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
@@ -269,11 +271,11 @@ void CEquationPresenter::MoveCaretRight()
 	view.Redraw();
 }
 
-void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
+void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	// Создаем новые модели для дроби
 	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	fracModel->InitializeChildren();
+	fracModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
@@ -284,10 +286,10 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent ) 
+void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	degrModel->InitializeChildren();
+	degrModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( degrModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
@@ -298,10 +300,10 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent )
 	view.Redraw();
 }
 
-void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
+void CEquationPresenter::addSubscript( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CSubscriptControlModel> subscriptModel( new CSubscriptControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	subscriptModel->InitializeChildren();
+	subscriptModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( subscriptModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
@@ -312,10 +314,10 @@ void CEquationPresenter::addSubscript(std::shared_ptr<CExprControlModel> parent)
 	view.Redraw();
 }
 
-void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> parent )
+void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CParenthesesControlModel> parenthesesModel( new CParenthesesControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	parenthesesModel->InitializeChildren();
+	parenthesesModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( parenthesesModel, caret.GetCurEdit( ) );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
@@ -326,11 +328,10 @@ void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> pare
 	view.Redraw();
 }
 
-void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
+void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
-
 	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	radicalModel->InitializeChildren();
+	radicalModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( radicalModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
@@ -343,9 +344,12 @@ void CEquationPresenter::addRadical(std::shared_ptr<CExprControlModel> parent)
 
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
+	std::shared_ptr<CExprControlModel> selectedChild;
 	if( isInSelectionMode ) {
+		selectedChild = std::dynamic_pointer_cast<CExprControlModel>( root->CopySelected() );
 		deleteSelectedParts();
 		isInSelectionMode = false;
+		deleteSelectionProcessor.Process();
 	}
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
@@ -357,19 +361,19 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	// Создаем новую вьюшку с выбранным типом
 	switch( viewType ) {
 	case FRAC:
-		addFrac( parent );
+		addFrac( parent, selectedChild );
 		break;
 	case DEGR:
-		addDegr( parent );
+		addDegr( parent, selectedChild );
 		break;
 	case SUBSCRIPT: 
-		addSubscript( parent );
+		addSubscript( parent, selectedChild );
 		break;
 	case RADICAL:
-		addRadical( parent );
+		addRadical( parent, selectedChild );
 		break;
 	case PARENTHESES:
-		addParentheses( parent );
+		addParentheses( parent, selectedChild );
 		break;
 	default:
 		break;

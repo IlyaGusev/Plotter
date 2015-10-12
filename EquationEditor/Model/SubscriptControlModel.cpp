@@ -49,11 +49,17 @@ int CSubscriptControlModel::GetMiddle() const
 
 }
 
-void CSubscriptControlModel::InitializeChildren()
+void CSubscriptControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
-	CRect firstChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	firstChild->InitializeChildren();
+	if( initChild ) {
+		firstChild = initChild;
+		firstChild->SetParent( shared_from_this( ) );
+		firstChild->UpdateDepth();
+	} else {
+		CRect firstChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+		firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		firstChild->InitializeChildren();
+	}
 
 	CRect secondChildRect = CRect( 0, 0, 0, 3 * getSubscriptHeight( rect.GetHeight() ) );
 	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
@@ -129,4 +135,23 @@ int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
 void CSubscriptControlModel::UpdateSelection()
 {
 	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CSubscriptControlModel::CopySelected() const
+{
+	std::shared_ptr<CSubscriptControlModel> newSubscriptionModel( new CSubscriptControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		newSubscriptionModel->firstChild = firstModel;
+		newSubscriptionModel->firstChild->SetParent( newSubscriptionModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		newSubscriptionModel->secondChild = secondChild->CopySelected( );
+		newSubscriptionModel->secondChild->SetParent( newSubscriptionModel );
+	}
+	return newSubscriptionModel;
 }

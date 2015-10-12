@@ -213,3 +213,14 @@ bool CEditControlModel::DeleteSelectedPart()
 	params.selectedPositions.first = params.selectedPositions.second = 0;
 	return !IsEmpty();
 }
+
+std::shared_ptr<IBaseExprModel> CEditControlModel::CopySelected() const
+{
+	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock(), false ) );
+	newEditControl->params.text = std::wstring( params.text.begin() + params.selectedPositions.first,
+		params.text.begin() + params.selectedPositions.second );
+	newEditControl->symbolsWidths = std::vector<int>( symbolsWidths.begin() + params.selectedPositions.first,
+		symbolsWidths.begin() + params.selectedPositions.second );
+
+	return newEditControl;
+}

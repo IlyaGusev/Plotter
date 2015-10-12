@@ -12,7 +12,7 @@ public:
 	// Выставляем размеры вьюшек
 	// Ширина дроби - 15 пикселей
 	// Высота дроби - две высоты соседнего текстового поля + 5
-	void InitializeChildren();
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void SetRect( const CRect& rect );
 
@@ -34,11 +34,13 @@ public:
 	bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	void UpdateSelection();
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	// Верхний ребенок
-	std::shared_ptr<CExprControlModel> firstChild;
+	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
-	std::shared_ptr<CExprControlModel> secondChild;
+	std::shared_ptr<IBaseExprModel> secondChild;
 
 	void updatePolygons();
 };

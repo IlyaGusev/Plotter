@@ -3,46 +3,59 @@
 #include <utility>
 #include <string>
 #include <stdexcept>
+#include <fstream>
 using namespace std;
-
 extern int NOTATION;
-extern int yyparse();
-extern FILE *yyin;
+extern ofstream FOUT;
+extern int mlparse();
+extern FILE *mlin;
+extern int texparse();
+extern FILE *texin;
+
 
 int main(int argc, char** argv) {
 	try{
-		string filename, from, to;
-		if (argc == 1){
-			// filename = "C:\\Users\\anata_000\\Source\\Repos\\mathNotationTranslation\\mathNotationTranslation\\mathNotationTranslation\\Examples\\ml.txt";
-			from = "mathml";
-			to = "tex";
+		string input, from, to, output;
+		if (argc!=5){
+			throw new invalid_argument("Not enough arguments");
 		}
-		else{
-			if (argc!=4){
-				throw new invalid_argument("Not enough arguments");
-			}
-			filename = argv[1];
-			from = argv[2];
-			to = argv[3];
-			if (!(from == "mathml" || from == "openmath" || from == "tex") ||
-				  !(to == "mathml" || to == "openmath" || to == "tex") ||
-					from.compare(to) == 0){
-				throw new invalid_argument("Wrong arguments");
-			}
+		input = argv[1];
+		output = argv[2];
+		from = argv[3];
+		to = argv[4];
+		if (!(from == "mathml" || from == "openmath" || from == "tex") ||
+			  !(to == "mathml" || to == "openmath" || to == "tex") ||
+				from.compare(to) == 0){
+			throw new invalid_argument("Wrong arguments");
 		}
 
-		int notation = 0;
+		int to_notation = 0;
 		if (to == "mathml")
-			notation = 0;
+			to_notation = 0;
 		else if (to == "openmath")
-			notation = 1;
+			to_notation = 1;
 		else if (to == "tex")
-			notation = 2;
+			to_notation = 2;
+		NOTATION = to_notation;
 
-		NOTATION = notation;
-
-		yyin = fopen(filename.c_str(), "r");
-		yyparse();
+		if (from == "mathml"){
+			mlin = fopen(input.c_str(), "r");
+			if (mlin == NULL)
+				throw new invalid_argument("File not found");
+			FOUT.open(output, std::ofstream::out);
+			mlparse();
+			fclose(mlin);
+		}
+		else if (from == "tex"){
+			texin = fopen(input.c_str(), "r");
+			if (texin == NULL)
+				throw new invalid_argument("File not found");
+			FOUT.open(output, std::ofstream::out);
+			texparse();
+			fclose(texin);
+		}
+		else if (from == "openmath")
+			cout << "Not implemented yet :(";
 		cout<<endl;
 	}
 	catch (invalid_argument* e){

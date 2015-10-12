@@ -7,19 +7,19 @@
 #include <map>
 #include <array>
 using namespace std;
-int NOTATION = 0;
 enum LANGUAGE{
 	MATHML,
 	OPENMATH,
 	TEX
 };
 
-class Node
-{
+class Node{
+protected:
+	string lfence;
+	string rfence;
 public:
 	virtual ~Node(){}
-	virtual string translate(int notation)
-	{
+	virtual string translate(int notation){
 		return string();
 	}
 	static map<string, array<string, 3>> createMap()
@@ -32,10 +32,29 @@ public:
 		m["="] = { " <mo> = </mo> ", "", " = " };
 		return m;
 	}
+	virtual void setFence(string _lfence, string _rfence){
+		lfence = _lfence;
+		rfence = _rfence;
+	}
+	virtual string addFence(int notation, string _s){
+		string s = _s;
+		switch (notation) {
+			case MATHML:
+				if (lfence == "(")
+					s = "<mfenced>" + s + "</mfenced>";
+				break;
+			case OPENMATH:
+				s = "";
+				break;
+			case TEX:
+				s = lfence + s + rfence;
+				break;
+		}
+		return s;
+	}
 };
 
-class NumNode : public Node
-{
+class NumNode : public Node{
 public:
 	float number;
 	NumNode(float _number): number(_number) {}
@@ -54,12 +73,11 @@ public:
 				result = num;
 				break;
 		}
-		return result;
+		return addFence(notation, result);
 	}
 };
 
-class IdNode : public Node
-{
+class IdNode : public Node{
 public:
 	string id;
 	IdNode(string _id): id(_id) {}
@@ -77,12 +95,11 @@ public:
 				result = id;
 				break;
 		}
-		return result;
+		return addFence(notation, result);
 	}
 };
 
-class BinOpNode : public Node
-{
+class BinOpNode : public Node{
 public:
 	Node* left;
 	Node* right;
@@ -95,46 +112,61 @@ public:
 		delete right;
 	}
 	string translate(int notation){
-		if (operation == "frac"){
+		if (operation == "frac" || operation == "sup"){
 			string result;
 			switch (notation) {
 				case MATHML:
-					result = " <mfrac> <mrow>" + left->translate(notation) + "</mrow> <mrow>" +
-								   right->translate(notation) + "</mrow> </mfrac> ";
+					if (operation == "frac")
+						result = " <mfrac>" + left->translate(notation) +
+								   right->translate(notation) + "</mfrac> ";
+				  if (operation == "sup")
+				  	result = " <msup>" + left->translate(notation) +
+								   right->translate(notation) + "</msup> ";
 					break;
 				case OPENMATH:
 					result = "";
 					break;
 				case TEX:
-					result = "\\frac {"+left->translate(notation)+"}{"+right->translate(notation)+"}";
+					if (operation == "frac")
+						result = "\\frac " + left->translate(notation) + right->translate(notation);
+					if (operation == "sup")
+						result = left->translate(notation) + " ^ " + right->translate(notation);
 					break;
 			}
-			return result;
+			return addFence(notation, result);
 		}
 		else
-			return left->translate(notation) + " " +createMap()[operation][notation] + " " + right->translate(notation);
+			return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));
 	}
 };
 
-class CompositeNode : public Node
-{
+class CompositeNode : public Node{
 public:
 	vector<Node*> nodes;
 
-	CompositeNode() {}
+	CompositeNode(string _lfence = "", string _rfence = ""){
+		setFence(_lfence, _rfence);
+	}
+	CompositeNode(Node* _node, string _lfence = "", string _rfence = ""){
+		setFence(_lfence, _rfence);
+		nodes.push_back(_node);
+	}
 	~CompositeNode(){
 		for (int i=0; i<nodes.size(); i++){
 			delete nodes[i];
 		}
 	}
-	void add(Node* node){
-		nodes.push_back(node);
+	void add(Node* _node){
+		nodes.push_back(_node);
 	}
 	string translate(int notation){
 		string s;
 		for (int i=0; i<nodes.size(); i++){
-			 s += nodes[i]->translate(notation);
+			 s += nodes[i]->translate(notation) + " ";
 		}
+		s = addFence(notation, s);
+		if (notation == MATHML && Node::lfence != "(")
+			s = "<mrow>" + s + "</mrow>";
 		return s;
 	}
 };

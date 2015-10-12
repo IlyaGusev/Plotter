@@ -1,4 +1,4 @@
-#include "calculator.h"
+п»ї#include "calculator.h"
 #include <string>
 #include <exception>
 #include <stack>
@@ -8,7 +8,7 @@ Calculator::Calculator(const std::string &_formula) :
 {
 }
 
-//получение числа для выполнения операции
+//РїРѕР»СѓС‡РµРЅРёРµ С‡РёСЃР»Р° РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ РѕРїРµСЂР°С†РёРё
 double Calculator::getOperand() {
 	if (numbers.empty()) {
 		throw std::logic_error("wrong expression");
@@ -19,14 +19,14 @@ double Calculator::getOperand() {
 	return result;
 }
 
-//подсчет верхней в стеке операции
+//РїРѕРґСЃС‡РµС‚ РІРµСЂС…РЅРµР№ РІ СЃС‚РµРєРµ РѕРїРµСЂР°С†РёРё
 void Calculator::countOperation() {
 	std::string operation;
 	if (!(operations.empty())) {
 		operation = operations.top();
 		operations.pop();
 	} else {
-		throw std::logic_error("wrong expression"); //попытка выполнить несуществующую операцию
+		throw std::logic_error("wrong expression"); //РїРѕРїС‹С‚РєР° РІС‹РїРѕР»РЅРёС‚СЊ РЅРµСЃСѓС‰РµСЃС‚РІСѓСЋС‰СѓСЋ РѕРїРµСЂР°С†РёСЋ
 	}
 
 	if (operation == "(") {
@@ -42,7 +42,7 @@ void Calculator::countOperation() {
 
 	double firstOperand = getOperand();
 
-	//подсчет значения операции для полученных операндов
+	//РїРѕРґСЃС‡РµС‚ Р·РЅР°С‡РµРЅРёСЏ РѕРїРµСЂР°С†РёРё РґР»СЏ РїРѕР»СѓС‡РµРЅРЅС‹С… РѕРїРµСЂР°РЅРґРѕРІ
 	if (operation == "+") {
 		numbers.push(firstOperand + secondOperand);
 	} else if (operation == "-") {
@@ -54,7 +54,7 @@ void Calculator::countOperation() {
 	}
 }
 
-//получение приоритета операции
+//РїРѕР»СѓС‡РµРЅРёРµ РїСЂРёРѕСЂРёС‚РµС‚Р° РѕРїРµСЂР°С†РёРё
 int Calculator::getPriority(std::string &operation) {
 	if ((operation == "+") || (operation == "-")) {
 		return 1;
@@ -65,7 +65,7 @@ int Calculator::getPriority(std::string &operation) {
 	}
 }
 
-//подсчет значения выражения
+//РїРѕРґСЃС‡РµС‚ Р·РЅР°С‡РµРЅРёСЏ РІС‹СЂР°Р¶РµРЅРёСЏ
 double Calculator::countExpression(double xArgument, double yArgument) {
 	size_t posInArgument = 0;
 	while (posInArgument < formula.length()) {

@@ -1,4 +1,4 @@
-#include "RotationLib.h""
+п»ї#include "RotationLib.h""
 #include "math.h"
 
 
@@ -53,7 +53,7 @@ Quaternion::Quaternion( double inputAngle, double inputX, double inputY, double 
 	z = sin( inputAngle / 180 / 2 * M_PI ) * inputZ / vnorm;
 }
 Vector Quaternion::makeRotation( const Vector& vect ) {
-	// Создаем кватернион соответсвующий получаемому вектору
+	// РЎРѕР·РґР°РµРј РєРІР°С‚РµСЂРЅРёРѕРЅ СЃРѕРѕС‚РІРµС‚СЃРІСѓСЋС‰РёР№ РїРѕР»СѓС‡Р°РµРјРѕРјСѓ РІРµРєС‚РѕСЂСѓ
 	Quaternion start;
 	start.x = vect.x;
 	start.y = vect.y;

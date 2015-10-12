@@ -1,4 +1,4 @@
-#include "mathCore.h"
+﻿#include "mathCore.h"
 #include <iostream>
 #include <exception>
 

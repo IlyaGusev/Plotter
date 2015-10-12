@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #define M_PI       3.1415926535897932384
 
 class Vector{
@@ -13,14 +13,14 @@ public:
 	double z;
 };
 
-// Все кватернионы нормализованные
+// Р’СЃРµ РєРІР°С‚РµСЂРЅРёРѕРЅС‹ РЅРѕСЂРјР°Р»РёР·РѕРІР°РЅРЅС‹Рµ
 class Quaternion {
 public:
 	Quaternion();
 	Quaternion( double inputW, const Vector& vect );
 	Quaternion( double inputW, double inputAngle, double inputY, double inputZ );
 	Quaternion getInversedQuaternion();
-	// Получает вектор который нужно повернуть на угол и вокруг оси задаваемой кватернионом 
+	// РџРѕР»СѓС‡Р°РµС‚ РІРµРєС‚РѕСЂ РєРѕС‚РѕСЂС‹Р№ РЅСѓР¶РЅРѕ РїРѕРІРµСЂРЅСѓС‚СЊ РЅР° СѓРіРѕР» Рё РІРѕРєСЂСѓРі РѕСЃРё Р·Р°РґР°РІР°РµРјРѕР№ РєРІР°С‚РµСЂРЅРёРѕРЅРѕРј 
 	Vector makeRotation( const Vector& vect );
 	void initialize( double inputW, const Vector& vect );
 	void Quaternion::initialize( double inputAngle, double inputX, double inputY, double inputZ );

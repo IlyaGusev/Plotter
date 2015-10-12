@@ -71,6 +71,22 @@ END
 ID_CMD_RADICAL_LargeImages_RESID    BITMAP    "Res\\radical.bmp" /* LargeImages ID_CMD_RADICAL_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
+    ID_CMD_Bracket_LabelTitle_RESID L"\x0421\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_Bracket_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Bracket_LabelDescription_RESID L"\x0421\x043a\x043e\x0431\x043a\x0438" /* LabelDescription ID_CMD_Bracket_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Bracket_TooltipDescription_RESID L"\x0421\x043a\x043e\x0431\x043a\x0438" /* TooltipDescription ID_CMD_Bracket_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Bracket_LargeImages_RESID    BITMAP    "Res\\bracket.bmp" /* LargeImages ID_CMD_Bracket_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
     ID_CMD_EXIT_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_EXIT_LabelTitle_RESID: (null) */
 END
 
@@ -108,6 +124,11 @@ END
 STRINGTABLE 
 BEGIN
     ID_CMD_MORE_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_MORE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupBracket_LabelTitle_RESID L"Label:cmdGroupBracket" /* LabelTitle cmdGroupBracket_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 

@@ -142,23 +142,9 @@ bool CExprControlModel::IsEmpty() const
 	return children.empty() || children.size() == 1 && children.front()->IsEmpty();
 }
 
-//bool CExprControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
-//{
-//	int first, second;
-//	int i = 0;
-//	for( auto it = children.begin(); it != children.end(); ++it, ++i ) {
-//		if( (*it).get() == model1 ) {
-//			first = i;
-//		}
-//		if( (*it).get() == model2 ) {
-//			second = i;
-//		}
-//	}
-//	return first < second;
-//}
-
 void CExprControlModel::UpdateSelection()
 {
+	// Считаем, что expr выделен, если выделены все его дети
 	for( std::shared_ptr<IBaseExprModel> child : children ) {
 		if( !child->IsSelected() ) {
 			params.isSelected = false;
@@ -176,48 +162,48 @@ bool CExprControlModel::DeleteSelectedPart()
 	}
 
 	for( auto it = children.begin(); it != children.end(); ++it ) {
-		// Если нужно дополнительное вмешательство
-		// Первым идет EditControl, его оставляем
+		// Если нужна дополнительная обработка, DeleteSelectedPart() ребенка вернет false
+		// Ничего не делаем с первым и последним элементом, потому что они - editControl'ы, которые нужно сохранить
 		if( !(*it)->DeleteSelectedPart() && it != children.begin() && it != --children.end() ) {
-			// Если пустой - удаляем
+			// Если ребенок пустой - удаляем
 			if( (*it)->IsEmpty() ) {
 				it = --children.erase( it );
 			}
-//			if( !(*it)->IsEmpty() ) {
-//				// Иначе переносим наверх все непустые контролы
-//				for( auto childExpr : (*it)->GetChildren() ) {
-//					if( !childExpr->IsEmpty() ) {
-//						for( auto child : childExpr->GetChildren() ) {
-//							children.insert( it, child );
-//							child->SetParent( shared_from_this() );
-//							child->UpdateDepth();
-//						}
-//					}
-//				}
-//			}
-//			it = --children.erase( it );
+			//if( !(*it)->IsEmpty() ) {
+			//	// Иначе переносим наверх все непустые контролы
+			//	for( auto childExpr : (*it)->GetChildren() ) {
+			//		if( !childExpr->IsEmpty() ) {
+			//			for( auto child : childExpr->GetChildren() ) {
+			//				children.insert( it, child );
+			//				child->SetParent( shared_from_this() );
+			//				child->UpdateDepth();
+			//			}
+			//		}
+			//	}
+			//}
+			//it = --children.erase( it );
 		}
 	}
 
-	if( children.size() == 1 ) {
-		return !IsEmpty();
-	}
-	std::vector<std::shared_ptr<IBaseExprModel>> copy;
-	for( auto child : children ) {
-		copy.push_back( child );
-	}
-	children.clear();
-	for( int i = 0; i < copy.size() - 1; ++i ) {
-		if( copy[i]->GetType() == TEXT && copy[i + 1]->GetType() == TEXT ) {
-			std::dynamic_pointer_cast<CEditControlModel>(copy[i])->MergeWith( *(std::dynamic_pointer_cast<CEditControlModel>(copy[i + 1])) );
-			copy[i + 1] = copy[i];
-		} else {
-			children.push_back( copy[i] );
+	// Если дети еще остались, нужно объединить рядом стоящие EditControl'ы в один
+	if( children.size() > 1 ) {
+		std::vector<std::shared_ptr<IBaseExprModel>> copy;
+		for( auto child : children ) {
+			copy.push_back( child );
 		}
+		children.clear();
+		for( int i = 0; i < copy.size() - 1; ++i ) {
+			if( copy[i]->GetType() == TEXT && copy[i + 1]->GetType() == TEXT ) {
+				// чур меня
+				std::dynamic_pointer_cast<CEditControlModel>(copy[i])->MergeWith( *(std::dynamic_pointer_cast<CEditControlModel>(copy[i + 1])) );
+				copy[i + 1] = copy[i];
+			} else {
+				children.push_back( copy[i] );
+			}
+		}
+		children.push_back( copy.back() );
 	}
-	children.push_back( copy.back() );
-
-	// Если остался один пустой EditControl
+	// Если в этом ExprControl остался один EditControl, его можно перенести наверх
 	return !IsEmpty();
 }
 
@@ -225,19 +211,27 @@ std::shared_ptr<IBaseExprModel> CExprControlModel::CopySelected() const
 {
 	std::shared_ptr<CExprControlModel> exprModel( new CExprControlModel( rect, parent ) );
 	
-	for( auto child : children ) {
-		std::shared_ptr<IBaseExprModel> copy = child->CopySelected();
-		if( copy != 0 && !copy->IsEmpty() ) {
+	for( auto it = children.begin(); it != children.end(); ++it ) {
+		// Берем копию ребенка
+		std::shared_ptr<IBaseExprModel> copy = (*it)->CopySelected();
+		if( copy != 0 && !copy->IsEmpty() || it == children.begin() ) {
+			// Если это тоже ExprControl (например, остался от числителя дроби), то перевешиваем всех его детей наверх
 			if( copy->GetType() == EXPR ) {
 				for( std::shared_ptr<IBaseExprModel> child : copy->GetChildren() ) {
 					exprModel->children.push_back( child );
-					child->SetParent( exprModel );
+					exprModel->children.back()->SetParent( exprModel );
 				}
 			} else {
+				// Иначе просто добавляем его, как нового ребенка
 				exprModel->children.push_back( copy );
-				copy->SetParent( exprModel );
+				exprModel->children.back()->SetParent( exprModel );
 			}
 		}
+	}
+
+	if( exprModel->children.size() > 1 && exprModel->children.back()->GetType() != TEXT ) {
+		exprModel->children.push_back( children.back()->CopySelected() );
+		exprModel->children.back()->SetParent( exprModel );
 	}
 
 	return exprModel;

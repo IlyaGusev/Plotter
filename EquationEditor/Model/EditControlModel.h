@@ -45,8 +45,6 @@ public:
 	std::list<std::pair<std::wstring, CRect>> GetSelectedText() const;
 	std::list<std::pair<std::wstring, CRect>> GetUnselectedText() const;
 
-	//bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
-
 	void UpdateSelection();
 
 	bool DeleteSelectedPart();
@@ -60,7 +58,4 @@ public:
 private:
 	std::vector<int> symbolsWidths;	// Ширина каждого символа
 	std::list< std::shared_ptr<IBaseExprModel> > children;	// Заглушка-пустой список
-
-	int selectionStart;	// Позиция первого выделенного символа
-	int selectionEnd;	// Позиция последнего выделенного символа
 };

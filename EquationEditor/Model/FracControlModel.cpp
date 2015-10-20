@@ -119,10 +119,6 @@ bool CFracControlModel::IsEmpty() const
 	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
 }
 
-//bool CFracControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
-//	return model1 == firstChild.get();
-//}
-
 void CFracControlModel::updatePolygons()
 {
 	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
@@ -138,15 +134,16 @@ std::shared_ptr<IBaseExprModel> CFracControlModel::CopySelected() const
 	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( rect, parent ) );
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+
 	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
-		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+		return (firstModel != 0 && !firstModel->IsEmpty() || firstModel->IsSelected()) ? firstModel : secondModel;
 	}
 	if( firstModel != 0 && !firstModel->IsEmpty() ) {
 		fracModel->firstChild = firstModel;
 		fracModel->firstChild->SetParent( fracModel );
 	}
 	if( secondModel != 0 && !secondModel->IsEmpty() ) {
-		fracModel->secondChild = secondChild->CopySelected( );
+		fracModel->secondChild = secondModel;
 		fracModel->secondChild->SetParent( fracModel );
 	}
 	return fracModel;

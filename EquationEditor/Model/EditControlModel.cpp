@@ -189,11 +189,6 @@ std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetUnselectedText( 
 													   std::make_pair( secondUnselectedString, secondRect ) };
 }
 
-//bool CEditControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const 
-//{
-//	return false;
-//}
-
 void CEditControlModel::UpdateSelection()
 {
 	if( params.selectedPositions.first == 0 && params.selectedPositions.second == symbolsWidths.size() ) {
@@ -228,6 +223,7 @@ std::shared_ptr<IBaseExprModel> CEditControlModel::CopySelected() const
 		params.text.begin() + params.selectedPositions.second );
 	newEditControl->symbolsWidths = std::vector<int>( symbolsWidths.begin() + params.selectedPositions.first,
 		symbolsWidths.begin() + params.selectedPositions.second );
+	newEditControl->SetHighlighting( params.isHighlighted );
 
 	return newEditControl;
 }

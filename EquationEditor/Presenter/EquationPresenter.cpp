@@ -21,10 +21,10 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 		// Если у exprControl единственный ребенок - это текст. Если текст пустой - соответствующий editControl надо подсветить
 		if( node->GetType() == EXPR ) {
 			if( node->IsEmpty() ) {
-				node->GetChildren().front()->HighlightingOn();
+				node->GetChildren().front()->SetHighlighting( true );
 			} else {
 				for( auto child : node->GetChildren() ) {
-					child->HighlightingOff();
+					child->SetHighlighting( false );
 				}
 			}
 		}

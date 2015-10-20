@@ -12,12 +12,14 @@ enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL, PARENTHESES };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
-	std::wstring text;
+	std::wstring text;			// Текст, содержащийся в модельке
+								// Имеет смысл начать хранить текст посимвольно с информацией
+								// об относящемуся к каждому символу стилю (курсив ли, размер, бэкграунд и цвет)
 	std::pair<int, int> selectedPositions;		// Номера первой и следующей за последней выбранной буквы
 
-	std::list<CLine> polygon;
-	bool isHighlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
-	bool isSelected;	// Выделена ли вьюшка
+	std::list<CLine> polygon;	// Набор относящихся к модели линий, рисуемых на экране
+	bool isHighlighted;			// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
+	bool isSelected;			// Выделена ли вьюшка
 
 	CDrawParams() :
 		isHighlighted( false ),
@@ -31,7 +33,7 @@ struct CDrawParams {
 class IBaseExprModel : public std::enable_shared_from_this<IBaseExprModel> {
 protected:
 	std::weak_ptr<IBaseExprModel> parent;
-	CRect rect;
+	CRect rect;		// Стоит подумать о переносе в CDrawParams
 	CDrawParams params;
 	int depth;		// Расстояние до корня в дереве
 
@@ -79,8 +81,7 @@ public:
 
 	// Говорит, подсвечен ли прямоугольник этого контрола
 	virtual bool IsHighlighted() const;
-	virtual void HighlightingOff();
-	virtual void HighlightingOn();
+	virtual void SetHighlighting( bool newHighlighting );
 	
 	// Говорит, выделен ли прямоугольник
 	virtual bool IsSelected() const;
@@ -99,14 +100,12 @@ public:
 	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
 	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
 
-	// Говорит, нужно ли двигаться вправо, чтобы попасть от первой модели ко второй
-	//virtual bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const = 0;
-
 	virtual bool IsEmpty() const = 0;
 
 	virtual int GetDepth() const;
 	virtual void UpdateDepth();
 
+	// Отдает копию поддерева со всеми вершинами, помеченными как selected
 	virtual std::shared_ptr<IBaseExprModel> CopySelected() const = 0;
 };
 
@@ -145,14 +144,9 @@ inline bool IBaseExprModel::IsHighlighted() const
 	return params.isHighlighted;
 }
 
-inline void IBaseExprModel::HighlightingOff()
+inline void IBaseExprModel::SetHighlighting( bool newHighlighting )
 {
-	params.isHighlighted = false;
-}
-
-inline void IBaseExprModel::HighlightingOn()
-{
-	params.isHighlighted = true;
+	params.isHighlighted = newHighlighting;
 }
 
 inline bool IBaseExprModel::IsSelected() const {

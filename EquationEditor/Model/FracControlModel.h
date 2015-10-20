@@ -3,6 +3,7 @@
 #include "Model/ExprControlModel.h"
 
 // Модель для дроби
+// Держит на себе пару ExprControl'ов - числитель и знаменатель
 class CFracControlModel : public IBaseExprModel {
 public:
 	CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
@@ -30,8 +31,6 @@ public:
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	
 	bool IsEmpty() const;
-
-	//bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	void UpdateSelection();
 

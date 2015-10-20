@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "Model/IBaseExprModel.h"
 
-// Модель холдера под вьюшки
+// Модель холдера для произвольного набора моделей
+// Должен всегда держать на себе хотя бы один EditControl
+// Если кроме EditControl'а есть еще что-то, в конце также стоит EditControl
 class CExprControlModel : public IBaseExprModel {
 public:
 	// Прямоугольник соседнего текстового поля, высота которого будет совпадать с высотой каждого текстового поля дроби
@@ -20,6 +22,8 @@ public:
 	// Вставляет нового ребенка после curChild
 	// Если curChild == nullptr, вставляет в конец списка
 	void AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild );
+	// Вставляет нового ребенка до curChild
+	// Если curChild == nullptr, вставляет в начало списка
 	void AddChildBefore( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> curChild );
 
 	ViewType GetType() const;
@@ -28,8 +32,6 @@ public:
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
 	bool IsEmpty() const;
-
-	//bool IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const;
 
 	void UpdateSelection();
 

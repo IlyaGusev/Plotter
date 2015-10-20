@@ -40,7 +40,17 @@
       <Command.LargeImages>
         <Image>Res\radical.bmp</Image>
       </Command.LargeImages>
-    </Command>    
+    </Command>
+
+    <Command Name="cmdButtonBracket"
+             Symbol="ID_CMD_Bracket"
+             LabelTitle="Скобки"
+             LabelDescription="Скобки"
+             TooltipDescription="Скобки">
+      <Command.LargeImages>
+        <Image>Res\bracket.bmp</Image>
+      </Command.LargeImages>
+    </Command>
 
     <Command Name="cmdButtonExit"
              Symbol="ID_CMD_EXIT"
@@ -67,6 +77,11 @@
              LabelTitle="Действия">
     </Command>
 
+    <Command Name="cmdGroupBracket"
+         Symbol="ID_CMD_GROUP_BRACKET"
+         LabelTitle="Скобки">
+    </Command>
+
     <Command Name="cmdGroupExit"
              Symbol="ID_CMD_GROUP_EXIT"
              LabelTitle="Выход">
@@ -90,7 +105,12 @@
             <Button CommandName="cmdButtonSubscript" />
             <Button CommandName="cmdButtonRadical" />
           </Group>
-        
+
+          <Group CommandName="cmdGroupBracket" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonBracket" />
+          </Group>
+
+
           <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonExit" />
           </Group>

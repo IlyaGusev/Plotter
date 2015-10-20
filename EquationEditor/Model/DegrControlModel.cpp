@@ -1,8 +1,11 @@
 ﻿#include "Model/DegrControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/Utils/GeneralFunct.h"
 
-#include <string>
+CDegrControlModel::CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( rect, parent ) 
+{
+	depth = parent.lock()->GetDepth() + 1;
+}
 
 void CDegrControlModel::Resize()
 {
@@ -45,28 +48,29 @@ int CDegrControlModel::GetMiddle() const
 	return rect.GetHeight() - secondChild->GetRect().GetHeight() + secondChild->GetMiddle();
 }
 
-void CDegrControlModel::InitializeChildren()
+void CDegrControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
 	CRect firstChildRect = CRect( 0, 0, 0, 3 * getExponentHeight( rect.GetHeight() ) );
 	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
 
-	CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
-	secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	secondChild->InitializeChildren();
+	if( initChild != 0 ) {
+		secondChild = initChild;
+		secondChild->SetParent( shared_from_this() );
+		secondChild->UpdateDepth();
+	} else {
+		CRect secondChildRect = CRect( 0, 0, 0, rect.GetHeight() );
+		secondChild = std::make_shared<CExprControlModel>( secondChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		secondChild->InitializeChildren();
+	}
 
 	Resize();
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const 
+std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const
 {
-	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
-}
-
-void CDegrControlModel::SetRect(const CRect& rect) 
-{
-	this->rect = rect;
+	return std::list<std::shared_ptr<IBaseExprModel>> { secondChild, firstChild };
 }
 
 ViewType CDegrControlModel::GetType() const 
@@ -77,10 +81,9 @@ ViewType CDegrControlModel::GetType() const
 void CDegrControlModel::MoveBy(int dx, int dy) 
 {
 	rect.MoveBy(dx, dy);
-	params.polygon.front().MoveBy(dx, dy);
 }
 
-void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
 	// Если пришли из показателя - идём в основание
 	if( from == firstChild.get() ) {
@@ -95,23 +98,55 @@ void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 	}
 }
 
-void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const 
+void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /* =false */ ) 
 {
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
-		secondChild->MoveCaretRight( this, caret );
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 	//если из основания - в показатель
 	else if( from == secondChild.get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
+
+bool CDegrControlModel::IsEmpty() const {
+	return firstChild->IsEmpty() && secondChild->IsEmpty();
+}
+
+//bool CDegrControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
+//	return model1 == secondChild.get();
+//}
 
 // Высота выступающего над основанием показателя степени
 int CDegrControlModel::getExponentHeight( int rectHeight )
 {
 	return rectHeight / 4 > CEditControlModel::MINIMAL_HEIGHT ? rectHeight / 4 : CEditControlModel::MINIMAL_HEIGHT;
+}
+
+void CDegrControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CDegrControlModel::CopySelected() const
+{
+	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return ( firstModel != 0 && !firstModel->IsEmpty() ) ? firstModel : (( secondModel != 0 && !secondModel->IsEmpty() ) ? secondModel : 0);
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		degrModel->firstChild = firstModel;
+		degrModel->firstChild->SetParent( degrModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		degrModel->secondChild = secondChild->CopySelected();
+		degrModel->secondChild->SetParent( degrModel );
+	}
+	return degrModel;
 }

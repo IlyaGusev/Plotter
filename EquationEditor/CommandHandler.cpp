@@ -125,6 +125,11 @@ STDMETHODIMP CCommandHandler::Execute(
 		::SendMessage(g_pHwnd, WM_COMMAND, WPARAM(ID_ADD_RADICAL), LPARAM(0));
 		break;
 
+	case ID_CMD_Bracket:
+		::SendMessage(g_pHwnd, WM_COMMAND, WPARAM(ID_ADD_PARANTHESIS), LPARAM(0));
+		break;
+
+
 	case ID_CMD_EXIT:
 		PostMessage(hwnd, WM_CLOSE, NULL, NULL);
 		break;

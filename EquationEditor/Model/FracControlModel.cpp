@@ -1,13 +1,13 @@
 ﻿#include "Model/FracControlModel.h"
 #include "Model/EditControlModel.h"
 
-#include <string>
-
-CFracControlModel::CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent ) :
+CFracControlModel::CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
 {
 	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
 	this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
+
+	depth = parent.lock()->GetDepth() + 1;
 }
 
 void CFracControlModel::Resize()
@@ -46,11 +46,17 @@ int CFracControlModel::GetMiddle( ) const
 	return (firstChild->GetRect().GetHeight() + (rect.GetHeight() - secondChild->GetRect().GetHeight())) / 2;
 }
 
-void CFracControlModel::InitializeChildren()
+void CFracControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
 {
-	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
-	firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-	firstChild->InitializeChildren();
+	CRect childRect = CRect( 0, 0, 0, rect.GetHeight( ) );
+	if( initChild ) {
+		firstChild = initChild;
+		firstChild->SetParent( shared_from_this() );
+		firstChild->UpdateDepth();
+	} else {
+		firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		firstChild->InitializeChildren();
+	}
 
 	secondChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
@@ -59,53 +65,86 @@ void CFracControlModel::InitializeChildren()
 	PlaceChildren();
 }
 
-std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const {
+std::list<std::shared_ptr<IBaseExprModel>> CFracControlModel::GetChildren() const 
+{
 	return std::list<std::shared_ptr<IBaseExprModel>> { firstChild, secondChild };
 }
 
-void CFracControlModel::SetRect( const CRect& rect ) {
+void CFracControlModel::SetRect( const CRect& rect ) 
+{
 	this->rect = rect;
 	updatePolygons();
-	::OutputDebugString( std::to_wstring( GetRect().Top() + GetMiddle() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( firstChild->GetRect().Bottom() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( secondChild->GetRect().Top() ).c_str() );
-	::OutputDebugString( (LPCWSTR) " " );
-	::OutputDebugString( std::to_wstring( rect.Top() ).c_str() );
-	::OutputDebugString( (LPCWSTR) "\n" );
 }
 
-ViewType CFracControlModel::GetType() const {
+ViewType CFracControlModel::GetType() const 
+{
 	return FRAC;
 }
 
-void CFracControlModel::MoveBy( int dx, int dy ) {
+void CFracControlModel::MoveBy( int dx, int dy ) 
+{
 	rect.MoveBy( dx, dy );
 	updatePolygons();
 }
 
-void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const {
-	// Если пришли из родителя - идем в верхнего ребенка
+void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
+{
+	// Если пришли из родителя - идем в нижнего ребенка
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
+	} else if( from == secondChild.get() ) {
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
-void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const {
+void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
+{
 	// Если пришли из родителя - идем в верхнего ребенка
 	if( from == parent.lock().get() ) {
-		firstChild->MoveCaretRight( this, caret );
+		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
+	} else if( from == firstChild.get() ) {
+		// Если пришли из верхнего - идем в нижнего
+		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretRight( this, caret );
+		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
 
-void CFracControlModel::updatePolygons( )
+bool CFracControlModel::IsEmpty() const 
+{
+	return firstChild->IsEmpty( ) && secondChild->IsEmpty( );
+}
+
+void CFracControlModel::updatePolygons()
 {
 	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+}
+
+void CFracControlModel::UpdateSelection()
+{
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+}
+
+std::shared_ptr<IBaseExprModel> CFracControlModel::CopySelected() const
+{
+	std::shared_ptr<CFracControlModel> fracModel( new CFracControlModel( rect, parent ) );
+	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+
+	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
+		return (firstModel != 0 && !firstModel->IsEmpty() || firstModel->IsSelected()) ? firstModel : secondModel;
+	}
+	if( firstModel != 0 && !firstModel->IsEmpty() ) {
+		fracModel->firstChild = firstModel;
+		fracModel->firstChild->SetParent( fracModel );
+	}
+	if( secondModel != 0 && !secondModel->IsEmpty() ) {
+		fracModel->secondChild = secondModel;
+		fracModel->secondChild->SetParent( fracModel );
+	}
+	return fracModel;
 }

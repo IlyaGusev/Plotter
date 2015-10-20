@@ -57,9 +57,6 @@
     <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp">
       <Filter>Source Files\Presenter\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Utils\GeneralFunct.cpp">
-      <Filter>Source Files\Model\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Model\Utils\Rect.cpp">
       <Filter>Source Files\Model\Utils</Filter>
     </ClCompile>
@@ -83,6 +80,8 @@
     </ClCompile>
     <ClCompile Include="RibbonFramework.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>    <ClCompile Include="Model\ParenthesesControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,9 +115,6 @@
     <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h">
       <Filter>Source Files\Presenter\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Model\Utils\GeneralFunct.h">
-      <Filter>Source Files\Model\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Model\Utils\Rect.h">
       <Filter>Source Files\Model\Utils</Filter>
     </ClInclude>
@@ -145,6 +141,8 @@
     </ClInclude>
     <ClInclude Include="RibbonFramework.h">
       <Filter>Header Files</Filter>
+    </ClInclude>    <ClInclude Include="Model\ParenthesesControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

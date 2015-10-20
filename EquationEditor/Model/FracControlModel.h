@@ -3,19 +3,19 @@
 #include "Model/ExprControlModel.h"
 
 // Модель для дроби
+// Держит на себе пару ExprControl'ов - числитель и знаменатель
 class CFracControlModel : public IBaseExprModel {
 public:
-	CFracControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
-	~CFracControlModel() {}
+	CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
 	// Выставляем размеры вьюшек
 	// Ширина дроби - 15 пикселей
 	// Высота дроби - две высоты соседнего текстового поля + 5
-	void InitializeChildren();
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
-	virtual void SetRect( const CRect& rect );
+	void SetRect( const CRect& rect );
 
 	void Resize();
 
@@ -27,13 +27,19 @@ public:
 
 	void MoveBy( int dx, int dy );
 
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	
+	bool IsEmpty() const;
+
+	void UpdateSelection();
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	// Верхний ребенок
-	std::shared_ptr<CExprControlModel> firstChild;
+	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
-	std::shared_ptr<CExprControlModel> secondChild;
+	std::shared_ptr<IBaseExprModel> secondChild;
 
 	void updatePolygons();
 };

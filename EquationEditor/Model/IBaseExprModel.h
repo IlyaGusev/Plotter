@@ -7,27 +7,25 @@
 #include "Model/Utils/Line.h"
 #include "Model/Utils/Caret.h"
 
-#define MIN(x, y) x < y ? x : y;
-#define MAX(x, y) x > y ? x : y;
-
-enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL };
+// Реализованные типы вьюшек
+enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL, PARENTHESES };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {
-	std::wstring text;
-	std::list<CLine> polygon;
-	bool isHighlighted;	// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
+	std::wstring text;			// Текст, содержащийся в модельке
+								// Имеет смысл начать хранить текст посимвольно с информацией
+								// об относящемуся к каждому символу стилю (курсив ли, размер, бэкграунд и цвет)
+	std::pair<int, int> selectedPositions;		// Номера первой и следующей за последней выбранной буквы
+
+	std::list<CLine> polygon;	// Набор относящихся к модели линий, рисуемых на экране
+	bool isHighlighted;			// Есть ли подсветка (должна быть над созданным контролом до того, как в него что-то введут)
+	bool isSelected;			// Выделена ли вьюшка
 
 	CDrawParams() :
-		isHighlighted( false )
+		isHighlighted( false ),
+		isSelected( false )
 	{
-	}
-
-	CDrawParams( const std::wstring& _text, std::list<CLine> _polygon, bool _isHightlighted ) :
-		text( _text ),
-		polygon( _polygon ),
-		isHighlighted( _isHightlighted )
-	{
+		selectedPositions.first = selectedPositions.second = 0;
 	}
 };
 
@@ -35,12 +33,14 @@ struct CDrawParams {
 class IBaseExprModel : public std::enable_shared_from_this<IBaseExprModel> {
 protected:
 	std::weak_ptr<IBaseExprModel> parent;
-	CRect rect;
+	CRect rect;		// Стоит подумать о переносе в CDrawParams
 	CDrawParams params;
+	int depth;		// Расстояние до корня в дереве
 
-	IBaseExprModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
+	IBaseExprModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent, int depth = 0 ) :
 		parent( parent ),
-		rect( rect ) 
+		rect( rect ),
+		depth( depth )
 	{
 	}
 public:
@@ -49,12 +49,12 @@ public:
 	}
 
 	virtual std::weak_ptr<IBaseExprModel> GetParent() const;
-	virtual void SetParent( std::weak_ptr<IBaseExprModel> parent );
+	virtual void SetParent( const std::weak_ptr<IBaseExprModel> parent );
 
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const = 0;
 
 	// Прикрепляет детей к свежесозданной модели. Имеет смысл вызывать эту функцию после каждого конструктора
-	virtual void InitializeChildren() = 0;
+	virtual void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 ) = 0;
 
 	// Нужно вызывать при создании модели для корректного определения начального положения дочерних элементов
 	virtual void SetRect( const CRect& rect );
@@ -73,22 +73,40 @@ public:
 	virtual int GetMiddle() const = 0;
 
 	// Возвращает текст, хранящийся в этой модели
-	virtual std::wstring GetText() const;
+	virtual std::list<std::pair<std::wstring, CRect>> GetSelectedText() const;
+	virtual std::list<std::pair<std::wstring, CRect>> GetUnselectedText() const;
 
 	// Возвращает набор линий, которые нужно провести на вьюшке, относящейся к этой модели
 	virtual std::list<CLine> GetLines() const;
 
 	// Говорит, подсвечен ли прямоугольник этого контрола
 	virtual bool IsHighlighted() const;
-	virtual void HighlightingOff();
-	virtual void HighlightingOn();
+	virtual void SetHighlighting( bool newHighlighting );
 	
+	// Говорит, выделен ли прямоугольник
+	virtual bool IsSelected() const;
+	virtual void DeleteSelection();
+	// Обновляет поле selection в соответствии со своими детьми: если все дети выделены, то и их родитель выделен
+	virtual void UpdateSelection() = 0;
+
+	// Удаляет тот кусок, который помечен, как isSelected
+	// Возвращает false, когда требуется дополнительная обработка от родителя
+	virtual bool DeleteSelectedPart();
+
 	// Возвращает тип модели
 	virtual ViewType GetType() const = 0;
 
 	// Сдвигает каретку в нужную сторону относительно from
-	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const = 0;
-	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const = 0;
+	virtual void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
+	virtual void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false ) = 0;
+
+	virtual bool IsEmpty() const = 0;
+
+	virtual int GetDepth() const;
+	virtual void UpdateDepth();
+
+	// Отдает копию поддерева со всеми вершинами, помеченными как selected
+	virtual std::shared_ptr<IBaseExprModel> CopySelected() const = 0;
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -96,7 +114,7 @@ inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
 	return parent;
 }
 
-inline void IBaseExprModel::SetParent( std::weak_ptr<IBaseExprModel> parent )
+inline void IBaseExprModel::SetParent( const std::weak_ptr<IBaseExprModel> parent )
 {
 	this->parent = parent;
 }
@@ -116,11 +134,6 @@ inline void IBaseExprModel::MoveBy( int dx, int dy )
 	rect.MoveBy( dx, dy );
 }
 
-inline std::wstring IBaseExprModel::GetText() const 
-{
-	return params.text;
-}
-
 inline std::list<CLine> IBaseExprModel::GetLines() const 
 {
 	return params.polygon;
@@ -131,12 +144,48 @@ inline bool IBaseExprModel::IsHighlighted() const
 	return params.isHighlighted;
 }
 
-inline void IBaseExprModel::HighlightingOff()
+inline void IBaseExprModel::SetHighlighting( bool newHighlighting )
 {
-	params.isHighlighted = false;
+	params.isHighlighted = newHighlighting;
 }
 
-inline void IBaseExprModel::HighlightingOn()
+inline bool IBaseExprModel::IsSelected() const {
+	return params.isSelected;
+}
+
+inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetSelectedText( ) const 
 {
-	params.isHighlighted = true;
+	return std::list<std::pair<std::wstring, CRect>>();
+}
+
+inline std::list<std::pair<std::wstring, CRect>> IBaseExprModel::GetUnselectedText( ) const 
+{
+	return std::list<std::pair<std::wstring, CRect>>();
+}
+
+inline void IBaseExprModel::DeleteSelection() {
+	params.isSelected = false;
+}
+
+inline int IBaseExprModel::GetDepth() const {
+	return depth;
+}
+
+inline bool IBaseExprModel::DeleteSelectedPart() {
+	auto children = GetChildren();
+	bool result = true;
+	for( auto it = children.begin(); it != children.end(); ++it ) {
+		// Если нужно дополнительное вмешательство
+		result &= (*it)->DeleteSelectedPart();
+	}
+	return result;
+}
+
+inline void IBaseExprModel::UpdateDepth() {
+	if( !parent.expired() ) {
+		depth = parent.lock()->depth + 1;
+	}
+	for( auto child : GetChildren() ) {
+		child->UpdateDepth();
+	}
 }

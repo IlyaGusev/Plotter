@@ -7,11 +7,10 @@
 // Модель текстового поля
 class CEditControlModel : public IBaseExprModel {
 public:
-	CEditControlModel( CRect rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted = true );
-	~CEditControlModel() {}
+	CEditControlModel( const CRect& rect, const std::weak_ptr<IBaseExprModel> parent, bool isHightlighted = true );
 
 	std::list< std::shared_ptr<IBaseExprModel> > GetChildren( ) const;
-	void InitializeChildren() {}
+	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 ) {}
 
 	void Resize();
 
@@ -36,14 +35,27 @@ public:
 	// Возвращает позицию символа на экране по его номеру
 	int GetSymbolPointByNumber( int number ) const;
 
-	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret ) const;
-	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret ) const;
+	void DeleteSelection();
+
+	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
+
+	bool IsEmpty() const;
+
+	std::list<std::pair<std::wstring, CRect>> GetSelectedText() const;
+	std::list<std::pair<std::wstring, CRect>> GetUnselectedText() const;
+
+	void UpdateSelection();
+
+	bool DeleteSelectedPart();
+
+	void MergeWith( const CEditControlModel& edit );
+
+	std::shared_ptr<IBaseExprModel> CopySelected() const;
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
-
 private:
-	// Ширина каждого символа
-	std::vector<int> symbolsWidths;
-	std::list< std::shared_ptr<IBaseExprModel> > children;
+	std::vector<int> symbolsWidths;	// Ширина каждого символа
+	std::list< std::shared_ptr<IBaseExprModel> > children;	// Заглушка-пустой список
 };

@@ -7,10 +7,6 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/FracControlModel.h"
-#include "Model/DegrControlModel.h"
-#include "Model/SubscriptControlModel.h"
-#include "Model/RadicalControlModel.h"
 #include "Model/Utils/Caret.h"
 
 #include "Presenter/Utils/TreeBfsProcessor.h"
@@ -21,14 +17,17 @@ class IEditorView {
 public:
 	virtual ~IEditorView() {}
 
+	// Отображает прямоугольник выделения вокруг вьюшки
+	virtual void DrawSelectedRect( const CRect& rect ) = 0;
+
 	// Отобразить текст в определенном прямоугольнике
-	virtual void DrawString( const std::wstring& text, const CRect& rect ) = 0;
+	virtual void DrawString( const std::wstring& text, const CRect& rect, bool isSelected ) = 0;
 
 	// Нарисовать ломаную
-	virtual void DrawPolygon( const std::list<CLine>& polygon ) = 0;
+	virtual void DrawPolygon( const std::list<CLine>& polygon, bool isSelected ) = 0;
 
 	// Нарисовать подсветку вокруг прямоугольника
-	virtual void DrawHightlightedRect( const CRect& rect ) = 0;
+	virtual void DrawHighlightedRect( const CRect& rect, bool isSelected ) = 0;
 
 	// Установить положение каретки
 	virtual void SetCaret( int caretPointX, int caretPointY, int height ) = 0;
@@ -44,18 +43,21 @@ public:
 class CEquationPresenter {
 public:
 	CEquationPresenter( IEditorView& newView );
-	~CEquationPresenter();
 
 	void AddControlView( ViewType viewType );
 
 	void InsertSymbol( wchar_t symbol );
 
-	void DeleteSymbol();
+	void DeleteSymbol( bool withCtrl = false );
+
+	void DeleteNextSymbol( bool withCtrl = false );
 
 	// Отправляет во вьюшку всё, что нужно на ней нарисовать
 	void OnDraw();
 	
 	void SetCaret( int x, int y );
+
+	void SetSelection( int x, int y );
 
 	// Обработка движений каретки стрелками
 	void MoveCaretLeft();
@@ -66,24 +68,33 @@ private:
     std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
 	CCaret caret;
+	CCaret beginSelectionCaret;
+	bool isInSelectionMode;
 
 	// processors
 	CTreeBfsProcessor highlightingProcessor;
 	CTreeBfsProcessor placeProcessor;
 	CTreeDfsProcessor resizeProcessor;
-	CTreeBfsProcessor drawer;
+	CTreeBfsProcessor drawProcessor;
+	CTreeBfsProcessor deleteSelectionProcessor;
+	CTreeBfsProcessor updateSelectionProcessor;
 
-	void addFrac( std::shared_ptr<CExprControlModel> parent );
-	void addRadical(std::shared_ptr<CExprControlModel> parent);
-
-	void addDegr( std::shared_ptr<CExprControlModel> parent );
-
-	void addSubscript(std::shared_ptr<CExprControlModel> parent);
+	void addFrac( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addRadical( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addSubscript( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	
+	void deleteSelectedParts();
+
+	// Говорит, правее ли model1 находится model2
+	bool isRightDirection( const IBaseExprModel* model1, const IBaseExprModel* model2, int offset1, int offset2 );
+
 	// Ищет позицию каретки с таким x
 	// Возвращает пару <координата, номер буквы>
 	std::pair<int, int> findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x );
 
+	void setCaretPos( int x, int y, CCaret& curCaret );
 	void invalidateTree();
 
 	void invalidateBranch(std::shared_ptr<IBaseExprModel> startingNode);

@@ -123,10 +123,6 @@ bool CRadicalControlModel::IsEmpty() const
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
-//bool CRadicalControlModel::IsSecondModelFarther( const IBaseExprModel* model1, const IBaseExprModel* model2 ) const {
-//	return model1 == firstChild.get();
-//}
-
 // высота показателя степени
 int CRadicalControlModel::getDegreeHeight( int rectHeight )
 {
@@ -157,16 +153,16 @@ std::shared_ptr<IBaseExprModel> CRadicalControlModel::CopySelected() const
 	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( rect, parent ) );
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
-	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
-		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+
+	// Если один из выбранных кусков пуст - возвращаем второй кусок (т.е. ExprControl, а не RadicalControl)
+	if( firstModel == 0 || firstModel->IsEmpty( ) || secondModel == 0 || secondModel->IsEmpty( ) ) {
+		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : secondModel;
 	}
-	if( firstModel != 0 && !firstModel->IsEmpty() ) {
-		radicalModel->firstChild = firstModel;
-		radicalModel->firstChild->SetParent( radicalModel );
-	}
-	if( secondModel != 0 && !secondModel->IsEmpty() ) {
-		radicalModel->secondChild = secondChild->CopySelected( );
-		radicalModel->secondChild->SetParent( radicalModel );
-	}
+	// Иначе возвращаем целую модельку
+	radicalModel->firstChild = firstModel;
+	radicalModel->firstChild->SetParent( radicalModel );
+
+	radicalModel->secondChild = secondChild->CopySelected();
+	radicalModel->secondChild->SetParent( radicalModel );
 	return radicalModel;
 }

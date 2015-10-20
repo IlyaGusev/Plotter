@@ -135,16 +135,15 @@ std::shared_ptr<IBaseExprModel> CFracControlModel::CopySelected() const
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
 
+	// Если один из выбранных кусков пуст - возвращаем второй кусок (т.е. ExprControl, а не FracControl)
 	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
 		return (firstModel != 0 && !firstModel->IsEmpty() || firstModel->IsSelected()) ? firstModel : secondModel;
 	}
-	if( firstModel != 0 && !firstModel->IsEmpty() ) {
-		fracModel->firstChild = firstModel;
-		fracModel->firstChild->SetParent( fracModel );
-	}
-	if( secondModel != 0 && !secondModel->IsEmpty() ) {
-		fracModel->secondChild = secondModel;
-		fracModel->secondChild->SetParent( fracModel );
-	}
+	// Иначе возвращаем целую дробь
+	fracModel->firstChild = firstModel;
+	fracModel->firstChild->SetParent( fracModel );
+
+	fracModel->secondChild = secondModel;
+	fracModel->secondChild->SetParent( fracModel );
 	return fracModel;
 }

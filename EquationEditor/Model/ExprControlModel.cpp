@@ -169,6 +169,8 @@ bool CExprControlModel::DeleteSelectedPart()
 			if( (*it)->IsEmpty() ) {
 				it = --children.erase( it );
 			}
+			// Вариант, когда при удалении, например, числителя дроби, она разрушается, и 
+			// знаменатель поднимается наверх в содержавший эту дробь ExprControl
 			//if( !(*it)->IsEmpty() ) {
 			//	// Иначе переносим наверх все непустые контролы
 			//	for( auto childExpr : (*it)->GetChildren() ) {
@@ -204,7 +206,7 @@ bool CExprControlModel::DeleteSelectedPart()
 		children.push_back( copy.back() );
 	}
 	// Если в этом ExprControl остался один EditControl, его можно перенести наверх
-	return !IsEmpty();
+	return children.size() > 1;
 }
 
 std::shared_ptr<IBaseExprModel> CExprControlModel::CopySelected() const
@@ -229,6 +231,7 @@ std::shared_ptr<IBaseExprModel> CExprControlModel::CopySelected() const
 		}
 	}
 
+	// Если в конце не оказалось текстовой модельки, нужно насильно её добавить
 	if( exprModel->children.size() > 1 && exprModel->children.back()->GetType() != TEXT ) {
 		exprModel->children.push_back( children.back()->CopySelected() );
 		exprModel->children.back()->SetParent( exprModel );

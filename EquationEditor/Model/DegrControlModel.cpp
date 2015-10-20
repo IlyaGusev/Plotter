@@ -137,16 +137,16 @@ std::shared_ptr<IBaseExprModel> CDegrControlModel::CopySelected() const
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( rect, parent ) );
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+
+	// Если один из выбранных кусков пуст - возвращаем второй кусок (т.е. ExprControl, а не DegrControl)
 	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
-		return ( firstModel != 0 && !firstModel->IsEmpty() ) ? firstModel : (( secondModel != 0 && !secondModel->IsEmpty() ) ? secondModel : 0);
+		return ( firstModel != 0 && !firstModel->IsEmpty() ) ? firstModel : secondModel;
 	}
-	if( firstModel != 0 && !firstModel->IsEmpty() ) {
-		degrModel->firstChild = firstModel;
-		degrModel->firstChild->SetParent( degrModel );
-	}
-	if( secondModel != 0 && !secondModel->IsEmpty() ) {
-		degrModel->secondChild = secondChild->CopySelected();
-		degrModel->secondChild->SetParent( degrModel );
-	}
+	// Иначе возвращаем целую модельку
+	degrModel->firstChild = firstModel;
+	degrModel->firstChild->SetParent( degrModel );
+
+	degrModel->secondChild = secondChild->CopySelected();
+	degrModel->secondChild->SetParent( degrModel );
 	return degrModel;
 }

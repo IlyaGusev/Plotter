@@ -142,16 +142,17 @@ std::shared_ptr<IBaseExprModel> CSubscriptControlModel::CopySelected() const
 	std::shared_ptr<CSubscriptControlModel> newSubscriptionModel( new CSubscriptControlModel( rect, parent ) );
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+
+	// Если один из выбранных кусков пуст - возвращаем второй кусок (т.е. ExprControl, а не SubscriptControl)
 	if( firstModel == 0 || firstModel->IsEmpty() || secondModel == 0 || secondModel->IsEmpty() ) {
-		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : ((secondModel != 0 && !secondModel->IsEmpty()) ? secondModel : 0);
+		return (firstModel != 0 && !firstModel->IsEmpty()) ? firstModel : secondModel;
 	}
-	if( firstModel != 0 && !firstModel->IsEmpty() ) {
-		newSubscriptionModel->firstChild = firstModel;
-		newSubscriptionModel->firstChild->SetParent( newSubscriptionModel );
-	}
-	if( secondModel != 0 && !secondModel->IsEmpty() ) {
-		newSubscriptionModel->secondChild = secondChild->CopySelected( );
-		newSubscriptionModel->secondChild->SetParent( newSubscriptionModel );
-	}
+
+	// Иначе возвращаем целую модельку
+	newSubscriptionModel->firstChild = firstModel;
+	newSubscriptionModel->firstChild->SetParent( newSubscriptionModel );
+
+	newSubscriptionModel->secondChild = secondChild->CopySelected();
+	newSubscriptionModel->secondChild->SetParent( newSubscriptionModel );
 	return newSubscriptionModel;
 }

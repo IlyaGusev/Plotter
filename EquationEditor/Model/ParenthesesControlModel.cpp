@@ -123,14 +123,19 @@ void CParenthesesControlModel::updatePolygons()
 
 std::shared_ptr<IBaseExprModel> CParenthesesControlModel::CopySelected() const
 {
-	std::shared_ptr<CParenthesesControlModel> parModel( new CParenthesesControlModel( rect, parent ) );
-	std::shared_ptr<IBaseExprModel> contentModel = content->CopySelected();
-	if( contentModel != 0 && !contentModel->IsEmpty() ) {
-		parModel->content = contentModel;
-		parModel->content->SetParent( parModel );
-		return parModel;
+	// Если всё внутри скобок выделено - возвращаем его обернутым в скобки,
+	// иначе возвращаем только выделенный кусок
+	if( content->IsSelected() ) {
+		std::shared_ptr<CParenthesesControlModel> parModel( new CParenthesesControlModel( rect, parent ) );
+		std::shared_ptr<IBaseExprModel> contentModel = content->CopySelected();
+		if( contentModel != 0 && !contentModel->IsEmpty() ) {
+			parModel->content = contentModel;
+			parModel->content->SetParent( parModel );
+			return parModel;
+		} else {
+			return 0;
+		}
 	} else {
-		return 0;
+		return content->CopySelected();
 	}
-	//return content->CopySelected();
 }

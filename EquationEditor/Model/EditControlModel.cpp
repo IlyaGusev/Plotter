@@ -218,6 +218,7 @@ void CEditControlModel::MergeWith( const CEditControlModel& edit ) {
 
 std::shared_ptr<IBaseExprModel> CEditControlModel::CopySelected() const
 {
+	// Создаем новую модельку с 
 	std::shared_ptr<CEditControlModel> newEditControl( new CEditControlModel( rect, parent.lock(), false ) );
 	newEditControl->params.text = std::wstring( params.text.begin() + params.selectedPositions.first,
 		params.text.begin() + params.selectedPositions.second );

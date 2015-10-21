@@ -8,7 +8,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 		return 1;
 	}
 
-	std::string formula = "x * x + y * y";
+	std::string formula = "x * x";
 	MathCore mathCore(formula);
 
 	GraphWindow* mainWindow = new GraphWindow(700, 700, mathCore);

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#define M_PI       3,1415926535897932384626433
-
 #include <vector> 
 #include <math.h>
 #include "RotationLib.h"
@@ -13,9 +11,13 @@
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( const MathCore& inputMCore, double inputLengthOfSection = 5, 
-		const std::vector<double>& inputAnglesOfAxis = { -30, 40, 90 }, 
-		std::pair<double, double> inputWindowSize = std::pair<double, double>(700, 700) );
+	GP( const MathCore& inputMCore, 
+		const std::vector<double>& inputAnglesOfAxis, double inputLengthOfSection = 5,
+		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
+
+	GP( const MathCore& inputMCore, double inputLengthOfSection = 5,
+		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
+
 	// Поворот вокруг оси Z
 	void turnAroundZ( int angle = 1 );
 	// Поворот вокруг оси Y

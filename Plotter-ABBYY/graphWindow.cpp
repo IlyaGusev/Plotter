@@ -1,7 +1,5 @@
-﻿#include <windows.h>
-#include <vector>
+﻿#include <vector>
 #include "graphWindow.h"
-#include "GP.h"
 
 GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 	windowWidth(width),

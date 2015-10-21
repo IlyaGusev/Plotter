@@ -1,27 +1,21 @@
 ﻿#include "GP.h"
-#include <vector> 
-#include <math.h>
 
-#define MinLenthOfSection 5
+#define MinLengthOfSection 5
 #define MaxLengthOfSection 50
 
 
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP(const MathCore& inputMCore, double inputLengthOfSection, const std::vector<double>& inputAnglesOfAxis, 
-	std::pair<double, double> inputWindowSize )
-
-	: mCore( inputMCore )
+GP::GP( const MathCore& inputMCore, const std::vector<double>& inputAnglesOfAxis,
+	double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) :
+	mCore( inputMCore )
 {
 	windowSize = inputWindowSize;
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;
 	lengthOfSection = inputLengthOfSection;
-	anglesOfAxis.resize( 3 );
-	for( int i = 0; i < 3; i++ ) {
-		anglesOfAxis[i] = inputAnglesOfAxis[i];
-	}
+	anglesOfAxis = inputAnglesOfAxis;
 	relativeAxis.resize( 3 );
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
@@ -30,6 +24,10 @@ GP::GP(const MathCore& inputMCore, double inputLengthOfSection, const std::vecto
 	generateGrid();
 	calculateRelativePoints();
 }
+
+GP::GP(const MathCore& inputMCore, double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) : 
+	GP( inputMCore, std::vector<double>{-30, 40, 90}, inputLengthOfSection, inputWindowSize )
+{}
 
 void GP::generateGrid() {
 	double size;
@@ -141,7 +139,7 @@ void GP::moveAlongY( int num ) {
 }
 
 void GP::changeScale( int num ) {
-	if( lengthOfSection + num > MinLenthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
+	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
 		mCore.changeScale((lengthOfSection + num) / lengthOfSection);
 
 		lengthOfSection += num;
@@ -162,9 +160,11 @@ void GP::calculateRelativePoints() {
 	double size = relativePoints.size();
 	for( int i = 0; i < relativePoints.size(); i++ ) {
 		for( int j = 0; j < relativePoints[i].size(); j++ ) {
-			double xRel = origin.first + x.first * ( i - size / 2 ) * lengthOfSection + y.first * (j - size / 2 ) * lengthOfSection + z.first * points[i][j] * lengthOfSection;
-			double yRel = origin.second + x.second * ( i - size / 2 ) * lengthOfSection + y.second * (j - size / 2 ) * lengthOfSection + z.second * points[i][j] * lengthOfSection;
+			double xRel = origin.first + x.first * ( i - size / 2 ) * lengthOfSection + 
+				y.first * (j - size / 2 ) * lengthOfSection + z.first * points[i][j] * lengthOfSection;
+			double yRel = origin.second + x.second * ( i - size / 2 ) * lengthOfSection + 
+				y.second * (j - size / 2 ) * lengthOfSection + z.second * points[i][j] * lengthOfSection;
 			relativePoints[i][j] = std::pair<double, double>( xRel, yRel );
 		}
 	}
-}	
+}

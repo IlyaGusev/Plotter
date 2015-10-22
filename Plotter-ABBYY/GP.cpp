@@ -1,7 +1,7 @@
 ﻿#include "GP.h"
 
 #define MinLengthOfSection 5
-#define MaxLengthOfSection 50
+#define MaxLengthOfSection 200
 
 
 // Graph in Points
@@ -37,7 +37,7 @@ void GP::generateGrid() {
 	else {
 		size = windowSize.second;
 	}
-	int gridSize = (int)(size/ lengthOfSection) / 2 * 2;
+	int gridSize = 4 * (int) (size / lengthOfSection);
 
 	points.resize(gridSize);
 	relativePoints.resize(gridSize);
@@ -46,12 +46,12 @@ void GP::generateGrid() {
 			points[i].resize( gridSize );
 			relativePoints[i].resize( gridSize );
 			for( int j = 0; j < gridSize; j++ ) {
-				points[i][j] = mCore.calculate( i - gridSize / 2, j - gridSize / 2 );
+				points[i][j] = mCore.calculate( (double) (i - gridSize / 2) / 4, (double) (j - gridSize / 2) / 4 );
 			}
 		} else {
 			relativePoints[i].resize( 1 );
 			points[i].resize( 1 );
-			points[i][0] = mCore.calculate( i - gridSize / 2, 0 );
+			points[i][0] = mCore.calculate( (double) (i - gridSize / 2) / 4, 0 );
 		}
 	}
 }

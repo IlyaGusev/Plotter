@@ -6,7 +6,7 @@
 GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints(mathCore, 40)
+	graphInPoints(mathCore, 80)
 {
 }
 
@@ -79,22 +79,22 @@ void GraphWindow::OnClose() {
 
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
-	case VK_RIGHT:
+	case VK_UP:
 		graphInPoints.turnRight();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
-	case VK_LEFT:
+	case VK_DOWN:
 		graphInPoints.turnLeft();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
-	case VK_UP:
+	case VK_LEFT:
 		graphInPoints.turnUp();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
-	case VK_DOWN:
+	case VK_RIGHT:
 		graphInPoints.turnDown();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
@@ -208,17 +208,32 @@ void GraphWindow::drawGraph(HDC dc) {
 	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
 
 	for (size_t i = 0; i < points.size(); ++i) {
-		::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
-		for (size_t j = 1; j < points[i].size(); ++j) {
-			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+		int size = points[i].size() % 3 == 0 ? points[i].size() - 2 : 3 * (points[i].size() / 3) + 1;
+		POINT* lppoints = new POINT[size];
+		//::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
+		for( size_t j = 0; j < size; ++j ) {
+		//	::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+			lppoints[j] = { round( points[i][j].first ), round( points[i][j].second ) };
 		}
+		::PolyBezier( dc, lppoints, size );
+
+		delete[] lppoints;
 	}
 
 	for (size_t j = 0; j < points[0].size(); ++j) {
-		::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
-		for (size_t i = 1; i < points.size(); ++i) {
-			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+		//::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
+		//for (size_t i = 1; i < points.size(); ++i) {
+		//	::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
+		//}
+
+		int size = points.size() % 3 == 0 ? points.size() - 2 : 3 * (points.size() / 3) + 1;
+		POINT* lppoints = new POINT[size];
+		for( size_t i = 0; i < size; ++i ) {
+			lppoints[i] = { round( points[i][j].first ), round( points[i][j].second ) };
 		}
+		::PolyBezier( dc, lppoints, size );
+
+		delete[] lppoints;
 	}
 
 	::DeleteObject(linePen);

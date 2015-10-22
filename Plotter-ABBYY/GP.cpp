@@ -26,7 +26,7 @@ GP::GP( const MathCore& inputMCore, const std::vector<double>& inputAnglesOfAxis
 }
 
 GP::GP(const MathCore& inputMCore, double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) : 
-	GP( inputMCore, std::vector<double>{-30, 40, 90}, inputLengthOfSection, inputWindowSize )
+GP( inputMCore, inputMCore.Is2D() ? std::vector<double>{0, 90, 90} : std::vector<double>{ -30, 40, 90 }, inputLengthOfSection, inputWindowSize )
 {}
 
 void GP::generateGrid() {
@@ -42,36 +42,75 @@ void GP::generateGrid() {
 	points.resize(gridSize);
 	relativePoints.resize(gridSize);
 	for( int i = 0; i < gridSize; i++ ) {
-		points[i].resize(gridSize);
-		relativePoints[i].resize(gridSize);
-		for( int j = 0; j < gridSize; j++ ) {
-			points[i][j] = mCore.calculate( i - gridSize /2 , j - gridSize / 2 );
+		if( !mCore.Is2D() ) {
+			points[i].resize( gridSize );
+			relativePoints[i].resize( gridSize );
+			for( int j = 0; j < gridSize; j++ ) {
+				points[i][j] = mCore.calculate( i - gridSize / 2, j - gridSize / 2 );
+			}
+		} else {
+			relativePoints[i].resize( 1 );
+			points[i].resize( 1 );
+			points[i][0] = mCore.calculate( i - gridSize / 2, 0 );
 		}
 	}
 }
 
-void GP::turnAroundZ( int angle ) {
-	Quaternion q( angle, relativeAxis[2] );
+//void GP::turnAroundZ( int angle ) {
+//	Quaternion q( angle, relativeAxis[2] );
+//	for( int i = 0; i < 3; i++ ) {
+//		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+//	}
+//	calculateRelativePoints();
+//}
+//
+//void GP::turnAroundY( int angle ) {
+//	Quaternion q( angle, relativeAxis[1] );
+//	for( int i = 0; i < 3; i++ ) {
+//		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+//	}
+//	calculateRelativePoints();
+//}
+
+void GP::turnAroundAxis( int axisNumber, int angle ) {
+	Quaternion q( angle, relativeAxis[axisNumber] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
 	}
 	calculateRelativePoints();
 }
 
-void GP::turnAroundY( int angle ) {
-	Quaternion q( angle, relativeAxis[1] );
-	for( int i = 0; i < 3; i++ ) {
-		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+void GP::turnLeft()
+{
+	if( mCore.Is2D() ) {
+		moveAlongX( -1 );
+	} else {
+		turnAroundAxis( 1, -1 );
 	}
-	calculateRelativePoints();
 }
-
-void GP::turnAroundX( int angle ) {
-	Quaternion q( angle, relativeAxis[0] );
-	for( int i = 0; i < 3; i++ ) {
-		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
+void GP::turnRight()
+{
+	if( mCore.Is2D() ) {
+		moveAlongX( 1 );
+	} else {
+		turnAroundAxis( 1, 1 );
 	}
-	calculateRelativePoints();
+}
+void GP::turnUp()
+{
+	if( mCore.Is2D() ) {
+		moveAlongZ( 1 );
+	} else {
+		turnAroundAxis( 2 );
+	}
+}
+void GP::turnDown()
+{
+	if( mCore.Is2D() ) {
+		moveAlongZ( -1 );
+	} else {
+		turnAroundAxis( 2, -1 );
+	}
 }
 
 void GP::turnRoundVector( int angle, Vector vector ) {
@@ -97,7 +136,7 @@ std::pair<double, double> GP::getAxisVector( int axisNum ) {
 	// пересчитываем координаты осей относительной( подвижной ) системы отсчета в 2D, используя координаты неподвижной системы
 	double relX = x0 * relativeAxis[axisNum].x + x1 * relativeAxis[axisNum].y + x2 * relativeAxis[axisNum].z;
 	double relY = y0 * relativeAxis[axisNum].x + y1 * relativeAxis[axisNum].y + y2 * relativeAxis[axisNum].z;
-	return std::pair<double, double>( relX, relY );
+	return std::pair<double, double>( mCore.scale * relX, mCore.scale * relY );
 }
 
 std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
@@ -138,6 +177,17 @@ void GP::moveAlongY( int num ) {
 	calculateRelativePoints();
 }
 
+void GP::moveAlongZ( int num )
+{
+	rotateToStartAngle();
+
+	mCore.changeWindowCoordinates( 0, 0, num );
+	generateGrid();
+
+	rotateToCurrentAngle();
+	calculateRelativePoints();
+}
+
 void GP::changeScale( int num ) {
 	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
 		mCore.changeScale((lengthOfSection + num) / lengthOfSection);
@@ -159,12 +209,20 @@ void GP::calculateRelativePoints() {
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
 	double size = relativePoints.size();
 	for( int i = 0; i < relativePoints.size(); i++ ) {
-		for( int j = 0; j < relativePoints[i].size(); j++ ) {
-			double xRel = origin.first + x.first * ( i - size / 2 ) * lengthOfSection + 
-				y.first * (j - size / 2 ) * lengthOfSection + z.first * points[i][j] * lengthOfSection;
-			double yRel = origin.second + x.second * ( i - size / 2 ) * lengthOfSection + 
-				y.second * (j - size / 2 ) * lengthOfSection + z.second * points[i][j] * lengthOfSection;
-			relativePoints[i][j] = std::pair<double, double>( xRel, yRel );
+		if( !mCore.Is2D() ) {
+			for( int j = 0; j < relativePoints[i].size(); j++ ) {
+				double xRel = origin.first + x.first * (i - size / 2) * lengthOfSection +
+					y.first * (j - size / 2) * lengthOfSection + z.first * points[i][j] * lengthOfSection;
+				double yRel = origin.second + x.second * (i - size / 2) * lengthOfSection +
+					y.second * (j - size / 2) * lengthOfSection + z.second * points[i][j] * lengthOfSection;
+				relativePoints[i][j] = std::pair<double, double>( xRel, yRel );
+			}
+		} else {
+			double xRel = origin.first + x.first * (i - size / 2) * lengthOfSection +
+				 z.first * points[i][0] * lengthOfSection;
+			double yRel = origin.second + x.second * (i - size / 2) * lengthOfSection +
+				 z.second * points[i][0] * lengthOfSection;
+			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );
 		}
 	}
 }

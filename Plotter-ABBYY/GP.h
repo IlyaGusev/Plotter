@@ -18,18 +18,27 @@ public:
 	GP( const MathCore& inputMCore, double inputLengthOfSection = 5,
 		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
 
-	// Поворот вокруг оси Z
-	void turnAroundZ( int angle = 1 );
-	// Поворот вокруг оси Y
-	void turnAroundY( int angle = 1 );
-	// поворот вокруг оси X
-	void turnAroundX( int angle = 1 );
+	//// Поворот вокруг оси Z
+	//void turnAroundZ( int angle = 1 );
+	//// Поворот вокруг оси Y
+	//void turnAroundY( int angle = 1 );
+	//// поворот вокруг оси X
+	//void turnAroundX( int angle = 1 );
+
+	// Повороты при нажатии на соответствующие кнопки на клавиатуре
+	void turnLeft();
+	void turnRight();
+	void turnUp();
+	void turnDown();
+	
 	// Поворот вокруг произвольного вектора
 	void turnRoundVector( int angle, Vector vector );
 	// Смещение по вертикали
 	void moveAlongX( int num );
 	// Смещение по горизонтали
 	void moveAlongY( int num );
+	// Смещение по оси Z
+	void moveAlongZ( int num );
 	// изменяет масштаб
 	void changeScale( int num );
 	// Возвращает положение относительных точек
@@ -49,6 +58,8 @@ private:
 
 	void GP::rotateToStartAngle();
 	void GP::rotateToCurrentAngle();
+
+	void turnAroundAxis( int axisNumber, int angle = 1 );
 	
 	
 	// точки изначальные, в качестве индексов - узлы сетки XY

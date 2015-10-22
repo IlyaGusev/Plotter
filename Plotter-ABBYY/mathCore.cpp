@@ -2,20 +2,22 @@
 #include <iostream>
 #include <exception>
 
-MathCore::MathCore(const std::string &formula) :
+MathCore::MathCore( const std::string &formula, bool _is2D ) :
 	calc(formula),
 	globalXShift(0),
 	globalYShift(0),
-	globalZShift(0)
+	globalZShift(0),
+	scale(1),
+	is2D( _is2D )
 {
 }
 
-MathCore::~MathCore() {
-}
+//MathCore::~MathCore() {
+//}
 
 double MathCore::calculate(double x, double y) {
 	try {
-		return calc.countExpression(x + globalXShift, y + globalYShift) - globalZShift;
+		return scale * (calc.countExpression( x + globalXShift, y + globalYShift ) - globalZShift);
 	}
 	catch (std::logic_error catchedException) {
 		std::cout << catchedException.what() << ", impossible to count" << '\n';
@@ -30,7 +32,10 @@ void MathCore::changeWindowCoordinates(double x, double y, double z) {
 }
 
 void MathCore::changeScale(double factor) {
-	globalXShift *= factor;
-	globalYShift *= factor;
-	globalZShift *= factor;
+	scale *= factor;
+}
+
+bool MathCore::Is2D() const
+{
+	return is2D;
 }

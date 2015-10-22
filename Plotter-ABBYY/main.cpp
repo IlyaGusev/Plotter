@@ -9,15 +9,17 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 	}
 
 	std::string formula = "x * x";
-	MathCore mathCore(formula);
+	MathCore mathCore(formula, true);
 
-	GraphWindow* mainWindow = new GraphWindow(700, 700, mathCore);
+	//GraphWindow* mainWindow = new GraphWindow(700, 700, mathCore);
+	GraphWindow mainWindow( 700, 700, mathCore );
 
-	if (!mainWindow->Create(hInstance, nCmdShow)) {
+	if(/*!mainWindow->Create(hInstance, nCmdShow)*/ !mainWindow.Create( hInstance, nCmdShow ) ) {
 		return 1;
 	}
 
-	mainWindow->Show();
+	//mainWindow->Show();
+	mainWindow.Show();
 
 	MSG message;
 	BOOL getMessageResult = 0;
@@ -30,7 +32,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 		::DispatchMessage(&message);
 	}
 
-	delete(mainWindow);
+	//delete(mainWindow);
 
 	return message.wParam;
 }

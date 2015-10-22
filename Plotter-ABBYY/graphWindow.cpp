@@ -1,4 +1,6 @@
 ﻿#include <vector>
+#include <Windowsx.h>
+
 #include "graphWindow.h"
 
 GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
@@ -8,9 +10,10 @@ GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
 {
 }
 
-GraphWindow::~GraphWindow()
-{
-}
+// Удалять чужой код нельзя, поэтому будем его комментировать
+//GraphWindow::~GraphWindow()
+//{
+//}
 
 const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
 const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
@@ -46,7 +49,7 @@ bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
 		200, 20, windowWidth, windowHeight,
 		NULL, NULL, hInstance, this);
 
-	return true;
+	return handle;
 }
 
 void GraphWindow::Show() {
@@ -77,50 +80,56 @@ void GraphWindow::OnClose() {
 void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
 	case VK_RIGHT:
-		graphInPoints.turnAroundY(1);
+		graphInPoints.turnRight();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case VK_LEFT:
-		graphInPoints.turnAroundY(-1);
+		graphInPoints.turnLeft();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case VK_UP:
-		graphInPoints.turnAroundZ(1);
+		graphInPoints.turnUp();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
 	case VK_DOWN:
-		graphInPoints.turnAroundZ(-1);
+		graphInPoints.turnDown();
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// Z key
 	case 0x5A:
 		graphInPoints.changeScale(-2 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// X key
 	case 0x58:
 		graphInPoints.changeScale( 2 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// Q key
 	case 0x51:
 		graphInPoints.moveAlongX( 1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// A key
 	case 0x41:
 		graphInPoints.moveAlongX( -1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// W key
 	case 0x57:
 		graphInPoints.moveAlongY( 1 );
 		::InvalidateRect(handle, NULL, FALSE);
 		::UpdateWindow(handle);
 		break;
+	// S key
 	case 0x53:
 		graphInPoints.moveAlongY( -1 );
 		::InvalidateRect(handle, NULL, FALSE);
@@ -129,7 +138,43 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 	}
 }
 
-void GraphWindow::OnPaint() {
+void GraphWindow::OnMouseWheel( WPARAM wParam )
+{
+	if( GET_WHEEL_DELTA_WPARAM( wParam ) > 0 ) {
+		::SendMessage( handle, WM_KEYDOWN, 0x5A, 0 );
+	} else {
+		::SendMessage( handle, WM_KEYDOWN, 0x58, 0 );
+	}
+}
+
+void GraphWindow::OnMouseMove( WPARAM wParam, int x, int y )
+{
+	if( wParam == MK_LBUTTON ) {
+		if( x - prevMousePosX > 5 ) {
+			::SendMessage( handle, WM_KEYDOWN, VK_RIGHT, 0 );
+			prevMousePosX = x;
+		} else if( x - prevMousePosX < -5 ) {
+			::SendMessage( handle, WM_KEYDOWN, VK_LEFT, 0 );
+			prevMousePosX = x;
+		}
+		if( y - prevMousePosY > 5 ) {
+			::SendMessage( handle, WM_KEYDOWN, VK_UP, 0 );
+			prevMousePosY = y;
+		} else if( y - prevMousePosY < -5 ) {
+			::SendMessage( handle, WM_KEYDOWN, VK_DOWN, 0 );
+			prevMousePosY = y;
+		}
+	}
+}
+
+void GraphWindow::OnLButtonDown( int xMousePos, int yMousePos )
+{
+	prevMousePosX = xMousePos;
+	prevMousePosY = yMousePos;
+}
+
+void GraphWindow::OnPaint()
+{
 	PAINTSTRUCT ps;
 	HDC hdc = ::BeginPaint(handle, &ps);
 	HDC newHdc = ::CreateCompatibleDC(hdc);
@@ -164,12 +209,12 @@ void GraphWindow::drawGraph(HDC dc) {
 
 	for (size_t i = 0; i < points.size(); ++i) {
 		::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
-		for (size_t j = 1; j < points.size(); ++j) {
+		for (size_t j = 1; j < points[i].size(); ++j) {
 			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
 		}
 	}
 
-	for (size_t j = 0; j < points.size(); ++j) {
+	for (size_t j = 0; j < points[0].size(); ++j) {
 		::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
 		for (size_t i = 1; i < points.size(); ++i) {
 			::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
@@ -234,15 +279,31 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 		case WM_CLOSE:
 			that->OnClose();
 			return 0;
+
 		case WM_DESTROY:
 			that->OnDestroy();
 			return 0;
+
 		case WM_PAINT:
 			that->OnPaint();
 			return 0;
+
 		case WM_KEYDOWN:
 			that->OnKeyDown(wParam);
 			return 0;
+
+		case WM_MOUSEWHEEL:
+			that->OnMouseWheel( wParam );
+			return 0;
+
+		case WM_LBUTTONDOWN:
+			that->OnLButtonDown( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+			return 0;
+
+		case WM_MOUSEMOVE:
+			that->OnMouseMove( wParam, GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+			return 0;
+
 		case WM_ERASEBKGND:
 			return 1;
 	}

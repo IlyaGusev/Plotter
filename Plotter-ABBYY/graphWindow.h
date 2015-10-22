@@ -7,7 +7,7 @@
 class GraphWindow {
 public:
 	GraphWindow(int width, int height, MathCore& mathCore);
-	~GraphWindow();
+	//~GraphWindow();
 
 	static bool RegisterClass(HINSTANCE hInstance);
 
@@ -18,7 +18,10 @@ public:
 	HWND GetHandle();
 
 protected:
-	void OnKeyDown(WPARAM wParam);
+	void OnKeyDown( WPARAM wParam );
+	void OnMouseWheel( WPARAM wParam );
+	void OnMouseMove( WPARAM wParam, int x, int y );
+	void OnLButtonDown( int xMousePos, int yMousePos );
 
 	void OnPaint();
 	void OnClose();
@@ -27,6 +30,9 @@ protected:
 private:
 	const static wchar_t* nameClassWindow;
 	const static wchar_t* nameWindow;
+
+	int prevMousePosX;
+	int prevMousePosY;
 
 	int windowWidth;
 	int windowHeight;

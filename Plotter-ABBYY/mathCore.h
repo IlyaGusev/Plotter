@@ -5,7 +5,7 @@
 
 class MathCore {
 public:
-	MathCore( const std::string &formula, bool is2D );
+	MathCore( const std::string &formula, bool is2D = false );
 	//~MathCore();
 
 	double calculate( double x, double y );

@@ -8,8 +8,8 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 		return 1;
 	}
 
-	std::string formula = "x * x / 3 - y * y / 5";
-	MathCore mathCore(formula, false);
+	std::string formula = "x * x - y * y / 5";
+	MathCore mathCore( formula );
 
 	//GraphWindow* mainWindow = new GraphWindow(700, 700, mathCore);
 	GraphWindow mainWindow( 700, 700, mathCore );

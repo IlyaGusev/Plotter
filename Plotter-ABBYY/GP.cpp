@@ -1,8 +1,7 @@
 ﻿#include "GP.h"
 
-#define MinLengthOfSection 5
-#define MaxLengthOfSection 200
-
+#define MinLengthOfSection 20
+#define MaxLengthOfSection 100
 
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
@@ -83,33 +82,33 @@ void GP::turnAroundAxis( int axisNumber, int angle ) {
 void GP::turnLeft()
 {
 	if( mCore.Is2D() ) {
-		moveAlongX( -1 );
+		moveAlongX( 1 );
 	} else {
-		turnAroundAxis( 1, -1 );
+		turnAroundAxis( 2, -1 );
 	}
 }
 void GP::turnRight()
 {
 	if( mCore.Is2D() ) {
-		moveAlongX( 1 );
+		moveAlongX( -1 );
 	} else {
-		turnAroundAxis( 1, 1 );
+		turnAroundAxis( 2, 1 );
 	}
 }
 void GP::turnUp()
 {
 	if( mCore.Is2D() ) {
-		moveAlongZ( 1 );
+		moveAlongZ( -1 );
 	} else {
-		turnAroundAxis( 2 );
+		turnAroundAxis( 1, 1 );
 	}
 }
 void GP::turnDown()
 {
 	if( mCore.Is2D() ) {
-		moveAlongZ( -1 );
+		moveAlongZ( 1 );
 	} else {
-		turnAroundAxis( 2, -1 );
+		turnAroundAxis( 1, -1 );
 	}
 }
 
@@ -190,13 +189,12 @@ void GP::moveAlongZ( int num )
 
 void GP::changeScale( int num ) {
 	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
-		mCore.changeScale((lengthOfSection + num) / lengthOfSection);
+		mCore.changeScale( (lengthOfSection + num) / lengthOfSection );
 
 		lengthOfSection += num;
 		generateGrid();
 		calculateRelativePoints();
-	}
-	
+	}	
 }
 
 std::pair<double, double> GP::getOriginCoordinates() {

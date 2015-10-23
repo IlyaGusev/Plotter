@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include <string>
 #include "calculator.h"
-//#include "calculator.h"
+#include "./pugixml/pugixml.hpp"
+
 
 class MathCore {
 public:
-	MathCore( const std::string &formula, bool is2D = false );
+	//MathCore( const std::string &formula, bool _is2D = false );
 	//~MathCore();
+	MathCore( const pugi::xml_node& formulaRoot, bool _is2D = false );
 
 	double calculate( double x, double y );
 
@@ -17,7 +19,8 @@ public:
 
 	double scale;
 private:
-	Calculator calc;
+	//StringCalculator calc;
+	MathMlCalculator calc;
 	double globalXShift;
 	double globalYShift;
 	double globalZShift;

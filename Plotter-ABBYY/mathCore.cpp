@@ -1,7 +1,7 @@
 ﻿#include "mathCore.h"
 #include <iostream>
 #include <exception>
-
+/*
 MathCore::MathCore( const std::string &formula, bool _is2D ) :
 	calc(formula),
 	globalXShift(0),
@@ -9,6 +9,16 @@ MathCore::MathCore( const std::string &formula, bool _is2D ) :
 	globalZShift(0),
 	scale(1),
 	is2D( _is2D )
+{
+}*/
+
+MathCore::MathCore(const pugi::xml_node& formulaRoot, bool _is2D) : 
+	calc(formulaRoot),
+	globalXShift(0),
+	globalYShift(0),
+	globalZShift(0),
+	scale(1),
+	is2D( _is2D)
 {
 }
 

@@ -3,13 +3,13 @@
 #include <exception>
 #include <stack>
 
-Calculator::Calculator(const std::string &_formula) :
+StringCalculator::StringCalculator(const std::string &_formula) :
 	formula(_formula)
 {
 }
 
 //получение числа для выполнения операции
-double Calculator::getOperand() {
+double StringCalculator::getOperand() {
 	if (numbers.empty()) {
 		throw std::logic_error("wrong expression");
 	}
@@ -20,7 +20,7 @@ double Calculator::getOperand() {
 }
 
 //подсчет верхней в стеке операции
-void Calculator::countOperation() {
+void StringCalculator::countOperation() {
 	std::string operation;
 	if (!(operations.empty())) {
 		operation = operations.top();
@@ -55,7 +55,7 @@ void Calculator::countOperation() {
 }
 
 //получение приоритета операции
-int Calculator::getPriority(std::string &operation) {
+int StringCalculator::getPriority(std::string &operation) {
 	if ((operation == "+") || (operation == "-")) {
 		return 1;
 	} else if ((operation == "*") || (operation == "/")) {
@@ -66,7 +66,7 @@ int Calculator::getPriority(std::string &operation) {
 }
 
 //подсчет значения выражения
-double Calculator::countExpression(double xArgument, double yArgument) {
+double StringCalculator::countExpression(double xArgument, double yArgument) {
 	size_t posInArgument = 0;
 	while (posInArgument < formula.length()) {
 		std::string currentToken = "";
@@ -125,4 +125,16 @@ double Calculator::countExpression(double xArgument, double yArgument) {
 			return result;
 		}
 	}
+}
+
+MathMlCalculator::MathMlCalculator(const pugi::xml_node& formulaRoot) {
+	buildFormula(formulaRoot);
+}
+
+void MathMlCalculator::buildFormula(const pugi::xml_node& formulaRoot) {
+	formula = [](double x, double y){return x*x + y*y; };
+}
+
+double MathMlCalculator::countExpression(double xArgument, double yArgument) {
+	return formula(xArgument, yArgument);
 }

@@ -80,7 +80,14 @@
     </ClCompile>
     <ClCompile Include="RibbonFramework.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>    <ClCompile Include="Model\ParenthesesControlModel.cpp">
+    </ClCompile>
+    <ClCompile Include="Model\ParenthesesControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\ProductControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SumControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -141,7 +148,14 @@
     </ClInclude>
     <ClInclude Include="RibbonFramework.h">
       <Filter>Header Files</Filter>
-    </ClInclude>    <ClInclude Include="Model\ParenthesesControlModel.h">
+    </ClInclude>
+    <ClInclude Include="Model\ParenthesesControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\ProductControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SumControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
@@ -154,14 +168,14 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="RibbonMarkup.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="RibbonUI.bml" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="RibbonMarkup.xml" />
   </ItemGroup>
 </Project>

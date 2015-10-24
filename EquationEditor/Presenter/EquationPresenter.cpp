@@ -5,6 +5,8 @@
 #include "Model/SubscriptControlModel.h"
 #include "Model/RadicalControlModel.h"
 #include "Model/ParenthesesControlModel.h"
+#include "Model/ProductControlModel.h"
+#include "Model/SumControlModel.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView ),
@@ -336,6 +338,36 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std
 	view.Redraw();
 }
 
+void CEquationPresenter::addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	// Создаем новые модели для суммы
+	std::shared_ptr<CSumControlModel> fracModel( new CSumControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	fracModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, fracModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	// Создаем новые модели для произведения
+	std::shared_ptr<CProductControlModel> fracModel( new CProductControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	fracModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, fracModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( caret.GetCurEdit()->GetRect(), parent ) );
@@ -424,6 +456,12 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		break;
 	case PARENTHESES:
 		addParentheses( parent, selectedChild );
+		break;
+	case SUM:
+		addSum( parent, selectedChild );
+		break;
+	case PRODUCT:
+		addProduct( parent, selectedChild );
 		break;
 	default:
 		break;

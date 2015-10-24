@@ -52,6 +52,26 @@
       </Command.LargeImages>
     </Command>
 
+    <Command Name="cmdButtonSum"
+             Symbol="ID_CMD_Sum"
+             LabelTitle="Сумма"
+             LabelDescription="Сумма"
+             TooltipDescription="Сумма">
+      <!--<Command.LargeImages>
+        <Image>Res\sum.bmp</Image>
+      </Command.LargeImages>-->
+    </Command>        
+
+    <Command Name="cmdButtonProduct"
+             Symbol="ID_CMD_Product"
+             LabelTitle="Произведение"
+             LabelDescription="Произведение"
+             TooltipDescription="Произведение">
+      <!--<Command.LargeImages>
+        <Image>Res\product.bmp</Image>
+      </Command.LargeImages>-->
+    </Command>    
+
     <Command Name="cmdButtonExit"
              Symbol="ID_CMD_EXIT"
              LabelTitle="Выход"
@@ -80,6 +100,11 @@
     <Command Name="cmdGroupBracket"
          Symbol="ID_CMD_GROUP_BRACKET"
          LabelTitle="Скобки">
+    </Command>
+    
+     <Command Name="cmdGroupSumProduct"
+         Symbol="ID_CMD_GROUP_SUM_PRODUCT"
+         LabelTitle="Сумма и произведение">
     </Command>
 
     <Command Name="cmdGroupExit"
@@ -110,14 +135,15 @@
             <Button CommandName="cmdButtonBracket" />
           </Group>
 
-
+          <Group CommandName="cmdGroupSumProduct" SizeDefinition="TwoButtons">
+            <Button CommandName="cmdButtonSum" />
+            <Button CommandName="cmdButtonProduct" />
+          </Group>
+            
           <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonExit" />
           </Group>
-          
-        </Tab>
-        
-        
+        </Tab>       
       </Ribbon.Tabs>
 		</Ribbon>
 	</Application.Views>

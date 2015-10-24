@@ -105,6 +105,12 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 		case ID_ADD_PARANTHESIS:
 			presenter->AddControlView( PARENTHESES );
 			break;
+		case ID_ADD_SUM:
+			presenter->AddControlView( SUM );
+			break;
+		case ID_ADD_PRODUCT:
+			presenter->AddControlView( PRODUCT );
+			break;
 		}
 	}
 }

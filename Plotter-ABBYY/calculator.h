@@ -3,6 +3,7 @@
 #include <stack>
 #include <functional>
 #include "./pugixml/pugixml.hpp"
+#include "Operation.h"
 
 class Calculator {
 public:
@@ -39,5 +40,7 @@ public:
 	double countExpression(double xArgument, double yArgument);
 private:
 	void buildFormula(const pugi::xml_node& formulaRoot);
-	std::function<double(double, double)> formula;
+	std::function<double(double, double)> xFormula;
+	std::function<double(double, double)> yFormula;
+	std::function<double(double, double)> zFormula;
 };

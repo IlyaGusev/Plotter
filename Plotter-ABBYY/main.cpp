@@ -12,7 +12,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 	}
 
 	std::string formula = "x * x + y * y";
-	char* pathToFile = ".\ex.xml";
+	char* pathToFile = "./ex.xml";
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file( pathToFile );
 	//MathCore mathCore( formula );
@@ -24,9 +24,11 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 	if(/*!mainWindow->Create(hInstance, nCmdShow)*/ !mainWindow.Create( hInstance, nCmdShow ) ) {
 		return 1;
 	}
+	
 	std::function<int(std::list<int>)> a = [](std::list<int> x){ int res = 0;
+	std::function<int(int, int)> b = [](int a, int b){return a + b; };
 	for (auto i = x.begin(); i != x.end(); ++i) {
-		res += *i;
+		res += *i + b(4, 2);
 	}
 	return res;
 	};

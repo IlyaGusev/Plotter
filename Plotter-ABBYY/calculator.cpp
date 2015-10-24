@@ -132,9 +132,15 @@ MathMlCalculator::MathMlCalculator(const pugi::xml_node& formulaRoot) {
 }
 
 void MathMlCalculator::buildFormula(const pugi::xml_node& formulaRoot) {
-	formula = [](double x, double y){return x*x + y*y; };
+	//xFormula = [](double x, double y){return x*x + y*y; };
+	zFormula = [&](double x, double y) -> double {
+		pugi::xml_node curArg = formulaRoot.first_child();
+		return OperationHandler::getOperation(curArg.name()).build(curArg);
+	};
 }
 
 double MathMlCalculator::countExpression(double xArgument, double yArgument) {
-	return formula(xArgument, yArgument);
+	OperationHandler::setVar("x", xArgument);
+	OperationHandler::setVar("y", yArgument);
+	return zFormula(xArgument, yArgument);
 }

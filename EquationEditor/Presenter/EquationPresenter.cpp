@@ -341,12 +341,12 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std
 void CEquationPresenter::addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	// Создаем новые модели для суммы
-	std::shared_ptr<CSumControlModel> fracModel( new CSumControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	fracModel->InitializeChildren( selectedChild );
-	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
+	std::shared_ptr<CSumControlModel> sumModel( new CSumControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	sumModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( sumModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
-	parent->AddChildAfter( newEditControl, fracModel );
+	parent->AddChildAfter( newEditControl, sumModel );
 
 	invalidateTree();
 
@@ -356,12 +356,12 @@ void CEquationPresenter::addSum( std::shared_ptr<CExprControlModel> parent, std:
 void CEquationPresenter::addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	// Создаем новые модели для произведения
-	std::shared_ptr<CProductControlModel> fracModel( new CProductControlModel( caret.GetCurEdit()->GetRect(), parent ) );
-	fracModel->InitializeChildren( selectedChild );
-	parent->AddChildAfter( fracModel, caret.GetCurEdit() );
+	std::shared_ptr<CProductControlModel> productModel( new CProductControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	productModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( productModel, caret.GetCurEdit() );
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
-	parent->AddChildAfter( newEditControl, fracModel );
+	parent->AddChildAfter( newEditControl, productModel );
 
 	invalidateTree();
 

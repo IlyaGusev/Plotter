@@ -4,9 +4,8 @@
 CSumControlModel::CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 IBaseExprModel( rect, parent )
 {
-	//this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
-	//this->params.polygon.push_back( CLine( rect.Left(), rect.GetHeight() / 2, rect.Right(), rect.GetHeight() / 2 ) );
-
+	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
+	
 	depth = parent.lock()->GetDepth() + 1;
 }
 
@@ -128,9 +127,11 @@ void CSumControlModel::updatePolygons()
 {
 	params.polygon.clear();
 	
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5 ) ); // левая палка
-	params.polygon.push_back( CLine( rect.Left() + 5, rect.Top() + 5, rect.Left() + 5, rect.Bottom() - 5 ) ); // правая палка
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 5 ) ); // верхняя перекладина
+	// TODO Arlen
+
+	// params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5 ) ); // левая палка
+	// params.polygon.push_back( CLine( rect.Left() + 5, rect.Top() + 5, rect.Left() + 5, rect.Bottom() - 5 ) ); // правая палка
+	// params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 5 ) ); // верхняя перекладина
 }
 
 void CSumControlModel::UpdateSelection()

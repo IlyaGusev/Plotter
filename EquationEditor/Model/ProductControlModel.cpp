@@ -5,7 +5,6 @@ CProductControlModel::CProductControlModel( const CRect& rect, std::weak_ptr<IBa
 IBaseExprModel( rect, parent )
 {
 	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
-	this->params.polygon.push_back( CLine( rect.Left(), rect.GetHeight() / 2, rect.Right(), rect.GetHeight() / 2 ) );
 
 	depth = parent.lock()->GetDepth() + 1;
 }
@@ -26,14 +25,14 @@ void CProductControlModel::PlaceChildren()
 
 	CRect oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
+	newRect.Bottom() = rect.Top() + oldRect.GetHeight() / 2;
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 
 	oldRect = secondChild->GetRect();
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
+	newRect.Top() = rect.Bottom() - oldRect.GetHeight() / 2;
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
@@ -127,10 +126,15 @@ bool CProductControlModel::IsEmpty() const
 void CProductControlModel::updatePolygons()
 {
 	params.polygon.clear();
+
+	int piTop = rect.Top() + firstChild->GetRect().GetHeight() + 5;
+	int piBottom = rect.Bottom() - secondChild->GetRect().GetHeight() - 5;
+	int piLeft = rect.Left() + rect.GetWidth() / 5;
+	int piRight = rect.Right() - rect.GetWidth() / 5;
 	
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5 ) ); // левая палка
-	params.polygon.push_back( CLine( rect.Left() + 5, rect.Top() + 5, rect.Left() + 5, rect.Bottom() - 5 ) ); // правая палка
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 5 ) ); // верхняя перекладина
+	params.polygon.push_back( CLine( piLeft, piTop, piLeft, piBottom ) ); // левая палка
+	params.polygon.push_back( CLine( piRight, piTop, piRight, piBottom ) ); // правая палка
+	params.polygon.push_back( CLine( rect.Left(), piTop, rect.Right(), piTop ) ); // верхняя перекладина
 }
 
 void CProductControlModel::UpdateSelection()

@@ -8,7 +8,11 @@
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
 GP::GP( const MathCore& inputMCore, const std::vector<double>& inputAnglesOfAxis,
 	double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) :
-	mCore( inputMCore )
+	mCore( inputMCore ),
+	globalXShift( 0 ),
+	globalYShift( 0 ),
+	globalZShift( 0 ),
+	scale( 1 )
 {
 	windowSize = inputWindowSize;
 	origin.first = windowSize.first / 2;
@@ -45,12 +49,13 @@ void GP::generateGrid() {
 			points[i].resize( gridSize );
 			relativePoints[i].resize( gridSize );
 			for( int j = 0; j < gridSize; j++ ) {
-				points[i][j] = mCore.calculate( (double) (i - gridSize / 2) / 4, (double) (j - gridSize / 2) / 4 );
+				points[i][j] = scale * (mCore.calculate( (double) (i - gridSize / 2 + globalXShift) / 4,
+					(double) (j - gridSize / 2 + globalYShift) / 4 ) - globalZShift);
 			}
 		} else {
 			relativePoints[i].resize( 1 );
 			points[i].resize( 1 );
-			points[i][0] = mCore.calculate( (double) (i - gridSize / 2) / 4, 0 );
+			points[i][0] = scale * (mCore.calculate( (double) (i - gridSize / 2 + globalXShift) / 4, globalYShift ) - globalZShift);
 		}
 	}
 }
@@ -135,7 +140,7 @@ std::pair<double, double> GP::getAxisVector( int axisNum ) {
 	// пересчитываем координаты осей относительной( подвижной ) системы отсчета в 2D, используя координаты неподвижной системы
 	double relX = x0 * relativeAxis[axisNum].x + x1 * relativeAxis[axisNum].y + x2 * relativeAxis[axisNum].z;
 	double relY = y0 * relativeAxis[axisNum].x + y1 * relativeAxis[axisNum].y + y2 * relativeAxis[axisNum].z;
-	return std::pair<double, double>( mCore.scale * relX, mCore.scale * relY );
+	return std::pair<double, double>( scale * relX, scale * relY );
 }
 
 std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
@@ -158,8 +163,8 @@ void GP::rotateToCurrentAngle() {
 
 void GP::moveAlongX( int num ) {
 	rotateToStartAngle();
-
-	mCore.changeWindowCoordinates( num, 0, 0 );
+	
+	globalXShift += num;
 	generateGrid();
 
 	rotateToCurrentAngle();
@@ -169,7 +174,7 @@ void GP::moveAlongX( int num ) {
 void GP::moveAlongY( int num ) {
 	rotateToStartAngle();
 
-	mCore.changeWindowCoordinates( 0, num, 0 );
+	globalYShift += num;
 	generateGrid();
 
 	rotateToCurrentAngle();
@@ -180,7 +185,7 @@ void GP::moveAlongZ( int num )
 {
 	rotateToStartAngle();
 
-	mCore.changeWindowCoordinates( 0, 0, num );
+	globalZShift += num;
 	generateGrid();
 
 	rotateToCurrentAngle();
@@ -189,7 +194,7 @@ void GP::moveAlongZ( int num )
 
 void GP::changeScale( int num ) {
 	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
-		mCore.changeScale( (lengthOfSection + num) / lengthOfSection );
+		scale = (lengthOfSection + num) / lengthOfSection;
 
 		lengthOfSection += num;
 		generateGrid();
@@ -198,7 +203,11 @@ void GP::changeScale( int num ) {
 }
 
 std::pair<double, double> GP::getOriginCoordinates() {
-	return origin;
+	std::pair<double, double> res = origin;
+	std::pair<double, double> z = getAxisVectorVisual( 2 );
+	res.first -= globalXShift * lengthOfSection * scale;
+	res.second -= z.second * globalZShift * lengthOfSection * scale;
+	return res;
 }
 
 void GP::calculateRelativePoints() {

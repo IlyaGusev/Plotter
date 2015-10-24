@@ -79,4 +79,10 @@ private:
 	std::pair<double, double> windowSize;
 	// пересчитывает координаты в зависимисти от удаления от центра окна
 	MathCore mCore;
+
+	// Смещения и увеличение графика
+	double globalXShift;
+	double globalYShift;
+	double globalZShift;
+	double scale;
 };

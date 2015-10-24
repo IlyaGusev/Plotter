@@ -81,61 +81,65 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
 	case VK_RIGHT:
 		graphInPoints.turnRight();
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	case VK_LEFT:
 		graphInPoints.turnLeft();
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	case VK_UP:
 		graphInPoints.turnUp();
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	case VK_DOWN:
 		graphInPoints.turnDown();
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// Z key
 	case 0x5A:
 		graphInPoints.changeScale(-2 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// X key
 	case 0x58:
 		graphInPoints.changeScale( 2 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// Q key
 	case 0x51:
 		graphInPoints.moveAlongX( 1 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// A key
 	case 0x41:
 		graphInPoints.moveAlongX( -1 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// W key
 	case 0x57:
 		graphInPoints.moveAlongY( 1 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
 	// S key
 	case 0x53:
 		graphInPoints.moveAlongY( -1 );
-		::InvalidateRect(handle, NULL, FALSE);
-		::UpdateWindow(handle);
+		//::InvalidateRect(handle, NULL, FALSE);
+		//::UpdateWindow(handle);
 		break;
+	default:
+		return;
 	}
+	::InvalidateRect( handle, NULL, FALSE );
+	::UpdateWindow( handle );
 }
 
 void GraphWindow::OnMouseWheel( WPARAM wParam )
@@ -150,17 +154,17 @@ void GraphWindow::OnMouseWheel( WPARAM wParam )
 void GraphWindow::OnMouseMove( WPARAM wParam, int x, int y )
 {
 	if( wParam == MK_LBUTTON ) {
-		if( x - prevMousePosX > 5 ) {
+		if( x - prevMousePosX > 2 ) {
 			::SendMessage( handle, WM_KEYDOWN, VK_RIGHT, 0 );
 			prevMousePosX = x;
-		} else if( x - prevMousePosX < -5 ) {
+		} else if( x - prevMousePosX < -2 ) {
 			::SendMessage( handle, WM_KEYDOWN, VK_LEFT, 0 );
 			prevMousePosX = x;
 		}
-		if( y - prevMousePosY > 5 ) {
+		if( y - prevMousePosY > 2 ) {
 			::SendMessage( handle, WM_KEYDOWN, VK_DOWN, 0 );
 			prevMousePosY = y;
-		} else if( y - prevMousePosY < -5 ) {
+		} else if( y - prevMousePosY < -2 ) {
 			::SendMessage( handle, WM_KEYDOWN, VK_UP, 0 );
 			prevMousePosY = y;
 		}

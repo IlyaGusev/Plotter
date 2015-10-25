@@ -39,6 +39,8 @@ private:
 	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
 	std::shared_ptr<IBaseExprModel> secondChild;
+	// Ребенок под произведением
+	std::shared_ptr<IBaseExprModel> productChild;
 
 	int getIndexHeight( int rectHeight );
 

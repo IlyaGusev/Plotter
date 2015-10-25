@@ -1,5 +1,6 @@
 #include "Model/ProductControlModel.h"
 #include "Model/EditControlModel.h"
+#include "Model/SumControlModel.h"
 
 CProductControlModel::CProductControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 IBaseExprModel( rect, parent )
@@ -16,8 +17,19 @@ int CProductControlModel::GetSymbolHeight() {
 
 void CProductControlModel::Resize()
 {
-	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + MIN( firstChild->GetRect().GetHeight(), secondChild->GetRect().GetHeight() ) * 1.618;
+	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5 + productChild->GetRect().GetWidth();
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight();
+	// проблемы с инициализацией? type всегда возвращает Expr
+	if ( productChild->GetType() == SUM ) // хотим размер суммы подогнать под размер вложенной суммы
+	{
+		auto child = std::shared_ptr<CSumControlModel>( dynamic_cast< CSumControlModel* >( productChild.get() ) ); // кастуем к сумме
+		height += child->GetSymbolHeight();
+	} else if ( productChild->GetType() == PRODUCT ) { // или под размер вложенного произведения
+		auto child = std::shared_ptr<CProductControlModel>( dynamic_cast< CProductControlModel* >( productChild.get() ) ); // кастуем к произведению
+		height += child->GetSymbolHeight();
+	} else {
+		height += productChild->GetRect().GetHeight() + 10; // иначе сумма чуть больше, чем выражение
+	}
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -26,7 +38,7 @@ void CProductControlModel::Resize()
 void CProductControlModel::PlaceChildren()
 {
 	CRect newRect;
-	int middle = ( rect.Right() + rect.Left() ) / 2;
+	int middle = ( rect.Right() + rect.Left() - productChild->GetRect().GetWidth() - 5 ) / 2;
 
 	CRect oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
@@ -41,6 +53,14 @@ void CProductControlModel::PlaceChildren()
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
+
+	int middleHeight = rect.Top() + firstChild->GetRect().GetHeight() + GetSymbolHeight() / 2;
+	oldRect = productChild->GetRect();
+	newRect.Top() = middleHeight - oldRect.GetHeight() / 2;
+	newRect.Bottom() = middleHeight + oldRect.GetHeight() / 2;
+	newRect.Left() = rect.Left() + MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5;
+	newRect.Right() = newRect.Left() + oldRect.GetWidth();
+	productChild->SetRect( newRect );
 
 	updatePolygons();
 }
@@ -58,18 +78,22 @@ int CProductControlModel::getIndexHeight( int rectHeight )
 
 void CProductControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild )
 {
-	CRect childRect = CRect( 0, 0, 0, getIndexHeight( rect.GetHeight() ) );
+	CRect indexRect = CRect( 0, 0, 0, getIndexHeight( rect.GetHeight() ) );
+	CRect sumRect = CRect( 0, 0, 0, rect.GetHeight() );
+
 	if ( initChild ) {
-		firstChild = initChild;
-		firstChild->SetParent( shared_from_this() );
-		firstChild->UpdateDepth();
-	}
-	else {
-		firstChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
-		firstChild->InitializeChildren();
+		productChild = initChild;
+		productChild->SetParent( shared_from_this() );
+		productChild->UpdateDepth();
+	} else {
+		productChild = std::make_shared<CExprControlModel>( sumRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+		productChild->InitializeChildren();
 	}
 
-	secondChild = std::make_shared<CExprControlModel>( childRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+	firstChild = std::make_shared<CExprControlModel>( indexRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
+	firstChild->InitializeChildren();
+
+	secondChild = std::make_shared<CExprControlModel>( indexRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	secondChild->InitializeChildren();
 
 	Resize();
@@ -78,7 +102,7 @@ void CProductControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> i
 
 std::list<std::shared_ptr<IBaseExprModel>> CProductControlModel::GetChildren() const
 {
-	return std::list < std::shared_ptr<IBaseExprModel> > { firstChild, secondChild };
+	return std::list < std::shared_ptr<IBaseExprModel> > { firstChild, secondChild, productChild };
 }
 
 void CProductControlModel::SetRect( const CRect& rect )
@@ -103,11 +127,11 @@ void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 	// Если пришли из родителя - идем в нижнего ребенка
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
-	}
-	else if ( from == secondChild.get() ) {
+	} else if ( from == secondChild.get() ) {
 		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
-	}
-	else {
+	} else if ( from == firstChild.get() ) {
+		productChild->MoveCaretLeft( this, caret, isInSelectionMode );
+	} else {
 		// Иначе идем наверх
 		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
@@ -118,12 +142,12 @@ void CProductControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& c
 	// Если пришли из родителя - идем в верхнего ребенка
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
-	}
-	else if ( from == firstChild.get() ) {
+	} else if ( from == firstChild.get() ) {
 		// Если пришли из верхнего - идем в нижнего
 		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
-	}
-	else {
+	} else if ( from == secondChild.get() ) {
+		productChild->MoveCaretRight( this, caret, isInSelectionMode );
+	} else {
 		// Иначе идем наверх
 		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
@@ -131,26 +155,28 @@ void CProductControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& c
 
 bool CProductControlModel::IsEmpty() const
 {
-	return firstChild->IsEmpty() && secondChild->IsEmpty();
+	return firstChild->IsEmpty() && secondChild->IsEmpty() && productChild->IsEmpty();
 }
 
 void CProductControlModel::updatePolygons()
 {
 	params.polygon.clear();
 
+	int piWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
+
 	int piTop = rect.Top() + firstChild->GetRect().GetHeight() + 5;
 	int piBottom = rect.Bottom() - secondChild->GetRect().GetHeight() - 5;
-	int piLeft = rect.Left() + rect.GetWidth() / 5;
-	int piRight = rect.Right() - rect.GetWidth() / 5;
+	int piLeft = rect.Left() + piWidth / 5;
+	int piRight = rect.Left() + 4 * piWidth / 5;
 	
 	params.polygon.push_back( CLine( piLeft, piTop, piLeft, piBottom ) ); // левая палка
 	params.polygon.push_back( CLine( piRight, piTop, piRight, piBottom ) ); // правая палка
-	params.polygon.push_back( CLine( rect.Left(), piTop, rect.Right(), piTop ) ); // верхняя перекладина
+	params.polygon.push_back( CLine( rect.Left(), piTop, rect.Left() + piWidth, piTop ) ); // верхняя перекладина
 }
 
 void CProductControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected() && productChild->IsSelected();
 }
 
 std::shared_ptr<IBaseExprModel> CProductControlModel::CopySelected() const
@@ -158,11 +184,15 @@ std::shared_ptr<IBaseExprModel> CProductControlModel::CopySelected() const
 	std::shared_ptr<CProductControlModel> productModel( new CProductControlModel( rect, parent ) );
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
+	std::shared_ptr<IBaseExprModel> productChildModel = productChild->CopySelected();
 
 	productModel->firstChild = firstModel;
 	productModel->firstChild->SetParent( productModel );
 
 	productModel->secondChild = secondModel;
 	productModel->secondChild->SetParent( productModel );
+
+	productModel->productChild = productChildModel;
+	productModel->productChild->SetParent( productModel );
 	return productModel;
 }

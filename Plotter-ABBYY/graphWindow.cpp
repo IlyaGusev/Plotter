@@ -3,10 +3,10 @@
 
 #include "graphWindow.h"
 
-GraphWindow::GraphWindow(int width, int height, MathCore &mathCore) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints(mathCore, 80)
+	graphInPoints( formulaPath, is2D, 80 )
 {
 }
 

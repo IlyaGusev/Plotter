@@ -3,16 +3,10 @@
 
 
 
-Vector::Vector() {
-	x = 1;
-	y = 1;
-	z = 1;
-}
-Vector::Vector( double inputX, double inputY, double inputZ ) {
-	x = inputX;
-	y = inputY;
-	z = inputZ;
-}
+Vector::Vector(): x(1), y(1), z(1) {}
+
+Vector::Vector( double inputX, double inputY, double inputZ ): x(inputX), y(inputY), z(inputZ) {}
+
 void Vector::initialize( double inputX, double inputY, double inputZ ) {
 	x = inputX;
 	y = inputY;
@@ -32,12 +26,8 @@ void Vector::operator =( const Vector& vect ) {
 
 
 
-Quaternion::Quaternion() {
-	w = 0;
-	x = 0;
-	y = 0;
-	z = 1;
-}
+Quaternion::Quaternion(): w(0), x(0), y(0), z(1) {}
+
 Quaternion::Quaternion( double inputAngle, const Vector& vect ) {
 	double vnorm = sqrt( vect.x*vect.x + vect.y*vect.y + vect.z*vect.z );
 	w = cos( inputAngle / 180 / 2 * M_PI );

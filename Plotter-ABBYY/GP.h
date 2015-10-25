@@ -3,7 +3,7 @@
 #include <vector> 
 #include <math.h>
 #include "RotationLib.h"
-#include "mathCore.h"
+#include "calculator.h"
 
 
 // Graph in Points
@@ -11,11 +11,8 @@
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( const MathCore& inputMCore, 
-		const std::vector<double>& inputAnglesOfAxis, double inputLengthOfSection = 5,
-		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
-
-	GP( const MathCore& inputMCore, double inputLengthOfSection = 5,
+	GP( const wchar_t* formulaPath,
+		bool is2D = false, double inputLengthOfSection = 5,
 		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
 
 	//// Поворот вокруг оси Z
@@ -53,17 +50,12 @@ public:
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();
-	// создает сетку в зависимости от размера ячейки
-	void generateGrid();
 
 	void GP::rotateToStartAngle();
 	void GP::rotateToCurrentAngle();
 
 	void turnAroundAxis( int axisNumber, int angle = 1 );
-	
-	
-	// точки изначальные, в качестве индексов - узлы сетки XY
-	std::vector<std::vector<double>> points;
+
 	// углы, под которыми расположены главные( неподвижные ) оси на 2D по отношению к стандартной оси X
 	std::vector< double > anglesOfAxis;
 	// относительные( подвижные ) оси вращающейся фигуры или графика функции
@@ -71,18 +63,17 @@ private:
 	std::vector< Vector > prevRelativeAxis;
 	// относительные точки уже в 2D, в качестве индексов изначальная сетка X, Y 
 	std::vector<std::vector<std::pair<double, double>>> relativePoints;
-	// длина отрезка сетки
-	double lengthOfSection;
 	// координаты пересечения осей в 2D
 	std::pair<double, double> origin;
+
+	// Считает значения функции в конкретных точках
+	MathMlCalculator calc;
+	// Будет ли график плоским
+	bool is2D;
+
+	// длина отрезка сетки
+	double lengthOfSection;
+
 	// координаты центра окна
 	std::pair<double, double> windowSize;
-	// пересчитывает координаты в зависимисти от удаления от центра окна
-	MathCore mCore;
-
-	// Смещения и увеличение графика
-	double globalXShift;
-	double globalYShift;
-	double globalZShift;
-	double scale;
 };

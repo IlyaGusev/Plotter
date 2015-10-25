@@ -171,11 +171,6 @@
     <None Include="RibbonUI.bml" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="RibbonMarkup.xml" />
   </ItemGroup>
 </Project>

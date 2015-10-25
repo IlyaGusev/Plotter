@@ -12,7 +12,7 @@ IBaseExprModel( rect, parent )
 void CProductControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 5;
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + MIN( firstChild->GetRect().GetHeight(), secondChild->GetRect().GetHeight() ) * 1.618;
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -25,14 +25,14 @@ void CProductControlModel::PlaceChildren()
 
 	CRect oldRect = firstChild->GetRect();
 	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight() / 2;
+	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 
 	oldRect = secondChild->GetRect();
 	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight() / 2;
+	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
 	newRect.Left() = middle - oldRect.GetWidth() / 2;
 	newRect.Right() = middle + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
@@ -45,9 +45,15 @@ int CProductControlModel::GetMiddle() const
 	return ( firstChild->GetRect().GetHeight() + ( rect.GetHeight() - secondChild->GetRect().GetHeight() ) ) / 2;
 }
 
+// новая высота индекса
+int CProductControlModel::getIndexHeight( int rectHeight )
+{
+	return MAX( 3 * rectHeight / 4, CEditControlModel::MINIMAL_HEIGHT );
+}
+
 void CProductControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild )
 {
-	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
+	CRect childRect = CRect( 0, 0, 0, getIndexHeight( rect.GetHeight() ) );
 	if ( initChild ) {
 		firstChild = initChild;
 		firstChild->SetParent( shared_from_this() );

@@ -39,5 +39,7 @@ private:
 	// Нижний ребенок
 	std::shared_ptr<IBaseExprModel> secondChild;
 
+	int getIndexHeight( int rectHeight );
+
 	void updatePolygons();
 };

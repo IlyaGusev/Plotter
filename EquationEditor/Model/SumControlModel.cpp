@@ -118,6 +118,8 @@ void CSumControlModel::MoveBy( int dx, int dy )
 
 void CSumControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем в нижнего ребенка
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -133,6 +135,8 @@ void CSumControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret,
 
 void CSumControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем в верхнего ребенка
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -177,7 +181,8 @@ void CSumControlModel::updatePolygons()
 
 void CSumControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected() && sumChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()) || !(sumChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CSumControlModel::CopySelected() const

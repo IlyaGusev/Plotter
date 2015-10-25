@@ -104,7 +104,8 @@ void CParenthesesControlModel::MoveCaretRight( const IBaseExprModel* from, CCare
 
 void CParenthesesControlModel::UpdateSelection()
 {
-	params.isSelected = content->IsSelected();
+	if (!content->IsSelected())
+		params.isSelected = false;
 }
 
 bool CParenthesesControlModel::IsEmpty() const

@@ -1,10 +1,10 @@
-#include "Tag.h"
-#include "TagQualifiers.h"
-#include "TagFunctions.h"
-#include "TagCi.h"
-#include "TagDeclare.h"
+#include "CTag.h"
+#include "CTagQualifiers.h"
+#include "CTagFunctions.h"
+#include "CTagCi.h"
+#include "CTagDeclare.h"
 #include "CTagContainer.h"
-#include "TagCn.h"
+#include "CTagCn.h"
 #include "CTagApplyReln.h"
 
 map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
@@ -23,39 +23,39 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 
 	/***** unary elementary classical functions *****/
 	// Trigonometric functions
-	tagsToFill.emplace( "sin", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "cos", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "tan", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "sec", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "csc", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "cot", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
+	tagsToFill.emplace( "sin", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "cos", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "tan", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "sec", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "csc", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "cot", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 
 	// Hyperbolic functions
-	tagsToFill.emplace( "sinh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "cosh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "tanh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "sech", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "csch", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "coth", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
+	tagsToFill.emplace( "sinh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "cosh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "tanh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "sech", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "csch", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "coth", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 
 	// Inverse trigonometric and hyperbolic functions
-	tagsToFill.emplace( "arcsin", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccos", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arctan", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccosh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccot", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccoth", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccsc", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arccsch", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arcsec", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arcsech", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arcsinh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "arctanh", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
+	tagsToFill.emplace( "arcsin", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccos", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arctan", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccosh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccot", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccoth", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccsc", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arccsch", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arcsec", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arcsech", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arcsinh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "arctanh", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 
 
-	tagsToFill.emplace( "exp", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "ln", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
-	tagsToFill.emplace( "log", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 1>()));
+	tagsToFill.emplace( "exp", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "ln", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "log", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 
 	/******/
 
@@ -76,20 +76,20 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 
 
 	/*compare*/
-	tagsToFill.emplace("eq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '='
-	tagsToFill.emplace("neq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '!='
-	tagsToFill.emplace("lt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '<'
-	tagsToFill.emplace("gt", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));			// '>'
-	tagsToFill.emplace("leq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '<='
-	tagsToFill.emplace("geq", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// '>='
-	tagsToFill.emplace("equivalent", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>())); // 	triple =
-	tagsToFill.emplace("approx", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));		// 	'~=' approximately equal
-	tagsToFill.emplace("factorof", unique_ptr<CTag>(new CTagVarArgFunction<NUMBER, BOOL>()));	//	| (a|b is true when b mod a = 0)
+	tagsToFill.emplace("eq", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '='
+	tagsToFill.emplace("neq", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '!='
+	tagsToFill.emplace("lt", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '<'
+	tagsToFill.emplace("gt", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '>'
+	tagsToFill.emplace("leq", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '<='
+	tagsToFill.emplace("geq", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );		// '>='
+	tagsToFill.emplace("equivalent", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) ); // 	triple =
+	tagsToFill.emplace("approx", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );	// 	'~=' approximately equal
+	tagsToFill.emplace("factorof", unique_ptr< CTag >( new CTagVarArgFunction< NUMBER, BOOL >() ) );	//	| (a|b is true when b mod a = 0)
 
 	/*logical*/
-	tagsToFill.emplace("and", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
-	tagsToFill.emplace("or", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
-	tagsToFill.emplace("xor", unique_ptr<CTag>(new CTagVarArgFunction<BOOL, BOOL>()));
+	tagsToFill.emplace("and", unique_ptr< CTag >( new CTagVarArgFunction< BOOL, BOOL >() ) );
+	tagsToFill.emplace("or", unique_ptr< CTag >( new CTagVarArgFunction< BOOL, BOOL >() ) )	;
+	tagsToFill.emplace("xor", unique_ptr< CTag >( new CTagVarArgFunction< BOOL, BOOL >() ) );
 
 	/**********************************************/
 

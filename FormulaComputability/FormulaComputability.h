@@ -4,8 +4,8 @@
 
 #include "CTagContainer.h"
 #include "../pugixml/pugixml.hpp"
-#include "Tag.h"
-#include "TagCi.h"
+#include "CTag.h"
+#include "CTagCi.h"
 
 using namespace pugi;
 

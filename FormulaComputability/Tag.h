@@ -65,14 +65,14 @@ protected:
 };
 
 //tag doesn't requier any siblings
-class CTagAtamar : public CTag 
+class CTagAtomic : public CTag 
 {
 public:
 	virtual const CNode  checkSignature(const CNode& node) const;
 };
 
 //класс для работы с тегом <bvar>, объявляющим локальную переменную
-class CTagBVar : public CTagAtamar 
+class CTagBVar : public CTagAtomic 
 {
 public:
 	CTagBVar();
@@ -80,7 +80,7 @@ public:
 };
 
 //класс для работы с тегом <condition>
-class CTagCondition : public CTagAtamar
+class CTagCondition : public CTagAtomic
 {
 public:
 	CTagCondition();

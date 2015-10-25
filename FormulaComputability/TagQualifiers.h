@@ -5,7 +5,7 @@
 #include "Tag.h"
 
 //класс для работы с тегами degree, lowlimit, uplimit
-class CTagQualifiers : public CTagAtamar
+class CTagQualifiers : public CTagAtomic
 {
 public:
     CTagQualifiers(int _type); //_type определяет конкретный тип тега

@@ -7,7 +7,7 @@
 
 //both Apply (= CTagApplyReln<NUMBER>) and Reld (= CTagApplyReln<BOOL>)
 template<CType TFunc>
-class CTagApplyReln : public CTagAtamar
+class CTagApplyReln : public CTagAtomic
 {
 public:
 	CTagApplyReln();

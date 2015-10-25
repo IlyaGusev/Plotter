@@ -4,7 +4,7 @@
 #include "Tag.h"
 
 //класс для работы с тегом <cn>
-class CTagCn : public CTagAtamar
+class CTagCn : public CTagAtomic
 {
 	void nodeIsInteger(const CNode& node)const;
 	void nodeIsReal(const CNode& node)const;

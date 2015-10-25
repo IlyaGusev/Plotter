@@ -1,16 +1,16 @@
-#pragma once
+п»ї#pragma once
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
-// Модель для суммы
-// Держит на себе пару ExprControl'ов - верхний и нижний индексы
+// РњРѕРґРµР»СЊ РґР»СЏ СЃСѓРјРјС‹
+// Р”РµСЂР¶РёС‚ РЅР° СЃРµР±Рµ РїР°СЂСѓ ExprControl'РѕРІ - РІРµСЂС…РЅРёР№ Рё РЅРёР¶РЅРёР№ РёРЅРґРµРєСЃС‹
 class CSumControlModel : public IBaseExprModel {
 public:
 	CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	// Выставляем размеры вьюшек
+	// Р’С‹СЃС‚Р°РІР»СЏРµРј СЂР°Р·РјРµСЂС‹ РІСЊСЋС€РµРє
 	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void SetRect( const CRect& rect );
@@ -36,11 +36,11 @@ public:
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
-	// Верхний ребенок
+	// Р’РµСЂС…РЅРёР№ СЂРµР±РµРЅРѕРє
 	std::shared_ptr<IBaseExprModel> firstChild;
-	// Нижний ребенок
+	// РќРёР¶РЅРёР№ СЂРµР±РµРЅРѕРє
 	std::shared_ptr<IBaseExprModel> secondChild;
-	// Ребенок, к которому относится сумма
+	// Р РµР±РµРЅРѕРє, Рє РєРѕС‚РѕСЂРѕРјСѓ РѕС‚РЅРѕСЃРёС‚СЃСЏ СЃСѓРјРјР°
 	std::shared_ptr<IBaseExprModel> sumChild;
 
 	void updatePolygons();

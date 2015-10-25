@@ -1,11 +1,11 @@
-#include "Model/SumControlModel.h"
+п»ї#include "Model/SumControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/ProductControlModel.h"	
 
 CSumControlModel::CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
 {
-	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
+	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // РЅР°СЃ РёРЅС‚РµСЂРµСЃСѓРµС‚ С‚РѕР»СЊРєРѕ РІС‹СЃРѕС‚Р°, РѕСЃС‚Р°Р»СЊРЅРѕРµ РёСЃРїСЂР°РІРёС‚СЃСЏ СЃСЂР°Р·Сѓ Р¶Рµ РїРѕСЃР»Рµ РёРЅРІР°Р»РёРґР°С†РёРё РґРµСЂРµРІР°
 
 	depth = parent.lock()->GetDepth() + 1;
 }
@@ -19,16 +19,16 @@ void CSumControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5 + sumChild->GetRect().GetWidth();
 	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight();
-	// проблемы с инициализацией? type всегда возвращает Expr
-	if ( sumChild->GetType() == SUM ) // хотим размер суммы подогнать под размер вложенной суммы
+	// РїСЂРѕР±Р»РµРјС‹ СЃ РёРЅРёС†РёР°Р»РёР·Р°С†РёРµР№? type РІСЃРµРіРґР° РІРѕР·РІСЂР°С‰Р°РµС‚ Expr
+	if ( sumChild->GetType() == SUM ) // С…РѕС‚РёРј СЂР°Р·РјРµСЂ СЃСѓРјРјС‹ РїРѕРґРѕРіРЅР°С‚СЊ РїРѕРґ СЂР°Р·РјРµСЂ РІР»РѕР¶РµРЅРЅРѕР№ СЃСѓРјРјС‹
 	{
-		auto child = std::shared_ptr<CSumControlModel>( dynamic_cast< CSumControlModel* >( sumChild.get() ) ); // кастуем к сумме
+		auto child = std::shared_ptr<CSumControlModel>( dynamic_cast< CSumControlModel* >( sumChild.get() ) ); // РєР°СЃС‚СѓРµРј Рє СЃСѓРјРјРµ
 		height += child->GetSymbolHeight();
-	} else if ( sumChild->GetType() == PRODUCT ) { // или под размер вложенного произведения
-		auto child = std::shared_ptr<CProductControlModel>( dynamic_cast< CProductControlModel* >( sumChild.get() ) ); // кастуем к произведению
+	} else if ( sumChild->GetType() == PRODUCT ) { // РёР»Рё РїРѕРґ СЂР°Р·РјРµСЂ РІР»РѕР¶РµРЅРЅРѕРіРѕ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ
+		auto child = std::shared_ptr<CProductControlModel>( dynamic_cast< CProductControlModel* >( sumChild.get() ) ); // РєР°СЃС‚СѓРµРј Рє РїСЂРѕРёР·РІРµРґРµРЅРёСЋ
 		height += child->GetSymbolHeight();
 	} else {
-		height += sumChild->GetRect().GetHeight() + 10; // иначе сумма чуть больше, чем выражение
+		height += sumChild->GetRect().GetHeight() + 10; // РёРЅР°С‡Рµ СЃСѓРјРјР° С‡СѓС‚СЊ Р±РѕР»СЊС€Рµ, С‡РµРј РІС‹СЂР°Р¶РµРЅРёРµ
 	}
 
 	rect.Right() = rect.Left() + width;
@@ -118,7 +118,7 @@ void CSumControlModel::MoveBy( int dx, int dy )
 
 void CSumControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
-	// Если пришли из родителя - идем в нижнего ребенка
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ СЂРµР±РµРЅРєР°
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else if ( from == secondChild.get() ) {
@@ -126,23 +126,23 @@ void CSumControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret,
 	} else if ( from == firstChild.get() ) {
 		sumChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
 void CSumControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
-	// Если пришли из родителя - идем в верхнего ребенка
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РІРµСЂС…РЅРµРіРѕ СЂРµР±РµРЅРєР°
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else if ( from == firstChild.get() ) {
-		// Если пришли из верхнего - идем в нижнего
+		// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· РІРµСЂС…РЅРµРіРѕ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ
 		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else if ( from == secondChild.get() ) {
 		sumChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
@@ -152,7 +152,7 @@ bool CSumControlModel::IsEmpty() const
 	return firstChild->IsEmpty() && secondChild->IsEmpty() && sumChild->IsEmpty();
 }
 
-// высота индексов
+// РІС‹СЃРѕС‚Р° РёРЅРґРµРєСЃРѕРІ
 int CSumControlModel::getIndexHeight( int rectHeight )
 {
 	return max( rectHeight * 3 / 4, CEditControlModel::MINIMAL_HEIGHT );
@@ -169,10 +169,10 @@ void CSumControlModel::updatePolygons()
 	int sigmaCenterX = ( sigmaLeft + sigmaRight ) / 2;
 	int sigmaCenterY = ( sigmaTop + sigmaBottom ) / 2;
 
-	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaRight, sigmaTop ) ); // верхняя перекладина
-	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaCenterX, sigmaCenterY ) ); // диагональ сверху в центр
-	params.polygon.push_back( CLine( sigmaCenterX, sigmaCenterY, sigmaLeft, sigmaBottom ) ); // диагональ из центра вниз
-	params.polygon.push_back( CLine( sigmaLeft, sigmaBottom, sigmaRight, sigmaBottom ) ); // нижняя перекладина
+	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaRight, sigmaTop ) ); // РІРµСЂС…РЅСЏСЏ РїРµСЂРµРєР»Р°РґРёРЅР°
+	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaCenterX, sigmaCenterY ) ); // РґРёР°РіРѕРЅР°Р»СЊ СЃРІРµСЂС…Сѓ РІ С†РµРЅС‚СЂ
+	params.polygon.push_back( CLine( sigmaCenterX, sigmaCenterY, sigmaLeft, sigmaBottom ) ); // РґРёР°РіРѕРЅР°Р»СЊ РёР· С†РµРЅС‚СЂР° РІРЅРёР·
+	params.polygon.push_back( CLine( sigmaLeft, sigmaBottom, sigmaRight, sigmaBottom ) ); // РЅРёР¶РЅСЏСЏ РїРµСЂРµРєР»Р°РґРёРЅР°
 }
 
 void CSumControlModel::UpdateSelection()

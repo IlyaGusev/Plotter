@@ -30,6 +30,8 @@ public:
 
 	bool IsEmpty() const;
 
+	int GetSymbolHeight();
+
 	void UpdateSelection();
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
@@ -38,7 +40,9 @@ private:
 	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
 	std::shared_ptr<IBaseExprModel> secondChild;
+	// Ребенок, к которому относится сумма
+	std::shared_ptr<IBaseExprModel> sumChild;
 
 	void updatePolygons();
-	int CSumControlModel::getIndexHeight(int rectHeight);
+	int getIndexHeight(int rectHeight);
 };

@@ -29,6 +29,7 @@ public:
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
 	bool IsEmpty() const;
+	int GetSymbolHeight();
 
 	void UpdateSelection();
 

@@ -9,6 +9,11 @@ IBaseExprModel( rect, parent )
 	depth = parent.lock()->GetDepth() + 1;
 }
 
+int CProductControlModel::GetSymbolHeight() {
+	return rect.GetHeight() - (firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight()); // -10 ?
+}
+
+
 void CProductControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );

@@ -57,9 +57,9 @@
              LabelTitle="Сумма"
              LabelDescription="Сумма"
              TooltipDescription="Сумма">
-      <!--<Command.LargeImages>
+      <Command.LargeImages>
         <Image>Res\sum.bmp</Image>
-      </Command.LargeImages>-->
+      </Command.LargeImages>
     </Command>        
 
     <Command Name="cmdButtonProduct"
@@ -67,9 +67,9 @@
              LabelTitle="Произведение"
              LabelDescription="Произведение"
              TooltipDescription="Произведение">
-      <!--<Command.LargeImages>
+      <Command.LargeImages>
         <Image>Res\product.bmp</Image>
-      </Command.LargeImages>-->
+      </Command.LargeImages>
     </Command>    
 
     <Command Name="cmdButtonExit"

@@ -73,4 +73,10 @@ private:
 
 	// координаты центра окна
 	std::pair<double, double> windowSize;
+
+	// Смещения и увеличение графика
+	double globalXShift;
+	double globalYShift;
+	double globalZShift;
+	double scale;
 };

@@ -56,6 +56,9 @@ public:
 	int GetGridSize();
 private:
 	void buildFormula(const pugi::xml_node& formulaRoot);
+	double getFirstArg( int i, int j );
+	double getSecondArg( int i, int j );
+
 	std::function<double()> xFormula;
 	std::function<double()> yFormula;
 	std::function<double()> zFormula;
@@ -63,16 +66,11 @@ private:
 	int gridSize;
 
 	bool is2D = false;
+	bool isParametric = false;
 
 	static pugi::xml_document doc;
 
 	std::vector<std::vector<double>> xPoints;
 	std::vector<std::vector<double>> yPoints;
 	std::vector<std::vector<double>> zPoints;
-
-	// Смещения и увеличение графика
-	double globalXShift;
-	double globalYShift;
-	double globalZShift;
-	double scale;
 };

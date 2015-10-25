@@ -25,13 +25,13 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 		return 1;
 	}
 	
-	std::function<int(std::list<int>)> a = [](std::list<int> x){ int res = 0;
-	std::function<int(int, int)> b = [](int a, int b){return a + b; };
-	for (auto i = x.begin(); i != x.end(); ++i) {
-		res += *i + b(4, 2);
-	}
-	return res;
-	};
+	//std::function<int(std::list<int>)> a = [](std::list<int> x){ int res = 0;
+	//std::function<int(int, int)> b = [](int a, int b){return a + b; };
+	//for (auto i = x.begin(); i != x.end(); ++i) {
+	//	res += *i + b(4, 2);
+	//}
+	//return res;
+	//};
 	//mainWindow->Show();
 	mainWindow.Show();
 

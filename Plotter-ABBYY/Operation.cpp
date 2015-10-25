@@ -66,8 +66,8 @@ const Operation& OperationHandler::getOperation(const std::string& opName) {
 }
 
 
-std::map<  std::string, std::unique_ptr<Operation> > OperationHandler::fillOperations() {
-	std::map<  std::string, std::unique_ptr<Operation> > operationsToFill;
+std::map< std::string, std::unique_ptr<Operation> > OperationHandler::fillOperations() {
+	std::map< std::string, std::unique_ptr<Operation> > operationsToFill;
 	operationsToFill.emplace("plus", std::unique_ptr<Operation>(new PlusOperation()) );
 	operationsToFill.emplace("minus", std::unique_ptr<Operation>(new MinusOperation()));
 	operationsToFill.emplace("times", std::unique_ptr<Operation>(new TimesOperation()));
@@ -83,6 +83,7 @@ std::map<std::string, double> OperationHandler::fillVars() {
 	varsToFill["y"] = 0;
 	varsToFill["z"] = 0;
 	varsToFill["t"] = 0;
+	varsToFill["u"] = 0;
 	return varsToFill;
 }
 

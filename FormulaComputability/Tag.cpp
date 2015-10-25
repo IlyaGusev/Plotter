@@ -164,7 +164,7 @@ CType CTag::getType() const
     return type;
 }
 
-const CNode CTagAtamar::checkSignature(const CNode& node) const
+const CNode CTagAtomic::checkSignature(const CNode& node) const
 {
 	return node.next_sibling();
 }

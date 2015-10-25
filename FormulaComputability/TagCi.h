@@ -4,7 +4,7 @@
 #include "Tag.h"
 
 //класс для работы с тегом <ci>
-class CTagCi : public CTagAtamar
+class CTagCi : public CTagAtomic
 {
 public:
 	CTagCi();

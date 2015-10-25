@@ -5,7 +5,7 @@
 #define _TAGDECLARE_H
 #include "CTagContainer.h"
 
-class CTagDeclare : public CTagAtamar
+class CTagDeclare : public CTagAtomic
 {	
 public:
 	void operator ()(const CNode& node) const;

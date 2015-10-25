@@ -68,7 +68,7 @@ BEGIN
     ID_CMD_RADICAL_TooltipDescription_RESID L"\x0421\x043e\x0437\x0434\x0430\x043d\x0438\x0435 \x043a\x043e\x0440\x043d\x044f" /* TooltipDescription ID_CMD_RADICAL_TooltipDescription_RESID: (null) */
 END
 
-ID_CMD_RADICAL_LargeImages_RESID    BITMAP    "Res/radical.bmp" /* LargeImages ID_CMD_RADICAL_LargeImages_RESID: (null) */
+ID_CMD_RADICAL_LargeImages_RESID    BITMAP    "Res\\radical.bmp" /* LargeImages ID_CMD_RADICAL_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
     ID_CMD_Bracket_LabelTitle_RESID L"\x0421\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_Bracket_LabelTitle_RESID: (null) */
@@ -100,6 +100,7 @@ BEGIN
     ID_CMD_Sum_TooltipDescription_RESID L"\x0421\x0443\x043c\x043c\x0430" /* TooltipDescription ID_CMD_Sum_TooltipDescription_RESID: (null) */
 END
 
+ID_CMD_Sum_LargeImages_RESID    BITMAP    "Res\sum.bmp" /* LargeImages ID_CMD_Sum_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
     ID_CMD_Product_LabelTitle_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* LabelTitle ID_CMD_Product_LabelTitle_RESID: (null) */
@@ -115,6 +116,7 @@ BEGIN
     ID_CMD_Product_TooltipDescription_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* TooltipDescription ID_CMD_Product_TooltipDescription_RESID: (null) */
 END
 
+ID_CMD_Product_LargeImages_RESID    BITMAP    "Res\product.bmp" /* LargeImages ID_CMD_Product_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
     ID_CMD_EXIT_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_EXIT_LabelTitle_RESID: (null) */
@@ -171,4 +173,4 @@ BEGIN
     InternalCmd2_LabelTitle_RESID L"Label:InternalCmd2" /* LabelTitle InternalCmd2_LabelTitle_RESID: (null) */
 END
 
-APPLICATION_RIBBON    UIFILE    "Debug\\\\RibbonUI.bml"
+APPLICATION_RIBBON    UIFILE    "RibbonUI.bml"

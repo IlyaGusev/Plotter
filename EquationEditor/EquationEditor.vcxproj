@@ -129,9 +129,11 @@
     <ResourceCompile Include="RibbonResource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="RibbonMarkup.xml">
+    <CustomBuild Include="RibbonMarkup.xml">
       <SubType>Designer</SubType>
-    </Xml>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">UICC.exe RibbonMarkup.xml RibbonUI.bml /header:RibbonIDs.h /res:RibbonResource.rc</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RibbonUI.bml; RibbonIDs.h; RibbonResource.rc</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <None Include="RibbonUI.bml" />

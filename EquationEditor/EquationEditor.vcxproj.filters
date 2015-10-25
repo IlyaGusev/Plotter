@@ -176,6 +176,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="RibbonMarkup.xml" />
+    <CustomBuild Include="RibbonMarkup.xml" />
   </ItemGroup>
 </Project>

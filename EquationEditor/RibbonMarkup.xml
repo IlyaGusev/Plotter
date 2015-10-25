@@ -38,7 +38,7 @@
              LabelDescription="Корень"
              TooltipDescription="Создание корня">
       <Command.LargeImages>
-        <Image>Res\radical.bmp</Image>
+        <Image>Res\\radical.bmp</Image>
       </Command.LargeImages>
     </Command>
 

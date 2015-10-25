@@ -8,27 +8,39 @@ LOBJ			"<OMOBJ>"
 ROBJ			"</OMOBJ>"
 LAPP			"<OMA>"
 RAPP			"</OMA>"
-LID 			"<OMI>"
-RID 			"</OMI>"
+LNUM 			"<OMI>"
+RNUM 			"</OMI>"
+EQUALS			\<OMS\ cd=\"relation1\"\ name=\"eq\"\/>
+MINUS 			\<OMS\ cd=\"arith1\"\ name=\"minus\"\/>
+PLUS 			\<OMS\ cd=\"arith1\"\ name=\"plus\"\/>
+DIVIDE			\<OMS\ cd=\"arith1\"\ name=\"divide\"\/>
+TIMES 			\<OMS\ cd=\"arith1\"\ name=\"times\"\/>
+ROOT			\<OMS\ cd=\"arith1\"\ name=\"root\"\/>
+UMINUS 			\<OMS\ cd=\"arith1\"\ name=\"unary_minus\"\/>
 ID				[a-z][a-z0-9]*
 NUMBER			([0-9]+)(\.[0-9]+)?
+END_OF_FILE		<<EOF>>
+
+
 
 %%
-{LOBJ}											{ printf("LOBJ\n"); }
-{ROBJ}											{ printf("ROBJ\n"); }
-{LAPP}											{ printf("LAPP\n"); }
-{RAPP}											{ printf("RAPP\n"); }
-{LID}											{ printf("LID\n"); }
-{RID}											{ printf("RID\n"); }
-\<OMV\ name=\"{ID}\"\/>							{ printf("VAR\n"); }
-\<OMS\ cd=\"arith1\"\ name=\"minus\"\/>			{ printf("'-'"); }
-\<OMS\ cd=\"arith1\"\ name=\"plus\"\/>			{ printf("'+'"); }
-\<OMS\ cd=\"arith1\"\ name=\"divide\"\/>		{ printf("'/'"); }
-\<OMS\ cd=\"arith1\"\ name=\"times\"\/>			{ printf("'*'"); }
-\<OMS\ cd=\"arith1\"\ name=\"root\"\/>			{ printf("'sqrt'"); }
-\<OMS\ cd=\"arith1\"\ name=\"unary_minus\"\/>	{ printf("unary '-'"); }
+{NUMBER}					{ printf("NUM\n"); }
+{LOBJ}						{ printf("LOBJ\n"); }
+{ROBJ}						{ printf("ROBJ\n"); }
+{LAPP}						{ printf("LAPP\n"); }
+{RAPP}						{ printf("RAPP\n"); }
+{LNUM}						{ printf("LNUM\n"); }
+{RNUM}						{ printf("RNUM\n"); }
+{EQUALS}					{ printf("'='\n"); }
+{MINUS}						{ printf("'-'\n"); }
+{PLUS}						{ printf("'+'\n"); }
+{DIVIDE}					{ printf("'/'\n"); }
+{TIMES}						{ printf("'*'\n"); }
+{ROOT}						{ printf("'sqrt'\n"); }
+{UMINUS}					{ printf("unary '-'\n"); }
+\<OMV\ name=\"{ID}\"\/>		{ printf("VAR\n"); }
 
-
-{WHITESPACE}     								{}
-{LINE_SEPARATOR} 								{}
+{WHITESPACE}     			{}
+{LINE_SEPARATOR} 			{}
+.							{}
 %%

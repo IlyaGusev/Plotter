@@ -40,4 +40,5 @@ private:
 	std::shared_ptr<IBaseExprModel> secondChild;
 
 	void updatePolygons();
+	int CSumControlModel::getIndexHeight(int rectHeight);
 };

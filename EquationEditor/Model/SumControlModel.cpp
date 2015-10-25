@@ -12,7 +12,7 @@ IBaseExprModel( rect, parent )
 void CSumControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 5;
+	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 30; // добавим третьего ребенка (что под суммой) -- высота будет зависеть от него
 
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
@@ -47,7 +47,7 @@ int CSumControlModel::GetMiddle() const
 
 void CSumControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild )
 {
-	CRect childRect = CRect( 0, 0, 0, rect.GetHeight() );
+	CRect childRect = CRect( 0, 0, 0, getIndexHeight( rect.GetHeight() ) );
 	if ( initChild ) {
 		firstChild = initChild;
 		firstChild->SetParent( shared_from_this() );
@@ -123,15 +123,28 @@ bool CSumControlModel::IsEmpty() const
 	return firstChild->IsEmpty() && secondChild->IsEmpty();
 }
 
+// высота индексов
+int CSumControlModel::getIndexHeight( int rectHeight )
+{
+	return max( rectHeight * 3 / 4, CEditControlModel::MINIMAL_HEIGHT );
+}
+
+
 void CSumControlModel::updatePolygons()
 {
 	params.polygon.clear();
 	
-	// TODO Arlen
+	int sigmaTop = rect.Top() + firstChild->GetRect().GetHeight() + 5;
+	int sigmaBottom = rect.Bottom() - secondChild->GetRect().GetHeight() - 5;
+	int sigmaLeft = rect.Left();
+	int sigmaRight = rect.Right();
+	int sigmaCenterX = (sigmaLeft + sigmaRight) / 2;
+	int sigmaCenterY = (sigmaTop + sigmaBottom) / 2;
 
-	// params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5 ) ); // левая палка
-	// params.polygon.push_back( CLine( rect.Left() + 5, rect.Top() + 5, rect.Left() + 5, rect.Bottom() - 5 ) ); // правая палка
-	// params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 5 ) ); // верхняя перекладина
+	params.polygon.push_back(CLine(sigmaLeft, sigmaTop, sigmaRight, sigmaTop)); // верхняя перекладина
+	params.polygon.push_back(CLine(sigmaLeft, sigmaTop, sigmaCenterX, sigmaCenterY)); // диагональ сверху в центр
+	params.polygon.push_back(CLine(sigmaCenterX, sigmaCenterY, sigmaLeft, sigmaBottom)); // диагональ из центра вниз
+	params.polygon.push_back(CLine(sigmaLeft, sigmaBottom, sigmaRight, sigmaBottom)); // нижняя перекладина
 }
 
 void CSumControlModel::UpdateSelection()

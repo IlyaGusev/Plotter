@@ -37,8 +37,9 @@
 class MathMlCalculator/*: Calculator*/ {
 public:
 	MathMlCalculator() {}
-	MathMlCalculator( const wchar_t* formulaPath );
+	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false );
 
+	void RecalculatePoints();
 	void RecalculatePoints( int gridSize );
 
 	//double countExpression(double xArgument, double yArgument);
@@ -62,6 +63,8 @@ private:
 	int gridSize;
 
 	bool is2D = false;
+
+	static pugi::xml_document doc;
 
 	std::vector<std::vector<double>> xPoints;
 	std::vector<std::vector<double>> yPoints;

@@ -19,7 +19,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 	//MathCore mathCore(doc);
 
 	//GraphWindow* mainWindow = new GraphWindow(700, 700, mathCore);
-	GraphWindow mainWindow( 700, 700, L"./ex.xml", false );
+	GraphWindow mainWindow( 700, 700, L"./ex.xml", true );
 
 	if(/*!mainWindow->Create(hInstance, nCmdShow)*/ !mainWindow.Create( hInstance, nCmdShow ) ) {
 		return 1;

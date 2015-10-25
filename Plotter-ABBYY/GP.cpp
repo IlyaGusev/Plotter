@@ -8,21 +8,20 @@
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
 GP::GP( const wchar_t* formulaPath, bool _is2D,
 	double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) :
-	is2D( _is2D ),
 	lengthOfSection( inputLengthOfSection ),
 	windowSize( inputWindowSize )
 {
-	calc = MathMlCalculator( formulaPath );
+	calc = MathMlCalculator( formulaPath, _is2D );
 
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;
-	anglesOfAxis = is2D ? std::vector<double>{0, 90, 90} : std::vector<double>{ -30, 40, 90 };
+	anglesOfAxis = calc.Is2D() ? std::vector<double>{0, 90, 90} : std::vector<double>{ -30, 40, 90 };
 	relativeAxis.resize( 3 );
 	relativeAxis[0] = Vector( 1, 0, 0 );
 	relativeAxis[1] = Vector( 0, 1, 0 );
 	relativeAxis[2] = Vector( 0, 0, 1 );
 	prevRelativeAxis = relativeAxis;
-	
+
 	double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
 	calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
 
@@ -45,7 +44,8 @@ GP::GP( const wchar_t* formulaPath, bool _is2D,
 //	calculateRelativePoints();
 //}
 
-void GP::turnAroundAxis( int axisNumber, int angle ) {
+void GP::turnAroundAxis( int axisNumber, int angle )
+{
 	Quaternion q( angle, relativeAxis[axisNumber] );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
@@ -55,50 +55,53 @@ void GP::turnAroundAxis( int axisNumber, int angle ) {
 
 void GP::turnLeft()
 {
-	if( is2D ) {
-		moveAlongX( 1 );
+	if( calc.Is2D() ) {
+		moveAlongX( -1 );
 	} else {
 		turnAroundAxis( 2, -1 );
 	}
 }
 void GP::turnRight()
 {
-	if( is2D ) {
-		moveAlongX( -1 );
+	if( calc.Is2D() ) {
+		moveAlongX( 1 );
 	} else {
 		turnAroundAxis( 2, 1 );
 	}
 }
 void GP::turnUp()
 {
-	if( is2D ) {
-		moveAlongZ( -1 );
+	if( calc.Is2D() ) {
+		moveAlongZ( 1 );
 	} else {
 		turnAroundAxis( 1, 1 );
 	}
 }
 void GP::turnDown()
 {
-	if( is2D ) {
-		moveAlongZ( 1 );
+	if( calc.Is2D() ) {
+		moveAlongZ( -1 );
 	} else {
 		turnAroundAxis( 1, -1 );
 	}
 }
 
-void GP::turnRoundVector( int angle, Vector vector ) {
+void GP::turnRoundVector( int angle, Vector vector )
+{
 	Quaternion q( angle, vector );
 	for( int i = 0; i < 3; i++ ) {
 		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
 	}
 }
 
-std::vector<std::vector<std::pair<double, double>>> GP::getRelativePoints() {
+std::vector<std::vector<std::pair<double, double>>> GP::getRelativePoints()
+{
 	return relativePoints;
 }
 
 // возвращает направляющий вектор относительной( подвижной ) системы отсчета. Номера осей X - 0, Y - 1, Z - 2
-std::pair<double, double> GP::getAxisVector( int axisNum ) {
+std::pair<double, double> GP::getAxisVector( int axisNum )
+{
 	// получаем координаты неподвижной системы отсчета в 2D
 	double x0 = cos( M_PI * anglesOfAxis[0] / 180 );
 	double y0 = sin( M_PI * anglesOfAxis[0] / 180 );
@@ -112,62 +115,47 @@ std::pair<double, double> GP::getAxisVector( int axisNum ) {
 	return std::pair<double, double>( calc.Scale() * relX, calc.Scale() * relY );
 }
 
-std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) {
+std::pair<double, double> GP::getAxisVectorVisual( int axisNum )
+{
 	std::pair<double, double> axis = getAxisVector( axisNum );
 	axis.second = -axis.second;
 	return axis;
 
 }
 
-void GP::rotateToStartAngle() {
+void GP::rotateToStartAngle()
+{
 	prevRelativeAxis = relativeAxis;
-	relativeAxis[0] = Vector(1, 0, 0);
-	relativeAxis[1] = Vector(0, 1, 0);
-	relativeAxis[2] = Vector(0, 0, 1);
+	relativeAxis[0] = Vector( 1, 0, 0 );
+	relativeAxis[1] = Vector( 0, 1, 0 );
+	relativeAxis[2] = Vector( 0, 0, 1 );
 }
 
-void GP::rotateToCurrentAngle() {
+void GP::rotateToCurrentAngle()
+{
 	relativeAxis = prevRelativeAxis;
 }
 
-void GP::moveAlongX( int num ) {
-	rotateToStartAngle();
-	
+void GP::moveAlongX( int num )
+{
 	calc.GlobalXShift() += num;
-
-	double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-	calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
-
-	rotateToCurrentAngle();
 	calculateRelativePoints();
 }
 
-void GP::moveAlongY( int num ) {
-	rotateToStartAngle();
-
+void GP::moveAlongY( int num )
+{
 	calc.GlobalYShift() += num;
-
-	double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-	calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
-
-	rotateToCurrentAngle();
 	calculateRelativePoints();
 }
 
 void GP::moveAlongZ( int num )
 {
-	rotateToStartAngle();
-
 	calc.GlobalZShift() += num;
-
-	double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-	calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
-
-	rotateToCurrentAngle();
 	calculateRelativePoints();
 }
 
-void GP::changeScale( int num ) {
+void GP::changeScale( int num )
+{
 	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
 		calc.Scale() *= (lengthOfSection + num) / lengthOfSection;
 
@@ -177,38 +165,46 @@ void GP::changeScale( int num ) {
 		calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
 
 		calculateRelativePoints();
-	}	
+	}
 }
 
-std::pair<double, double> GP::getOriginCoordinates() {
+std::pair<double, double> GP::getOriginCoordinates()
+{
 	std::pair<double, double> res = origin;
+	std::pair<double, double> x = getAxisVectorVisual( 0 );
+	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
-	res.first -= calc.GlobalXShift() * lengthOfSection * calc.Scale();
-	res.second -= z.second * calc.GlobalZShift() * lengthOfSection * calc.Scale();
+	res.first -= x.first * calc.GlobalXShift() * lengthOfSection + y.first * calc.GlobalYShift() * lengthOfSection +
+		z.first * calc.GlobalZShift() * lengthOfSection;
+	res.second -= x.second * calc.GlobalXShift() * lengthOfSection + y.second * calc.GlobalYShift() * lengthOfSection +
+		z.second * calc.GlobalZShift() * lengthOfSection;
 	return res;
 }
 
-void GP::calculateRelativePoints() {
+void GP::calculateRelativePoints()
+{
 	std::pair<double, double> x = getAxisVectorVisual( 0 );
 	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
 	relativePoints.resize( calc.GetGridSize() );
 	for( int i = 0; i < relativePoints.size(); i++ ) {
-		if( !is2D ) {
+		if( !calc.Is2D() ) {
 			relativePoints[i].resize( calc.GetGridSize() );
 			for( int j = 0; j < relativePoints[i].size(); j++ ) {
-				double xRel = origin.first + x.first * calc.GetX( i, j ) * lengthOfSection +
-					y.first * calc.GetY( i, j ) * lengthOfSection + z.first * calc.GetZ( i, j ) * lengthOfSection;
-				double yRel = origin.second + x.second * calc.GetX( i, j ) * lengthOfSection +
-					y.second * calc.GetY( i, j ) * lengthOfSection + z.second * calc.GetZ( i, j ) * lengthOfSection;
+				double xRel = origin.first + x.first * (calc.GetX( i, j ) - calc.GlobalXShift()) * lengthOfSection +
+					y.first * (calc.GetY( i, j ) - calc.GlobalYShift()) * lengthOfSection +
+					z.first * (calc.GetZ( i, j ) - calc.GlobalZShift()) * lengthOfSection;
+				double yRel = origin.second + x.second * (calc.GetX( i, j ) - calc.GlobalXShift()) * lengthOfSection +
+					y.second * (calc.GetY( i, j ) - calc.GlobalYShift()) * lengthOfSection +
+					z.second * (calc.GetZ( i, j ) - calc.GlobalZShift()) * lengthOfSection;
 				relativePoints[i][j] = std::pair<double, double>( xRel, yRel );
 			}
 		} else {
 			relativePoints[i].resize( 1 );
-			double xRel = origin.first + x.first * calc.GetX( i, 0 ) * lengthOfSection +
-				z.first * calc.GetZ( i, 0 ) * lengthOfSection;
-			double yRel = origin.second + x.second * calc.GetX( i, 0 ) * lengthOfSection +
-				z.second * calc.GetZ( i, 0 ) * lengthOfSection;
+			double xRel = origin.first + x.first * (calc.GetX( i, 0 ) - calc.GlobalXShift()) * lengthOfSection +
+				z.first * (calc.GetZ( i, 0 ) - calc.GlobalZShift()) * lengthOfSection;
+			double yRel = origin.second + x.second * (calc.GetX( i, 0 ) - calc.GlobalXShift()) * lengthOfSection +
+				z.second * (calc.GetZ( i, 0 ) - calc.GlobalZShift()) * lengthOfSection;
 			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );
 		}
 	}

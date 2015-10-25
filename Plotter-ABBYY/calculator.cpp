@@ -127,9 +127,10 @@
 //	}
 //}
 
-static pugi::xml_document doc;
+pugi::xml_document MathMlCalculator::doc;
 
-MathMlCalculator::MathMlCalculator(const wchar_t* formulaPath) :
+MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D ) :
+	is2D( _is2D ),
 	scale( 1 ),
 	globalXShift( 0 ),
 	globalYShift( 0 ),
@@ -137,6 +138,11 @@ MathMlCalculator::MathMlCalculator(const wchar_t* formulaPath) :
 {
 	pugi::xml_parse_result result = doc.load_file( formulaPath );
 	buildFormula( doc );
+}
+
+void MathMlCalculator::RecalculatePoints()
+{
+	RecalculatePoints( gridSize );
 }
 
 void MathMlCalculator::RecalculatePoints( int _gridSize )
@@ -163,12 +169,12 @@ void MathMlCalculator::RecalculatePoints( int _gridSize )
 
 double MathMlCalculator::GetX( int i, int j )
 {
-	return (double) (i - gridSize / 2 + globalXShift) / 4;
+	return (double) (i - gridSize / 2) / 4;
 }
 
 double MathMlCalculator::GetY( int i, int j )
 {
-	return (double) (j - gridSize / 2 + globalYShift) / 4;
+	return (double) (j - gridSize / 2) / 4;
 }
 
 double MathMlCalculator::GetZ( int i, int j )

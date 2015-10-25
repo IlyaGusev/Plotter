@@ -111,8 +111,8 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		//::InvalidateRect(handle, NULL, FALSE);
 		//::UpdateWindow(handle);
 		break;
-	// Q key
-	case 0x51:
+	// D key
+	case 0x44:
 		graphInPoints.moveAlongX( 1 );
 		//::InvalidateRect(handle, NULL, FALSE);
 		//::UpdateWindow(handle);

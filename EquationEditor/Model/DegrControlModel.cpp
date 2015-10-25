@@ -85,21 +85,25 @@ void CDegrControlModel::MoveBy(int dx, int dy)
 
 void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из показателя - идём в основание
 	if( from == firstChild.get() ) {
-		secondChild->MoveCaretLeft( this, caret );
+		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 	//если пришли из родителя - идём в показатель
 	else if ( from == parent.lock().get() ) {
-		firstChild->MoveCaretLeft( this, caret );
+		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
 		// Иначе идем наверх
-		parent.lock()->MoveCaretLeft( this, caret );
+		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
 void CDegrControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /* =false */ ) 
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
 		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -129,7 +133,8 @@ int CDegrControlModel::getExponentHeight( int rectHeight )
 
 void CDegrControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CDegrControlModel::CopySelected() const

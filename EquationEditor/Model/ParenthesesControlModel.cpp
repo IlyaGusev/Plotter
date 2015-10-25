@@ -76,6 +76,8 @@ void CParenthesesControlModel::MoveBy( int dx, int dy )
 
 void CParenthesesControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем внутрь скобок
 	if( from == parent.lock().get() ) {
 		content->MoveCaretLeft( this, caret );
@@ -88,6 +90,8 @@ void CParenthesesControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret
 
 void CParenthesesControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем внутрь скобок
 	if( from == parent.lock().get() ) {
 		content->MoveCaretRight( this, caret );

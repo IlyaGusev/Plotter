@@ -87,6 +87,8 @@ void CSubscriptControlModel::MoveBy(int dx, int dy)
 
 void CSubscriptControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из индекса - идём в основание
 	if( from == secondChild.get() ) {
 		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -103,6 +105,8 @@ void CSubscriptControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& 
 
 void CSubscriptControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в основание
 	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -134,7 +138,8 @@ int CSubscriptControlModel::getSubscriptHeight( int rectHeight ) {
 
 void CSubscriptControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CSubscriptControlModel::CopySelected() const

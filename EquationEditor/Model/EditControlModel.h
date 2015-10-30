@@ -52,6 +52,7 @@ public:
 	void MergeWith( const CEditControlModel& edit );
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
+	std::wstring Serialize();
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;

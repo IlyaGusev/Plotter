@@ -34,6 +34,7 @@ public:
 	void UpdateSelection();
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
+	std::wstring Serialize();
 private:
 	// Верхний ребенок
 	std::shared_ptr<IBaseExprModel> firstChild;

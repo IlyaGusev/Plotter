@@ -17,6 +17,20 @@ void CRadicalControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CRadicalControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><root/><degree>" + firstChild->Serialize() + L"</degree>";
+	}
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</apply>";
+	}
+
+	return result;
+}
+
 void CRadicalControlModel::PlaceChildren()
 {
 	CRect newRect;

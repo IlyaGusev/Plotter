@@ -4,6 +4,8 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
+	FILE *stream;
+	freopen_s(&stream, "output.txt", "w", stdout);
 	HRESULT hr = CoInitialize(NULL);
     CEquationEditorWindow::RegisterClass();
     CEquationEditorWindow wnd;
@@ -16,5 +18,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
         ::DispatchMessage(&msg);
     }
 
+	fclose(stream);
     return 0;
 }

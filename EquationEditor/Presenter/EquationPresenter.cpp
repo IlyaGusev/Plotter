@@ -130,6 +130,12 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 	view.Redraw();
 }
 
+std::wstring CEquationPresenter::Serialize() {
+	std::wstring result = root->Serialize();
+	std::cout << std::string(result.begin(), result.end());
+	return L"";
+}
+
 void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 {
 	if( isInSelectionMode ) {
@@ -145,7 +151,11 @@ void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 		}
 	} else if( !withCtrl ) {
 		do {
-			MoveCaretRight();
+			SetSelection(caret.GetPointX(), caret.GetPointY());
+			deleteSelectedParts();
+			isInSelectionMode = false;
+			deleteSelectionProcessor.Process();
+			//MoveCaretRight();
 		} while( caret.GetCurEdit() != root->GetChildren().back() && caret.GetCurEdit()->GetSymbolsWidths().size() == 0 );
 	}
 

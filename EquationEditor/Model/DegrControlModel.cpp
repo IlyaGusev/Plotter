@@ -1,5 +1,6 @@
 ﻿#include "Model/DegrControlModel.h"
 #include "Model/EditControlModel.h"
+#include <iostream>
 
 CDegrControlModel::CDegrControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent ) 
@@ -66,6 +67,20 @@ void CDegrControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> init
 
 	Resize();
 	PlaceChildren();
+}
+
+std::wstring CDegrControlModel::Serialize() {
+	std::wstring result = L"";
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><power/>" + firstChild->Serialize();
+	}
+
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</apply>";
+	}
+
+	return result;
 }
 
 std::list<std::shared_ptr<IBaseExprModel>> CDegrControlModel::GetChildren() const

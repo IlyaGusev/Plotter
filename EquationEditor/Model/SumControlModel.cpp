@@ -15,6 +15,25 @@ int CSumControlModel::GetSymbolHeight() {
 	return rect.GetHeight() - ( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() ); // -10 ?
 }
 
+std::wstring CSumControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><sum/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
+	}
+
+	if (!sumChild->IsEmpty()) {
+		result += L"<apply>" + sumChild->Serialize() + L"</apply>";
+	}
+
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	}
+
+
+	return result;
+}
+
 void CSumControlModel::Resize()
 {
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5 + sumChild->GetRect().GetWidth();

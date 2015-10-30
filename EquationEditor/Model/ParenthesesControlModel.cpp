@@ -18,6 +18,13 @@ void CParenthesesControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CParenthesesControlModel::Serialize() {
+	if (!content->IsEmpty()) {
+		return L"<mfenced>" + content->Serialize() + L"</mfenced>";
+	}
+	return L"";
+}
+
 void CParenthesesControlModel::PlaceChildren()
 {
 	CRect newRect;

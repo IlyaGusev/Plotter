@@ -14,6 +14,23 @@ int CProductControlModel::GetSymbolHeight() {
 	return rect.GetHeight() - (firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight()); // -10 ?
 }
 
+std::wstring CProductControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><product/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
+	}
+
+	if (!productChild->IsEmpty()) {
+		result += L"<apply>" + productChild->Serialize() + L"</apply>";
+	}
+
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	}
+
+	return result;
+}
 
 void CProductControlModel::Resize()
 {

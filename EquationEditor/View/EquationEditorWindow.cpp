@@ -136,6 +136,7 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 
 	case VK_UP:     // UP ARROW 
 	case VK_DOWN:   // DOWN ARROW 
+		presenter->Serialize();
 		break;
 	}
 }

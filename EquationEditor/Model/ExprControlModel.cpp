@@ -23,6 +23,14 @@ void CExprControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> init
 	PlaceChildren();
 }
 
+std::wstring CExprControlModel::Serialize() {
+	std::wstring result = L"";
+	for (auto child : children) {
+		result += child->Serialize();
+	}
+	return params.text + result;
+}
+
 void CExprControlModel::Resize()
 {
 	int width = 0;

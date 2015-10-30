@@ -169,6 +169,17 @@ bool CEditControlModel::IsEmpty() const {
 	return params.text.empty();
 }
 
+std::wstring CEditControlModel::Serialize() {
+	//if (!firstChild->IsEmpty()) {
+	//	firstChild->Serialize();
+	//}
+	//if (!secondChild->IsEmpty()) {
+	//	secondChild->Serialize();
+	//}
+
+	return params.text;
+}
+
 std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetSelectedText() const 
 {
 	std::wstring selectedString( params.text.begin() + params.selectedPositions.first, params.text.begin() + params.selectedPositions.second );

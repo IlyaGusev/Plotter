@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <set>
 
 #include "Model/IBaseExprModel.h"
 
@@ -52,11 +53,17 @@ public:
 	void MergeWith( const CEditControlModel& edit );
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
-	std::wstring Serialize();
+	std::wstring Serialize();	
+	
+	//нет смысла пихать ее в базовый класс, так как весь текст написан в  exprControl'ах
+	std::wstring ParseText();
 
 	static const int MINIMAL_WIDTH = 10;
 	static const int MINIMAL_HEIGHT = 5;
 private:
+	const std::set<wchar_t> operations = { L'+', L'-', L'/', L'*', L'=' };
+
+	std::wstring Wrap(std::wstring &text, bool isNumber);
 	std::vector<int> symbolsWidths;	// Ширина каждого символа
 	std::list< std::shared_ptr<IBaseExprModel> > children;	// Заглушка-пустой список
 };

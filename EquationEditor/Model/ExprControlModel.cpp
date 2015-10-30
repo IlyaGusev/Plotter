@@ -28,7 +28,7 @@ std::wstring CExprControlModel::Serialize() {
 	for (auto child : children) {
 		result += child->Serialize();
 	}
-	return params.text + result;
+	return result;
 }
 
 void CExprControlModel::Resize()

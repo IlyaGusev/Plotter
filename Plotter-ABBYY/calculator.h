@@ -26,7 +26,8 @@ public:
 
 	int GetGridSize();
 private:
-	void buildFormula(const pugi::xml_node& formulaRoot);
+	void buildFormulas(const pugi::xml_node& formulaRoot);
+	void buildCoordFormula(const pugi::xml_node& coordRoot);
 	double getFirstArg( int i, int j );
 	double getSecondArg( int i, int j );
 

@@ -1,4 +1,49 @@
 <apply>
-	<sin/>
-	  <ci>x</ci>
+	<eq/>
+	<ci>y</ci>
+	<apply>
+		<times/>
+		<apply>
+			<sin/>
+			<ci>t</ci>
+		</apply>
+		<apply>
+			<plus/>
+			<apply>
+			<cos/>
+			<ci>u</ci>
+			</apply>
+			<cn>3</cn>
+		</apply>
+	</apply>
+</apply>
+<apply>
+	<eq/>
+	<ci>x</ci>
+	<apply>
+		<times/>
+		<apply>
+			<cos/>
+			<ci>t</ci>
+		</apply>
+		<apply>
+			<plus/>
+			<apply>
+			<cos/>
+			<ci>u</ci>
+			</apply>
+			<cn>3</cn>
+		</apply>
+	</apply>
+</apply>
+<apply>
+	<eq/>
+	<ci>z</ci>
+	<apply>
+		<plus/>
+	<apply>
+		<sin/>
+		<ci>u</ci>
+	</apply>
+	<ci>t</ci>
 </apply>

@@ -41,6 +41,8 @@ public:
 	std::pair<double, double> getOriginCoordinates();
 	// возвращает значения Z для пары XY
 	std::vector<std::vector<double>> getZcoordinates();
+	// возвращает точку на экране, которая соответствует точке на графике с координатой Z и узлу сетки i j 
+	std::pair<double, double> getRelativePointWithXYZ( int i, int j, double z );
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();

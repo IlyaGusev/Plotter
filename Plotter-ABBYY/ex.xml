@@ -1,4 +1,14 @@
 <apply>
-	<sin/>
-	  <ci>x</ci>
+
+<plus/> 
+<apply> 
+<times/> 
+<ci>x</ci> 
+<ci>x</ci> 
+</apply> 
+<apply> 
+<times/> 
+<ci>y</ci> 
+<ci>y</ci> 
+</apply> 
 </apply>

@@ -2,6 +2,8 @@
 #include <Windowsx.h>
 
 #include "graphWindow.h"
+using namespace Gdiplus;
+#pragma comment (lib, "Gdiplus.lib")
 
 GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D ) :
 	windowWidth(width),
@@ -250,6 +252,15 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 200, 200));
 	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+}
+
+void GraphWindow::fillWithGradient(HDC dc) {
+	Graphics graphics( dc );
+	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
+	graphics.SetSmoothingMode(SmoothingModeNone);
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);
+	graphics.SetTextRenderingHint(TextRenderingHintSingleBitPerPixel);
 }
 
 

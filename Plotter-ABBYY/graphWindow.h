@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Windows.h>
+#include <gdiplus.h>
 
 #include "GP.h"
 
@@ -42,6 +43,7 @@ private:
 
 	void drawGraph(HDC dc);
 	void drawAxes(HDC dc);
+	void fillWithGradient(HDC dc);
 
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 };

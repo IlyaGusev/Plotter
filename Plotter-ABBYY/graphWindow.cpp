@@ -254,6 +254,31 @@ void GraphWindow::drawAxes(HDC dc) {
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
 }
 
+void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {
+	std::vector<std::vector<double>> zCoordinates = graphInPoints.getZcoordinates();
+
+	xMax = 0;
+	xMin = 0;
+	yMax = 0;
+	yMin = 0;
+	max = zCoordinates[0][0];
+	min = zCoordinates[0][0];
+
+	for (int i = 0; i < zCoordinates.size(); ++i) {
+		for (int j = 0; j < zCoordinates[i].size(); ++j) {
+			if (zCoordinates[i][j] <= min) {
+				min = zCoordinates[i][j];
+				xMin = i;
+				yMin = j;
+			}
+			if (zCoordinates[i][j] >= max) {
+				xMax = i;
+				yMax = j;
+			}
+		}
+	}
+}
+
 void GraphWindow::fillWithGradient(HDC dc) {
 	Graphics graphics( dc );
 	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
@@ -261,6 +286,12 @@ void GraphWindow::fillWithGradient(HDC dc) {
 	graphics.SetPixelOffsetMode(PixelOffsetModeNone);
 	graphics.SetCompositingQuality(CompositingQualityHighSpeed);
 	graphics.SetTextRenderingHint(TextRenderingHintSingleBitPerPixel);
+
+	int xMax, yMax, xMin, yMin;
+	double max, min;
+	getMaxMinZAndRelativeGridKnots( min, max, xMin, yMin, xMax, yMax );
+
+	// TODO
 }
 
 

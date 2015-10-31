@@ -197,3 +197,15 @@ void GP::calculateRelativePoints()
 		}
 	}
 }
+
+std::vector< std::vector<double> > GP::getZcoordinates() {
+	std::vector< std::vector<double> > zCoordinates;
+	zCoordinates.resize( calc.GetGridSize() );
+	for (int i = 0; i < zCoordinates.size(); ++i) {
+		zCoordinates[i].resize( calc.GetGridSize() );
+		for (int j = 0; j < zCoordinates[i].size(); ++j) {
+			zCoordinates[i][j] = calc.GetZ( i, j ) - globalZShift;
+		}
+	}
+	return zCoordinates;
+}

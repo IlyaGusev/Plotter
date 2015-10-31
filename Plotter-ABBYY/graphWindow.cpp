@@ -279,7 +279,36 @@ void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& 
 	}
 }
 
-void GraphWindow::fillWithGradient(HDC dc) {
+void GraphWindow::getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons) {
+	polygons.resize( 0 );
+
+	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
+	for (size_t i = 0; i < points.size() - 1; ++i) {
+		int firstSize = points[i].size() % 3 == 0 ? points[i].size() - 2 : 3 * (points[i].size() / 3) + 1;
+		std::shared_ptr< std::vector< PointF > > firstPointsArray = std::shared_ptr< std::vector< PointF > >( new std::vector< PointF >( firstSize ) );
+		for (size_t j = 0; j < firstSize; ++j) {
+			(*firstPointsArray)[j] = PointF( points[i][j].first, points[i][j].second );
+			int secondSize = points[i + 1].size() % 3 == 0 ? points[i + 1].size() - 2 : 3 * (points[i + 1].size() / 3) + 1;
+			std::shared_ptr< std::vector< PointF > > secondPointsArray = std::shared_ptr< std::vector< PointF > >( new std::vector< PointF >( secondSize ) );
+			for (size_t j = 0; j < secondSize; ++j) {
+				(*secondPointsArray)[j] = PointF( points[i + 1][j].first, points[i + 1][j].second );
+			}
+
+			int size = min( firstSize, secondSize );
+			for (size_t t = 0; t < size - 1; ++t) {
+				Polygon4Wrap wrap;
+				wrap.poly[0] = (*firstPointsArray)[t];
+				wrap.poly[1] = (*firstPointsArray)[t + 1];
+				wrap.poly[2] = (*secondPointsArray)[t + 1];
+				wrap.poly[3] = (*secondPointsArray)[t];
+
+				polygons.push_back( wrap );
+			}
+		}
+	}
+}
+
+void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
 	Graphics graphics( dc );
 	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
 	graphics.SetSmoothingMode(SmoothingModeNone);
@@ -290,6 +319,9 @@ void GraphWindow::fillWithGradient(HDC dc) {
 	int xMax, yMax, xMin, yMin;
 	double max, min;
 	getMaxMinZAndRelativeGridKnots( min, max, xMin, yMin, xMax, yMax );
+
+	std::vector< Polygon4Wrap > polygons;
+	getAllPolygonsOfGrid( polygons );
 
 	// TODO
 }

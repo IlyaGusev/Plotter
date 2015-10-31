@@ -4,6 +4,10 @@
 
 #include "GP.h"
 
+struct Polygon4Wrap {
+	Gdiplus::PointF poly[4];
+};
+
 class GraphWindow {
 public:
 	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false );
@@ -43,10 +47,12 @@ private:
 
 	void drawGraph(HDC dc);
 	void drawAxes(HDC dc);
-	void fillWithGradient(HDC dc);
+	// red for max and blue for min by default
+	void fillWithGradient(HDC dc, Gdiplus::Color maxColor = Gdiplus::Color(128, 255, 0, 0), Gdiplus::Color minColor = Gdiplus::Color(128, 0, 0, 255));
 
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void getMaxMinZAndRelativeGridKnots( double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax );
+	void getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons);
 };
 

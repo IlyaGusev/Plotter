@@ -220,4 +220,5 @@ std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zVal
 	double yRel = origin.second + ( x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
 					y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
 					z.second * (zValue - globalZShift) * lengthOfSection );
+	return std::make_pair( xRel, yRel );
 }

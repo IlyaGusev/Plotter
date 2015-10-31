@@ -32,22 +32,6 @@ GP::GP( const wchar_t* formulaPath, bool _is2D,
 	calculateRelativePoints();
 }
 
-//void GP::turnAroundZ( int angle ) {
-//	Quaternion q( angle, relativeAxis[2] );
-//	for( int i = 0; i < 3; i++ ) {
-//		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
-//	}
-//	calculateRelativePoints();
-//}
-//
-//void GP::turnAroundY( int angle ) {
-//	Quaternion q( angle, relativeAxis[1] );
-//	for( int i = 0; i < 3; i++ ) {
-//		relativeAxis[i] = q.makeRotation( relativeAxis[i] );
-//	}
-//	calculateRelativePoints();
-//}
-
 void GP::turnAroundAxis( int axisNumber, int angle )
 {
 	Quaternion q( angle, relativeAxis[axisNumber] );

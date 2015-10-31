@@ -25,7 +25,6 @@ void Vector::operator =( const Vector& vect ) {
 }
 
 
-
 Quaternion::Quaternion(): w(0), x(0), y(0), z(1) {}
 
 Quaternion::Quaternion( double inputAngle, const Vector& vect ) {

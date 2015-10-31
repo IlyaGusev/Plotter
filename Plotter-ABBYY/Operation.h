@@ -101,7 +101,6 @@ private:
 };
 
 
-
 class OperationHandler {
 public:
 	static const Operation& getOperation(const std::string& opName);

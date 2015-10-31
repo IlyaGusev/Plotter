@@ -10,11 +10,6 @@ GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, boo
 {
 }
 
-// Удалять чужой код нельзя, поэтому будем его комментировать
-//GraphWindow::~GraphWindow()
-//{
-//}
-
 const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
 const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
 
@@ -81,59 +76,39 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 	switch (wParam) {
 	case VK_RIGHT:
 		graphInPoints.turnRight();
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	case VK_LEFT:
 		graphInPoints.turnLeft();
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	case VK_UP:
 		graphInPoints.turnUp();
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	case VK_DOWN:
 		graphInPoints.turnDown();
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// Z key
 	case 0x5A:
 		graphInPoints.changeScale(-2 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// X key
 	case 0x58:
 		graphInPoints.changeScale( 2 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// D key
 	case 0x44:
 		graphInPoints.moveAlongX( 1 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// A key
 	case 0x41:
 		graphInPoints.moveAlongX( -1 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// W key
 	case 0x57:
 		graphInPoints.moveAlongY( 1 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	// S key
 	case 0x53:
 		graphInPoints.moveAlongY( -1 );
-		//::InvalidateRect(handle, NULL, FALSE);
-		//::UpdateWindow(handle);
 		break;
 	default:
 		return;
@@ -216,9 +191,7 @@ void GraphWindow::drawGraph(HDC dc) {
 
 	for( size_t i = 0; i < pointsISize; ++i ) {
 		POINT* lppoints = new POINT[pointsJSize];
-		//::MoveToEx(dc, round(points[i][0].first), round(points[i][0].second), NULL);
 		for( size_t j = 0; j < pointsJSize; ++j ) {
-		//	::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
 			lppoints[j] = { round( points[i][j].first ), round( points[i][j].second ) };
 		}
 		::PolyBezier( dc, lppoints, pointsJSize );
@@ -227,11 +200,6 @@ void GraphWindow::drawGraph(HDC dc) {
 	}
 
 	for( size_t j = 0; j < pointsJSize; ++j ) {
-		//::MoveToEx(dc, round(points[0][j].first), round(points[0][j].second), NULL);
-		//for (size_t i = 1; i < points.size(); ++i) {
-		//	::LineTo(dc, round(points[i][j].first), round(points[i][j].second));
-		//}
-
 		POINT* lppoints = new POINT[pointsISize];
 		for( size_t i = 0; i < pointsISize; ++i ) {
 			lppoints[i] = { round( points[i][j].first ), round( points[i][j].second ) };

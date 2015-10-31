@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="PugiXML">
+      <UniqueIdentifier>{288c67c9-db62-423e-9feb-cdfd2e3f822b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="calculator.cpp">
@@ -27,17 +30,14 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mathCore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RotationLib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pugixml\pugixml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Operation.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml\pugixml.cpp">
+      <Filter>PugiXML</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -50,20 +50,17 @@
     <ClInclude Include="graphWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mathCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RotationLib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pugixml\pugiconfig.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pugixml\pugixml.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Operation.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml\pugixml.hpp">
+      <Filter>PugiXML</Filter>
+    </ClInclude>
+    <ClInclude Include="pugixml\pugiconfig.hpp">
+      <Filter>PugiXML</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

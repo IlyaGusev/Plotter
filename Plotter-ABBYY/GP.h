@@ -15,13 +15,6 @@ public:
 		bool is2D = false, double inputLengthOfSection = 5,
 		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
 
-	//// Поворот вокруг оси Z
-	//void turnAroundZ( int angle = 1 );
-	//// Поворот вокруг оси Y
-	//void turnAroundY( int angle = 1 );
-	//// поворот вокруг оси X
-	//void turnAroundX( int angle = 1 );
-
 	// Повороты при нажатии на соответствующие кнопки на клавиатуре
 	void turnLeft();
 	void turnRight();

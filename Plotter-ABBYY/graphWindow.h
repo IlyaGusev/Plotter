@@ -1,13 +1,11 @@
 ﻿#pragma once
 #include <Windows.h>
 
-#include "mathCore.h"
 #include "GP.h"
 
 class GraphWindow {
 public:
 	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false );
-	//~GraphWindow();
 
 	static bool RegisterClass(HINSTANCE hInstance);
 

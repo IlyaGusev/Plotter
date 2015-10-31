@@ -28,6 +28,60 @@ public:
 private:
 };
 
+class DivideOperation : public Operation{
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class DegreeOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class AbsOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class SinOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class CosOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class TanOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class CotOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class PowerOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
+class RootOperation : public Operation {
+public:
+	double build( const pugi::xml_node& currentNode ) const;
+private:
+};
+
 class Ident : public Operation {
 public:
 	double build(const pugi::xml_node& currentNode) const;

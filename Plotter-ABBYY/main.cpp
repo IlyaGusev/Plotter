@@ -2,9 +2,6 @@
 #include <string>
 #include "graphWindow.h"
 #include "mathCore.h"
-#include <functional>
-#include <list>
-#include "./pugixml/pugixml.hpp"
 
 int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR commandLine, int nCmdShow) {
 	if (!GraphWindow::RegisterClass(hInstance)) {

@@ -53,6 +53,6 @@ private:
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
 	void getMaxMinZAndRelativeGridKnots( double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax );
-	void getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons);
+	void getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons, std::vector< std::vector < std::pair<double, double> > > &points);
 };
 

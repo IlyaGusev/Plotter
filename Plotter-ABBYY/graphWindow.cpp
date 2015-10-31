@@ -185,7 +185,7 @@ void GraphWindow::OnPaint()
 void GraphWindow::drawGraph(HDC dc) {
 	::SetBkColor(dc, RGB(0, 0, 0));
 
-	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 10, 0));
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
@@ -309,6 +309,21 @@ void GraphWindow::getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons, st
 	}
 }
 
+void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
+														double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax, 
+														std::vector< std::vector < std::pair<double, double> > > &points) 
+{
+	int semiGridSize = graphInPoints.getGridSize() / 2;
+
+	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - 5 );
+	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + 5 );
+
+	minColorPoint.X = (int)minPointPair.first;
+	minColorPoint.Y = (int)minPointPair.second;
+	maxColorPoint.X = (int)maxPointPair.first;
+	maxColorPoint.Y = (int)maxPointPair.second;
+}
+
 void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
 	Graphics graphics( dc );
 	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
@@ -325,17 +340,18 @@ void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
 	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
 	getAllPolygonsOfGrid( polygons, points );
 
+	Point maxPoint, minPoint;
+	generatePointsOfMaxAndMinGradientColor(maxPoint, minPoint, min, max, xMin, yMin, xMax, yMax, points);
+
 	LinearGradientBrush linGrBrush(
-		Point((int)points[xMax][yMax].first, (int)points[xMax][yMax].second),
-		Point((int)points[xMin][yMin].first, (int)points[xMin][yMin].second),
+		maxPoint,
+		minPoint,
 		maxColor,
 		minColor);
 
 	for (int i = 0; i < polygons.size(); ++i) {
 		 graphics.FillPolygon( &linGrBrush, polygons[i].poly, 4 );
 	}
-
-	// TODO
 }
 
 

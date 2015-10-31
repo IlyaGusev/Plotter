@@ -54,5 +54,8 @@ private:
 
 	void getMaxMinZAndRelativeGridKnots( double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax );
 	void getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons, std::vector< std::vector < std::pair<double, double> > > &points);
+	void generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
+												double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax, 
+												std::vector< std::vector < std::pair<double, double> > > &points);
 };
 

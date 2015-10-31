@@ -222,3 +222,7 @@ std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zVal
 					z.second * (zValue - globalZShift) * lengthOfSection );
 	return std::make_pair( xRel, yRel );
 }
+
+int GP::getGridSize() {
+	return calc.GetGridSize();
+}

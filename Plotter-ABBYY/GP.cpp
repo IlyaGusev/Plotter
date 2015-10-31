@@ -197,3 +197,32 @@ void GP::calculateRelativePoints()
 		}
 	}
 }
+
+std::vector< std::vector<double> > GP::getZcoordinates() {
+	std::vector< std::vector<double> > zCoordinates;
+	zCoordinates.resize( calc.GetGridSize() );
+	for (int i = 0; i < zCoordinates.size(); ++i) {
+		zCoordinates[i].resize( calc.GetGridSize() );
+		for (int j = 0; j < zCoordinates[i].size(); ++j) {
+			zCoordinates[i][j] = calc.GetZ( i, j ) - globalZShift;
+		}
+	}
+	return zCoordinates;
+}
+
+std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zValue ) {
+	std::pair<double, double> x = getAxisVectorVisual( 0 );
+	std::pair<double, double> y = getAxisVectorVisual( 1 );
+	std::pair<double, double> z = getAxisVectorVisual( 2 );
+	double xRel = origin.first + ( x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+					y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+					z.first * (zValue - globalZShift) * lengthOfSection );
+	double yRel = origin.second + ( x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+					y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+					z.second * (zValue - globalZShift) * lengthOfSection );
+	return std::make_pair( xRel, yRel );
+}
+
+int GP::getGridSize() {
+	return calc.GetGridSize();
+}

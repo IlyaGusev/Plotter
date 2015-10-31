@@ -2,11 +2,14 @@
 #include <Windowsx.h>
 
 #include "graphWindow.h"
+using namespace Gdiplus;
+#pragma comment (lib, "Gdiplus.lib")
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D ) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isFillPolygonsIf3D ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, 80 )
+	graphInPoints( formulaPath, is2D, 80 ),
+	needToFillPolygons( isFillPolygonsIf3D )
 {
 }
 
@@ -163,6 +166,10 @@ void GraphWindow::OnPaint()
 	HBITMAP bitmap = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
 	HGDIOBJ oldbitmap = ::SelectObject(newHdc, bitmap);
 
+	if (needToFillPolygons) {
+		fillWithGradient( newHdc );
+	}
+
 	drawGraph(newHdc);
 	drawAxes(newHdc);
 
@@ -181,7 +188,12 @@ void GraphWindow::OnPaint()
 void GraphWindow::drawGraph(HDC dc) {
 	::SetBkColor(dc, RGB(0, 0, 0));
 
-	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN linePen;
+	if (needToFillPolygons) {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 10, 0 ) );
+	} else {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 255, 0 ) );
+	}
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
@@ -250,6 +262,104 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 200, 200));
 	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+}
+
+void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {
+	std::vector<std::vector<double>> zCoordinates = graphInPoints.getZcoordinates();
+
+	xMax = 0;
+	xMin = 0;
+	yMax = 0;
+	yMin = 0;
+	max = zCoordinates[0][0];
+	min = zCoordinates[0][0];
+
+	for (int i = 0; i < zCoordinates.size(); ++i) {
+		for (int j = 0; j < zCoordinates[i].size(); ++j) {
+			if (zCoordinates[i][j] <= min) {
+				min = zCoordinates[i][j];
+				xMin = i;
+				yMin = j;
+			}
+			if (zCoordinates[i][j] >= max) {
+				xMax = i;
+				yMax = j;
+			}
+		}
+	}
+}
+
+void GraphWindow::getAllPolygonsOfGrid(std::vector< Polygon4Wrap > &polygons, std::vector< std::vector < std::pair<double, double> > > &points) {
+	polygons.resize( 0 );
+
+	for (size_t i = 0; i < points.size() - 1; ++i) {
+		int firstSize = points[i].size() % 3 == 0 ? points[i].size() - 2 : 3 * (points[i].size() / 3) + 1;
+		std::shared_ptr< std::vector< PointF > > firstPointsArray = std::shared_ptr< std::vector< PointF > >( new std::vector< PointF >( firstSize ) );
+		for (size_t j = 0; j < firstSize; ++j) {
+			(*firstPointsArray)[j] = PointF( points[i][j].first, points[i][j].second );
+		}
+		int secondSize = points[i + 1].size() % 3 == 0 ? points[i + 1].size() - 2 : 3 * (points[i + 1].size() / 3) + 1;
+		std::shared_ptr< std::vector< PointF > > secondPointsArray = std::shared_ptr< std::vector< PointF > >( new std::vector< PointF >( secondSize ) );
+		for (size_t j = 0; j < secondSize; ++j) {
+			(*secondPointsArray)[j] = PointF( points[i + 1][j].first, points[i + 1][j].second );
+		}
+
+		int size = min( firstSize, secondSize );
+		for (size_t t = 0; t < size - 1; ++t) {
+			Polygon4Wrap wrap;
+			wrap.poly[0] = (*firstPointsArray)[t];
+			wrap.poly[1] = (*firstPointsArray)[t + 1];
+			wrap.poly[2] = (*secondPointsArray)[t + 1];
+			wrap.poly[3] = (*secondPointsArray)[t];
+
+			polygons.push_back( wrap );
+		}
+	}
+}
+
+void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
+														double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax, 
+														std::vector< std::vector < std::pair<double, double> > > &points) 
+{
+	int semiGridSize = graphInPoints.getGridSize() / 2;
+
+	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - semiGridSize );
+	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + semiGridSize );
+
+	minColorPoint.X = (int)minPointPair.first;
+	minColorPoint.Y = (int)minPointPair.second;
+	maxColorPoint.X = (int)maxPointPair.first;
+	maxColorPoint.Y = (int)maxPointPair.second;
+}
+
+void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
+	Graphics graphics( dc );
+	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
+	graphics.SetSmoothingMode(SmoothingModeNone);
+	graphics.SetPixelOffsetMode(PixelOffsetModeNone);
+	graphics.SetCompositingQuality(CompositingQualityHighSpeed);
+	graphics.SetTextRenderingHint(TextRenderingHintSingleBitPerPixel);
+
+	int xMax, yMax, xMin, yMin;
+	double max, min;
+	getMaxMinZAndRelativeGridKnots( min, max, xMin, yMin, xMax, yMax );
+
+	std::vector< Polygon4Wrap > polygons;
+	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
+	getAllPolygonsOfGrid( polygons, points );
+
+	Point maxPoint, minPoint;
+	generatePointsOfMaxAndMinGradientColor(maxPoint, minPoint, min, max, xMin, yMin, xMax, yMax, points);
+
+	LinearGradientBrush linGrBrush(
+		maxPoint,
+		minPoint,
+		maxColor,
+		minColor);
+
+	for (int i = 0; i < polygons.size(); ++i) {
+		 graphics.FillPolygon( &linGrBrush, polygons[i].poly, 4 );
+	}
 }
 
 

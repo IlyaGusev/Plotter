@@ -39,6 +39,12 @@ public:
 	std::pair<double, double> getAxisVectorVisual( int axisNum );
 	// возвращает координаты пересечения осей в 2d
 	std::pair<double, double> getOriginCoordinates();
+	// возвращает значения Z для пары XY
+	std::vector<std::vector<double>> getZcoordinates();
+	// возвращает точку на экране, которая соответствует точке на графике с координатой Z и узлу сетки i j 
+	std::pair<double, double> getRelativePointWithXYZ( int i, int j, double z );
+	// возвращает размер сетки
+	int getGridSize();
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();

@@ -5,10 +5,11 @@
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D ) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isFillPolygonsIf3D ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, 80 )
+	graphInPoints( formulaPath, is2D, 80 ),
+	needToFillPolygons( isFillPolygonsIf3D )
 {
 }
 
@@ -165,7 +166,9 @@ void GraphWindow::OnPaint()
 	HBITMAP bitmap = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
 	HGDIOBJ oldbitmap = ::SelectObject(newHdc, bitmap);
 
-	fillWithGradient( newHdc );
+	if (needToFillPolygons) {
+		fillWithGradient( newHdc );
+	}
 
 	drawGraph(newHdc);
 	drawAxes(newHdc);
@@ -185,7 +188,12 @@ void GraphWindow::OnPaint()
 void GraphWindow::drawGraph(HDC dc) {
 	::SetBkColor(dc, RGB(0, 0, 0));
 
-	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 10, 0));
+	HPEN linePen;
+	if (needToFillPolygons) {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 10, 0 ) );
+	} else {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 255, 0 ) );
+	}
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
@@ -315,8 +323,8 @@ void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxCol
 {
 	int semiGridSize = graphInPoints.getGridSize() / 2;
 
-	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - 5 );
-	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + 5 );
+	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - semiGridSize );
+	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + semiGridSize );
 
 	minColorPoint.X = (int)minPointPair.first;
 	minColorPoint.Y = (int)minPointPair.second;

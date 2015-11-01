@@ -71,6 +71,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren() cons
 void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) 
 {
 	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
+	
 	if( currentChildIterator == children.end() ) {
 		children.push_back( newChild );
 	} else {
@@ -157,9 +158,9 @@ void CExprControlModel::UpdateSelection()
 bool CExprControlModel::DeleteSelectedPart() 
 {
 	// Если уже пустой - ничего не трогаем
-	if( IsEmpty() ) {
-		return true;
-	}
+	//if( IsEmpty() ) {
+	//	return true;
+	//}
 
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		// Если нужна дополнительная обработка, DeleteSelectedPart() ребенка вернет false

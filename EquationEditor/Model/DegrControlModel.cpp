@@ -53,7 +53,7 @@ void CDegrControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> init
 	CRect firstChildRect = CRect( 0, 0, 0, 3 * getExponentHeight( rect.GetHeight() ) );
 	firstChild = std::make_shared<CExprControlModel>( firstChildRect, std::weak_ptr<IBaseExprModel>( shared_from_this() ) );
 	firstChild->InitializeChildren();
-
+	
 	if( initChild != 0 ) {
 		secondChild = initChild;
 		secondChild->SetParent( shared_from_this() );
@@ -85,6 +85,7 @@ void CDegrControlModel::MoveBy(int dx, int dy)
 
 void CDegrControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
+
 	if (isInSelectionMode)
 		params.isSelected = true;
 	// Если пришли из показателя - идём в основание

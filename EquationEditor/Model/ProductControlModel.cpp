@@ -124,6 +124,8 @@ void CProductControlModel::MoveBy( int dx, int dy )
 
 void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем в нижнего ребенка
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -139,6 +141,8 @@ void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 
 void CProductControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// ≈сли пришли из родител€ - идем в верхнего ребенка
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -176,7 +180,8 @@ void CProductControlModel::updatePolygons()
 
 void CProductControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected() && productChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()) || !(productChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CProductControlModel::CopySelected() const

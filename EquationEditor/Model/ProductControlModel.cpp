@@ -1,6 +1,7 @@
 ﻿#include "Model/ProductControlModel.h"
 #include "Model/EditControlModel.h"
-#include "Model/SumControlModel.h"
+#include "Model/SumControlModel.h"	
+
 
 CProductControlModel::CProductControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 IBaseExprModel( rect, parent )
@@ -10,55 +11,105 @@ IBaseExprModel( rect, parent )
 	depth = parent.lock()->GetDepth() + 1;
 }
 
-int CProductControlModel::GetSymbolHeight() {
-	return rect.GetHeight() - (firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight()); // -10 ?
+int CProductControlModel::GetSymbolHeight() const {
+	return symbolRect.GetHeight();
+}
+
+void CProductControlModel::setRealChildPresentSumOrProduct()
+{
+	realChildPresentSum = nullptr;
+	realChildPresentProduct = nullptr;
+	auto childList = productChild->GetChildren();
+	if( !childList.empty() ) {
+		auto child = std::next( childList.begin() );
+		if( child != childList.end() ) {
+			auto type = (*child)->GetType();
+			if( type == SUM ) {
+				realChildPresentSum = std::dynamic_pointer_cast< CSumControlModel >(*child);
+			} else if( type == PRODUCT ) {
+				realChildPresentProduct = std::dynamic_pointer_cast< CProductControlModel >(*child);
+			}
+		}
+	}
+}
+
+int CProductControlModel::getSumChildHeight() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return realChildPresentSum->GetSymbolHeight(); // возвращаем высоту знака суммы
+	} else if( realChildPresentProduct != nullptr ) {
+		return realChildPresentProduct->GetSymbolHeight();
+	}
+	return productChild->GetRect().GetHeight(); // иначе возвращаем высоту выражения
+}
+
+void CProductControlModel::updateSymbolRect()
+{
+	symbolRect.Top() = getSymbolTop();
+	symbolRect.Bottom() = symbolRect.Top() + getSumChildHeight();
+	int indexMaxWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
+	int piWidth = MAX( MIN( indexMaxWidth, symbolRect.GetHeight() ), symbolRect.GetHeight() / 2 );
+	symbolRect.Left() = MAX( rect.Left() + indexMaxWidth / 2 - piWidth / 2, rect.Left() );
+	symbolRect.Right() = symbolRect.Left() + piWidth;
 }
 
 
 void CProductControlModel::Resize()
 {
+	setRealChildPresentSumOrProduct();
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5 + productChild->GetRect().GetWidth();
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight();
-	// проблемы с инициализацией? type всегда возвращает Expr
-	if ( productChild->GetType() == SUM ) // хотим размер суммы подогнать под размер вложенной суммы
-	{
-		auto child = std::shared_ptr<CSumControlModel>( dynamic_cast< CSumControlModel* >( productChild.get() ) ); // кастуем к сумме
-		height += child->GetSymbolHeight();
-	} else if ( productChild->GetType() == PRODUCT ) { // или под размер вложенного произведения
-		auto child = std::shared_ptr<CProductControlModel>( dynamic_cast< CProductControlModel* >( productChild.get() ) ); // кастуем к произведению
-		height += child->GetSymbolHeight();
-	} else {
-		height += productChild->GetRect().GetHeight() + 10; // иначе сумма чуть больше, чем выражение
-	}
-
+	updateSymbolRect();
+	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 10 + symbolRect.GetHeight(),
+		productChild->GetRect().GetHeight() );
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
+}
+
+int CProductControlModel::getSumChildRectTop() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return symbolRect.Top() - 5 - realChildPresentSum->GetChildren().front()->GetRect().GetHeight();
+	} else if( realChildPresentProduct != nullptr ) {
+		return symbolRect.Top() - 5 - realChildPresentProduct->GetChildren().front()->GetRect().GetHeight();
+	}
+	return symbolRect.Top();
+}
+
+int CProductControlModel::getSymbolTop() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return MAX( symbolRect.Top(), rect.Top() + realChildPresentSum->GetChildren().front()->GetRect().GetHeight() + 5 );
+	} else if( realChildPresentProduct != nullptr ) {
+		return MAX( symbolRect.Top(), rect.Top() + realChildPresentProduct->GetChildren().front()->GetRect().GetHeight() + 5 );
+	}
+	return rect.Top() + firstChild->GetRect().GetHeight() + 5;
 }
 
 void CProductControlModel::PlaceChildren()
 {
 	CRect newRect;
-	int middle = ( rect.Right() + rect.Left() - productChild->GetRect().GetWidth() - 5 ) / 2;
+	updateSymbolRect();
+	int middleWidth = symbolRect.Left() + symbolRect.GetWidth() / 2;
+	int middleHeight = rect.GetHeight() / 2;
 
 	CRect oldRect = firstChild->GetRect();
-	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
-	newRect.Left() = middle - oldRect.GetWidth() / 2;
-	newRect.Right() = middle + oldRect.GetWidth() / 2;
+	newRect.Bottom() = symbolRect.Top() - 5;
+	newRect.Top() = newRect.Bottom() - oldRect.GetHeight();
+	newRect.Left() = middleWidth - oldRect.GetWidth() / 2;
+	newRect.Right() = middleWidth + oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 
 	oldRect = secondChild->GetRect();
-	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
-	newRect.Left() = middle - oldRect.GetWidth() / 2;
-	newRect.Right() = middle + oldRect.GetWidth() / 2;
+	newRect.Top() = symbolRect.Top() + symbolRect.GetHeight() + 5;
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
+	newRect.Left() = middleWidth - oldRect.GetWidth() / 2;
+	newRect.Right() = middleWidth + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
 
-	int middleHeight = rect.Top() + firstChild->GetRect().GetHeight() + GetSymbolHeight() / 2;
 	oldRect = productChild->GetRect();
-	newRect.Top() = middleHeight - oldRect.GetHeight() / 2;
-	newRect.Bottom() = middleHeight + oldRect.GetHeight() / 2;
-	newRect.Left() = rect.Left() + MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5;
+	newRect.Top() = getSumChildRectTop();
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
+	newRect.Left() = MAX( symbolRect.Right(), MAX( firstChild->GetRect().Right(), secondChild->GetRect().Right() ) ) + 5;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	productChild->SetRect( newRect );
 
@@ -124,6 +175,8 @@ void CProductControlModel::MoveBy( int dx, int dy )
 
 void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в нижнего ребенка
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -139,6 +192,8 @@ void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 
 void CProductControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в верхнего ребенка
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -162,21 +217,22 @@ void CProductControlModel::updatePolygons()
 {
 	params.polygon.clear();
 
-	int piWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
+	int piWidth = symbolRect.GetWidth();
 
-	int piTop = rect.Top() + firstChild->GetRect().GetHeight() + 5;
-	int piBottom = rect.Bottom() - secondChild->GetRect().GetHeight() - 5;
-	int piLeft = rect.Left() + piWidth / 5;
-	int piRight = rect.Left() + 4 * piWidth / 5;
+	int piTop = symbolRect.Top();
+	int piBottom = symbolRect.Bottom();
+	int piLeft = symbolRect.Left() + piWidth / 5;
+	int piRight = symbolRect.Right() - piWidth / 5;
 	
 	params.polygon.push_back( CLine( piLeft, piTop, piLeft, piBottom ) ); // левая палка
 	params.polygon.push_back( CLine( piRight, piTop, piRight, piBottom ) ); // правая палка
-	params.polygon.push_back( CLine( rect.Left(), piTop, rect.Left() + piWidth, piTop ) ); // верхняя перекладина
+	params.polygon.push_back( CLine( symbolRect.Left(), piTop, symbolRect.Left() + piWidth, piTop ) ); // верхняя перекладина
 }
 
 void CProductControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected() && productChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()) || !(productChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CProductControlModel::CopySelected() const

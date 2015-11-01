@@ -4,7 +4,11 @@
 
 // Модель для суммы
 // Держит на себе пару ExprControl'ов - верхний и нижний индексы
-class CSumControlModel : public IBaseExprModel {
+
+class CProductControlModel;
+
+class CSumControlModel : public IBaseExprModel
+{
 public:
 	CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
@@ -30,7 +34,7 @@ public:
 
 	bool IsEmpty() const;
 
-	int GetSymbolHeight();
+	int GetSymbolHeight() const;
 
 	void UpdateSelection();
 
@@ -43,6 +47,16 @@ private:
 	// Ребенок, к которому относится сумма
 	std::shared_ptr<IBaseExprModel> sumChild;
 
+	CRect symbolRect;
+
+	std::shared_ptr<CSumControlModel> realChildPresentSum;
+	std::shared_ptr<CProductControlModel> realChildPresentProduct;
+
 	void updatePolygons();
 	int getIndexHeight(int rectHeight);
+	int getSumChildRectTop() const;
+	int getSymbolTop() const;
+	void updateSymbolRect();
+	int getSumChildHeight() const;
+	void setRealChildPresentSumOrProduct();
 };

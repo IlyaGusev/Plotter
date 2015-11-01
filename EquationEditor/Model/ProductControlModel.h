@@ -2,6 +2,8 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
+class CSumControlModel;
+
 // Модель для произведения
 // Держит на себе пару ExprControl'ов - верхний и нижний индексы
 class CProductControlModel : public IBaseExprModel {
@@ -29,7 +31,7 @@ public:
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
 	bool IsEmpty() const;
-	int GetSymbolHeight();
+	int GetSymbolHeight() const;
 
 	void UpdateSelection();
 
@@ -42,7 +44,16 @@ private:
 	// Ребенок под произведением
 	std::shared_ptr<IBaseExprModel> productChild;
 
-	int getIndexHeight( int rectHeight );
+	CRect symbolRect;
+
+	std::shared_ptr<CSumControlModel> realChildPresentSum;
+	std::shared_ptr<CProductControlModel> realChildPresentProduct;
 
 	void updatePolygons();
+	int getIndexHeight( int rectHeight );
+	int getSumChildRectTop() const;
+	int getSymbolTop() const;
+	void updateSymbolRect();
+	int getSumChildHeight() const;
+	void setRealChildPresentSumOrProduct();
 };

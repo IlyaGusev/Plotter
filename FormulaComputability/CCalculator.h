@@ -5,7 +5,8 @@
 #include <complex>
 #include <vector>
 
-enum STATUS_RESULT {INF, CALCULATED, UNCALCULATED, NO_RESULT};
+enum STATUS_RESULT {CALCULATED, UNCALCULATED};
+//UNCALCULATED - метод не сошёлся за 10^7 итераций либо диагональ матрицы содержит нулевой элемент
 
 class CCalculator {
 

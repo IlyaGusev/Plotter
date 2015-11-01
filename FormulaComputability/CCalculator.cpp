@@ -25,9 +25,22 @@ STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double
     double eps = 0.001;
     std::vector< double > tempX(n);
     double norm; // норма, определяемая как наибольшая разность компонент столбца иксов соседних итераций.
+
     ///TODO: проверка на вырожденность
     ///TODO: проверка на сходимость метода
+
+    for (int i = 0; i < n; ++i) {
+        if (A[i][i] == 0) {
+            return UNCALCULATED;
+        }
+    }
+
+    int counter = 0;
     do {
+        ++counter;
+        if ( counter > 10000000 ) {
+            return UNCALCULATED;
+        }
         for (int i = 0; i < n; i++) {
             tempX[i] = F[i];
             for (int g = 0; g < n; g++) {
@@ -36,7 +49,8 @@ STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double
             }
             tempX[i] /= A[i][i];
         }
-                norm = fabs(X[0] - tempX[0]);
+
+        norm = fabs(X[0] - tempX[0]);
         for (int h = 0; h < n; h++) {
             if (fabs(X[h] - tempX[h]) > norm)
                 norm = fabs(X[h] - tempX[h]);

@@ -118,7 +118,11 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 		}
 	} else if( !withCtrl ) {
 		do {
-			MoveCaretLeft();
+			SetSelection(caret.GetPointX(), caret.GetPointY());
+			deleteSelectedParts();
+			isInSelectionMode = false;
+			deleteSelectionProcessor.Process();
+			//MoveCaretLeft();
 		} while( caret.GetCurEdit() != root->GetChildren().front() && caret.Offset() == 0 );
 	}
 
@@ -376,6 +380,7 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent, std
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
 	parent->AddChildAfter( newEditControl, degrModel );
+	
 
 	invalidateTree();
 	

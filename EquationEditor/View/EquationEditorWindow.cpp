@@ -33,7 +33,7 @@ bool CEquationEditorWindow::Create()
 	bkSelectedHighlightColorref = RGB( 0x44, 0x4b, 0x52 );
 	bkUnselectedHightlightColorref = RGB(0xF0, 0xF0, 0xF0);
 
-	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED, 0, 0, 500, 400,
+	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED | WS_CLIPCHILDREN, 0, 0, 500, 400,
 		nullptr, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 

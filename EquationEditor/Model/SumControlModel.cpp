@@ -1,5 +1,6 @@
 #include "Model/SumControlModel.h"
 #include "Model/EditControlModel.h"
+#include "Model/ProductControlModel.h"	
 
 CSumControlModel::CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
@@ -37,9 +38,9 @@ int CSumControlModel::getSumChildHeight() const
 {
 	if( realChildPresentSum != nullptr ) {
 		return realChildPresentSum->GetSymbolHeight(); // возвращаем высоту знака суммы
-	} /* TODO product else if( ) {
-
-	  } */
+	} else if( realChildPresentProduct != nullptr ) {
+		return realChildPresentProduct->GetSymbolHeight();
+	}
 	return sumChild->GetRect().GetHeight(); // иначе возвращаем высоту выражения
 }
 
@@ -68,9 +69,9 @@ int CSumControlModel::getSumChildRectTop() const
 {
 	if( realChildPresentSum != nullptr ) {
 		return symbolRect.Top() - 5 - realChildPresentSum->GetChildren().front()->GetRect().GetHeight();
-	} /* TODO product else if( ) {
-
-	} */
+	} else if( realChildPresentProduct != nullptr ) {
+		return symbolRect.Top() - 5 - realChildPresentProduct->GetChildren().front()->GetRect().GetHeight();
+	}
 	return symbolRect.Top();
 }
 
@@ -78,9 +79,9 @@ int CSumControlModel::GetSymbolTop() const
 {
 	if( realChildPresentSum != nullptr ) {
 		return MAX( symbolRect.Top(), rect.Top() + realChildPresentSum->GetChildren().front()->GetRect().GetHeight() + 5 );
-	} /* TODO product else if( ) {
-	
-	} */
+	} else if( realChildPresentProduct != nullptr ) {
+		return MAX( symbolRect.Top(), rect.Top() + realChildPresentProduct->GetChildren().front()->GetRect().GetHeight() + 5 );
+	}
 	return rect.Top() + firstChild->GetRect().GetHeight() + 5;
 }
 
@@ -108,7 +109,7 @@ void CSumControlModel::PlaceChildren()
 	oldRect = sumChild->GetRect();
 	newRect.Top() = getSumChildRectTop();
 	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
-	newRect.Left() = symbolRect.Right() + 5;
+	newRect.Left() = MAX( symbolRect.Right(), MAX( firstChild->GetRect().Right(), secondChild->GetRect().Right() ) ) + 5;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	sumChild->SetRect( newRect );
 

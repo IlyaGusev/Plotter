@@ -1,11 +1,14 @@
 #pragma once
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
-#include "Model/ProductControlModel.h"	
 
 // Модель для суммы
 // Держит на себе пару ExprControl'ов - верхний и нижний индексы
-class CSumControlModel : public IBaseExprModel {
+
+class CProductControlModel;
+
+class CSumControlModel : public IBaseExprModel
+{
 public:
 	CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
@@ -31,12 +34,12 @@ public:
 
 	bool IsEmpty() const;
 
-	int GetSymbolHeight() const;
-
 	void UpdateSelection();
 
+	int GetSymbolHeight() const;
+
 	int GetSymbolTop() const;
-	
+
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 private:
 	// Верхний ребенок
@@ -52,7 +55,7 @@ private:
 
 	void updatePolygons();
 	void updateSymbolRect();
-	int getIndexHeight(int rectHeight);
+	int getIndexHeight( int rectHeight );
 	int getSumChildHeight() const;
 	int getSumChildRectTop() const;
 	void setRealChildPresentSumOrProduct();

@@ -7,10 +7,41 @@ std::pair< std::complex <double>, std::complex <double> >  CCalculator::quadrati
     if ( b*b - 4*a*c > 0) {
         std::complex<double> x( ( -b + sqrt( b*b - 4*a*c ) ) / ( 2 * a ) );
         std::complex<double> y( ( -b - sqrt( b*b - 4*a*c ) ) / ( 2 * a ) );
-        return std::make_pair< std::complex <double>, std::complex <double> >( x, y );
+        return std::pair< std::complex <double>, std::complex <double> >( x, y );
     } else {
         std::complex<double> x( -b / ( 2 * a ), ( sqrt( 4*a*c - b*b ) ) / ( 2 * a ) );
         std::complex<double> y( -b / ( 2 * a ),  ( -sqrt( 4*a*c - b*b ) ) / ( 2 * a ) );
-        return std::make_pair< std::complex <double>, std::complex <double> >( x, y );
+        return std::pair< std::complex <double>, std::complex <double> >( x, y );
     }
+}
+
+
+
+
+// n - размерность матрицы; A[n][n] - матрица коэффициентов, F[n] - столбец свободных членов,
+// X[n] - начальное приближение, ответ записывается также в X[n];
+STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double> >& A, const std::vector<double>& F, std::vector<double>& X)
+{
+    double eps = 0.001;
+    std::vector< double > tempX(n);
+    double norm; // норма, определяемая как наибольшая разность компонент столбца иксов соседних итераций.
+    ///TODO: проверка на вырожденность
+    ///TODO: проверка на сходимость метода
+    do {
+        for (int i = 0; i < n; i++) {
+            tempX[i] = F[i];
+            for (int g = 0; g < n; g++) {
+                if (i != g)
+                    tempX[i] -= A[i][g] * X[g];
+            }
+            tempX[i] /= A[i][i];
+        }
+                norm = fabs(X[0] - tempX[0]);
+        for (int h = 0; h < n; h++) {
+            if (fabs(X[h] - tempX[h]) > norm)
+                norm = fabs(X[h] - tempX[h]);
+            X[h] = tempX[h];
+        }
+    } while ( norm > eps );
+    return CALCULATED;
 }

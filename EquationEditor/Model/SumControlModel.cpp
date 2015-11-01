@@ -1,64 +1,115 @@
-#include "Model/SumControlModel.h"
+п»ї#include "Model/SumControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/ProductControlModel.h"	
 
 CSumControlModel::CSumControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel( rect, parent )
 {
-	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
+	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // РЅР°СЃ РёРЅС‚РµСЂРµСЃСѓРµС‚ С‚РѕР»СЊРєРѕ РІС‹СЃРѕС‚Р°, РѕСЃС‚Р°Р»СЊРЅРѕРµ РёСЃРїСЂР°РІРёС‚СЃСЏ СЃСЂР°Р·Сѓ Р¶Рµ РїРѕСЃР»Рµ РёРЅРІР°Р»РёРґР°С†РёРё РґРµСЂРµРІР°
 
 	depth = parent.lock()->GetDepth() + 1;
 }
 
 
-int CSumControlModel::GetSymbolHeight() {
-	return rect.GetHeight() - ( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() ); // -10 ?
+int CSumControlModel::GetSymbolHeight() const
+{
+	return symbolRect.GetHeight();
+}
+
+void CSumControlModel::setRealChildPresentSumOrProduct()
+{
+	realChildPresentSum = nullptr;
+	realChildPresentProduct = nullptr;
+	auto childList = sumChild->GetChildren();
+	if( !childList.empty() ) {
+		auto child = std::next( childList.begin() );
+		if( child != childList.end() ) {
+			auto type = (*child)->GetType();
+			if( type == SUM ) {
+				realChildPresentSum = std::dynamic_pointer_cast< CSumControlModel >(*child);
+			} else if( type == PRODUCT ) {
+				realChildPresentProduct = std::dynamic_pointer_cast< CProductControlModel >(*child);
+			}
+		}
+	}
+}
+
+int CSumControlModel::getSumChildHeight() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return realChildPresentSum->GetSymbolHeight(); // РІРѕР·РІСЂР°С‰Р°РµРј РІС‹СЃРѕС‚Сѓ Р·РЅР°РєР° СЃСѓРјРјС‹
+	} else if( realChildPresentProduct != nullptr ) {
+		return realChildPresentProduct->GetSymbolHeight();
+	}
+	return sumChild->GetRect().GetHeight(); // РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј РІС‹СЃРѕС‚Сѓ РІС‹СЂР°Р¶РµРЅРёСЏ
+}
+
+void CSumControlModel::updateSymbolRect()
+{
+	symbolRect.Top() = getSymbolTop();
+	symbolRect.Bottom() = symbolRect.Top() + getSumChildHeight();
+	int indexMaxWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
+	int sigmaWidth = MAX( MIN( indexMaxWidth, symbolRect.GetHeight() ), symbolRect.GetHeight() / 2 );
+	symbolRect.Left() = MAX( rect.Left() + indexMaxWidth / 2 - sigmaWidth / 2, rect.Left() );
+	symbolRect.Right() = symbolRect.Left() + sigmaWidth;
 }
 
 void CSumControlModel::Resize()
 {
+	setRealChildPresentSumOrProduct();
 	int width = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5 + sumChild->GetRect().GetWidth();
-	int height = firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight();
-	// проблемы с инициализацией? type всегда возвращает Expr
-	if ( sumChild->GetType() == SUM ) // хотим размер суммы подогнать под размер вложенной суммы
-	{
-		auto child = std::shared_ptr<CSumControlModel>( dynamic_cast< CSumControlModel* >( sumChild.get() ) ); // кастуем к сумме
-		height += child->GetSymbolHeight();
-	} else if ( sumChild->GetType() == PRODUCT ) { // или под размер вложенного произведения
-		auto child = std::shared_ptr<CProductControlModel>( dynamic_cast< CProductControlModel* >( sumChild.get() ) ); // кастуем к произведению
-		height += child->GetSymbolHeight();
-	} else {
-		height += sumChild->GetRect().GetHeight() + 10; // иначе сумма чуть больше, чем выражение
-	}
-
+	updateSymbolRect();
+	int height = MAX( firstChild->GetRect().GetHeight() + secondChild->GetRect().GetHeight() + 10 + symbolRect.GetHeight(),
+		sumChild->GetRect().GetHeight() );
 	rect.Right() = rect.Left() + width;
 	rect.Bottom() = rect.Top() + height;
+}
+
+int CSumControlModel::getSumChildRectTop() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return symbolRect.Top() - 5 - realChildPresentSum->GetChildren().front()->GetRect().GetHeight();
+	} else if( realChildPresentProduct != nullptr ) {
+		return symbolRect.Top() - 5 - realChildPresentProduct->GetChildren().front()->GetRect().GetHeight();
+	}
+	return symbolRect.Top();
+}
+
+int CSumControlModel::getSymbolTop() const
+{
+	if( realChildPresentSum != nullptr ) {
+		return MAX( symbolRect.Top(), rect.Top() + realChildPresentSum->GetChildren().front()->GetRect().GetHeight() + 5 );
+	} else if( realChildPresentProduct != nullptr ) {
+		return MAX( symbolRect.Top(), rect.Top() + realChildPresentProduct->GetChildren().front()->GetRect().GetHeight() + 5 );
+	}
+	return rect.Top() + firstChild->GetRect().GetHeight() + 5;
 }
 
 void CSumControlModel::PlaceChildren()
 {
 	CRect newRect;
-	int middle = ( rect.Right() + rect.Left() - sumChild->GetRect().GetWidth() - 5 ) / 2;
+	updateSymbolRect();
+	int middleWidth = symbolRect.Left() + symbolRect.GetWidth() / 2;
+	int middleHeight = rect.GetHeight() / 2;
 
 	CRect oldRect = firstChild->GetRect();
-	newRect.Top() = rect.Top();
-	newRect.Bottom() = rect.Top() + oldRect.GetHeight();
-	newRect.Left() = middle - oldRect.GetWidth() / 2;
-	newRect.Right() = middle + oldRect.GetWidth() / 2;
+	newRect.Bottom() = symbolRect.Top() - 5;
+	newRect.Top() = newRect.Bottom() - oldRect.GetHeight();
+	newRect.Left() = middleWidth - oldRect.GetWidth() / 2;
+	newRect.Right() = middleWidth + oldRect.GetWidth() / 2;
 	firstChild->SetRect( newRect );
 
 	oldRect = secondChild->GetRect();
-	newRect.Bottom() = rect.Bottom();
-	newRect.Top() = rect.Bottom() - oldRect.GetHeight();
-	newRect.Left() = middle - oldRect.GetWidth() / 2;
-	newRect.Right() = middle + oldRect.GetWidth() / 2;
+	newRect.Top() = symbolRect.Top() + symbolRect.GetHeight() + 5;
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
+	newRect.Left() = middleWidth - oldRect.GetWidth() / 2;
+	newRect.Right() = middleWidth + oldRect.GetWidth() / 2;
 	secondChild->SetRect( newRect );
 
-	int middleHeight = rect.Top() + firstChild->GetRect().GetHeight() + GetSymbolHeight() / 2;
 	oldRect = sumChild->GetRect();
-	newRect.Top() = middleHeight - oldRect.GetHeight() / 2;
-	newRect.Bottom() = middleHeight + oldRect.GetHeight() / 2;
-	newRect.Left() = rect.Left() + MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() ) + 5;
+	newRect.Top() = getSumChildRectTop();
+	newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
+	newRect.Left() = MAX( symbolRect.Right(), MAX( firstChild->GetRect().Right(), secondChild->GetRect().Right() ) ) + 5;
 	newRect.Right() = newRect.Left() + oldRect.GetWidth();
 	sumChild->SetRect( newRect );
 
@@ -67,7 +118,7 @@ void CSumControlModel::PlaceChildren()
 
 int CSumControlModel::GetMiddle() const
 {
-	return ( firstChild->GetRect().GetHeight() + ( rect.GetHeight() - secondChild->GetRect().GetHeight() ) ) / 2;
+	return (firstChild->GetRect().GetHeight() + (rect.GetHeight() - secondChild->GetRect().GetHeight())) / 2;
 }
 
 void CSumControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild )
@@ -75,7 +126,7 @@ void CSumControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initC
 	CRect indexRect = CRect( 0, 0, 0, getIndexHeight( rect.GetHeight() ) );
 	CRect sumRect = CRect( 0, 0, 0, rect.GetHeight() );
 
-	if ( initChild ) {
+	if( initChild ) {
 		sumChild = initChild;
 		sumChild->SetParent( shared_from_this() );
 		sumChild->UpdateDepth();
@@ -118,35 +169,35 @@ void CSumControlModel::MoveBy( int dx, int dy )
 
 void CSumControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
-	if (isInSelectionMode)
+	if( isInSelectionMode )
 		params.isSelected = true;
-	// Если пришли из родителя - идем в нижнего ребенка
-	if ( from == parent.lock().get() ) {
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ СЂРµР±РµРЅРєР°
+	if( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
-	} else if ( from == secondChild.get() ) {
+	} else if( from == secondChild.get() ) {
 		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
-	} else if ( from == firstChild.get() ) {
+	} else if( from == firstChild.get() ) {
 		sumChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
 
 void CSumControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
-	if (isInSelectionMode)
+	if( isInSelectionMode )
 		params.isSelected = true;
-	// Если пришли из родителя - идем в верхнего ребенка
-	if ( from == parent.lock().get() ) {
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РІРµСЂС…РЅРµРіРѕ СЂРµР±РµРЅРєР°
+	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
-	} else if ( from == firstChild.get() ) {
-		// Если пришли из верхнего - идем в нижнего
+	} else if( from == firstChild.get() ) {
+		// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· РІРµСЂС…РЅРµРіРѕ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ
 		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
-	} else if ( from == secondChild.get() ) {
+	} else if( from == secondChild.get() ) {
 		sumChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
@@ -156,7 +207,7 @@ bool CSumControlModel::IsEmpty() const
 	return firstChild->IsEmpty() && secondChild->IsEmpty() && sumChild->IsEmpty();
 }
 
-// высота индексов
+// РІС‹СЃРѕС‚Р° РёРЅРґРµРєСЃРѕРІ
 int CSumControlModel::getIndexHeight( int rectHeight )
 {
 	return max( rectHeight * 3 / 4, CEditControlModel::MINIMAL_HEIGHT );
@@ -165,23 +216,18 @@ int CSumControlModel::getIndexHeight( int rectHeight )
 void CSumControlModel::updatePolygons()
 {
 	params.polygon.clear();
+	int sigmaCenterX = (symbolRect.Left() + symbolRect.Right()) / 2;
+	int sigmaCenterY = (symbolRect.Top() + symbolRect.Bottom()) / 2;
 
-	int sigmaTop = rect.Top() + firstChild->GetRect().GetHeight() + 5;
-	int sigmaBottom = rect.Bottom() - secondChild->GetRect().GetHeight() - 5;
-	int sigmaLeft = rect.Left();
-	int sigmaRight = rect.Left() + MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
-	int sigmaCenterX = ( sigmaLeft + sigmaRight ) / 2;
-	int sigmaCenterY = ( sigmaTop + sigmaBottom ) / 2;
-
-	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaRight, sigmaTop ) ); // верхняя перекладина
-	params.polygon.push_back( CLine( sigmaLeft, sigmaTop, sigmaCenterX, sigmaCenterY ) ); // диагональ сверху в центр
-	params.polygon.push_back( CLine( sigmaCenterX, sigmaCenterY, sigmaLeft, sigmaBottom ) ); // диагональ из центра вниз
-	params.polygon.push_back( CLine( sigmaLeft, sigmaBottom, sigmaRight, sigmaBottom ) ); // нижняя перекладина
+	params.polygon.push_back( CLine( symbolRect.Left(), symbolRect.Top(), symbolRect.Right(), symbolRect.Top() ) ); // РІРµСЂС…РЅСЏСЏ РїРµСЂРµРєР»Р°РґРёРЅР°
+	params.polygon.push_back( CLine( symbolRect.Left(), symbolRect.Top(), sigmaCenterX, sigmaCenterY ) ); // РґРёР°РіРѕРЅР°Р»СЊ СЃРІРµСЂС…Сѓ РІ С†РµРЅС‚СЂ
+	params.polygon.push_back( CLine( sigmaCenterX, sigmaCenterY, symbolRect.Left(), symbolRect.Bottom() ) ); // РґРёР°РіРѕРЅР°Р»СЊ РёР· С†РµРЅС‚СЂР° РІРЅРёР·
+	params.polygon.push_back( CLine( symbolRect.Left(), symbolRect.Bottom(), symbolRect.Right(), symbolRect.Bottom() ) ); // РЅРёР¶РЅСЏСЏ РїРµСЂРµРєР»Р°РґРёРЅР°
 }
 
 void CSumControlModel::UpdateSelection()
 {
-	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()) || !(sumChild->IsSelected()))
+	if( !(firstChild->IsSelected()) || !(secondChild->IsSelected()) || !(sumChild->IsSelected()) )
 		params.isSelected = false;
 }
 
@@ -191,7 +237,6 @@ std::shared_ptr<IBaseExprModel> CSumControlModel::CopySelected() const
 	std::shared_ptr<IBaseExprModel> firstModel = firstChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> secondModel = secondChild->CopySelected();
 	std::shared_ptr<IBaseExprModel> sumChildModel = sumChild->CopySelected();
-
 
 	sumModel->firstChild = firstModel;
 	sumModel->firstChild->SetParent( sumModel );

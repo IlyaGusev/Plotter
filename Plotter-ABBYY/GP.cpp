@@ -150,7 +150,7 @@ void GP::changeScale( int num )
 		lengthOfSection += num;
 
 		double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-		calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
+		//calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
 
 		calculateRelativePoints();
 	}
@@ -179,16 +179,17 @@ void GP::calculateRelativePoints()
 		if( !calc.Is2D() ) {
 			relativePoints[i].resize( calc.GetGridSize() );
 			for( int j = 0; j < relativePoints[i].size(); j++ ) {
-				relativePoints[i][j].clear();
-				for( double z_ij : calc.GetZ( i, j ) ) {
-					double xRel = origin.first + (x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+				auto z_ij = calc.GetZ( i, j );
+				relativePoints[i][j].resize( z_ij.size() );
+				for( size_t k = 0; k < z_ij.size(); ++k ) {
+					double xRel = origin.first + scale *(x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
 						y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-						z.first * (z_ij - globalZShift) * lengthOfSection);
-					double yRel = origin.second + (x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+						z.first * (z_ij[k] - globalZShift) * lengthOfSection);
+					double yRel = origin.second + scale * (x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
 						y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-						z.second * (z_ij - globalZShift) * lengthOfSection);
+						z.second * (z_ij[k] - globalZShift) * lengthOfSection);
 
-					relativePoints[i][j].push_back( std::pair<double, double>( xRel, yRel ) );
+					relativePoints[i][j][k] = std::pair<double, double>( xRel, yRel );
 				}
 			}
 		} else {

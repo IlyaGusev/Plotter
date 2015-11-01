@@ -215,7 +215,7 @@ void GraphWindow::drawGraph(HDC dc) {
 
 	int iSize = points.size();
 	int jSize = points[0].size();
-	/*for( size_t i = 0; i < iSize; ++i ) {
+	for( size_t i = 0; i < iSize; ++i ) {
 		size_t j = 0;
 		for( ; j < jSize && points[i][j].size() == 0; ++j );
 		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size() : 0); ++k ) {
@@ -230,19 +230,20 @@ void GraphWindow::drawGraph(HDC dc) {
 					if( l > 0 && k + 1 < points[i][l - 1].size() ) {
 						::LineTo( dc, round( points[i][l - 1][k].first ), round( points[i][l - 1][k + 1].second ) );
 					}
+					break;
 				}
 			}
 		}
-	}*/
+	}
 
 	for( size_t j = 0; j < jSize; ++j ) {
 		size_t i = 0;
 		for( ; i < iSize && points[i][j].size() == 0; ++i );
 		for( size_t k = 0; k < ((i < iSize) ? points[i][j].size() : 0); ++k ) {
 			::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
-			/*if( k + 1 < points[i][j].size() ) {
+			if( k + 1 < points[i][j].size() ) {
 				::LineTo( dc, round( points[i][j][k].first ), round( points[i][j][k + 1].second ) );
-			}*/
+			}
 			for( size_t l = i; l < iSize; ++l ) {
 				if( points[l][j].size() > k ) {
 					::LineTo( dc, round( points[l][j][k].first ), round( points[l][j][k].second ) );

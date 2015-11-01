@@ -1,0 +1,9 @@
+<apply>
+<eq/>
+<ci>z</ci>
+<apply>
+<times/>
+<ci>x</ci>
+<ci>x</ci>
+</apply>
+</apply>

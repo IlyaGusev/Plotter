@@ -80,6 +80,49 @@ bool MathMlCalculator::Is2D()
 	return is2D;
 }
 
+double MathMlCalculator::calculateMax(const std::vector<std::vector<double>>& points) const {
+	int n = points.size();
+	double max = -INT_MAX;
+	for (int i = 0; i < n; ++i) {
+		int innerN = points[i].size();
+		for (int j = 0; j < innerN; ++j) {
+			if (points[i][j] > max) {
+				max = points[i][j];
+			}
+		}
+	}
+	return max;
+}
+
+double MathMlCalculator::getXMax() const
+{
+	double xMax;
+	if (!isParametric) {
+		xMax = *((--xPoints.end())->begin());
+	}
+	else {
+		xMax = calculateMax(xPoints);
+	}
+	return xMax;
+}
+
+double MathMlCalculator::getYMax() const
+{
+	double yMax;
+	if (!isParametric) {
+		yMax = *(--((--yPoints.end())->end()));
+	}
+	else {
+		yMax = calculateMax(yPoints);
+	}
+	return yMax;
+}
+
+double MathMlCalculator::getZMax() const
+{
+	return calculateMax(zPoints);
+}
+
 void MathMlCalculator::buildFormulas( const pugi::xml_node& formulaRoot )
 {
 	pugi::xml_node coordDefinitionNode = formulaRoot.first_child();

@@ -88,7 +88,7 @@ std::vector<std::vector<std::pair<double, double>>> GP::getRelativePoints()
 }
 
 // возвращает направляющий вектор относительной( подвижной ) системы отсчета. Номера осей X - 0, Y - 1, Z - 2
-std::pair<double, double> GP::getAxisVector( int axisNum )
+std::pair<double, double> GP::getAxisVector( int axisNum ) const
 {
 	// получаем координаты неподвижной системы отсчета в 2D
 	double x0 = cos( M_PI * anglesOfAxis[0] / 180 );
@@ -103,7 +103,7 @@ std::pair<double, double> GP::getAxisVector( int axisNum )
 	return std::pair<double, double>( scale * relX, scale * relY );
 }
 
-std::pair<double, double> GP::getAxisVectorVisual( int axisNum )
+std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) const
 {
 	std::pair<double, double> axis = getAxisVector( axisNum );
 	axis.second = -axis.second;
@@ -185,7 +185,8 @@ void GP::calculateRelativePoints()
 				double yRel = origin.second + ( x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
 					y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
 					z.second * (calc.GetZ( i, j ) - globalZShift) * lengthOfSection );
-				relativePoints[i][j] = std::pair<double, double>( xRel, yRel );
+				relativePoints[i][j].first = xRel;
+				relativePoints[i][j].second = yRel;
 			}
 		} else {
 			relativePoints[i].resize( 1 );
@@ -193,18 +194,52 @@ void GP::calculateRelativePoints()
 				z.first * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
 			double yRel = origin.second + ( x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
 				z.second * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
-			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );
+			relativePoints[i][0].first = xRel;
+			relativePoints[i][0].second = yRel;
 		}
 	}
 }
 
+std::pair<double, double> GP::getXProjection(double x) const
+{
+	std::pair<double, double> xAxis = getAxisVectorVisual(0);
+	return std::make_pair(origin.first + xAxis.first * (x - globalXShift) * lengthOfSection,
+		origin.second + xAxis.second * (x - globalXShift) * lengthOfSection);
+}
+
+std::pair<double, double> GP::getYProjection(double y) const
+{
+	std::pair<double, double> yAxis = getAxisVectorVisual(1);
+	return std::make_pair(origin.first + yAxis.first * (y - globalYShift) * lengthOfSection,
+		origin.second + yAxis.second * (y - globalYShift) * lengthOfSection);
+}
+
+std::pair<double, double> GP::getZProjection(double z) const
+{
+	std::pair<double, double> zAxis = getAxisVectorVisual(2);
+	return std::make_pair(origin.first + zAxis.first * (z - globalZShift) * lengthOfSection,
+		origin.second + zAxis.second * (z - globalZShift) * lengthOfSection);
+}
+
+double GP::getXMax() const {
+	return calc.getXMax();
+}
+
+double GP::getYMax() const {
+	return calc.getYMax();
+}
+
+double GP::getZMax() const {
+	return calc.getZMax();
+}
+
 std::vector< std::vector<double> > GP::getZcoordinates() {
 	std::vector< std::vector<double> > zCoordinates;
-	zCoordinates.resize( calc.GetGridSize() );
+	zCoordinates.resize(calc.GetGridSize());
 	for (int i = 0; i < zCoordinates.size(); ++i) {
-		zCoordinates[i].resize( calc.GetGridSize() );
+		zCoordinates[i].resize(calc.GetGridSize());
 		for (int j = 0; j < zCoordinates[i].size(); ++j) {
-			zCoordinates[i][j] = calc.GetZ( i, j ) - globalZShift;
+			zCoordinates[i][j] = calc.GetZ(i, j) - globalZShift;
 		}
 	}
 	return zCoordinates;

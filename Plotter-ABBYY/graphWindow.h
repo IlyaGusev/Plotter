@@ -49,6 +49,7 @@ private:
 
 	void drawGraph(HDC dc);
 	void drawAxes(HDC dc);
+
 	// red for max and blue for min by default
 	void fillWithGradient(HDC dc, Gdiplus::Color maxColor = Gdiplus::Color(128, 255, 0, 0), Gdiplus::Color minColor = Gdiplus::Color(128, 0, 0, 255));
 

@@ -25,11 +25,17 @@ public:
 	bool Is2D();
 
 	int GetGridSize();
+
+	double getXMax() const;
+	double getYMax() const;
+	double getZMax() const;
+	
 private:
 	void buildFormulas(const pugi::xml_node& formulaRoot);
 	void buildCoordFormula(const pugi::xml_node& coordRoot);
 	double getFirstArg( int i, int j );
 	double getSecondArg( int i, int j );
+	double calculateMax(const std::vector<std::vector<double>>& points) const;
 
 	std::function<double()> xFormula;
 	std::function<double()> yFormula;

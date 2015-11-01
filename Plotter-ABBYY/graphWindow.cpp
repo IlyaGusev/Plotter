@@ -91,7 +91,7 @@ void GraphWindow::OnKeyDown(WPARAM wParam) {
 		break;
 	// Z key
 	case 0x5A:
-		graphInPoints.changeScale(-2 );
+		graphInPoints.changeScale( -2 );
 		break;
 	// X key
 	case 0x58:
@@ -200,7 +200,6 @@ void GraphWindow::drawGraph(HDC dc) {
 	
 	int pointsJSize = points[0].size() % 3 == 0 ? points[0].size() - 2 : 3 * (points[0].size() / 3) + 1;
 	int pointsISize = points.size() % 3 == 0 ? points.size() - 2 : 3 * (points.size() / 3) + 1;
-
 	for( size_t i = 0; i < pointsISize; ++i ) {
 		POINT* lppoints = new POINT[pointsJSize];
 		for( size_t j = 0; j < pointsJSize; ++j ) {
@@ -241,6 +240,21 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 100, 200));
 	::TextOut(dc, round(origin.first + xAxis.first * 200), round(origin.second + xAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
+	text = std::to_string(graphInPoints.getGridSize());
+	
+	int pointsCount = 5;
+	double maxValue = graphInPoints.getXMax();
+	double axisScaleCoordUnit = maxValue / pointsCount;
+	double axisScaleCoord = 0;
+	std::pair<double, double> projectionCoord;
+	for (int i = 0; i < pointsCount; ++i ) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getXProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+	}
 
 	linePen = ::CreatePen(PS_SOLID, 1, RGB(200, 100, 200));
 	::SelectObject(dc, linePen);
@@ -251,6 +265,16 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(200, 100, 200));
 	::TextOut(dc, round(origin.first + yAxis.first * 200), round(origin.second + yAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	maxValue = graphInPoints.getYMax();
+	axisScaleCoordUnit = maxValue / pointsCount;
+	axisScaleCoord = 0;
+	for (int i = 0; i < pointsCount; ++i) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getYProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+	}
 
 	linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 200, 200));
 	::SelectObject(dc, linePen);
@@ -262,6 +286,16 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 200, 200));
 	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	maxValue = graphInPoints.getZMax();
+	axisScaleCoordUnit = maxValue / pointsCount;
+	axisScaleCoord = 0;
+	for (int i = 0; i < pointsCount; ++i) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getZProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+	}
 }
 
 void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {

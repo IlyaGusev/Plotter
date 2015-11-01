@@ -35,7 +35,6 @@ double TimesOperation::build(const pugi::xml_node& currentNode) const {
 	double result = 1;
 	while (!curArg.empty()) {
 		result *= OperationHandler::getOperation(curArg.name()).build(curArg);
-		//result *= 2;
 		curArg = curArg.next_sibling();
 	}
 	return result;
@@ -44,7 +43,7 @@ double TimesOperation::build(const pugi::xml_node& currentNode) const {
 double DivideOperation::build( const pugi::xml_node& currentNode ) const
 {
 	pugi::xml_node firstArg = currentNode.next_sibling();
-	if( firstArg.empty( ) ) {
+	if( firstArg.empty() ) {
 		//error
 	}
 	pugi::xml_node secondArg = firstArg.next_sibling();

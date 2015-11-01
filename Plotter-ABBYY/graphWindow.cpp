@@ -184,30 +184,75 @@ void GraphWindow::drawGraph(HDC dc) {
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
 	::SelectObject(dc, linePen);
 
-	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
+	std::vector< std::vector < std::vector< std::pair<double, double> > > > points = graphInPoints.getRelativePoints();
 	
-	int pointsJSize = points[0].size() % 3 == 0 ? points[0].size() - 2 : 3 * (points[0].size() / 3) + 1;
-	int pointsISize = points.size() % 3 == 0 ? points.size() - 2 : 3 * (points.size() / 3) + 1;
+	//int pointsJSize = points[0].size() % 3 == 0 ? points[0].size() - 2 : 3 * (points[0].size() / 3) + 1;
+	//int pointsISize = points.size() % 3 == 0 ? points.size() - 2 : 3 * (points.size() / 3) + 1;
 
-	for( size_t i = 0; i < pointsISize; ++i ) {
-		POINT* lppoints = new POINT[pointsJSize];
-		for( size_t j = 0; j < pointsJSize; ++j ) {
-			lppoints[j] = { round( points[i][j].first ), round( points[i][j].second ) };
+	//for( size_t i = 0; i < pointsISize; ++i ) {
+	//	POINT* lppoints = new POINT[pointsJSize];
+	//	for( size_t j = 0; j < pointsJSize; ++j ) {
+	//		if( points[i][j].size() > 0 ) {
+	//			lppoints[j] = { round( points[i][j][0].first ), round( points[i][j][0].second ) };
+	//		}
+	//	}
+	//	::PolyBezier( dc, lppoints, pointsJSize );
+
+	//	delete[] lppoints;
+	//}
+
+	//for( size_t j = 0; j < pointsJSize; ++j ) {
+	//	POINT* lppoints = new POINT[pointsISize];
+	//	for( size_t i = 0; i < pointsISize; ++i ) {
+	//		if( points[i][j].size() > 0 ) {
+	//			lppoints[i] = { round( points[i][j][0].first ), round( points[i][j][0].second ) };
+	//		}
+	//	}
+	//	::PolyBezier( dc, lppoints, pointsISize );
+
+	//	delete[] lppoints;
+	//}
+
+	int iSize = points.size();
+	int jSize = points[0].size();
+	for( size_t i = 0; i < iSize; ++i ) {
+		size_t j = 0;
+		for( ; j < jSize && points[i][j].size( ) == 0; ++j );
+		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size() : 0); ++k ) {
+			::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+			for( size_t l = j; l < jSize; ++l ) {
+				if( points[i][l].size() > k ) {
+					::LineTo( dc, round( points[i][l][k].first ), round( points[i][l][k].second ) );
+				}
+			}
 		}
-		::PolyBezier( dc, lppoints, pointsJSize );
-
-		delete[] lppoints;
 	}
 
-	for( size_t j = 0; j < pointsJSize; ++j ) {
-		POINT* lppoints = new POINT[pointsISize];
-		for( size_t i = 0; i < pointsISize; ++i ) {
-			lppoints[i] = { round( points[i][j].first ), round( points[i][j].second ) };
+	for( size_t j = 0; j < jSize; ++j ) {
+		size_t i = 0;
+		for( ; i < iSize && points[i][j].size() == 0; ++i );
+		for( size_t k = 0; k < ((i < iSize) ? points[i][j].size() : 0); ++k ) {
+			::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+			for( size_t l = i; l < iSize; ++l ) {
+				if( points[l][j].size() > k ) {
+					::LineTo( dc, round( points[l][j][k].first ), round( points[l][j][k].second ) );
+				}
+			}
 		}
-		::PolyBezier( dc, lppoints, pointsISize );
-
-		delete[] lppoints;
 	}
+
+	//for( size_t j = 0; j < points.size(); ++j ) {
+	//	bool isStart = true;
+	//	for( size_t i = 1; i < points.size( ); ++i ) {
+	//		if( isStart && points[0][j].size( ) > 0 ) {
+	//			::MoveToEx( dc, round( points[0][j][0].first ), round( points[0][j][0].second ), NULL );
+	//			isStart = false;
+	//		}
+	//		if( points[i][j].size() > 0 ) {
+	//			::LineTo( dc, round( points[i][j][0].first ), round( points[i][j][0].second ) );
+	//		}
+	//	}
+	//}
 
 	::DeleteObject(linePen);
 }

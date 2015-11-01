@@ -5,7 +5,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 	if (!GraphWindow::RegisterClass(hInstance)) {
 		return 1;
 	}
-	GraphWindow mainWindow( 700, 700, L"./ex.xml", true );
+	GraphWindow mainWindow( 700, 700, L"./ex.xml" );
 
 	if( !mainWindow.Create( hInstance, nCmdShow ) ) {
 		return 1;

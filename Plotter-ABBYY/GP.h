@@ -32,7 +32,7 @@ public:
 	// изменяет масштаб
 	void changeScale( int num );
 	// Возвращает положение относительных точек
-	std::vector<std::vector<std::pair<double, double>>> getRelativePoints();
+	std::vector<std::vector< std::vector< std::pair<double, double> >>> getRelativePoints();
 	// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
 	std::pair<double, double> getAxisVector( int axisNum );
 	// возвращает направляющий вектор в подстроенный под ориентацию WinApi
@@ -54,7 +54,7 @@ private:
 	std::vector< Vector > relativeAxis;
 	std::vector< Vector > prevRelativeAxis;
 	// относительные точки уже в 2D, в качестве индексов изначальная сетка X, Y 
-	std::vector<std::vector<std::pair<double, double>>> relativePoints;
+	std::vector < std::vector < std::vector< std::pair<double, double > > > > relativePoints;
 	// координаты пересечения осей в 2D
 	std::pair<double, double> origin;
 

@@ -1,4 +1,22 @@
 <apply>
-	<sin/>
-	  <ci>x</ci>
+  <minus/>
+  <apply>
+    <times/>
+    <apply>
+      <power/>
+      <ci>x</ci>
+      <cn>2</cn>
+    </apply>
+    <apply>
+      <power/>
+      <ci>y</ci>
+      <cn>2</cn>
+    </apply>
+    <apply>
+      <power/>
+      <ci>z</ci>
+      <cn>2</cn>
+    </apply>
+  </apply>
+  <cn>100</cn>
 </apply>

@@ -63,4 +63,9 @@
       <Filter>PugiXML</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ex.xml">
+      <Filter>Resource Files</Filter>
+    </Xml>
+  </ItemGroup>
 </Project>

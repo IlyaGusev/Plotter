@@ -96,10 +96,7 @@ void MathMlCalculator::buildFormula( const pugi::xml_node& formulaRoot )
 		isParametric = true;
 	} else {
 		zFormula = [curNode] () -> double {
-			return OperationHandler::getVar( "x" ) * OperationHandler::getVar( "x" ) 
-				+ OperationHandler::getVar( "y" ) * OperationHandler::getVar( "y" ) 
-				+ OperationHandler::getVar( "z" ) * OperationHandler::getVar( "z" ) - 4;
-			//return OperationHandler::getOperation( curNode.name() ).build( curNode );
+			return OperationHandler::getOperation( curNode.name() ).build( curNode );
 		};
 	}
 }

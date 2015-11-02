@@ -19,6 +19,20 @@ void CFracControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CFracControlModel::Serialize() {
+	std::wstring result = L"<mfrac><mrow>";
+
+	if (!firstChild->IsEmpty()) {
+		result += firstChild->Serialize() + L"</mrow><mrow>";
+	}
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</mrow></mfrac>";
+	}
+
+	return result;
+}
+
 void CFracControlModel::PlaceChildren()
 {
 	CRect newRect;

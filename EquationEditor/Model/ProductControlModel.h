@@ -1,18 +1,18 @@
-#pragma once
+п»ї#pragma once
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
 class CSumControlModel;
 
-// Модель для произведения
-// Держит на себе пару ExprControl'ов - верхний и нижний индексы
+// РњРѕРґРµР»СЊ РґР»СЏ РїСЂРѕРёР·РІРµРґРµРЅРёСЏ
+// Р”РµСЂР¶РёС‚ РЅР° СЃРµР±Рµ РїР°СЂСѓ ExprControl'РѕРІ - РІРµСЂС…РЅРёР№ Рё РЅРёР¶РЅРёР№ РёРЅРґРµРєСЃС‹
 class CProductControlModel : public IBaseExprModel {
 public:
 	CProductControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	// Выставляем размеры вьюшек
+	// Р’С‹СЃС‚Р°РІР»СЏРµРј СЂР°Р·РјРµСЂС‹ РІСЊСЋС€РµРє
 	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void SetRect( const CRect& rect );
@@ -31,29 +31,30 @@ public:
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 
 	bool IsEmpty() const;
+	int GetSymbolHeight() const;
+
 	void UpdateSelection();
 
-	int GetSymbolHeight() const;
-	int GetSymbolTop() const;
-
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
+	std::wstring Serialize();
 private:
-	// Верхний ребенок
+	// Р’РµСЂС…РЅРёР№ СЂРµР±РµРЅРѕРє
 	std::shared_ptr<IBaseExprModel> firstChild;
-	// Нижний ребенок
+	// РќРёР¶РЅРёР№ СЂРµР±РµРЅРѕРє
 	std::shared_ptr<IBaseExprModel> secondChild;
-	// Ребенок под произведением
+	// Р РµР±РµРЅРѕРє РїРѕРґ РїСЂРѕРёР·РІРµРґРµРЅРёРµРј
 	std::shared_ptr<IBaseExprModel> productChild;
 
-	std::shared_ptr< CSumControlModel > realChildPresentSum;
-	std::shared_ptr< CProductControlModel > realChildPresentProduct;
 	CRect symbolRect;
 
-	int getIndexHeight( int rectHeight );
+	std::shared_ptr<CSumControlModel> realChildPresentSum;
+	std::shared_ptr<CProductControlModel> realChildPresentProduct;
 
 	void updatePolygons();
+	int getIndexHeight( int rectHeight );
+	int getSumChildRectTop() const;
+	int getSymbolTop() const;
 	void updateSymbolRect();
 	int getSumChildHeight() const;
-	int getSumChildRectTop() const;
 	void setRealChildPresentSumOrProduct();
 };

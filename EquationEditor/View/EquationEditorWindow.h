@@ -10,6 +10,11 @@ public:
     // Если true, то зарегистрировали успешно
     static bool RegisterClassW();
 
+	HWND GetHandle()
+	{
+		return hwnd;
+	}
+
     // Создать экземпляр окна
     // Если true, то создано успешно
     bool Create();
@@ -52,6 +57,7 @@ private:
     HWND hwnd;		// хэндл окна
 	HDC hdc;		// канва для рисования
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
+	bool isPressedShift;
 
 	COLORREF symbolSelectedColorref;
 	COLORREF symbolUnselectedColorref;

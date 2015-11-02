@@ -8,6 +8,7 @@ const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr ) 
 {
 	presenter = std::make_shared<CEquationPresenter>(*this);
+	isPressedShift = false;
 }
 
 bool CEquationEditorWindow::RegisterClassW() 
@@ -88,7 +89,29 @@ void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos )
 
 void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam ) 
 {
-	if( HIWORD( wParam ) == 0 ) {
+	CCaret caret;
+	if( HIWORD( wParam ) == 1 ) {
+		switch( LOWORD( wParam ) ) {
+			case ID_ACC_DEGR:
+				presenter->AddControlView( DEGR );
+				break;
+			case ID_ACC_FRAC:
+				presenter->AddControlView( FRAC );
+				break;
+			case ID_SHIFT_LEFT:
+				caret = presenter->GetCaret();
+				caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret );
+				presenter->SetSelection( caret.GetPointX(), caret.GetPointY() );
+				break;
+			case ID_SHIFT_RIGHT:
+				caret = presenter->GetCaret();
+				caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret );
+				presenter->SetSelection( caret.GetPointX(), caret.GetPointY() );
+				break;
+			default:
+				return;
+		}
+	} else if( HIWORD( wParam ) == 0 ) {
 		switch( LOWORD( wParam ) ) {
 		case ID_ADD_FRAC:
 			presenter->AddControlView( FRAC );
@@ -126,7 +149,7 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 		presenter->DeleteSymbol( GetKeyState( VK_CONTROL ) < 0 );
 		break;
 
-	case VK_LEFT:   // LEFT ARROW 
+	case VK_LEFT:   // LEFT ARROW
 		presenter->MoveCaretLeft();
 		break;
 
@@ -136,6 +159,7 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 
 	case VK_UP:     // UP ARROW 
 	case VK_DOWN:   // DOWN ARROW 
+		presenter->Serialize();
 		break;
 	}
 }

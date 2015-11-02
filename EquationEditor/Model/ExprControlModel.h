@@ -38,6 +38,7 @@ public:
 	bool DeleteSelectedPart();
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
+	std::wstring Serialize();
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

@@ -1,4 +1,4 @@
-#include "Model/ProductControlModel.h"
+п»ї#include "Model/ProductControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/SumControlModel.h"	
 
@@ -6,7 +6,7 @@
 CProductControlModel::CProductControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 IBaseExprModel( rect, parent )
 {
-	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
+	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // РЅР°СЃ РёРЅС‚РµСЂРµСЃСѓРµС‚ С‚РѕР»СЊРєРѕ РІС‹СЃРѕС‚Р°, РѕСЃС‚Р°Р»СЊРЅРѕРµ РёСЃРїСЂР°РІРёС‚СЃСЏ СЃСЂР°Р·Сѓ Р¶Рµ РїРѕСЃР»Рµ РёРЅРІР°Р»РёРґР°С†РёРё РґРµСЂРµРІР°
 
 	depth = parent.lock()->GetDepth() + 1;
 }
@@ -17,35 +17,53 @@ int CProductControlModel::GetSymbolHeight() const {
 
 void CProductControlModel::setRealChildPresentSumOrProduct()
 {
-	realChildPresentSum = nullptr;
-	realChildPresentProduct = nullptr;
-	auto childList = productChild->GetChildren();
-	if( !childList.empty() ) {
-		auto child = std::next( childList.begin() );
-		if( child != childList.end() ) {
-			auto type = (*child)->GetType();
-			if( type == SUM ) {
-				realChildPresentSum = std::dynamic_pointer_cast< CSumControlModel >(*child);
-			} else if( type == PRODUCT ) {
-				realChildPresentProduct = std::dynamic_pointer_cast< CProductControlModel >(*child);
-			}
-		}
+  realChildPresentSum = nullptr;
+  realChildPresentProduct = nullptr;
+  auto childList = productChild->GetChildren();
+  if (!childList.empty()) {
+    auto child = std::next(childList.begin());
+    if (child != childList.end()) {
+      auto type = (*child)->GetType();
+      if (type == SUM) {
+        realChildPresentSum = std::dynamic_pointer_cast<CSumControlModel>(*child);
+      } else if (type == PRODUCT) {
+        realChildPresentProduct = std::dynamic_pointer_cast<CProductControlModel>(*child);
+      }
+    }
+  }
+}
+
+std::wstring CProductControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><product/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
 	}
+
+	if (!productChild->IsEmpty()) {
+		result += L"<apply>" + productChild->Serialize() + L"</apply>";
+	}
+
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	}
+
+	return result;
 }
 
 int CProductControlModel::getSumChildHeight() const
 {
 	if( realChildPresentSum != nullptr ) {
-		return realChildPresentSum->GetSymbolHeight(); // возвращаем высоту знака суммы
+		return realChildPresentSum->GetSymbolHeight(); // РІРѕР·РІСЂР°С‰Р°РµРј РІС‹СЃРѕС‚Сѓ Р·РЅР°РєР° СЃСѓРјРјС‹
 	} else if( realChildPresentProduct != nullptr ) {
 		return realChildPresentProduct->GetSymbolHeight();
 	}
-	return productChild->GetRect().GetHeight(); // иначе возвращаем высоту выражения
+	return productChild->GetRect().GetHeight(); // РёРЅР°С‡Рµ РІРѕР·РІСЂР°С‰Р°РµРј РІС‹СЃРѕС‚Сѓ РІС‹СЂР°Р¶РµРЅРёСЏ
 }
 
 void CProductControlModel::updateSymbolRect()
 {
-	symbolRect.Top() = GetSymbolTop();
+	symbolRect.Top() = getSymbolTop();
 	symbolRect.Bottom() = symbolRect.Top() + getSumChildHeight();
 	int indexMaxWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
 	int piWidth = MAX( MIN( indexMaxWidth, symbolRect.GetHeight() ), symbolRect.GetHeight() / 2 );
@@ -75,7 +93,7 @@ int CProductControlModel::getSumChildRectTop() const
 	return symbolRect.Top();
 }
 
-int CProductControlModel::GetSymbolTop() const
+int CProductControlModel::getSymbolTop() const
 {
 	int top = rect.Top() + firstChild->GetRect().GetHeight() + 5;
 	if( realChildPresentSum != nullptr ) {
@@ -122,7 +140,7 @@ int CProductControlModel::GetMiddle() const
 	return ( firstChild->GetRect().GetHeight() + ( rect.GetHeight() - secondChild->GetRect().GetHeight() ) ) / 2;
 }
 
-// новая высота индекса
+// РЅРѕРІР°СЏ РІС‹СЃРѕС‚Р° РёРЅРґРµРєСЃР°
 int CProductControlModel::getIndexHeight( int rectHeight )
 {
 	return MAX( 3 * rectHeight / 4, CEditControlModel::MINIMAL_HEIGHT );
@@ -178,7 +196,7 @@ void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 {
 	if (isInSelectionMode)
 		params.isSelected = true;
-	// Если пришли из родителя - идем в нижнего ребенка
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ СЂРµР±РµРЅРєР°
 	if ( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else if ( from == secondChild.get() ) {
@@ -186,7 +204,7 @@ void CProductControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 	} else if ( from == firstChild.get() ) {
 		productChild->MoveCaretLeft( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretLeft( this, caret, isInSelectionMode );
 	}
 }
@@ -195,16 +213,16 @@ void CProductControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& c
 {
 	if (isInSelectionMode)
 		params.isSelected = true;
-	// Если пришли из родителя - идем в верхнего ребенка
+	// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· СЂРѕРґРёС‚РµР»СЏ - РёРґРµРј РІ РІРµСЂС…РЅРµРіРѕ СЂРµР±РµРЅРєР°
 	if ( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else if ( from == firstChild.get() ) {
-		// Если пришли из верхнего - идем в нижнего
+		// Р•СЃР»Рё РїСЂРёС€Р»Рё РёР· РІРµСЂС…РЅРµРіРѕ - РёРґРµРј РІ РЅРёР¶РЅРµРіРѕ
 		secondChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else if ( from == secondChild.get() ) {
 		productChild->MoveCaretRight( this, caret, isInSelectionMode );
 	} else {
-		// Иначе идем наверх
+		// РРЅР°С‡Рµ РёРґРµРј РЅР°РІРµСЂС…
 		parent.lock()->MoveCaretRight( this, caret, isInSelectionMode );
 	}
 }
@@ -225,9 +243,9 @@ void CProductControlModel::updatePolygons()
 	int piLeft = symbolRect.Left() + piWidth / 5;
 	int piRight = symbolRect.Right() - piWidth / 5;
 	
-	params.polygon.push_back( CLine( piLeft, piTop, piLeft, piBottom ) ); // левая палка
-	params.polygon.push_back( CLine( piRight, piTop, piRight, piBottom ) ); // правая палка
-	params.polygon.push_back( CLine( symbolRect.Left(), piTop, symbolRect.Left() + piWidth, piTop ) ); // верхняя перекладина
+	params.polygon.push_back( CLine( piLeft, piTop, piLeft, piBottom ) ); // Р»РµРІР°СЏ РїР°Р»РєР°
+	params.polygon.push_back( CLine( piRight, piTop, piRight, piBottom ) ); // РїСЂР°РІР°СЏ РїР°Р»РєР°
+	params.polygon.push_back( CLine( symbolRect.Left(), piTop, symbolRect.Left() + piWidth, piTop ) ); // РІРµСЂС…РЅСЏСЏ РїРµСЂРµРєР»Р°РґРёРЅР°
 }
 
 void CProductControlModel::UpdateSelection()

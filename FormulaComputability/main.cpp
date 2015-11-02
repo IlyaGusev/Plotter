@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class XmlLoadException : public exception 
+class XmlLoadException : public exception
 {
 public:
     XmlLoadException( const char* errInfo ) : errorMsg( errInfo ) {};
@@ -28,9 +28,10 @@ int main(int argc, char** argv) {
         if ( !result ) {
             throw XmlLoadException(result.description());
         }
-        if ( FormulaComputability::checkComputability(doc) ) {
-            cout << "Given formula is computable" << endl;
-        }
+        // if ( FormulaComputability::checkComputability(doc) ) {
+        //     cout << "Given formula is computable" << endl;
+        // }
+        FormulaComputability::solveQudraticEquation(doc);
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << std::endl;
     }

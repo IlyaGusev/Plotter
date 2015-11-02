@@ -1,8 +1,9 @@
 #ifndef _TAGAPPLY_H
 #define _TAGAPPLY_H
 #include "CTag.h"
+#include "CTree.h"
 #include "CTagCi.h"
-
+#include <typeinfo>
 
 //both Apply (= CTagApplyReln<NUMBER>) and Reld (= CTagApplyReln<BOOL>)
 template<CType TFunc>
@@ -10,6 +11,7 @@ class CTagApplyReln : public CTagAtomic {
 public:
 	CTagApplyReln();
 	virtual void operator ()( const CNode& node ) const;
+	virtual void operator ()( const CNode& node, CTreeNode& tree_node );
 protected:
 	static void enterToAllLimitableArgs( const CNode& node );//обход всех дочерних вершин для функций sum, product
 };
@@ -36,13 +38,24 @@ void CTagApplyReln< TFunc>::operator ()( const CNode& node )const
 	if ( !(child.empty()) ) {
 		throwException( node, child.offset_debug(), INVALID_ARGUMENT );
 	}
-	//limitable-функции требуют особого обхода
-	if ( func.getType() & LIMITABLE ) {
-		enterToAllLimitableArgs( node );
-	}
-	else {
+
+	if (! (func.getType() & LIMITABLE )) {
 		enterToAllChilds( node );
 	}
+	else {
+		//limitable-функции требуют особого обхода
+		enterToAllLimitableArgs( node );
+	}
+}
+
+template<CType TFunc>
+void CTagApplyReln< TFunc>::operator ()( const CNode& node, CTreeNode& tree_node)
+{
+	auto child = node.first_child();
+	const CTag& func = CTagContainer::getTag(child.name());
+	CTreeNode& next_node = tree_node.Step(child.name());
+	func.checkTree(child, next_node);
+	enterToAllChilds( node, next_node);
 }
 
 template<CType TFunc>

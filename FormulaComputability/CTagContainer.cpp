@@ -56,10 +56,11 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 	tagsToFill.emplace( "exp", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 	tagsToFill.emplace( "ln", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
 	tagsToFill.emplace( "log", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 1 >() ) );
+	tagsToFill.emplace( "power", unique_ptr<CTag>( new CTagNArgFunction< NUMBER, NUMBER, 2 >() ) );
 
 	/******/
 
-	tagsToFill.emplace( "minus", unique_ptr<CTag>( new CTagVarArgFunction<NUMBER, NUMBER>()));
+	tagsToFill.emplace( "minus", unique_ptr<CTag>( new CTagNArgFunction<NUMBER, NUMBER, 2>()));
 	tagsToFill.emplace( "mull", unique_ptr<CTag>( new CTagVarArgFunction<NUMBER, NUMBER>()));
 	tagsToFill.emplace( "cn", unique_ptr<CTag>(  new CTagCn() ) );
 	tagsToFill.emplace( "ci", unique_ptr<CTag>(  new CTagCi() ) );
@@ -68,7 +69,7 @@ map< string, unique_ptr< CTag > > CTagContainer::CTagContainerBuild()
 	tagsToFill.emplace( "uplimit", unique_ptr<CTag>(  new CTagQualifiers(LIMIT_UP) ) );
 	tagsToFill.emplace( "condition", unique_ptr<CTag>(  new CTagCondition() ) );
 	tagsToFill.emplace( "declare", unique_ptr<CTag>(  new CTagDeclare() ) );
-    tagsToFill.emplace( "bvar", unique_ptr<CTag>( new CTagBVar() ) );
+  tagsToFill.emplace( "bvar", unique_ptr<CTag>( new CTagBVar() ) );
 
     /* limitable functions*/
     tagsToFill.emplace( "sum", unique_ptr<CTag>( new CTagLimitable() ) );

@@ -25,6 +25,18 @@ void CTagCi::operator()(const CNode& node) const
 	}
 }
 
+void CTagCi::operator()(const CNode& node, CTreeNode& tree_node)
+{
+	string ident(deleteSpaces(node.text().as_string()));
+	tree_node.Step(node.name());
+	if (ident.empty()) {
+		throwException(node, node.offset_debug(), INCORRECT_VALUE);
+	}
+	if( identifiers.find(ident) == identifiers.end() ) {
+		throwException(node, node.offset_debug(), UNKNOWN_IDENTIFIER);
+	}
+}
+
 void CTagCi::AddIdentifier(const CNode& node, CType Type)
 {
 	string ident(node.text().as_string());

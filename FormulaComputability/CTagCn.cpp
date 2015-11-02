@@ -1,7 +1,7 @@
 #ifndef _TacCn_CPP
 #define _TacCn_CPP
 
-#include "CTagCn.h" 
+#include "CTagCn.h"
 
 CTagCn::CTagCn()
 {
@@ -26,6 +26,15 @@ void CTagCn::nodeIsReal(const CNode& node)const
 	double d = stod(num, &pos);
 	if (pos != num.length() || !num.length())
 		throwException(node, node.offset_debug(), INCORRECT_VALUE);
+}
+
+void CTagCn::nodeIsReal(const CNode& node, CTreeNode& tree_node)const
+{
+	nodeIsReal(node);
+	size_t pos = 0;
+	string num = deleteSpaces(node.text().as_string());
+	double d = stod(num, &pos);
+	tree_node.value = d;
 }
 
 void CTagCn::operator ()(const CNode& node)const
@@ -73,6 +82,20 @@ void CTagCn::operator ()(const CNode& node)const
 	};
 
 	throwException(node, node.offset_debug(), UNKNOWN_ATTRIBUTE);
+}
+
+void CTagCn::operator ()(const CNode& node, CTreeNode& tree_node)
+{
+	(*this)(node);
+	checkAttributes(node, { "type" });
+	string attr = node.attribute("type").as_string();
+	CNode child = node.first_child();
+	if (attr == "real" || attr == "")
+	{
+		hasNChilds(node, 1);
+		nodeIsReal(child, tree_node.Step("cn"));
+		return;
+	}
 }
 
 #endif

@@ -97,14 +97,14 @@ void CTagDeclare::addFunction(const CNode& node) const
 void CTagDeclare::addIdentifier(const CNode& node) const
 {
 	CTagCi::AddIdentifier(node.first_child(), NUMBER | VARIABLE);
-	auto lastChildNode = node.first_child().next_sibling();
-	if ( lastChildNode.empty() ) {
-		throwException(node, node.first_child().offset_debug(), MISSED_ARGUMENT);
-	}
-	if ( !(CTagContainer::getTag( lastChildNode.name() ).getType() & NUMBER)) {
-		throwException(lastChildNode, lastChildNode.offset_debug(), UNEXPECTED_CHILD);
-	}
-	CTagContainer::getTag( lastChildNode.name() )( lastChildNode );
+	// auto lastChildNode = node.first_child().next_sibling();
+	// if ( lastChildNode.empty() ) {
+	// 	throwException(node, node.first_child().offset_debug(), MISSED_ARGUMENT);
+	// }
+	// if ( !(CTagContainer::getTag( lastChildNode.name() ).getType() & NUMBER)) {
+	// 	throwException(lastChildNode, lastChildNode.offset_debug(), UNEXPECTED_CHILD);
+	// }
+	// CTagContainer::getTag( lastChildNode.name() )( lastChildNode );
 }
 
 #endif

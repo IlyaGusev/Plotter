@@ -1,6 +1,5 @@
 #include "CTag.h"
 #include "CTagCi.h"
-#include <sstream>
 
 CTag::CTag()
 {
@@ -32,6 +31,26 @@ void CTag::enterToAllChilds( const CNode& node )
             boundNode = child.first_child();
         } else {
            ( childTag )( child );
+        }
+        child = child.next_sibling();
+    }
+    if ( !boundNode.empty() ) {
+        CTagCi::deleteIdentifier( boundNode.text().as_string() );
+    }
+}
+
+void CTag::enterToAllChilds( const CNode& node, CTreeNode& tree_node)
+{
+    auto child = node.first_child();
+    CNode boundNode;
+    while (! child.empty())
+    {
+        CTag& childTag = CTagContainer::getTag( child.name() );
+        if ( childTag.getType() & BOUND ) {
+            CTagCi::AddIdentifier(child.first_child(), BOUND);
+            boundNode = child.first_child();
+        } else {
+           ( childTag )( child, tree_node );
         }
         child = child.next_sibling();
     }

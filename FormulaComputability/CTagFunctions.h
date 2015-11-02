@@ -39,6 +39,7 @@ class CTagVarArgFunction : public CTagFunction< TArg, TRes>
 {
 public:
 	virtual const CNode checkSignature(const CNode& node)const;
+	virtual const CNode checkTree(const CNode& node, CTreeNode& tree_node)const;
 };
 
 //function with CountArg arguments
@@ -47,6 +48,7 @@ class CTagNArgFunction : public CTagFunction< TArg, TRes>
 {
 public:
 	virtual const CNode checkSignature(const CNode& node)const;
+	virtual const CNode checkTree(const CNode& node, CTreeNode& tree_node)const;
 };
 
 template< CType TArg,CType TRes>
@@ -62,19 +64,30 @@ const CNode CTagVarArgFunction< TArg, TRes>::checkSignature(const CNode& node)co
 	{
 		arg = CTagFunction< TArg, TRes>::checkArgument(arg);
 	}
-
 	return arg;
+};
+
+template< CType TArg,CType TRes>
+const CNode CTagVarArgFunction< TArg, TRes>::checkTree(const CNode& node, CTreeNode& tree_node)const
+{
+	(*this).checkSignature(node);
 };
 
 template< CType TArg, CType TRes, int CountArg>
 const CNode CTagNArgFunction< TArg, TRes, CountArg>::checkSignature(const CNode& node)const
 {
-		auto arg = node;
+		auto arg = node.next_sibling();
 		for (int i = 0; i < CountArg; ++i)
 		{
-			arg = CTagFunction< TArg, TRes>::checkArgument(arg.next_sibling());
+			arg = CTagFunction< TArg, TRes>::checkArgument(arg);
 		}
 	return arg;
+};
+
+template< CType TArg, CType TRes, int CountArg>
+const CNode CTagNArgFunction< TArg, TRes, CountArg>::checkTree(const CNode& node, CTreeNode& tree_node)const
+{
+	(*this).checkSignature(node);
 };
 
 #endif

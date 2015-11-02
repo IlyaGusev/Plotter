@@ -1,16 +1,10 @@
 #pragma once
 #ifndef _CTAGCONTAINER_H
 #define _CTAGCONTAINER_H
-
-#include <map>
-#include <memory>
-#include <utility>
-
-using namespace std;
-
+#include "common.h"
 class CTag;
 
-class CTagContainer 
+class CTagContainer
 {
 public:
     static CTag& getTag(const string& name);

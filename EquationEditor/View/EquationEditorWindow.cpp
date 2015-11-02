@@ -1,6 +1,5 @@
 ﻿#include <Windowsx.h>
 #include "resource.h"
-#include "../RibbonFramework.h"
 #include "View/EquationEditorWindow.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
@@ -25,17 +24,18 @@ bool CEquationEditorWindow::RegisterClassW()
 	return ::RegisterClassEx( &wnd ) != 0;
 }
 
-bool CEquationEditorWindow::Create() 
+bool CEquationEditorWindow::Create( HWND parent, RECT rect ) 
 {
-	symbolSelectedColorref = RGB( 0xFF, 0xFF, 0xFF );	// Белый
+  symbolSelectedColorref = RGB( 0xFF, 0xFF, 0xFF );	// Белый
 	symbolUnselectedColorref = RGB( 0, 0, 0 );			// Черный
 	bkSelectedColorref = RGB( 0x1F, 0xAE, 0xE9 );		// Голубой
 	bkUnselectedColorref = RGB( 0xFF, 0xFF, 0xFF );		// Белый
 	bkSelectedHighlightColorref = RGB( 0x44, 0x4b, 0x52 );
 	bkUnselectedHightlightColorref = RGB(0xF0, 0xF0, 0xF0);
 
-	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED | WS_CLIPCHILDREN, 0, 0, 500, 400,
-		nullptr, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
+  parent = parent;
+	return ::CreateWindowEx( 0, className, L"Equation Editor", WS_CHILD | WS_EX_LAYERED | WS_CLIPCHILDREN | WS_VSCROLL, rect.left, rect.top, rect.right, rect.bottom,
+		parent, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 
 void CEquationEditorWindow::Show( int cmdShow ) 
@@ -315,12 +315,10 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 
 	switch( message ) {
 	case WM_DESTROY:
-		DestroyFramework();
 		wnd->OnDestroy();
 		return 0;
 
 	case WM_CREATE:
-		InitializeFramework(handle);
 		wnd->OnCreate();
 		return 0;
 

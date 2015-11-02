@@ -99,10 +99,12 @@
     <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp" />
     <ClCompile Include="RibbonFramework.cpp" />
     <ClCompile Include="View\EquationEditorWindow.cpp" />
+    <ClCompile Include="View\MainWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />
@@ -123,6 +125,7 @@
     <ClInclude Include="RibbonFramework.h" />
     <ClInclude Include="RibbonIDs.h" />
     <ClInclude Include="View\EquationEditorWindow.h" />
+    <ClInclude Include="View\MainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EquationEditor.rc" />

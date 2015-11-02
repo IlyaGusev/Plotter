@@ -15,6 +15,7 @@ public:
   }
 
   UINT32 getRibbonHeight();
+  RECT getChildRect();
 
   // Создать экземпляр окна
   // Если true, то создано успешно

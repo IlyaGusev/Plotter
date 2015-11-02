@@ -66,7 +66,7 @@ void CEquationEditorWindow::OnSize( int cxSize, int cySize )
 
 void CEquationEditorWindow::Redraw() 
 {
-	RECT rctB = { 0, 180, 1800, 1800 };
+	RECT rctB = { 0, 0, 1800, 1800 };
 	::InvalidateRect( hwnd, &rctB, TRUE );
 }
 

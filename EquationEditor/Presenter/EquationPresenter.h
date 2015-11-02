@@ -13,7 +13,8 @@
 #include "Presenter/Utils/TreeDfsProcessor.h"
 
 // Интерфейс окна редактора
-class IEditorView {
+class IEditorView
+{
 public:
 	virtual ~IEditorView() {}
 
@@ -40,7 +41,8 @@ public:
 
 
 // Класс, размещающий прямоугольники вьюшек на экране
-class CEquationPresenter {
+class CEquationPresenter
+{
 public:
 	CEquationPresenter( IEditorView& newView );
 
@@ -54,7 +56,7 @@ public:
 
 	// Отправляет во вьюшку всё, что нужно на ней нарисовать
 	void OnDraw();
-	
+
 	void SetCaret( int x, int y );
 
 	void SetSelection( int x, int y );
@@ -64,8 +66,22 @@ public:
 	void MoveCaretRight();
 	void MoveCaretTop();
 	void MoveCaretBottom();
+
+	//void MoveCaretLeft( CCaret& externalCaret )
+	//{
+	//	caret.GetCurEdit->
+	//}
+	//void MoveCaretRight( CCaret& externalCaret )
+	//{
+
+	//}
+
+	CCaret GetCaret() const
+	{
+		return caret;
+	}
 private:
-    std::shared_ptr<CExprControlModel> root;
+	std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
 	CCaret caret;
 	CCaret beginSelectionCaret;
@@ -99,5 +115,5 @@ private:
 	void setCaretPos( int x, int y, CCaret& curCaret );
 	void invalidateTree();
 
-	void invalidateBranch(std::shared_ptr<IBaseExprModel> startingNode);
+	void invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode );
 };

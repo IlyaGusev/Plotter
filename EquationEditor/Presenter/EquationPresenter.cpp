@@ -12,7 +12,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	view( newView ),
 	isInSelectionMode( false )
 {
-	CRect rect(20, 180, 30, 200);
+	CRect rect(20, 30, 30, 50);
 
 	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
 	root->InitializeChildren();

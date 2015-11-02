@@ -68,21 +68,22 @@ void CSumControlModel::Resize()
 int CSumControlModel::getSumChildRectTop() const
 {
 	if( realChildPresentSum != nullptr ) {
-		return symbolRect.Top() - 5 - realChildPresentSum->GetChildren().front()->GetRect().GetHeight();
+		return symbolRect.Top() - realChildPresentSum->GetSymbolTop() + realChildPresentSum->GetRect().Top();
 	} else if( realChildPresentProduct != nullptr ) {
-		return symbolRect.Top() - 5 - realChildPresentProduct->GetChildren().front()->GetRect().GetHeight();
+		return symbolRect.Top() - realChildPresentProduct->GetSymbolTop() + realChildPresentProduct->GetRect().Top();
 	}
 	return symbolRect.Top();
 }
 
 int CSumControlModel::GetSymbolTop() const
 {
+	int top = rect.Top() + firstChild->GetRect().GetHeight() + 5;
 	if( realChildPresentSum != nullptr ) {
-		return MAX( symbolRect.Top(), rect.Top() + realChildPresentSum->GetChildren().front()->GetRect().GetHeight() + 5 );
+		return MAX( top, rect.Top() + realChildPresentSum->GetSymbolTop() - realChildPresentSum->GetRect().Top() );
 	} else if( realChildPresentProduct != nullptr ) {
-		return MAX( symbolRect.Top(), rect.Top() + realChildPresentProduct->GetChildren().front()->GetRect().GetHeight() + 5 );
+		return MAX( top, rect.Top() + realChildPresentProduct->GetSymbolTop() - realChildPresentProduct->GetRect().Top() );
 	}
-	return rect.Top() + firstChild->GetRect().GetHeight() + 5;
+	return top;
 }
 
 void CSumControlModel::PlaceChildren()

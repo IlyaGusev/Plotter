@@ -1,0 +1,25 @@
+<declare type="int_type" nargs="1">
+     <ci> x </ci>
+</declare>
+<reln>
+  <eq/>
+  <apply>
+    <plus/>
+    <apply>
+      <times/>
+      <apply>
+        <power/>
+        <ci> x </ci>
+        <cn>2</cn>
+      </apply>
+      <cn>1</cn>
+    </apply>
+    <apply>
+      <times/>
+      <ci> x </ci>
+      <cn> 5 </cn>
+    </apply>
+    <cn> 4 </cn>
+  </apply>
+  <cn> 0 </cn>
+</reln>

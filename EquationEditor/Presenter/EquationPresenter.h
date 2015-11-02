@@ -54,6 +54,8 @@ public:
 
 	void DeleteNextSymbol( bool withCtrl = false );
 
+	std::wstring Serialize();
+
 	// Отправляет во вьюшку всё, что нужно на ней нарисовать
 	void OnDraw();
 

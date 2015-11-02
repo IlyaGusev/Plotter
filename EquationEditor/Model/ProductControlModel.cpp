@@ -17,20 +17,38 @@ int CProductControlModel::GetSymbolHeight() const {
 
 void CProductControlModel::setRealChildPresentSumOrProduct()
 {
-	realChildPresentSum = nullptr;
-	realChildPresentProduct = nullptr;
-	auto childList = productChild->GetChildren();
-	if( !childList.empty() ) {
-		auto child = std::next( childList.begin() );
-		if( child != childList.end() ) {
-			auto type = (*child)->GetType();
-			if( type == SUM ) {
-				realChildPresentSum = std::dynamic_pointer_cast< CSumControlModel >(*child);
-			} else if( type == PRODUCT ) {
-				realChildPresentProduct = std::dynamic_pointer_cast< CProductControlModel >(*child);
-			}
-		}
+  realChildPresentSum = nullptr;
+  realChildPresentProduct = nullptr;
+  auto childList = productChild->GetChildren();
+  if (!childList.empty()) {
+    auto child = std::next(childList.begin());
+    if (child != childList.end()) {
+      auto type = (*child)->GetType();
+      if (type == SUM) {
+        realChildPresentSum = std::dynamic_pointer_cast<CSumControlModel>(*child);
+      } else if (type == PRODUCT) {
+        realChildPresentProduct = std::dynamic_pointer_cast<CProductControlModel>(*child);
+      }
+    }
+  }
+}
+
+std::wstring CProductControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><product/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
 	}
+
+	if (!productChild->IsEmpty()) {
+		result += L"<apply>" + productChild->Serialize() + L"</apply>";
+	}
+
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	}
+
+	return result;
 }
 
 int CProductControlModel::getSumChildHeight() const

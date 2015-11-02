@@ -16,6 +16,26 @@ int CSumControlModel::GetSymbolHeight() const
 	return symbolRect.GetHeight();
 }
 
+
+std::wstring CSumControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><sum/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
+	}
+
+	if (!sumChild->IsEmpty()) {
+		result += L"<apply>" + sumChild->Serialize() + L"</apply>";
+	}
+
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	}
+
+
+	return result;
+}
+
 void CSumControlModel::setRealChildPresentSumOrProduct()
 {
 	realChildPresentSum = nullptr;

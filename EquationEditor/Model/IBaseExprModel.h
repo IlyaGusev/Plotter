@@ -2,6 +2,8 @@
 #include <list>
 #include <memory>
 #include <Windows.h>
+#include <iostream>
+#include <string>
 
 #include "Model/Utils/Rect.h"
 #include "Model/Utils/Line.h"
@@ -107,6 +109,9 @@ public:
 
 	// Отдает копию поддерева со всеми вершинами, помеченными как selected
 	virtual std::shared_ptr<IBaseExprModel> CopySelected() const = 0;
+
+	//Отдаёт строку -- перевод в текст данного поддерева
+	virtual std::wstring Serialize();
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
@@ -188,4 +193,9 @@ inline void IBaseExprModel::UpdateDepth() {
 	for( auto child : GetChildren() ) {
 		child->UpdateDepth();
 	}
+}
+
+inline std::wstring IBaseExprModel::Serialize() {
+	std::cout << "not nyan" << std::endl;
+	return L"";
 }

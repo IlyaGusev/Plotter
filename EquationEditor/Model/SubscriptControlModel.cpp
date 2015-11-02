@@ -24,6 +24,20 @@ void CSubscriptControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CSubscriptControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<msub>" + firstChild->Serialize();
+	}
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</msub>";
+	}
+
+	return result;
+}
+
 void CSubscriptControlModel::PlaceChildren()
 {
 	CRect newRect;

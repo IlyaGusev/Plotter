@@ -165,8 +165,68 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
+std::wstring CEditControlModel::Wrap(std::wstring &text, bool isNumber) {
+	if (text == L"")
+		return L"";
+	if (isNumber)
+		return L"<cn>" + text + L"</cn>";
+	else
+		return L"<ci>" + text + L"</ci>";
+}
+
+std::wstring CEditControlModel::ParseText() {
+	std::wstring result = L"";
+
+	std::wstring currentWord = L"";
+	int i = 0;
+	do {
+		if ((params.text[i] <= L'9') && (params.text[i] >= L'0') || (params.text[i] <= L'z') && (params.text[i] >= L'a'))
+			currentWord += params.text[i];
+		else
+		{
+			result += Wrap(currentWord, true);
+			currentWord = L"";
+		}
+
+		if (operations.find(params.text[i]) != operations.end())
+			switch (params.text[i]) {
+			case L'+':
+				result += L"<mo>+</mo>";
+				break;
+			case L'-':
+				result += L"<mo>-</mo>";
+				break;
+			case L'*':
+				result += L"<mo>*</mo>";
+				break;
+			case L'/':
+				result += L"<mo>/</mo>";
+				break;
+			case L'=':
+				result += L"<mo>=</mo>";
+				break;
+			default:
+				break;
+			}
+		i++;
+	} while (i <= params.text.length());
+
+	return result;
+}
+
 bool CEditControlModel::IsEmpty() const {
 	return params.text.empty();
+}
+
+std::wstring CEditControlModel::Serialize() {
+	//if (!firstChild->IsEmpty()) {
+	//	firstChild->Serialize();
+	//}
+	//if (!secondChild->IsEmpty()) {
+	//	secondChild->Serialize();
+	//}
+
+	return ParseText();
 }
 
 std::list<std::pair<std::wstring, CRect>> CEditControlModel::GetSelectedText() const 

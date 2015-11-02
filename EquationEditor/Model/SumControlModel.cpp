@@ -66,7 +66,7 @@ int CSumControlModel::getSumChildHeight() const
 
 void CSumControlModel::updateSymbolRect()
 {
-	symbolRect.Top() = getSymbolTop();
+	symbolRect.Top() = GetSymbolTop();
 	symbolRect.Bottom() = symbolRect.Top() + getSumChildHeight();
 	int indexMaxWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
 	int sigmaWidth = MAX( MIN( indexMaxWidth, symbolRect.GetHeight() ), symbolRect.GetHeight() / 2 );
@@ -95,7 +95,7 @@ int CSumControlModel::getSumChildRectTop() const
 	return symbolRect.Top();
 }
 
-int CSumControlModel::getSymbolTop() const
+int CSumControlModel::GetSymbolTop() const
 {
 	int top = rect.Top() + firstChild->GetRect().GetHeight() + 5;
 	if( realChildPresentSum != nullptr ) {

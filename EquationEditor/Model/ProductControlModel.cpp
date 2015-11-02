@@ -63,7 +63,7 @@ int CProductControlModel::getSumChildHeight() const
 
 void CProductControlModel::updateSymbolRect()
 {
-	symbolRect.Top() = getSymbolTop();
+	symbolRect.Top() = GetSymbolTop();
 	symbolRect.Bottom() = symbolRect.Top() + getSumChildHeight();
 	int indexMaxWidth = MAX( firstChild->GetRect().GetWidth(), secondChild->GetRect().GetWidth() );
 	int piWidth = MAX( MIN( indexMaxWidth, symbolRect.GetHeight() ), symbolRect.GetHeight() / 2 );
@@ -93,7 +93,7 @@ int CProductControlModel::getSumChildRectTop() const
 	return symbolRect.Top();
 }
 
-int CProductControlModel::getSymbolTop() const
+int CProductControlModel::GetSymbolTop() const
 {
 	int top = rect.Top() + firstChild->GetRect().GetHeight() + 5;
 	if( realChildPresentSum != nullptr ) {

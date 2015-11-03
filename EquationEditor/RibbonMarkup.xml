@@ -1,5 +1,6 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
+    
   <Application.Commands>
     
     <Command Name="cmdButtonFrac"
@@ -82,6 +83,16 @@
       </Command.LargeImages>
     </Command>
 
+    <Command Name="cmdButtonSave"
+             Symbol="ID_CMD_SAVE"
+             LabelTitle="Сохранить в файл"
+             LabelDescription="Сохранить в файл"
+             TooltipDescription="Сохранение выражения в файл">
+      <Command.LargeImages>
+        <Image>Res/Save32.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
     <Command Name="cmdTabMain"
              Symbol="ID_CMD_TAB_MAIN"
              LabelTitle="Главная">
@@ -120,6 +131,17 @@
 
 	<Application.Views>
 		<Ribbon>
+      <Ribbon.ApplicationMenu>
+      <ApplicationMenu>
+        <MenuGroup Class="MajorItems">
+          <Button CommandName='cmdButtonSave' />
+        </MenuGroup>
+        <MenuGroup Class="MajorItems">
+          <Button CommandName='cmdButtonExit' />
+        </MenuGroup>
+      </ApplicationMenu>
+    </Ribbon.ApplicationMenu>
+      
       <Ribbon.Tabs>
         
         <Tab CommandName="cmdTabMain">

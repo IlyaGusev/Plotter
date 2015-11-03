@@ -135,6 +135,22 @@ END
 ID_CMD_EXIT_LargeImages_RESID    BITMAP    "Res\\Exit32.bmp" /* LargeImages ID_CMD_EXIT_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
+    ID_CMD_SAVE_LabelTitle_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0438\x0442\x044c \x0432 \x0444\x0430\x0439\x043b" /* LabelTitle ID_CMD_SAVE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SAVE_LabelDescription_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0438\x0442\x044c \x0432 \x0444\x0430\x0439\x043b" /* LabelDescription ID_CMD_SAVE_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SAVE_TooltipDescription_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0435\x043d\x0438\x0435 \x0432\x044b\x0440\x0430\x0436\x0435\x043d\x0438\x044f \x0432 \x0444\x0430\x0439\x043b" /* TooltipDescription ID_CMD_SAVE_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_SAVE_LargeImages_RESID    BITMAP    "Res\\Save32.bmp" /* LargeImages ID_CMD_SAVE_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
     ID_CMD_TAB_MAIN_LabelTitle_RESID L"\x0413\x043b\x0430\x0432\x043d\x0430\x044f" /* LabelTitle ID_CMD_TAB_MAIN_LabelTitle_RESID: (null) */
 END
 

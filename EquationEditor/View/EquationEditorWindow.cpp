@@ -246,10 +246,8 @@ void CEquationEditorWindow::OnScroll(WPARAM wParam)
   // Reset the current scroll position. 
   yCurrentScroll = yNewPos;
 
-  ::ScrollWindowEx(hwnd, -xDelta, -yDelta, (CONST RECT *) NULL,
-    (CONST RECT *) NULL, (HRGN)NULL, (PRECT)NULL,
-    SW_INVALIDATE);
-  ::UpdateWindow(hwnd);
+  ::ScrollWindowEx(hwnd, -xDelta, -yDelta, NULL, NULL, NULL, NULL, SW_INVALIDATE);
+  
 
   // Reset the scroll bar. 
   SCROLLINFO si;
@@ -257,6 +255,8 @@ void CEquationEditorWindow::OnScroll(WPARAM wParam)
   si.fMask = SIF_POS;
   si.nPos = yCurrentScroll;
   SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
+  presenter->SetDelta(yCurrentScroll);
+  ::UpdateWindow(hwnd);
 }
 
 void CEquationEditorWindow::OnChar( WPARAM wParam ) 

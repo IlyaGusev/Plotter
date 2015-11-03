@@ -13,6 +13,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	isInSelectionMode( false )
 {
 	CRect rect(20, 30, 30, 50);
+  deltaY = 0;
 
 	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
 	root->InitializeChildren();
@@ -44,19 +45,30 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	// initialize draw processor
 	drawProcessor = CTreeBfsProcessor( root, [=] ( CTreeBfsProcessor::Node node ) {
 		if( node->IsSelected() ) {
-			view.DrawSelectedRect( node->GetRect() );
+      CRect rect = node->GetRect();
+      rect.MoveBy(0, -deltaY);
+			view.DrawSelectedRect( rect );
 		}
 		if( !node->GetLines().empty() ) {
-			view.DrawPolygon( node->GetLines(), node->IsSelected() );
+      std::list<CLine> lines;
+      for (CLine line : node->GetLines()) {
+        line.MoveBy(0, -deltaY);
+        lines.push_back(line);
+      }
+			view.DrawPolygon( lines, node->IsSelected() );
 		}
 		for( std::pair<std::wstring, CRect> selectedText : node->GetSelectedText() ) {
+      selectedText.second.MoveBy(0, -deltaY);
 			view.DrawString( selectedText.first, selectedText.second, true );
 		}
 		for( std::pair<std::wstring, CRect> selectedText : node->GetUnselectedText() ) {
+      selectedText.second.MoveBy(0, -deltaY);
 			view.DrawString( selectedText.first, selectedText.second, false );
 		}
 		if( node->IsHighlighted() ) {
-			view.DrawHighlightedRect( node->GetRect(), node->IsSelected() );
+      CRect rect = node->GetRect();
+      rect.MoveBy(0, -deltaY);
+			view.DrawHighlightedRect( rect, node->IsSelected() );
 		}
 	} );
 
@@ -67,6 +79,10 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	updateSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
 		node->UpdateSelection();
 	} );
+}
+
+void CEquationPresenter::SetDelta(int delta) {
+  deltaY = delta;
 }
 
 void CEquationPresenter::deleteSelectedParts() {

@@ -8,6 +8,9 @@ CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr )
 {
 	presenter = std::make_shared<CEquationPresenter>(*this);
 	isPressedShift = false;
+  yMinScroll = 0;
+  yCurrentScroll = 0;
+  yMaxScroll = 0;
 }
 
 bool CEquationEditorWindow::RegisterClassW() 
@@ -40,7 +43,8 @@ bool CEquationEditorWindow::Create( HWND parent, RECT rect )
 
 void CEquationEditorWindow::Show( int cmdShow ) 
 {
-	::ShowWindow( hwnd, cmdShow );
+  UpdateScrollbar();
+  ::ShowWindow( hwnd, cmdShow );
 }
 
 void CEquationEditorWindow::OnDestroy() 
@@ -60,6 +64,25 @@ void CEquationEditorWindow::OnCreate()
 //	::SetMenu( hwnd, hMenu );
 }
 
+void CEquationEditorWindow::UpdateScrollbar()
+{
+  RECT rect;
+  GetClientRect(hwnd, &rect);
+  int cySize = rect.bottom - rect.top;
+
+  yMaxScroll = max(presenter->GetRoot()->GetRect().GetHeight() - cySize + 60, 0);
+  yCurrentScroll = min(yCurrentScroll, yMaxScroll);
+
+  SCROLLINFO si;
+  si.cbSize = sizeof(si);
+  si.fMask = SIF_RANGE | SIF_PAGE | SIF_POS | SIF_DISABLENOSCROLL;
+  si.nMin = yMinScroll;
+  si.nMax = presenter->GetRoot()->GetRect().GetHeight() + 60;
+  si.nPage = cySize;
+  si.nPos = yCurrentScroll;
+  BOOL res = SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
+}
+
 void CEquationEditorWindow::OnSize( int cxSize, int cySize ) 
 {
 }
@@ -68,6 +91,7 @@ void CEquationEditorWindow::Redraw()
 {
 	RECT rctB = { 0, 0, 1800, 1800 };
 	::InvalidateRect( hwnd, &rctB, TRUE );
+  UpdateScrollbar();
 }
 
 int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight ) 
@@ -169,6 +193,70 @@ void CEquationEditorWindow::OnMouseMove( WPARAM wParam, int x, int y )
 	if( wParam == MK_LBUTTON ) {
 		presenter->SetSelection( x, y );
 	}
+}
+
+void CEquationEditorWindow::OnScroll(WPARAM wParam)
+{
+  int xDelta = 0;
+  int yDelta;     // yDelta = new_pos - current_pos 
+  int yNewPos;    // new position 
+
+  switch (LOWORD(wParam))
+  {
+    // User clicked the scroll bar shaft above the scroll box. 
+  case SB_PAGEUP:
+    yNewPos = yCurrentScroll - 50;
+    break;
+
+    // User clicked the scroll bar shaft below the scroll box. 
+  case SB_PAGEDOWN:
+    yNewPos = yCurrentScroll + 50;
+    break;
+
+    // User clicked the top arrow. 
+  case SB_LINEUP:
+    yNewPos = yCurrentScroll - 5;
+    break;
+
+    // User clicked the bottom arrow. 
+  case SB_LINEDOWN:
+    yNewPos = yCurrentScroll + 5;
+    break;
+
+    // User dragged the scroll box. 
+  case SB_THUMBPOSITION:
+    yNewPos = HIWORD(wParam);
+    break;
+
+  default:
+    yNewPos = yCurrentScroll;
+  }
+
+  // New position must be between 0 and the screen height. 
+  yNewPos = max(0, yNewPos);
+  yNewPos = min(yMaxScroll, yNewPos);
+
+  // If the current position does not change, do not scroll.
+  if (yNewPos == yCurrentScroll)
+    return;
+
+  // Determine the amount scrolled (in pixels). 
+  yDelta = yNewPos - yCurrentScroll;
+
+  // Reset the current scroll position. 
+  yCurrentScroll = yNewPos;
+
+  ::ScrollWindowEx(hwnd, -xDelta, -yDelta, (CONST RECT *) NULL,
+    (CONST RECT *) NULL, (HRGN)NULL, (PRECT)NULL,
+    SW_INVALIDATE);
+  ::UpdateWindow(hwnd);
+
+  // Reset the scroll bar. 
+  SCROLLINFO si;
+  si.cbSize = sizeof(si);
+  si.fMask = SIF_POS;
+  si.nPos = yCurrentScroll;
+  SetScrollInfo(hwnd, SB_VERT, &si, TRUE);
 }
 
 void CEquationEditorWindow::OnChar( WPARAM wParam ) 
@@ -352,6 +440,10 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 
 	case WM_ERASEBKGND:
 		return 0;
+
+  case WM_VSCROLL:
+    wnd->OnScroll(wParam);
+    return 0;
 	}
 	return ::DefWindowProc( handle, message, wParam, lParam );
 }

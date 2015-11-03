@@ -51,6 +51,10 @@ public:
 	void OnKeyDown( WPARAM wParam );
 
 	void OnMouseMove( WPARAM wParam, int x, int y );
+
+  void OnScroll( WPARAM wParam );
+
+  void UpdateScrollbar();
 protected:
   void OnDestroy();
 
@@ -67,6 +71,10 @@ private:
 	COLORREF bkUnselectedColorref;
 	COLORREF bkSelectedHighlightColorref;
 	COLORREF bkUnselectedHightlightColorref;
+
+  int yMinScroll;       // minimum vertical scroll value 
+  int yCurrentScroll;   // current vertical scroll value 
+  int yMaxScroll;       // maximum vertical scroll value
 
   static const wchar_t* const className;
 	

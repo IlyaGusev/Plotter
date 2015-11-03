@@ -164,9 +164,6 @@
     <ClInclude Include="View\MainWindow.h">
       <Filter>Source Files\View</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EquationEditor.rc">

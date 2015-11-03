@@ -82,6 +82,12 @@ public:
 	{
 		return caret;
 	}
+
+  std::shared_ptr<CExprControlModel> GetRoot()
+  {
+    return root;
+  }
+
 private:
 	std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;

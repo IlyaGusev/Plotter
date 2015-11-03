@@ -40,6 +40,7 @@ public:
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 	std::wstring Serialize();
+	int GetSymbolTop() const;
 private:
 	// Верхний ребенок
 	std::shared_ptr<IBaseExprModel> firstChild;
@@ -56,7 +57,6 @@ private:
 	void updatePolygons();
 	int getIndexHeight(int rectHeight);
 	int getSumChildRectTop() const;
-	int getSymbolTop() const;
 	void updateSymbolRect();
 	int getSumChildHeight() const;
 	void setRealChildPresentSumOrProduct();

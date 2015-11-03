@@ -32,6 +32,7 @@ public:
 
 	bool IsEmpty() const;
 	int GetSymbolHeight() const;
+	int GetSymbolTop() const;
 
 	void UpdateSelection();
 
@@ -53,7 +54,6 @@ private:
 	void updatePolygons();
 	int getIndexHeight( int rectHeight );
 	int getSumChildRectTop() const;
-	int getSymbolTop() const;
 	void updateSymbolRect();
 	int getSumChildHeight() const;
 	void setRealChildPresentSumOrProduct();

@@ -15,6 +15,8 @@ bool CMainWindow::RegisterClassW()
   wnd.style = CS_HREDRAW | CS_VREDRAW;
   wnd.lpfnWndProc = mainWindowProc;
   wnd.hInstance = ::GetModuleHandle(nullptr);
+  wnd.hIcon = reinterpret_cast<HICON>(::LoadImage(wnd.hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 32, 32, 0));
+  wnd.hIconSm = reinterpret_cast<HICON>(::LoadImage(wnd.hInstance, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 16, 16, 0));
   wnd.lpszClassName = L"MainWindow";
   wnd.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
   wnd.hCursor = ::LoadCursor(nullptr, IDC_ARROW);

@@ -104,7 +104,6 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="CommandHandler.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />

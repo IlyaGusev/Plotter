@@ -46,19 +46,24 @@ UINT32 CMainWindow::getRibbonHeight()
   return ribbonHeight;
 }
 
+RECT CMainWindow::getChildRect() {
+  RECT rect;
+  ::GetClientRect(GetHandle(), &rect);
+  RECT childRect;
+  childRect.left = 0;
+  childRect.top = getRibbonHeight();
+  childRect.bottom = rect.bottom - getRibbonHeight();
+  childRect.right = rect.right;
+
+  return childRect;
+}
 
 bool CMainWindow::Create()
 {
   if ( ::CreateWindowEx( 0, L"MainWindow", L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED | WS_CLIPCHILDREN, 0, 0, 500, 400,
     nullptr, nullptr, ::GetModuleHandle(nullptr), this ) != 0 ) {
-    RECT rect;
-    ::GetWindowRect( GetHandle(), &rect );
-    RECT childRect;
-    childRect.left = 0;
-    childRect.top = getRibbonHeight();
-    childRect.bottom = rect.bottom;
-    childRect.right = rect.right;
-    return ( editor.Create( GetHandle(), childRect ) != 0 );
+    
+    return ( editor.Create( GetHandle(), getChildRect() ) != 0 );
   }
   return false;
 }
@@ -80,11 +85,13 @@ void CMainWindow::OnCreate()
 
 void CMainWindow::OnSize(int cxSize, int cySize)
 {
+  RECT child = getChildRect();
+  ::MoveWindow( editor.GetHandle(), child.left, child.top, child.right - child.left, child.bottom, TRUE );
 }
 
 void CMainWindow::Redraw()
 {
-  RECT rctB = { 0, 180, 1800, 1800 };
+  RECT rctB = { 0, 0, 1800, 1800 };
   ::InvalidateRect(hwnd, &rctB, TRUE);
 }
 

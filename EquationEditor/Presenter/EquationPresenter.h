@@ -46,6 +46,8 @@ class CEquationPresenter
 public:
 	CEquationPresenter( IEditorView& newView );
 
+  void SetDelta( int delta );
+
 	void AddControlView( ViewType viewType );
 
 	void InsertSymbol( wchar_t symbol );
@@ -82,6 +84,12 @@ public:
 	{
 		return caret;
 	}
+
+  std::shared_ptr<CExprControlModel> GetRoot()
+  {
+    return root;
+  }
+
 private:
 	std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
@@ -118,4 +126,6 @@ private:
 	void invalidateTree();
 
 	void invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode );
+
+  int deltaY; // текущая величина сдвига прямоугольничков вверх (для обработки скролла)
 };

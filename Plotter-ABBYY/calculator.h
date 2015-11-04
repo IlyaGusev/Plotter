@@ -8,7 +8,7 @@
 class MathMlCalculator {
 public:
 	MathMlCalculator() {}
-	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false );
+	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false, bool isImplisit = false );
 
 	void RecalculatePoints();
 	void RecalculatePoints( int gridSize );
@@ -38,6 +38,7 @@ private:
 	int gridSize;
 
 	bool is2D = false;
+	bool isImplisit = false;
 	bool isParametric = false;
 
 	static pugi::xml_document doc;

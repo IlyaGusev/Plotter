@@ -6,8 +6,8 @@
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP( const wchar_t* formulaPath, bool _is2D,
-	double inputLengthOfSection, std::pair<double, double>& inputWindowSize ) :
+GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/, bool isImplisit /*= false*/,
+	double inputLengthOfSection /*= 5*/, std::pair<double, double>& inputWindowSize /*= std::pair<double, double>( 700, 700 ) */ ) :
 	lengthOfSection( inputLengthOfSection ),
 	windowSize( inputWindowSize ),
 	scale( 1 ),
@@ -15,7 +15,7 @@ GP::GP( const wchar_t* formulaPath, bool _is2D,
 	globalYShift( 0 ),
 	globalZShift( 0 )
 {
-	calc = MathMlCalculator( formulaPath, _is2D );
+	calc = MathMlCalculator( formulaPath, is2D, isImplisit );
 
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;
@@ -162,10 +162,8 @@ std::pair<double, double> GP::getOriginCoordinates()
 	std::pair<double, double> x = getAxisVectorVisual( 0 );
 	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
-	res.first -= x.first * globalXShift * lengthOfSection + y.first * globalYShift * lengthOfSection +
-		z.first * globalZShift * lengthOfSection;
-	res.second -= x.second * globalXShift * lengthOfSection + y.second * globalYShift * lengthOfSection +
-		z.second * globalZShift * lengthOfSection;
+	res.first -= lengthOfSection * ( x.first * globalXShift + y.first * globalYShift + z.first * globalZShift );
+	res.second -= lengthOfSection * ( x.second * globalXShift + y.second * globalYShift + z.second * globalZShift );
 	return res;
 }
 
@@ -193,12 +191,23 @@ void GP::calculateRelativePoints()
 				}
 			}
 		} else {
+			auto z_ij = calc.GetZ( i, 0 );
 			relativePoints[i].resize( 1 );
-			//double xRel = origin.first + ( x.first * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-			//	z.first * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
-			//double yRel = origin.second + ( x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-			//	z.second * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
-			//relativePoints[i][0] = std::pair<double, double>( xRel, yRel );
+			relativePoints[i][0].resize( z_ij.size() );
+			for( size_t k = 0; k < z_ij.size(); ++k ) {
+				double xRel = origin.first + scale * (x.first * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
+					z.first * (z_ij[k] - globalZShift) * lengthOfSection);
+				double yRel = origin.second + scale * (x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
+					z.second * (z_ij[k] - globalZShift) * lengthOfSection);
+
+				relativePoints[i][0][k] = std::pair<double, double>( xRel, yRel );
+			}
+			/*relativePoints[i].resize( 1 );
+			double xRel = origin.first + ( x.first * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
+				z.first * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
+			double yRel = origin.second + ( x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
+				z.second * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
+			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );*/
 		}
 	}
 }

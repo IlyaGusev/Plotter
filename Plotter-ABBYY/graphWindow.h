@@ -5,7 +5,7 @@
 
 class GraphWindow {
 public:
-	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false );
+	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false, bool isImplicit = false );
 
 	static bool RegisterClass(HINSTANCE hInstance);
 

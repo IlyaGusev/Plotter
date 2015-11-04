@@ -1,22 +1,25 @@
 <apply>
   <minus/>
   <apply>
-    <plus/>
+    <minus/>
     <apply>
-      <power/>
-      <ci>x</ci>
-      <cn>2</cn>
-    </apply>
-    <apply>
-      <power/>
-      <ci>y</ci>
-      <cn>2</cn>
+      <plus/>
+      <apply>
+        <power/>
+        <ci>x</ci>
+        <cn>2</cn>
+      </apply>
+      <apply>
+        <power/>
+        <ci>y</ci>
+        <cn>2</cn>
+      </apply>
     </apply>
     <apply>
       <power/>
       <ci>z</ci>
       <cn>2</cn>
-    </apply>
+     </apply>
   </apply>
-  <cn>4</cn>
+  <cn>1</cn>
 </apply>

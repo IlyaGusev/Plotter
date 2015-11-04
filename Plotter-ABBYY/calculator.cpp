@@ -5,13 +5,15 @@
 #include <algorithm>
 
 pugi::xml_document MathMlCalculator::doc;
-double MathMlCalculator::eps = 0.001;
+double MathMlCalculator::eps = 0.005;
 
-MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D ) :
-	is2D( _is2D )
+MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D, bool _isImplisit ) :
+	is2D( _is2D ),
+	isImplisit( _isImplisit )
 {
 	pugi::xml_parse_result result = doc.load_file( formulaPath );
 	buildFormula( doc );
+	srand( time( NULL ) );
 }
 
 void MathMlCalculator::RecalculatePoints()
@@ -37,13 +39,21 @@ void MathMlCalculator::RecalculatePoints( int _gridSize )
 					OperationHandler::setVar( "y", getSecondArg( i, j ) );
 					yPoints[i][j] = getSecondArg( i, j );
 
-					zPoints[i][j] = findAllZRoots();
+					if( isImplisit ) {
+						zPoints[i][j] = findAllZRoots();
+					} else {
+						zPoints[i][j].push_back( zFormula() );
+					}
 				} else {
 					OperationHandler::setVar( "t", getFirstArg( i, j ) );
 					OperationHandler::setVar( "u", getSecondArg( i, j ) );
 					xPoints[i][j] = xFormula();
 					yPoints[i][j] = yFormula();
-					//zPoints[i][j] = zFormula();
+					if( isImplisit ) {
+						zPoints[i][j] = findAllZRoots();
+					} else {
+						zPoints[i][j].push_back( zFormula() );
+					}
 				}
 			}
 		} else {
@@ -52,11 +62,19 @@ void MathMlCalculator::RecalculatePoints( int _gridSize )
 			if( !isParametric ) {
 				OperationHandler::setVar( "x", getFirstArg( i, 0 ) );
 				xPoints[i][0] = getFirstArg( i, 0 );
-				//zPoints[i][0] = zFormula();
+				if( isImplisit ) {
+					zPoints[i][0] = findAllZRoots();
+				} else {
+					zPoints[i][0].push_back( zFormula() );
+				}
 			} else {
 				OperationHandler::setVar( "t", getFirstArg( i, 0 ) );
 				xPoints[i][0] = xFormula();
-				//zPoints[i][0] = zFormula();
+				if( isImplisit ) {
+					zPoints[i][0] = findAllZRoots();
+				} else {
+					zPoints[i][0].push_back( zFormula() );
+				}
 			}
 		}
 	}
@@ -113,14 +131,11 @@ double MathMlCalculator::getSecondArg( int i, int j )
 
 bool MathMlCalculator::findRoot( const std::function<double(double)>& func, double& root )
 {
-	//unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-	//std::default_random_engine generator( seed );
-	//std::cauchy_distribution<double> distribution( 0.0, 50.0 );
-	//double z_0 = distribution( generator );
-	//double z_1 = distribution( generator );
-	srand( time( NULL ) );
-	double z_0 = rand() % 300 - 150;
-	double z_1 = rand() % 300 - 150;
+	double z_0 = rand() % 200 - 100;
+	double z_1 = rand() % 200 - 100;
+	while( z_1 == z_0 ) {
+		z_1 = rand( ) % 200 - 100;
+	}
 	double z_n = 0;
 	for( int i = 0; i < 100 && fabs( z_1 - z_0 ) > eps; ++i ) {
 		OperationHandler::setVar( "z", z_0 );
@@ -132,7 +147,9 @@ bool MathMlCalculator::findRoot( const std::function<double(double)>& func, doub
 		z_0 = z_1;
 		z_1 = z_n;
 	}
-	if( fabs( z_1 - z_0 ) <= 0.001 ) {
+	OperationHandler::setVar( "z", z_n );
+	double f_n = zFormula() / func( z_n );
+	if( fabs( z_1 - z_0 ) <= eps && fabs( f_n ) <= eps ) {
 		root = z_n;
 		return true;
 	}

@@ -3,10 +3,10 @@
 
 #include "graphWindow.h"
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D ) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isImplicit /*= false */ ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, 80 )
+	graphInPoints( formulaPath, is2D, isImplicit, 80 )
 {
 }
 
@@ -185,76 +185,119 @@ void GraphWindow::drawGraph(HDC dc) {
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::vector< std::pair<double, double> > > > points = graphInPoints.getRelativePoints();
-	
-	//int pointsJSize = points[0].size() % 3 == 0 ? points[0].size() - 2 : 3 * (points[0].size() / 3) + 1;
-	//int pointsISize = points.size() % 3 == 0 ? points.size() - 2 : 3 * (points.size() / 3) + 1;
-
-	//for( size_t i = 0; i < pointsISize; ++i ) {
-	//	POINT* lppoints = new POINT[pointsJSize];
-	//	for( size_t j = 0; j < pointsJSize; ++j ) {
-	//		if( points[i][j].size() > 0 ) {
-	//			lppoints[j] = { round( points[i][j][0].first ), round( points[i][j][0].second ) };
-	//		}
-	//	}
-	//	::PolyBezier( dc, lppoints, pointsJSize );
-
-	//	delete[] lppoints;
-	//}
-
-	//for( size_t j = 0; j < pointsJSize; ++j ) {
-	//	POINT* lppoints = new POINT[pointsISize];
-	//	for( size_t i = 0; i < pointsISize; ++i ) {
-	//		if( points[i][j].size() > 0 ) {
-	//			lppoints[i] = { round( points[i][j][0].first ), round( points[i][j][0].second ) };
-	//		}
-	//	}
-	//	::PolyBezier( dc, lppoints, pointsISize );
-
-	//	delete[] lppoints;
-	//}
 
 	int iSize = points.size();
 	int jSize = points[0].size();
+	// Проводим отрезки вдоль оси X
 	for( size_t i = 0; i < iSize; ++i ) {
 		size_t j = 0;
-		for( ; j < jSize && points[i][j].size() == 0; ++j );
-		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size() : 0); ++k ) {
-			::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+		// Ищем, где точки начинаются
+		for( ; j < jSize && points[i][j].size( ) == 0; ++j );
+		// Считаем, что есть k слоев, рисуем отрезки послойно
+		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size( ) : 0); ++k ) {
+			POINT* lppoints = new POINT[jSize - j];
+			size_t size = 0;
+			size_t lastPoint = 0;
+			// Проводим отрезок, соединяющий этот и следующий слой (вообще говоря, это нужно не всегда...)
 			if( k + 1 < points[i][j].size() ) {
-				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
 				::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
 			}
+
 			for( size_t l = j; l < jSize; ++l ) {
+				// Если в этой точке достаточно слоев - проводим отрезок через нее
 				if( points[i][l].size() > k ) {
-					::LineTo( dc, round( points[i][l][k].first ), round( points[i][l][k].second ) );
-				} else {
-					if( l > 0 && k + 1 < points[i][l - 1].size() ) {
-						::LineTo( dc, round( points[i][l - 1][k + 1].first ), round( points[i][l - 1][k + 1].second ) );
+					// Если размер равен нулю и l != j - значит, среди отрезков на этой прямой был разрыв, заполняем его
+					if( size == 0 && l != j ) {
+						::LineTo( dc, round( points[i][l][k].first ), round( points[i][l][k].second ) );
 					}
-					break;
+					lppoints[size] = { round( points[i][l][k].first ), round( points[i][l][k].second ) };
+					++size;
+					lastPoint = l;
+				} else {
+					// Если слоев недостаточно, начинаем проводить кривые Безье
+					// Точек должно быть 3k+1
+					int bezierPointsSize = size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1;
+					::PolyBezier( dc, lppoints, bezierPointsSize );
+					// Оставшиеся точки соединяем линией
+					for( int p = bezierPointsSize - size; p < 0; ++p ) {
+						if( k < points[i][l + p - 1].size() && k < points[i][l + p].size() ) {
+							::MoveToEx( dc, round( points[i][l + p - 1][k].first ), round( points[i][l + p - 1][k].second ), NULL );
+							::LineTo( dc, round( points[i][l + p][k].first ), round( points[i][l + p][k].second ) );
+						}
+					}
+					size = 0;
+					if( k < points[i][l - 1].size() ) {
+						::MoveToEx( dc, round( points[i][l - 1][k].first ), round( points[i][l - 1][k].second ), NULL );
+					}
 				}
+			}
+
+			::PolyBezier( dc, lppoints, size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1 );
+			delete[] lppoints;
+
+			// Проводим отрезок в верхний слой
+			if( k + 1 < points[i][lastPoint].size() ) {
+				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
+				::LineTo( dc, round( points[i][lastPoint][k + 1].first ), round( points[i][lastPoint][k + 1].second ) );
+				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
 			}
 		}
 	}
 
+	// Проводим отрезки вдоль оси X
 	for( size_t j = 0; j < jSize; ++j ) {
 		size_t i = 0;
+		// Ищем, где точки начинаются
 		for( ; i < iSize && points[i][j].size() == 0; ++i );
+		// Считаем, что есть k слоев, рисуем отрезки послойно
 		for( size_t k = 0; k < ((i < iSize) ? points[i][j].size() : 0); ++k ) {
-			::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+			POINT* lppoints = new POINT[iSize - i];
+			size_t size = 0;
+			size_t lastPoint = 0;
+			// Проводим отрезок, соединяющий этот и следующий слой (вообще говоря, это нужно не всегда...)
 			if( k + 1 < points[i][j].size() ) {
-				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
 				::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
+				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
 			}
+
 			for( size_t l = i; l < iSize; ++l ) {
+				// Если в этой точке достаточно слоев - проводим отрезок через нее
 				if( points[l][j].size() > k ) {
-					::LineTo( dc, round( points[l][j][k].first ), round( points[l][j][k].second ) );
-				} else {
-					if( l > 0 && k + 1 < points[l - 1][j].size() ) {
-						::LineTo( dc, round( points[l - 1][j][k + 1].first ), round( points[l - 1][j][k + 1].second ) );
+					// Если размер равен нулю и l != i - значит, среди отрезков на этой прямой был разрыв, заполняем его
+					if( size == 0 && l != i ) {
+						::LineTo( dc, round( points[l][j][k].first ), round( points[l][j][k].second ) );
 					}
-					break;
+					lppoints[size] = { round( points[l][j][k].first ), round( points[l][j][k].second ) };
+					++size;
+					lastPoint = l;
+				} else {
+					// Если слоев недостаточно, начинаем проводить кривые Безье
+					// Точек должно быть 3k+1
+					int bezierPointsSize = size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1;
+					::PolyBezier( dc, lppoints, bezierPointsSize );
+					// Оставшиеся точки соединяем линией
+					for( int p = bezierPointsSize - size; p < 0; ++p ) {
+						if( k < points[l + p - 1][j].size( ) && k < points[l + p][j].size( ) ) {
+							::MoveToEx( dc, round( points[l + p - 1][j][k].first ), round( points[l + p - 1][j][k].second ), NULL );
+							::LineTo( dc, round( points[l + p][j][k].first ), round( points[l + p][j][k].second ) );
+						}
+					}
+					size = 0;
+					if( k < points[l - 1][j].size() ) {
+						::MoveToEx( dc, round( points[l - 1][j][k].first ), round( points[l - 1][j][k].second ), NULL );
+					}
 				}
+			}
+
+			::PolyBezier( dc, lppoints, size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1 );
+			delete[] lppoints;
+
+			// Проводим отрезок в верхний слой
+			if( k + 1 < points[lastPoint][j].size( ) ) {
+				::MoveToEx( dc, round( points[lastPoint][j][k].first ), round( points[lastPoint][j][k].second ), NULL );
+				::LineTo( dc, round( points[lastPoint][j][k + 1].first ), round( points[lastPoint][j][k + 1].second ) );
+				::MoveToEx( dc, round( points[lastPoint][j][k].first ), round( points[lastPoint][j][k].second ), NULL );
 			}
 		}
 	}

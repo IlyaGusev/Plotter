@@ -10,7 +10,7 @@ struct Polygon4Wrap {
 
 class GraphWindow {
 public:
-	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false, bool isFillPolygonsIf3D = true, bool isImplicit = false );
+	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false, bool isFillPolygonsIf3D = true );
 
 	static bool RegisterClass(HINSTANCE hInstance);
 

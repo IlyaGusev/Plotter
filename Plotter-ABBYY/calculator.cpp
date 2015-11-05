@@ -7,9 +7,8 @@
 pugi::xml_document MathMlCalculator::doc;
 double MathMlCalculator::eps = 0.005;
 
-MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D, bool _isImplisit ) :
-	is2D( _is2D ),
-	isImplisit( _isImplisit )
+MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D ) :
+	is2D( _is2D )
 {
 	pugi::xml_parse_result result = doc.load_file( formulaPath );
 	buildFormulas( doc );
@@ -163,39 +162,45 @@ double MathMlCalculator::getZMax() const
 void MathMlCalculator::buildFormulas( const pugi::xml_node& formulaRoot )
 {
 	pugi::xml_node coordDefinitionNode = formulaRoot.first_child();
-	buildCoordFormula(coordDefinitionNode);
-	coordDefinitionNode = coordDefinitionNode.next_sibling();
-	if (!coordDefinitionNode.empty()) {
-		buildCoordFormula(coordDefinitionNode);
-		if (!coordDefinitionNode.next_sibling().empty()) {
-			buildCoordFormula(coordDefinitionNode.next_sibling());
+	if( !coordDefinitionNode.empty() && !buildCoordFormula(coordDefinitionNode) ) {
+		// Неявная функция
+		coordDefinitionNode = coordDefinitionNode.first_child().next_sibling();
+		zFormula = [coordDefinitionNode] () -> double {
+			return OperationHandler::getOperation( coordDefinitionNode.name() ).build( coordDefinitionNode ) -
+				OperationHandler::getOperation( coordDefinitionNode.next_sibling().name() ).build( coordDefinitionNode.next_sibling() );
+		};
+		isImplisit = true;
+	} else {
+		coordDefinitionNode = coordDefinitionNode.next_sibling();
+		while( !coordDefinitionNode.empty() && !buildCoordFormula( coordDefinitionNode ) ) {
+			// Если встретились еще равенства - значит, формула задана параметрически
+			coordDefinitionNode = coordDefinitionNode.next_sibling();
+			isParametric = true;
 		}
-		isParametric = true;
-	}
-	else {
-		//неявная
 	}
 }
 
 
-void MathMlCalculator::buildCoordFormula(const pugi::xml_node& coordRoot) {
+bool MathMlCalculator::buildCoordFormula(const pugi::xml_node& coordRoot) {
 	pugi::xml_node coordIdentNode = coordRoot.first_child().next_sibling();
 	std::string coordName = coordIdentNode.text().as_string();
 	if (coordName == "x") {
 		xFormula = [coordIdentNode]() -> double {
 			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
 		};
-	}
-	else if (coordName == "y") {
+		return true;
+	} else if (coordName == "y") {
 		yFormula = [coordIdentNode]() -> double {
 			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
 		};
-	}
-	else if (coordName == "z") {
+		return true;
+	} else if (coordName == "z") {
 		zFormula = [coordIdentNode]() -> double {
 			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
 		};
+		return true;
 	}
+	return false;
 }
 
 int MathMlCalculator::GetGridSize()

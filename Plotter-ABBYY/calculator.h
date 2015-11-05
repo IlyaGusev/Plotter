@@ -8,7 +8,7 @@
 class MathMlCalculator {
 public:
 	MathMlCalculator() {}
-	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false, bool isImplisit = false );
+	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false );
 
 	void RecalculatePoints();
 	void RecalculatePoints( int gridSize );
@@ -28,7 +28,7 @@ public:
 	
 private:
 	void buildFormulas(const pugi::xml_node& formulaRoot);
-	void buildCoordFormula(const pugi::xml_node& coordRoot);
+	bool buildCoordFormula(const pugi::xml_node& coordRoot);
 	double getFirstArg( int i, int j );
 	double getSecondArg( int i, int j );
 	double calculateMax(const std::vector<std::vector<double>>& points) const;

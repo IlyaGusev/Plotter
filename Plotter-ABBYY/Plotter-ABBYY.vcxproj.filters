@@ -16,6 +16,9 @@
     <Filter Include="PugiXML">
       <UniqueIdentifier>{288c67c9-db62-423e-9feb-cdfd2e3f822b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Formulas">
+      <UniqueIdentifier>{03305293-a987-4f54-a6ee-ec79d00708a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="calculator.cpp">
@@ -65,7 +68,13 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="ex.xml">
-      <Filter>Resource Files</Filter>
+      <Filter>Formulas</Filter>
+    </Xml>
+    <Xml Include="exbig.xml">
+      <Filter>Formulas</Filter>
+    </Xml>
+    <Xml Include="exsimple.xml">
+      <Filter>Formulas</Filter>
     </Xml>
   </ItemGroup>
 </Project>

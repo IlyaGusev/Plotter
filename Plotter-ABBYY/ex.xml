@@ -1,5 +1,5 @@
 <apply>
-  <minus/>
+  <eq/>
   <apply>
     <minus/>
     <apply>
@@ -14,12 +14,13 @@
         <ci>y</ci>
         <cn>2</cn>
       </apply>
+      <apply>
+        <power/>
+        <ci>z</ci>
+        <cn>2</cn>
+      </apply>
     </apply>
-    <apply>
-      <power/>
-      <ci>z</ci>
-      <cn>2</cn>
-     </apply>
+    <cn>4</cn>
   </apply>
-  <cn>1</cn>
+  <cn>0</cn>
 </apply>

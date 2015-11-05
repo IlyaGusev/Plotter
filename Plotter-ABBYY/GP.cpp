@@ -6,7 +6,7 @@
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/, bool isImplisit /*= false*/,
+GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/,
 	double inputLengthOfSection /*= 5*/, std::pair<double, double>& inputWindowSize /*= std::pair<double, double>( 700, 700 ) */ ) :
 	lengthOfSection( inputLengthOfSection ),
 	windowSize( inputWindowSize ),
@@ -15,7 +15,7 @@ GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/, bool isImplisit /*= f
 	globalYShift( 0 ),
 	globalZShift( 0 )
 {
-	calc = MathMlCalculator( formulaPath, is2D, isImplisit );
+	calc = MathMlCalculator( formulaPath, is2D );
 
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;
@@ -265,12 +265,12 @@ std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zVal
 	std::pair<double, double> x = getAxisVectorVisual( 0 );
 	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
-	double xRel = origin.first + ( x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-					y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-					z.first * (zValue - globalZShift) * lengthOfSection );
-	double yRel = origin.second + ( x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-					y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-					z.second * (zValue - globalZShift) * lengthOfSection );
+	double xRel = origin.first + scale * (x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+		y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+		z.first * (zValue - globalZShift) * lengthOfSection);
+	double yRel = origin.second + scale * (x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+		y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+		z.second * (zValue - globalZShift) * lengthOfSection);
 	return std::make_pair( xRel, yRel );
 }
 

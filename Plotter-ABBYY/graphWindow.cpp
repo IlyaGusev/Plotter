@@ -5,10 +5,10 @@
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isFillPolygonsIf3D, bool isImplicit /*= false */ ) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D /*= false*/, bool isFillPolygonsIf3D /*= true */ ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, isImplicit, 80 ),
+	graphInPoints( formulaPath, is2D, 80 ),
 	needToFillPolygons( isFillPolygonsIf3D )
 {
 }
@@ -201,7 +201,8 @@ void GraphWindow::drawGraph(HDC dc) {
 	// Проводим отрезки вдоль оси Y
 	for( size_t i = 0; i < iSize; ++i ) {
 		yPolygonPoints.push_back( std::vector < std::vector< PointF > >() );
-		zPolygonPoints.push_back( std::vector < std::vector< PointF > >( ) );
+		zPolygonPoints.push_back( std::vector < std::vector< PointF > >() );
+		zPolygonPoints.back().push_back( std::vector<PointF>() );
 
 		size_t j = 0;
 		// Ищем, где точки начинаются
@@ -209,7 +210,6 @@ void GraphWindow::drawGraph(HDC dc) {
 		// Считаем, что есть k слоев, рисуем отрезки послойно
 		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size( ) : 0); ++k ) {
 			yPolygonPoints.back().push_back( std::vector<PointF>() );
-			zPolygonPoints.back().push_back( std::vector<PointF>() );
 
 			POINT* lppoints = new POINT[jSize - j];
 			size_t size = 0;
@@ -473,14 +473,29 @@ void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vect
 
 	std::vector< Polygon4Wrap > polygons;
 	
-	for( size_t i = 0; i < yPolygonPoints.size() - 1; ++i ) {
-		for( size_t k = 0; k < yPolygonPoints[i].size(); ++k ) {
-			for( size_t j = 0; j < min( yPolygonPoints[i][k].size(), yPolygonPoints[i + 1][k].size() ) - 1; ++j ) {
+	for( int i = 0; i < yPolygonPoints.size( ) - 1; ++i ) {
+		for( int k = 0; k < yPolygonPoints[i].size( ); ++k ) {
+			for( int j = 0; j < ((yPolygonPoints[i + 1].size( ) > k) ? (min( yPolygonPoints[i][k].size( ), yPolygonPoints[i + 1][k].size( ) ) - 1) : 0); ++j ) {
 				Polygon4Wrap wrap;
 				wrap.poly[0] = yPolygonPoints[i][k][j];
 				wrap.poly[1] = yPolygonPoints[i][k][j + 1];
 				wrap.poly[2] = yPolygonPoints[i + 1][k][j + 1];
 				wrap.poly[3] = yPolygonPoints[i + 1][k][j];
+
+				polygons.push_back( wrap );
+			}
+		}
+	}
+
+	for( int i = 0; i < zPolygonPoints.size() - 1; ++i ) {
+		for( int k = 0; k < zPolygonPoints[i].size( ); ++k ) {
+			int sizeJ = min( zPolygonPoints[i][k].size(), zPolygonPoints[i + 1][k].size() ) - 1;
+			for( int j = 0; j < ( (zPolygonPoints[i + 1].size() > k) ? sizeJ : 0 ); ++j ) {
+				Polygon4Wrap wrap;
+				wrap.poly[0] = zPolygonPoints[i][k][j];
+				wrap.poly[1] = zPolygonPoints[i][k][j + 1];
+				wrap.poly[2] = zPolygonPoints[i + 1][k][j + 1];
+				wrap.poly[3] = zPolygonPoints[i + 1][k][j];
 
 				polygons.push_back( wrap );
 			}

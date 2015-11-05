@@ -12,7 +12,7 @@ MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D, bool
 	isImplisit( _isImplisit )
 {
 	pugi::xml_parse_result result = doc.load_file( formulaPath );
-	buildFormula( doc );
+	buildFormulas( doc );
 	srand( time( NULL ) );
 }
 
@@ -100,21 +100,100 @@ bool MathMlCalculator::Is2D()
 	return is2D;
 }
 
-void MathMlCalculator::buildFormula( const pugi::xml_node& formulaRoot )
+double MathMlCalculator::calculateMax(const std::vector<std::vector<double>>& points) const {
+	int n = points.size();
+	double max = -INT_MAX;
+	for (int i = 0; i < n; ++i) {
+		int innerN = points[i].size();
+		for (int j = 0; j < innerN; ++j) {
+			if (points[i][j] > max) {
+				max = points[i][j];
+			}
+		}
+	}
+	return max;
+}
+
+double MathMlCalculator::calculateZMax( const std::vector<std::vector<std::vector<double>>>& points ) const
 {
-	pugi::xml_node curNode = formulaRoot.first_child();
-	if( !curNode.next_sibling().empty() ) {
-		xFormula = [curNode] () -> double {
-			return OperationHandler::getOperation( curNode.first_child().name() ).build( curNode.first_child() );
-		};
-		curNode = curNode.next_sibling();
-		zFormula = [curNode] () -> double {
-			return OperationHandler::getOperation( curNode.first_child().name() ).build( curNode.first_child() );
-		};
+	int n = points.size();
+	double max = -INT_MAX;
+	for( int i = 0; i < n; ++i ) {
+		int innerN = points[i].size();
+		for( int j = 0; j < innerN; ++j ) {
+			for( int k = 0; k < points[i][j].size(); ++k ) {
+				if( points[i][j][k] > max ) {
+					max = points[i][j][k];
+				}
+			}
+		}
+	}
+	return max;
+}
+
+double MathMlCalculator::getXMax() const
+{
+	double xMax;
+	if (!isParametric) {
+		xMax = *((--xPoints.end())->begin());
+	}
+	else {
+		xMax = calculateMax(xPoints);
+	}
+	return xMax;
+}
+
+double MathMlCalculator::getYMax() const
+{
+	double yMax;
+	if (!isParametric) {
+		yMax = *(--((--yPoints.end())->end()));
+	}
+	else {
+		yMax = calculateMax(yPoints);
+	}
+	return yMax;
+}
+
+double MathMlCalculator::getZMax() const
+{
+	return calculateZMax( zPoints );
+}
+
+void MathMlCalculator::buildFormulas( const pugi::xml_node& formulaRoot )
+{
+	pugi::xml_node coordDefinitionNode = formulaRoot.first_child();
+	buildCoordFormula(coordDefinitionNode);
+	coordDefinitionNode = coordDefinitionNode.next_sibling();
+	if (!coordDefinitionNode.empty()) {
+		buildCoordFormula(coordDefinitionNode);
+		if (!coordDefinitionNode.next_sibling().empty()) {
+			buildCoordFormula(coordDefinitionNode.next_sibling());
+		}
 		isParametric = true;
-	} else {
-		zFormula = [curNode] () -> double {
-			return OperationHandler::getOperation( curNode.name() ).build( curNode );
+	}
+	else {
+		//неявная
+	}
+}
+
+
+void MathMlCalculator::buildCoordFormula(const pugi::xml_node& coordRoot) {
+	pugi::xml_node coordIdentNode = coordRoot.first_child().next_sibling();
+	std::string coordName = coordIdentNode.text().as_string();
+	if (coordName == "x") {
+		xFormula = [coordIdentNode]() -> double {
+			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
+		};
+	}
+	else if (coordName == "y") {
+		yFormula = [coordIdentNode]() -> double {
+			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
+		};
+	}
+	else if (coordName == "z") {
+		zFormula = [coordIdentNode]() -> double {
+			return OperationHandler::getOperation(coordIdentNode.next_sibling().name()).build(coordIdentNode.next_sibling());
 		};
 	}
 }

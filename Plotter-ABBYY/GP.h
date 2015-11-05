@@ -34,11 +34,26 @@ public:
 	// Возвращает положение относительных точек
 	std::vector<std::vector< std::vector< std::pair<double, double> >>> getRelativePoints();
 	// возвращает направляющий вектор Номера осей X - 0, Y - 1, Z - 2
-	std::pair<double, double> getAxisVector( int axisNum );
+	std::pair<double, double> getAxisVector( int axisNum ) const;
 	// возвращает направляющий вектор в подстроенный под ориентацию WinApi
-	std::pair<double, double> getAxisVectorVisual( int axisNum );
+	std::pair<double, double> getAxisVectorVisual( int axisNum ) const;
 	// возвращает координаты пересечения осей в 2d
 	std::pair<double, double> getOriginCoordinates();
+	// возвращает значения Z для пары XY
+	std::vector<std::vector<std::vector<double>>> getZcoordinates();
+	// возвращает точку на экране, которая соответствует точке на графике с координатой Z и узлу сетки i j 
+	std::pair<double, double> getRelativePointWithXYZ( int i, int j, double z );
+	// возвращает размер сетки
+	int getGridSize();
+	
+	std::pair<double, double> getXProjection(double x) const;
+	std::pair<double, double> getYProjection(double y) const;
+	std::pair<double, double> getZProjection(double z) const;
+
+	double getXMax() const;
+	double getYMax() const;
+	double getZMax() const;
+
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();

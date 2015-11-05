@@ -88,7 +88,7 @@ std::vector<std::vector<std::vector<std::pair<double, double>>>> GP::getRelative
 }
 
 // возвращает направляющий вектор относительной( подвижной ) системы отсчета. Номера осей X - 0, Y - 1, Z - 2
-std::pair<double, double> GP::getAxisVector( int axisNum )
+std::pair<double, double> GP::getAxisVector( int axisNum ) const
 {
 	// получаем координаты неподвижной системы отсчета в 2D
 	double x0 = cos( M_PI * anglesOfAxis[0] / 180 );
@@ -103,7 +103,7 @@ std::pair<double, double> GP::getAxisVector( int axisNum )
 	return std::pair<double, double>( scale * relX, scale * relY );
 }
 
-std::pair<double, double> GP::getAxisVectorVisual( int axisNum )
+std::pair<double, double> GP::getAxisVectorVisual( int axisNum ) const
 {
 	std::pair<double, double> axis = getAxisVector( axisNum );
 	axis.second = -axis.second;
@@ -210,4 +210,70 @@ void GP::calculateRelativePoints()
 			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );*/
 		}
 	}
+}
+
+std::pair<double, double> GP::getXProjection(double x) const
+{
+	std::pair<double, double> xAxis = getAxisVectorVisual(0);
+	return std::make_pair(origin.first + xAxis.first * (x - globalXShift) * lengthOfSection,
+		origin.second + xAxis.second * (x - globalXShift) * lengthOfSection);
+}
+
+std::pair<double, double> GP::getYProjection(double y) const
+{
+	std::pair<double, double> yAxis = getAxisVectorVisual(1);
+	return std::make_pair(origin.first + yAxis.first * (y - globalYShift) * lengthOfSection,
+		origin.second + yAxis.second * (y - globalYShift) * lengthOfSection);
+}
+
+std::pair<double, double> GP::getZProjection(double z) const
+{
+	std::pair<double, double> zAxis = getAxisVectorVisual(2);
+	return std::make_pair(origin.first + zAxis.first * (z - globalZShift) * lengthOfSection,
+		origin.second + zAxis.second * (z - globalZShift) * lengthOfSection);
+}
+
+double GP::getXMax() const {
+	return calc.getXMax();
+}
+
+double GP::getYMax() const {
+	return calc.getYMax();
+}
+
+double GP::getZMax() const {
+	return calc.getZMax();
+}
+
+std::vector<std::vector<std::vector<double>>> GP::getZcoordinates()
+{
+	std::vector<std::vector<std::vector<double>>> zCoordinates( calc.GetGridSize() );
+	for( size_t i = 0; i < calc.GetGridSize( ); ++i ) {
+		zCoordinates[i].resize( calc.GetGridSize() );
+		for( size_t j = 0; j < calc.GetGridSize( ); ++j ) {
+			auto z_ij = calc.GetZ( i, j );
+			zCoordinates[i][j].resize( z_ij.size() );
+			for( size_t k = 0; k < z_ij.size(); ++k ) {
+				zCoordinates[i][j][k] = z_ij[k] - globalZShift;
+			}
+		}
+	}
+	return zCoordinates;
+}
+
+std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zValue ) {
+	std::pair<double, double> x = getAxisVectorVisual( 0 );
+	std::pair<double, double> y = getAxisVectorVisual( 1 );
+	std::pair<double, double> z = getAxisVectorVisual( 2 );
+	double xRel = origin.first + ( x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+					y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+					z.first * (zValue - globalZShift) * lengthOfSection );
+	double yRel = origin.second + ( x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
+					y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
+					z.second * (zValue - globalZShift) * lengthOfSection );
+	return std::make_pair( xRel, yRel );
+}
+
+int GP::getGridSize() {
+	return calc.GetGridSize();
 }

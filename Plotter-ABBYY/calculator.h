@@ -21,10 +21,18 @@ public:
 	bool Is2D();
 
 	int GetGridSize();
+
+	double getXMax() const;
+	double getYMax() const;
+	double getZMax() const;
+	
 private:
-	void buildFormula(const pugi::xml_node& formulaRoot);
+	void buildFormulas(const pugi::xml_node& formulaRoot);
+	void buildCoordFormula(const pugi::xml_node& coordRoot);
 	double getFirstArg( int i, int j );
 	double getSecondArg( int i, int j );
+	double calculateMax(const std::vector<std::vector<double>>& points) const;
+	double calculateZMax( const std::vector<std::vector<std::vector<double>>>& points ) const;
 
 	// Ищет корень уравнения zFormula(z) / func(z) = 0
 	bool findRoot( const std::function<double(double)>& func, double& root );

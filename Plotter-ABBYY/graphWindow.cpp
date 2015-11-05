@@ -2,11 +2,14 @@
 #include <Windowsx.h>
 
 #include "graphWindow.h"
+using namespace Gdiplus;
+#pragma comment (lib, "Gdiplus.lib")
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isImplicit /*= false */ ) :
+GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D, bool isFillPolygonsIf3D, bool isImplicit /*= false */ ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, isImplicit, 80 )
+	graphInPoints( formulaPath, is2D, isImplicit, 80 ),
+	needToFillPolygons( isFillPolygonsIf3D )
 {
 }
 
@@ -181,20 +184,33 @@ void GraphWindow::OnPaint()
 void GraphWindow::drawGraph(HDC dc) {
 	::SetBkColor(dc, RGB(0, 0, 0));
 
-	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(0, 255, 0));
+	HPEN linePen;
+	if (needToFillPolygons) {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 100, 0 ) );
+	} else {
+		linePen = ::CreatePen( PS_SOLID, 1, RGB( 0, 255, 0 ) );
+	}
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::vector< std::pair<double, double> > > > points = graphInPoints.getRelativePoints();
+	std::vector< std::vector < std::vector< PointF > > > yPolygonPoints;
+	std::vector< std::vector < std::vector< PointF > > > zPolygonPoints;
 
 	int iSize = points.size();
 	int jSize = points[0].size();
-	// Проводим отрезки вдоль оси X
+	// Проводим отрезки вдоль оси Y
 	for( size_t i = 0; i < iSize; ++i ) {
+		yPolygonPoints.push_back( std::vector < std::vector< PointF > >() );
+		zPolygonPoints.push_back( std::vector < std::vector< PointF > >( ) );
+
 		size_t j = 0;
 		// Ищем, где точки начинаются
 		for( ; j < jSize && points[i][j].size( ) == 0; ++j );
 		// Считаем, что есть k слоев, рисуем отрезки послойно
 		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size( ) : 0); ++k ) {
+			yPolygonPoints.back().push_back( std::vector<PointF>() );
+			zPolygonPoints.back().push_back( std::vector<PointF>() );
+
 			POINT* lppoints = new POINT[jSize - j];
 			size_t size = 0;
 			size_t lastPoint = 0;
@@ -202,8 +218,9 @@ void GraphWindow::drawGraph(HDC dc) {
 			if( k + 1 < points[i][j].size() ) {
 				::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
 				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
+				zPolygonPoints.back().back().push_back( PointF( points[i][j][k].first, points[i][j][k].second ) );
+				zPolygonPoints.back().back().push_back( PointF( points[i][j][k + 1].first, points[i][j][k + 1].second ) );
 			}
-
 			for( size_t l = j; l < jSize; ++l ) {
 				// Если в этой точке достаточно слоев - проводим отрезок через нее
 				if( points[i][l].size() > k ) {
@@ -212,10 +229,12 @@ void GraphWindow::drawGraph(HDC dc) {
 						::LineTo( dc, round( points[i][l][k].first ), round( points[i][l][k].second ) );
 					}
 					lppoints[size] = { round( points[i][l][k].first ), round( points[i][l][k].second ) };
+				
+					yPolygonPoints.back().back().push_back( PointF( points[i][l][k].first, points[i][l][k].second ) );
 					++size;
 					lastPoint = l;
 				} else {
-					// Если слоев недостаточно, начинаем проводить кривые Безье
+					// Если слоев недостаточно, начинаем проводить кривые Безье по предыдущим точкам
 					// Точек должно быть 3k+1
 					int bezierPointsSize = size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1;
 					::PolyBezier( dc, lppoints, bezierPointsSize );
@@ -224,11 +243,14 @@ void GraphWindow::drawGraph(HDC dc) {
 						if( k < points[i][l + p - 1].size() && k < points[i][l + p].size() ) {
 							::MoveToEx( dc, round( points[i][l + p - 1][k].first ), round( points[i][l + p - 1][k].second ), NULL );
 							::LineTo( dc, round( points[i][l + p][k].first ), round( points[i][l + p][k].second ) );
+							yPolygonPoints.back().back().push_back( PointF( points[i][l + p - 1][k].first, points[i][l + p - 1][k].second ) );
+							yPolygonPoints.back().back().push_back( PointF( points[i][l + p][k].first, points[i][l + p][k].second ) );
 						}
 					}
 					size = 0;
 					if( k < points[i][l - 1].size() ) {
 						::MoveToEx( dc, round( points[i][l - 1][k].first ), round( points[i][l - 1][k].second ), NULL );
+						yPolygonPoints.back().back().push_back( PointF( points[i][l - 1][k].first, points[i][l - 1][k].second ) );
 					}
 				}
 			}
@@ -239,7 +261,9 @@ void GraphWindow::drawGraph(HDC dc) {
 			// Проводим отрезок в верхний слой
 			if( k + 1 < points[i][lastPoint].size() ) {
 				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
+				zPolygonPoints.back().back().push_back( PointF( points[i][lastPoint][k].first, points[i][lastPoint][k].second ) );
 				::LineTo( dc, round( points[i][lastPoint][k + 1].first ), round( points[i][lastPoint][k + 1].second ) );
+				zPolygonPoints.back().back().push_back( PointF( points[i][lastPoint][k + 1].first, points[i][lastPoint][k + 1].second ) );
 				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
 			}
 		}
@@ -303,6 +327,10 @@ void GraphWindow::drawGraph(HDC dc) {
 	}
 
 	::DeleteObject(linePen);
+
+	if( needToFillPolygons ) {
+		fillWithGradient( dc, yPolygonPoints, zPolygonPoints );
+	}
 }
 
 void GraphWindow::drawAxes(HDC dc) {
@@ -322,6 +350,21 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 100, 200));
 	::TextOut(dc, round(origin.first + xAxis.first * 200), round(origin.second + xAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	std::vector< std::vector < std::vector< std::pair<double, double> > > > points = graphInPoints.getRelativePoints();
+	text = std::to_string(graphInPoints.getGridSize());
+
+	int pointsCount = 5;
+	double maxValue = graphInPoints.getXMax();
+	double axisScaleCoordUnit = maxValue / pointsCount;
+	double axisScaleCoord = 0;
+	std::pair<double, double> projectionCoord;
+	for (int i = 0; i < pointsCount; ++i ) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getXProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+	}
 
 	linePen = ::CreatePen(PS_SOLID, 1, RGB(200, 100, 200));
 	::SelectObject(dc, linePen);
@@ -332,6 +375,16 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(200, 100, 200));
 	::TextOut(dc, round(origin.first + yAxis.first * 200), round(origin.second + yAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	maxValue = graphInPoints.getYMax();
+	axisScaleCoordUnit = maxValue / pointsCount;
+	axisScaleCoord = 0;
+	for (int i = 0; i < pointsCount; ++i) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getYProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+	}
 
 	linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 200, 200));
 	::SelectObject(dc, linePen);
@@ -343,6 +396,109 @@ void GraphWindow::drawAxes(HDC dc) {
 	::SetTextColor(dc, RGB(100, 200, 200));
 	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
+	maxValue = graphInPoints.getZMax();
+	axisScaleCoordUnit = maxValue / pointsCount;
+	axisScaleCoord = 0;
+	for (int i = 0; i < pointsCount; ++i) {
+		axisScaleCoord += axisScaleCoordUnit;
+		text = std::to_string(axisScaleCoord);
+		projectionCoord = graphInPoints.getZProjection(axisScaleCoord);
+		::TextOut(dc, projectionCoord.first, projectionCoord.second,
+			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
+}
+}
+
+void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {
+	std::vector<std::vector<std::vector<double>>> zCoordinates = graphInPoints.getZcoordinates();
+
+	xMax = 0;
+	xMin = 0;
+	yMax = 0;
+	yMin = 0;
+
+	for (int i = 0; i < zCoordinates.size(); ++i) {
+		for (int j = 0; j < zCoordinates[i].size(); ++j) {
+			if( zCoordinates[i][j].size() > 0 ) {
+				max = zCoordinates[i][j][0];
+				min = zCoordinates[i][j][0];
+			}
+		}
+	}
+
+	for( int i = 0; i < zCoordinates.size(); ++i ) {
+		for( int j = 0; j < zCoordinates[i].size(); ++j ) {
+			for( int k = 0; k < zCoordinates[i][j].size(); ++k ) {
+				if( zCoordinates[i][j][k] < min ) {
+					min = zCoordinates[i][j][k];
+					xMin = i;
+					yMin = j;
+				}
+				if( zCoordinates[i][j][k] > max ) {
+					max = zCoordinates[i][j][k];
+					xMax = i;
+					yMax = j;
+				}
+			}
+		}
+	}
+}
+
+void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
+														double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax )
+{
+	int semiGridSize = graphInPoints.getGridSize() / 2;
+
+	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - semiGridSize );
+	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + semiGridSize );
+
+	minColorPoint.X = (int) minPointPair.first;
+	minColorPoint.Y = (int) minPointPair.second;
+	maxColorPoint.X = (int) maxPointPair.first;
+	maxColorPoint.Y = (int) maxPointPair.second;
+}
+
+void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vector< PointF > > >& yPolygonPoints, std::vector< std::vector < std::vector< PointF > > >& zPolygonPoints,
+	Color maxColor, Color minColor )
+{
+	Graphics graphics( dc );
+	graphics.SetInterpolationMode( InterpolationModeNearestNeighbor );
+	graphics.SetSmoothingMode( SmoothingModeNone );
+	graphics.SetPixelOffsetMode( PixelOffsetModeNone );
+	graphics.SetCompositingQuality( CompositingQualityHighSpeed );
+	graphics.SetTextRenderingHint( TextRenderingHintSingleBitPerPixel );
+
+	int xMax, yMax, xMin, yMin;
+	double max, min;
+	getMaxMinZAndRelativeGridKnots( min, max, xMin, yMin, xMax, yMax );
+
+	std::vector< Polygon4Wrap > polygons;
+	
+	for( size_t i = 0; i < yPolygonPoints.size() - 1; ++i ) {
+		for( size_t k = 0; k < yPolygonPoints[i].size(); ++k ) {
+			for( size_t j = 0; j < min( yPolygonPoints[i][k].size(), yPolygonPoints[i + 1][k].size() ) - 1; ++j ) {
+				Polygon4Wrap wrap;
+				wrap.poly[0] = yPolygonPoints[i][k][j];
+				wrap.poly[1] = yPolygonPoints[i][k][j + 1];
+				wrap.poly[2] = yPolygonPoints[i + 1][k][j + 1];
+				wrap.poly[3] = yPolygonPoints[i + 1][k][j];
+
+				polygons.push_back( wrap );
+			}
+		}
+	}
+
+	Point maxPoint, minPoint;
+	generatePointsOfMaxAndMinGradientColor( maxPoint, minPoint, min, max, xMin, yMin, xMax, yMax );
+
+	LinearGradientBrush linGrBrush(
+		maxPoint,
+		minPoint,
+		maxColor,
+		minColor);
+
+	for (int i = 0; i < polygons.size(); ++i) {
+		graphics.FillPolygon( &linGrBrush, polygons[i].poly, 4 );
+	}
 }
 
 

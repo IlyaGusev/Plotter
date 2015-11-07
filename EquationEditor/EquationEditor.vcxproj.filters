@@ -93,6 +93,9 @@
     <ClCompile Include="View\MainWindow.cpp">
       <Filter>Source Files\View</Filter>
     </ClCompile>
+    <ClCompile Include="Model\SystemControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="View\MainWindow.h">
       <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SystemControlModel.h">
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

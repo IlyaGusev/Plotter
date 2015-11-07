@@ -91,6 +91,7 @@
     <ClCompile Include="Model\RadicalControlModel.cpp" />
     <ClCompile Include="Model\SubscriptControlModel.cpp" />
     <ClCompile Include="Model\SumControlModel.cpp" />
+    <ClCompile Include="Model\SystemControlModel.cpp" />
     <ClCompile Include="Model\Utils\Caret.cpp" />
     <ClCompile Include="Model\Utils\Line.cpp" />
     <ClCompile Include="Model\Utils\Rect.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="Model\RadicalControlModel.h" />
     <ClInclude Include="Model\SubscriptControlModel.h" />
     <ClInclude Include="Model\SumControlModel.h" />
+    <ClInclude Include="Model\SystemControlModel.h" />
     <ClInclude Include="Model\Utils\Caret.h" />
     <ClInclude Include="Model\Utils\Line.h" />
     <ClInclude Include="Model\Utils\Rect.h" />

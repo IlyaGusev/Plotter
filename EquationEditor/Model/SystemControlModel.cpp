@@ -160,7 +160,12 @@ bool CSystemControlModel::IsEmpty() const
 void CSystemControlModel::updatePolygons()
 {
   params.polygon.clear();
-  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5)); // середина
+
+  int middle = rect.Top() + rect.GetHeight() / 2;
+  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, middle - 3 )); // середина 1
+  params.polygon.push_back(CLine(rect.Left() + 2, middle + 3, rect.Left() + 2, rect.Bottom() - 5)); // середина 2
+  params.polygon.push_back(CLine(rect.Left() + 2, middle + 3, rect.Left(), middle - 1)); // "носик" нижний
+  params.polygon.push_back(CLine(rect.Left() + 2, middle - 3, rect.Left(), middle + 1)); // "носик" верхний
   params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 2)); // верх
   params.polygon.push_back(CLine(rect.Left() + 2, rect.Bottom() - 5, rect.Left() + 5, rect.Bottom() - 2)); // низ
 }

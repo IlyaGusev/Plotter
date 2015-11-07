@@ -7,6 +7,7 @@
 #include "Model/ParenthesesControlModel.h"
 #include "Model/ProductControlModel.h"
 #include "Model/SumControlModel.h"
+#include "Model/SystemControlModel.h"
 
 CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
 	view( newView ),
@@ -455,6 +456,20 @@ void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent, 
 	view.Redraw();
 }
 
+void CEquationPresenter::addSystem(std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild)
+{
+  std::shared_ptr<CSystemControlModel> systemModel(new CSystemControlModel(caret.GetCurEdit()->GetRect(), parent));
+  systemModel->InitializeChildren(selectedChild);
+  parent->AddChildAfter(systemModel, caret.GetCurEdit());
+
+  std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl(caret.Offset());
+  parent->AddChildAfter(newEditControl, systemModel);
+
+  invalidateTree();
+
+  view.Redraw();
+}
+
 void CEquationPresenter::AddControlView( ViewType viewType )
 {
 	std::shared_ptr<CExprControlModel> selectedChild;
@@ -494,6 +509,9 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 	case PRODUCT:
 		addProduct( parent, selectedChild );
 		break;
+  case SYSTEM:
+    addSystem(parent, selectedChild);
+    break;
 	default:
 		break;
 	}

@@ -112,6 +112,7 @@ private:
 	void addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+  void addSystem(std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild);
 
 	void deleteSelectedParts();
 

@@ -137,8 +137,12 @@ STDMETHODIMP CCommandHandler::Execute(
 		::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_PRODUCT ), LPARAM( 0 ) );
 		break;
 
+  case ID_CMD_System:
+    ::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_SYSTEM ), LPARAM( 0 ) );
+    break;
+
 	case ID_CMD_EXIT:
-		PostMessage(hwnd, WM_CLOSE, NULL, NULL);
+		PostMessage( hwnd, WM_CLOSE, NULL, NULL );
 		break;
 	}
 

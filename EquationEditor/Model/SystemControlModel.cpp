@@ -5,14 +5,12 @@ CSystemControlModel::CSystemControlModel( const CRect& rect, std::weak_ptr<IBase
 	IBaseExprModel(rect, parent)
 {
 	this->rect.Set( 0, 0, 0, rect.GetHeight() ); // нас интересует только высота, остальное исправится сразу же после инвалидации дерева
-	// this->params.polygon.push_back( CLine( rect.Left( ), rect.GetHeight( ) / 2, rect.Right( ), rect.GetHeight( ) / 2 ) );
-
 	depth = parent.lock()->GetDepth() + 1;
 }
 
 int CSystemControlModel::CalcHeight() const
 {
-  int height = 0;
+  int height = 10;
   for (auto child : children) {
     height += child->GetRect().GetHeight();
   }
@@ -42,7 +40,7 @@ std::wstring CSystemControlModel::Serialize() {
 void CSystemControlModel::PlaceChildren()
 {
 	CRect newRect;
-  int currentTop = rect.Top();
+  int currentTop = rect.Top() + 5;
 
   for (int i = 0; i < children.size(); ++i) {
     CRect oldRect = children[i]->GetRect();
@@ -161,7 +159,10 @@ bool CSystemControlModel::IsEmpty() const
 
 void CSystemControlModel::updatePolygons()
 {
-	params.polygon.front().Set( rect.Left(), rect.Top() + GetMiddle(), rect.Right(), rect.Top() + GetMiddle() );
+  params.polygon.clear();
+  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5)); // середина
+  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 2)); // верх
+  params.polygon.push_back(CLine(rect.Left() + 2, rect.Bottom() - 5, rect.Left() + 5, rect.Bottom() - 2)); // низ
 }
 
 void CSystemControlModel::UpdateSelection()

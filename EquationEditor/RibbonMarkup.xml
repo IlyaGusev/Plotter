@@ -71,7 +71,17 @@
       <Command.LargeImages>
         <Image>Res\product.bmp</Image>
       </Command.LargeImages>
-    </Command>    
+    </Command>
+
+    <Command Name="cmdButtonSystem"
+             Symbol="ID_CMD_System"
+             LabelTitle="Система уравнений"
+             LabelDescription="Система уравнений"
+             TooltipDescription="Система уравнений">
+      <Command.LargeImages>
+        <Image>Res\eqsystem.bmp</Image>
+      </Command.LargeImages>
+    </Command>
 
     <Command Name="cmdButtonExit"
              Symbol="ID_CMD_EXIT"
@@ -117,6 +127,12 @@
          Symbol="ID_CMD_GROUP_SUM_PRODUCT"
          LabelTitle="Сумма и произведение">
     </Command>
+    
+    <Command Name="cmdGroupSystem"
+             Symbol="ID_CMD_GROUP_SYSTEM"
+             LabelTitle="Система уравнений">
+    </Command>
+
 
     <Command Name="cmdGroupExit"
              Symbol="ID_CMD_GROUP_EXIT"
@@ -160,6 +176,10 @@
           <Group CommandName="cmdGroupSumProduct" SizeDefinition="TwoButtons">
             <Button CommandName="cmdButtonSum" />
             <Button CommandName="cmdButtonProduct" />
+          </Group>
+
+          <Group CommandName="cmdGroupSystem" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonSystem" />
           </Group>
             
           <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">

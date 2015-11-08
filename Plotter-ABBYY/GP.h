@@ -39,6 +39,8 @@ public:
 	std::pair<double, double> getAxisVectorVisual( int axisNum ) const;
 	// возвращает координаты пересечения осей в 2d
 	std::pair<double, double> getOriginCoordinates();
+
+	void changeSize(double x, double y);
 	// возвращает значения Z для пары XY
 	std::vector<std::vector<double>> getZcoordinates();
 	// возвращает точку на экране, которая соответствует точке на графике с координатой Z и узлу сетки i j 
@@ -46,17 +48,18 @@ public:
 	// возвращает размер сетки
 	int getGridSize();
 	
-	std::pair<double, double> getXProjection(double x) const;
-	std::pair<double, double> getYProjection(double y) const;
-	std::pair<double, double> getZProjection(double z) const;
+	std::pair<double, double> getProjection(double value, int axisNum) const;
 
-	double getXMax() const;
-	double getYMax() const;
-	double getZMax() const;
+	double getAxisMax(const std::pair<double, double>& relativeMaxPoint, const std::pair<double, double>& axis) const;
+
+	std::pair<double, double> getMaxRelativePoint(std::pair<double, double>& axis, int top, int bottom, int left, int right);
+
 
 private:
 	// Пересчет положения точек относительно осей
 	void calculateRelativePoints();
+
+	void recalculateOrigin(int xShift, int yShift, int zShift);
 
 	void rotateToStartAngle();
 	void rotateToCurrentAngle();
@@ -81,10 +84,10 @@ private:
 
 	// координаты центра окна
 	std::pair<double, double> windowSize;
-
+	
 	// Смещения и увеличение графика
-	double globalXShift;
+	/*double globalXShift;
 	double globalYShift;
-	double globalZShift;
+	double globalZShift;*/
 	double scale;
 };

@@ -92,7 +92,11 @@
     <ClInclude Include="Operation.h" />
     <ClInclude Include="pugixml\pugiconfig.hpp" />
     <ClInclude Include="pugixml\pugixml.hpp" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RotationLib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Plotter-ABBYY.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

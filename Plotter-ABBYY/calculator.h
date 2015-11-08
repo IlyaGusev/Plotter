@@ -14,9 +14,9 @@ public:
 	void RecalculatePoints( int gridSize );
 
 	//double countExpression(double xArgument, double yArgument);
-	double GetX( int i, int j );
-	double GetY( int i, int j );
-	double GetZ( int i, int j );
+	double GetX( int i, int j ) const;
+	double GetY( int i, int j ) const;
+	double GetZ( int i, int j ) const;
 
 	double& GlobalXShift();
 	double& GlobalYShift();
@@ -24,7 +24,7 @@ public:
 	double& Scale();
 	bool Is2D();
 
-	int GetGridSize();
+	int GetGridSize() const;
 
 	double getXMax() const;
 	double getYMax() const;

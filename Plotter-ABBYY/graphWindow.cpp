@@ -2,6 +2,7 @@
 #include <Windowsx.h>
 
 #include "graphWindow.h"
+#include "resource.h"
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
 
@@ -46,6 +47,10 @@ bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER,
 		200, 20, windowWidth, windowHeight,
 		NULL, NULL, hInstance, this);
+
+	menu = ::LoadMenu(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU1));	// Загрузить меню из файла ресурса
+	//SetMenu(handle, menu);
+	
 
 	return handle;
 }
@@ -155,13 +160,41 @@ void GraphWindow::OnLButtonDown( int xMousePos, int yMousePos )
 	prevMousePosY = yMousePos;
 }
 
+void GraphWindow::OnImageSave() {
+	HANDLE file;
+	wchar_t filename[256];
+	filename[0] = '\0';
+	OPENFILENAME enteredFileName;
+	::ZeroMemory(&enteredFileName, sizeof(enteredFileName));
+	enteredFileName.lStructSize = sizeof(OPENFILENAME);
+	enteredFileName.hwndOwner = NULL;
+	enteredFileName.lpstrFile = filename;
+	enteredFileName.nMaxFile = 256;
+	enteredFileName.lpstrFilter = L"Image Files( *.png )";
+	enteredFileName.nFilterIndex = 1;
+	enteredFileName.lpstrTitle = TEXT("Сохранить как");   //заголовок
+	enteredFileName.lpstrInitialDir = NULL;   //начальный каталог для сохранения
+	enteredFileName.Flags = OFN_OVERWRITEPROMPT | OFN_CREATEPROMPT;
+
+	if (::GetSaveFileName(&enteredFileName)) {
+		file = ::CreateFile(static_cast<LPCWSTR>(filename), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+		
+		CloseHandle(file);
+	}
+}
+
+void GraphWindow::OnSize(int width, int height) {
+	graphInPoints.changeSize((width - 20) / 2, height / 2);
+}
+
 void GraphWindow::OnPaint()
 {
 	PAINTSTRUCT ps;
 	HDC hdc = ::BeginPaint(handle, &ps);
 	HDC newHdc = ::CreateCompatibleDC(hdc);
 	RECT rect;
-	::GetClientRect(handle, &rect);
+ 	::GetClientRect(handle, &rect);
+	graphInPoints.changeSize((rect.right - rect.left) / 2, (rect.bottom - rect.top) / 2);
 
 	HBITMAP bitmap = ::CreateCompatibleBitmap( hdc, rect.right - rect.left, rect.bottom - rect.top );
 	HGDIOBJ oldbitmap = ::SelectObject(newHdc, bitmap);
@@ -203,7 +236,7 @@ void GraphWindow::drawGraph(HDC dc) {
 	for( size_t i = 0; i < pointsISize; ++i ) {
 		POINT* lppoints = new POINT[pointsJSize];
 		for( size_t j = 0; j < pointsJSize; ++j ) {
-			lppoints[j] = { round( points[i][j].first ), round( points[i][j].second ) };
+			lppoints[j] = { ( points[i][j].first ), ( points[i][j].second ) };
 		}
 		::PolyBezier( dc, lppoints, pointsJSize );
 
@@ -213,7 +246,7 @@ void GraphWindow::drawGraph(HDC dc) {
 	for( size_t j = 0; j < pointsJSize; ++j ) {
 		POINT* lppoints = new POINT[pointsISize];
 		for( size_t i = 0; i < pointsISize; ++i ) {
-			lppoints[i] = { round( points[i][j].first ), round( points[i][j].second ) };
+			lppoints[i] = { ( points[i][j].first ),( points[i][j].second ) };
 		}
 		::PolyBezier( dc, lppoints, pointsISize );
 
@@ -224,75 +257,44 @@ void GraphWindow::drawGraph(HDC dc) {
 }
 
 void GraphWindow::drawAxes(HDC dc) {
-	std::pair<double, double> xAxis = graphInPoints.getAxisVectorVisual(0);
-	std::pair<double, double> yAxis = graphInPoints.getAxisVectorVisual(1);
-	std::pair<double, double> zAxis = graphInPoints.getAxisVectorVisual(2);
-
-	std::pair<double, double> origin = graphInPoints.getOriginCoordinates();
+	RECT rec;
+	::GetClientRect(handle, &rec);
 
 	HPEN linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 100, 200));
 	::SelectObject(dc, linePen);
-	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo(dc, round(xAxis.first * 10000000000) / 1000, round(xAxis.second * 10000000000) / 1000);
-	::DeleteObject(linePen);
 
-	std::string text = "X";
+	drawAxe(dc, 0, rec, "X");
+	drawAxe(dc, 1, rec, "Y");
+
+	drawAxe(dc, 2, rec, "Z");
+
+	::DeleteObject(linePen);
+}
+
+void GraphWindow::drawAxe(HDC dc, int axisNum, RECT rec, const std::string axisName) {
+	std::pair<double, double> axis = graphInPoints.getAxisVectorVisual(axisNum);
+	std::pair<double, double> maxCoordinates = graphInPoints.getMaxRelativePoint(axis, rec.top, rec.bottom,
+		rec.left, rec.right);
+	std::pair<double, double> origin = graphInPoints.getOriginCoordinates();
+	::MoveToEx(dc, (origin.first), (origin.second), NULL);
+	::LineTo(dc, maxCoordinates.first, maxCoordinates.second);
+	std::string text = axisName;
 	::SetTextColor(dc, RGB(100, 100, 200));
-	::TextOut(dc, round(origin.first + xAxis.first * 200), round(origin.second + xAxis.second * 200),
+	::TextOut(dc, maxCoordinates.first - axis.first * 20, maxCoordinates.second - axis.second * 20,
 		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
-	std::vector< std::vector < std::pair<double, double> > > points = graphInPoints.getRelativePoints();
-	text = std::to_string(graphInPoints.getGridSize());
-	
-	int pointsCount = 5;
-	double maxValue = graphInPoints.getXMax();
+
+	drawCoordinates(dc, axisNum, graphInPoints.getAxisMax(maxCoordinates, axis));
+}
+
+void GraphWindow::drawCoordinates(HDC dc, int axisNum, double maxValue, int pointsCount) {
 	double axisScaleCoordUnit = maxValue / pointsCount;
+	std::string text;
 	double axisScaleCoord = 0;
 	std::pair<double, double> projectionCoord;
-	for (int i = 0; i < pointsCount; ++i ) {
+	for (int i = 0; i < pointsCount - 1; ++i) {
 		axisScaleCoord += axisScaleCoordUnit;
 		text = std::to_string(axisScaleCoord);
-		projectionCoord = graphInPoints.getXProjection(axisScaleCoord);
-		::TextOut(dc, projectionCoord.first, projectionCoord.second,
-			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
-	}
-
-	linePen = ::CreatePen(PS_SOLID, 1, RGB(200, 100, 200));
-	::SelectObject(dc, linePen);
-	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo(dc, round(yAxis.first * 10000000000) / 1000, round(yAxis.second * 10000000000) / 1000);
-
-	text = "Y";
-	::SetTextColor(dc, RGB(200, 100, 200));
-	::TextOut(dc, round(origin.first + yAxis.first * 200), round(origin.second + yAxis.second * 200),
-		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
-	maxValue = graphInPoints.getYMax();
-	axisScaleCoordUnit = maxValue / pointsCount;
-	axisScaleCoord = 0;
-	for (int i = 0; i < pointsCount; ++i) {
-		axisScaleCoord += axisScaleCoordUnit;
-		text = std::to_string(axisScaleCoord);
-		projectionCoord = graphInPoints.getYProjection(axisScaleCoord);
-		::TextOut(dc, projectionCoord.first, projectionCoord.second,
-			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
-	}
-
-	linePen = ::CreatePen(PS_SOLID, 1, RGB(100, 200, 200));
-	::SelectObject(dc, linePen);
-	::MoveToEx(dc, round(origin.first), round(origin.second), NULL);
-	::LineTo(dc, round(zAxis.first * 10000000000) / 1000, round(zAxis.second * 10000000000) / 1000);
-	::DeleteObject(linePen);
-
-	text = "Z";
-	::SetTextColor(dc, RGB(100, 200, 200));
-	::TextOut(dc, round(origin.first + zAxis.first * 200), round(origin.second + zAxis.second * 200),
-		(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length());
-	maxValue = graphInPoints.getZMax();
-	axisScaleCoordUnit = maxValue / pointsCount;
-	axisScaleCoord = 0;
-	for (int i = 0; i < pointsCount; ++i) {
-		axisScaleCoord += axisScaleCoordUnit;
-		text = std::to_string(axisScaleCoord);
-		projectionCoord = graphInPoints.getZProjection(axisScaleCoord);
+		projectionCoord = graphInPoints.getProjection(axisScaleCoord, axisNum);
 		::TextOut(dc, projectionCoord.first, projectionCoord.second,
 			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
 	}
@@ -404,9 +406,8 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
-
+	int i = 0;
 	GraphWindow* that = reinterpret_cast< GraphWindow* >(::GetWindowLong(handle, GWL_USERDATA));
-
 	switch (message) {
 		case WM_CLOSE:
 			that->OnClose();
@@ -419,6 +420,21 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 		case WM_PAINT:
 			that->OnPaint();
 			return 0;
+
+		case WM_SIZE:
+			//that->OnSize(LOWORD(lParam), HIWORD(lParam));
+			return 0;
+
+		case WM_COMMAND :
+			if (HIWORD(wParam) == 0) { //menu
+				switch (LOWORD(wParam)) {
+				case ID_FILE_SAVEIMAGE:
+					that->OnImageSave();
+					return 0;
+				default:
+					break;
+				}
+			}
 
 		case WM_KEYDOWN:
 			that->OnKeyDown(wParam);

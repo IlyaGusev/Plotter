@@ -8,6 +8,7 @@
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/Utils/Caret.h"
+#include "Model/SystemControlModel.h"
 
 #include "Presenter/Utils/TreeBfsProcessor.h"
 #include "Presenter/Utils/TreeDfsProcessor.h"
@@ -122,4 +123,6 @@ private:
 	void invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode );
 
   int deltaY; // текущая величина сдвига прямоугольничков вверх (для обработки скролла)
+
+  std::shared_ptr<CSystemControlModel> NearestSystem(std::shared_ptr<CEditControlModel> edit); // находит ближайшую систему уравнений
 };

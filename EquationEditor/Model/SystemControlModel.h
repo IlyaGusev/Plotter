@@ -35,12 +35,13 @@ public:
   int CalcHeight() const;
 
   void AddChild( int num, std::shared_ptr<IBaseExprModel> initChild = 0 );
+  std::shared_ptr<IBaseExprModel> TryRemoveChild(int line); // контрол нового активного edit если ребенок удалился, nullptr иначе
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 	std::wstring Serialize();
 
   int FindLineNum(std::shared_ptr<CEditControlModel>);
-
+  bool CanRemoveChild(int line);
 private:
   // Дети-линии
   std::vector<std::shared_ptr<IBaseExprModel>> children;

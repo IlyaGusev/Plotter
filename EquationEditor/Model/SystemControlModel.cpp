@@ -33,6 +33,32 @@ void CSystemControlModel::AddChild(int num, std::shared_ptr<IBaseExprModel> init
   }
 }
 
+bool CSystemControlModel::CanRemoveChild(int line)
+{
+  return children[line]->IsEmpty();
+}
+
+std::shared_ptr<IBaseExprModel> CSystemControlModel::TryRemoveChild(int line)
+{
+  if (CanRemoveChild(line)) {
+    children.erase(children.begin() + line);
+    if (children.size() == 1) { // остался последний контрол -- убиваем систему, оставляем пустой контрол
+      // перевешиваем ребенка
+      auto exprParent = std::shared_ptr<CExprControlModel>(std::dynamic_pointer_cast<CExprControlModel>(GetParent().lock()));
+      children[0]->SetParent(exprParent); 
+      children[0]->UpdateDepth();
+      exprParent->AddChildBefore(children[0], shared_from_this());
+      
+      // удаляем систему из детей своего родителя
+      exprParent->RemoveChild(shared_from_this());
+      return children[0];
+    }
+    return children[MAX(0, line - 1)];
+  }
+
+  return nullptr;
+}
+
 void CSystemControlModel::Resize()
 {
   int width = 0;  

@@ -31,6 +31,11 @@ std::wstring CExprControlModel::Serialize() {
 	return result;
 }
 
+void CExprControlModel::RemoveChild(std::shared_ptr<IBaseExprModel> child)
+{
+  children.remove(child);
+}
+
 void CExprControlModel::Resize()
 {
 	int width = 0;

@@ -120,6 +120,23 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 
 void CEquationPresenter::DeleteSymbol( bool withCtrl ) 
 {
+  // если курсор стоит на пустой строчке в системе уравнений, надо её убить 
+  std::shared_ptr<IBaseExprModel> next = nullptr;
+  auto parentSystem = NearestSystem(caret.GetCurEdit());
+  if (parentSystem != nullptr) {
+    int line = parentSystem->FindLineNum(caret.GetCurEdit());
+    if (parentSystem->CanRemoveChild(line)) {
+      MoveCaretLeft();
+    }
+
+    next = parentSystem->TryRemoveChild(line);
+    if (next != nullptr) {
+      invalidateTree();
+      view.Redraw();
+      return;
+    }
+  }
+  // иначе просто обычная строчка
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
@@ -141,7 +158,7 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 			deleteSelectionProcessor.Process();
 			//MoveCaretLeft();
 		} while( caret.GetCurEdit() != root->GetChildren().front() && caret.Offset() == 0 );
-	}
+  }
 
 	invalidateTree();
 	view.Redraw();
@@ -354,20 +371,27 @@ void CEquationPresenter::MoveCaretRight()
 	view.Redraw();
 }
 
-void CEquationPresenter::OnEnter()
+std::shared_ptr<CSystemControlModel> CEquationPresenter::NearestSystem(std::shared_ptr<CEditControlModel> edit) // ближайший слева объект "системы уравнений"
 {
-  std::weak_ptr<IBaseExprModel> parentSystem = caret.GetCurEdit();
+  std::weak_ptr<IBaseExprModel> parentSystem = edit;
   while (parentSystem.lock().get() != nullptr && parentSystem.lock().get()->GetType() != SYSTEM) {
     parentSystem = parentSystem.lock().get()->GetParent();
   }
 
-  if ( parentSystem.lock().get() != nullptr ) { // if caret is in equation system
-    int lineNum = std::dynamic_pointer_cast<CSystemControlModel>(parentSystem.lock())->FindLineNum(caret.GetCurEdit()) + 1; // надо поместить новый контрол на следующую строку
-    std::dynamic_pointer_cast<CSystemControlModel>(parentSystem.lock())->AddChild(lineNum, nullptr); // вторым аргументом мог бы быть IBaseExprModel для вставки, но нет
+  return std::dynamic_pointer_cast<CSystemControlModel>(parentSystem.lock());
+}
+
+void CEquationPresenter::OnEnter()
+{
+  std::shared_ptr<CSystemControlModel> parentSystem = NearestSystem(caret.GetCurEdit());
+
+  if ( parentSystem != nullptr ) { // if caret is in equation system
+    int lineNum = parentSystem->FindLineNum(caret.GetCurEdit()) + 1; // надо поместить новый контрол на следующую строку
+    parentSystem->AddChild(lineNum, nullptr); // вторым аргументом мог бы быть IBaseExprModel для вставки, но нет
     invalidateTree();
     view.Redraw();
 
-    std::list<std::shared_ptr<IBaseExprModel>> children = parentSystem.lock().get()->GetChildren();
+    std::list<std::shared_ptr<IBaseExprModel>> children = parentSystem->GetChildren();
     auto it = children.begin();
     std::advance(it, lineNum);
     caret.SetCurEdit(it->get()->GetChildren().front());

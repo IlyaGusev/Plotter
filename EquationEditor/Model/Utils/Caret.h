@@ -20,6 +20,7 @@ public:
 	std::shared_ptr<CEditControlModel> GetCurEdit( ) const;
 
 	int& Offset();
+  void SetOffset(int off);
 
 	bool operator==(const CCaret& other) const;
 

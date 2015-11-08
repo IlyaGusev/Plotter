@@ -395,6 +395,8 @@ void CEquationPresenter::OnEnter()
     auto it = children.begin();
     std::advance(it, lineNum);
     caret.SetCurEdit(it->get()->GetChildren().front());
+    caret.SetOffset(0);
+
     invalidateTree();
     view.Redraw();
   } else {

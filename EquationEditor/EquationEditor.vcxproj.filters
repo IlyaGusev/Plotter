@@ -96,6 +96,15 @@
     <ClCompile Include="Model\SystemControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Model\IBracketsModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SquareBracketsControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\BracesControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -168,6 +177,15 @@
       <Filter>Source Files\View</Filter>
     </ClInclude>
     <ClInclude Include="Model\SystemControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\IBracketsModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SquareBracketsControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\BracesControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>

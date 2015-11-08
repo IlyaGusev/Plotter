@@ -1,8 +1,8 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
-    
+
   <Application.Commands>
-    
+
     <Command Name="cmdButtonFrac"
              Symbol="ID_CMD_FRAC"
              LabelTitle="Дробь"
@@ -12,7 +12,7 @@
         <Image>Res\frac.bmp</Image>
       </Command.LargeImages>
     </Command>
-    
+
     <Command Name="cmdButtonDegr"
              Symbol="ID_CMD_DEGR"
              LabelTitle="Степень"
@@ -43,15 +43,37 @@
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdButtonBracket"
-             Symbol="ID_CMD_Bracket"
-             LabelTitle="Скобки"
-             LabelDescription="Скобки"
-             TooltipDescription="Скобки">
+    <Command Name="cmdButtonParantheses"
+             Symbol="ID_CMD_Parantheses"
+             LabelTitle="Круглые скобки"
+             LabelDescription="Круглые скобки"
+             TooltipDescription="Круглые скобки">
       <Command.LargeImages>
-        <Image>Res\bracket.bmp</Image>
+        <Image>Res\parantheses.bmp</Image>
       </Command.LargeImages>
     </Command>
+
+    <Command Name="cmdButtonSquareBrackets"
+         Symbol="ID_CMD_SquareBrackets"
+         LabelTitle="Квадратные скобки"
+         LabelDescription="Квадратные скобки"
+         TooltipDescription="Квадратные скобки">
+      <Command.LargeImages>
+        <Image>Res\squarebrackets.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+
+    <Command Name="cmdButtonBraces"
+         Symbol="ID_CMD_Braces"
+         LabelTitle="Фигурные скобки"
+         LabelDescription="Фигурные скобки"
+         TooltipDescription="Фигурные скобки">
+      <Command.LargeImages>
+        <Image>Res\braces.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
 
     <Command Name="cmdButtonSum"
              Symbol="ID_CMD_Sum"
@@ -61,7 +83,7 @@
       <Command.LargeImages>
         <Image>Res\sum.bmp</Image>
       </Command.LargeImages>
-    </Command>        
+    </Command>
 
     <Command Name="cmdButtonProduct"
              Symbol="ID_CMD_Product"
@@ -122,12 +144,12 @@
          Symbol="ID_CMD_GROUP_BRACKET"
          LabelTitle="Скобки">
     </Command>
-    
-     <Command Name="cmdGroupSumProduct"
-         Symbol="ID_CMD_GROUP_SUM_PRODUCT"
-         LabelTitle="Сумма и произведение">
+
+    <Command Name="cmdGroupSumProduct"
+        Symbol="ID_CMD_GROUP_SUM_PRODUCT"
+        LabelTitle="Сумма и произведение">
     </Command>
-    
+
     <Command Name="cmdGroupSystem"
              Symbol="ID_CMD_GROUP_SYSTEM"
              LabelTitle="Система уравнений">
@@ -145,23 +167,23 @@
     </Command>
   </Application.Commands>
 
-	<Application.Views>
-		<Ribbon>
+  <Application.Views>
+    <Ribbon>
       <Ribbon.ApplicationMenu>
-      <ApplicationMenu>
-        <MenuGroup Class="MajorItems">
-          <Button CommandName='cmdButtonSave' />
-        </MenuGroup>
-        <MenuGroup Class="MajorItems">
-          <Button CommandName='cmdButtonExit' />
-        </MenuGroup>
-      </ApplicationMenu>
-    </Ribbon.ApplicationMenu>
-      
+        <ApplicationMenu>
+          <MenuGroup Class="MajorItems">
+            <Button CommandName='cmdButtonSave' />
+          </MenuGroup>
+          <MenuGroup Class="MajorItems">
+            <Button CommandName='cmdButtonExit' />
+          </MenuGroup>
+        </ApplicationMenu>
+      </Ribbon.ApplicationMenu>
+
       <Ribbon.Tabs>
-        
+
         <Tab CommandName="cmdTabMain">
-          
+
           <Group CommandName="cmdGroupActions" SizeDefinition="FourButtons">
             <Button CommandName="cmdButtonFrac" />
             <Button CommandName="cmdButtonDegr" />
@@ -169,8 +191,10 @@
             <Button CommandName="cmdButtonRadical" />
           </Group>
 
-          <Group CommandName="cmdGroupBracket" SizeDefinition="OneButton">
-            <Button CommandName="cmdButtonBracket" />
+          <Group CommandName="cmdGroupBracket" SizeDefinition="ThreeButtons">
+            <Button CommandName="cmdButtonParantheses" />
+            <Button CommandName="cmdButtonBraces" />
+            <Button CommandName="cmdButtonSquareBrackets" />
           </Group>
 
           <Group CommandName="cmdGroupSumProduct" SizeDefinition="TwoButtons">
@@ -181,12 +205,12 @@
           <Group CommandName="cmdGroupSystem" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonSystem" />
           </Group>
-            
+
           <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonExit" />
           </Group>
-        </Tab>       
+        </Tab>
       </Ribbon.Tabs>
-		</Ribbon>
-	</Application.Views>
+    </Ribbon>
+  </Application.Views>
 </Application>

@@ -16,7 +16,7 @@ void omerror(const char *){};
 %}
 
 %union {
-    int intValue;
+    float value;
     char identName[256];
     char str[256];
     struct Node* node;
@@ -24,27 +24,28 @@ void omerror(const char *){};
     struct BinOpNode* binop_node;
 };
 
-%token <intValue> NUMBER
+%token <value> NUMBER
 %token <identName> ID
 %token <str> ADD MUL SUB DIV EQ SQRT USUB LOBJ ROBJ LAPP RAPP LNUM RNUM LID RID END_OF_FILE
+%left ADD EQ
 
 %type <node> stm
-%type <composite_node> doc
 %type <composite_node> list
 %type <binop_node> binop;
 
 %%
-doc: LOBJ list ROBJ { $$ = $2; }
-
 list: stm { $$ = new CompositeNode($1); }
     | list stm { $$ = $1; $$->add($2); }
 ;
 
 stm: LNUM stm RNUM { $$ = $2; }
    | LID stm RID { $$ = $2; }
-   | LOBJ list ROBJ { $$ = $2; }
+   | LOBJ list ROBJ { $$ = $2; $$->setFence("<OMOBJ>","</OMOBJ"); }
    | LAPP list RAPP { $$ = $2; }
-   | NUMBER {$$ = new NumNode(omlval.intValue); }
+   | LAPP list RAPP END_OF_FILE { $$ = $2; FOUT<<$$->translate(NOTATION); } 
+   | binop { $$ = $1; }
+   | NUMBER { $$ = new NumNode(omlval.value); }
+   | ID { $$ = new IdNode(omlval.identName); }
 ;
 
 binop: ADD stm stm { $$ = new BinOpNode($2, $3, "+"); }

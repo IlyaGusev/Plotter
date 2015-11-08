@@ -3,11 +3,11 @@
 <OMS cd="arith1" name="divide"/>
 <OMA>
 <OMS cd="arith1" name="plus"/>
-<OMI> 5 </OMI>
-<OMI> 1 </OMI>
+<OMI> 5.1 </OMI>
+<OMV name="y">
 </OMA>
 <OMA>
-<OMI> 3 </OMI>
+<OMI> 4 </OMI>
 </OMA>
 <OMV name="x">
 </OMA>

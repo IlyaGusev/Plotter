@@ -29,7 +29,7 @@ END_OF_FILE <<EOF>>
 "^"		{ return SUP; }
 
 {ID}		 { strcpy(texlval.identName, textext); return ID; }
-{NUMBER} { texlval.intValue = atoi(textext); return NUMBER; }
+{NUMBER} { texlval.value = atof(textext); return NUMBER; }
 {LBRACE} { return LBRACE; }
 {RBRACE} { return RBRACE; }
 {FRAC}   { return FRAC; }

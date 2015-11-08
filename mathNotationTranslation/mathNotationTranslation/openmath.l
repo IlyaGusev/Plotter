@@ -30,7 +30,7 @@ END_OF_FILE		<<EOF>>
 
 %%
 {ID}			{ strcpy(omlval.identName, omtext); return ID; }
-{NUMBER}		{ omlval.intValue = atoi(omtext); return NUMBER; }
+{NUMBER}		{ omlval.value = atof(omtext); return NUMBER; }
 {LOBJ}			{ return LOBJ; }
 {ROBJ}			{ return ROBJ; }
 {LAPP}			{ return LAPP; }

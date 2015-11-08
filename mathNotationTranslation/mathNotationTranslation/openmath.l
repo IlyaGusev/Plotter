@@ -29,24 +29,24 @@ NUMBER			([0-9]+)(\.[0-9]+)?
 END_OF_FILE		<<EOF>>
 
 %%
-{ID}			{ printf("ID\n"); strcpy(omlval.identName, omtext); return ID; }
-{NUMBER}		{ printf("NUM\n"); omlval.intValue = atoi(mltext); return NUMBER; }
-{LOBJ}			{ printf("LOBJ\n"); return LOBJ; }
-{ROBJ}			{ printf("ROBJ\n"); return ROBJ; }
-{LAPP}			{ printf("LAPP\n"); return LAPP; }
-{RAPP}			{ printf("RAPP\n"); return RAPP; }
-{LNUM}			{ printf("LNUM\n"); return LNUM; }
-{RNUM}			{ printf("RNUM\n"); return RNUM; }
-{LID}			{ printf("LID\n"); return LID; }
-{RID}			{ printf("RID\n"); return RID; }
+{ID}			{ strcpy(omlval.identName, omtext); return ID; }
+{NUMBER}		{ omlval.intValue = atoi(omtext); return NUMBER; }
+{LOBJ}			{ return LOBJ; }
+{ROBJ}			{ return ROBJ; }
+{LAPP}			{ return LAPP; }
+{RAPP}			{ return RAPP; }
+{LNUM}			{ return LNUM; }
+{RNUM}			{ return RNUM; }
+{LID}			{ return LID; }
+{RID}			{ return RID; }
 
-{EQUALS}		{ printf("'='\n"); return EQ; }
-{MINUS}			{ printf("'-'\n"); return SUB; }
-{PLUS}			{ printf("'+'\n"); return ADD; }
-{DIVIDE}		{ printf("'/'\n"); return DIV; }
-{TIMES}			{ printf("'*'\n"); return MUL; }
-{ROOT}			{ printf("'sqrt'\n"); return SQRT; }
-{UMINUS}		{ printf("unary '-'\n"); return USUB; }
+{EQUALS}		{ return EQ; }
+{MINUS}			{ return SUB; }
+{PLUS}			{ return ADD; }
+{DIVIDE}		{ return DIV; }
+{TIMES}			{ return MUL; }
+{ROOT}			{ return SQRT; }
+{UMINUS}		{ return USUB; }
 
 
 {WHITESPACE}     			{}

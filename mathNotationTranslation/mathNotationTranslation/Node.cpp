@@ -11,7 +11,7 @@ map<string, array<string, 3>> Node::createMap()
 	m["-"] = { " <mo> - </mo> ", "<OMS cd=\"arith1\" name=\"minus\"/>", " - " };
 	m["*"] = { " <mo> * </mo> ", "<OMS cd=\"arith1\" name=\"times\"/>", " * " };
 	m["/"] = { " <mo> / </mo> ", "<OMS cd=\"arith1\" name=\"divide\"/>", " / " };
-	m["="] = { " <mo> = </mo> ", "<OMS cd=\"realtion1\" name=\"eq\"/>", " = " };
+	m["="] = { " <mo> = </mo> ", "<OMS cd=\"relation1\" name=\"eq\"/>", " = " };
 	return m;
 }
 
@@ -27,7 +27,7 @@ string Node::addFence(int notation, string _s) const {
 				s = "<mfenced>" + s + "</mfenced>";
 			break;
 		case OPENMATH:
-			s = "";
+			//s = "";
 			break;
 		case TEX:
 			s = lfence + s + rfence;
@@ -146,8 +146,8 @@ string CompositeNode::translate(int notation) const {
 	s = addFence(notation, s);
 	if (notation == MATHML && Node::lfence != "(")
 		s = "<mrow>" + s + "</mrow>";
-	if (notation == OPENMATH && Node::lfence != "(")
-		s = "<OMA>" + s + "</OMA>"
+	if (notation == OPENMATH)
+		s = "<OMA>" + s + "</OMA>";
 	return s;
 
 }

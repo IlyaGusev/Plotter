@@ -33,8 +33,8 @@ void omerror(const char *){};
 %type <binop_node> binop;
 
 %%
-list: list stm { $$ = new CompositeNode($1); }
-    | stm { $$ = $1; $$-> add($2); }
+list: stm { $$ = new CompositeNode($1); }
+    | list stm { $$ = $1; $$->add($2); }
 ;
 
 stm: LNUM stm RNUM { $$ = $2; }

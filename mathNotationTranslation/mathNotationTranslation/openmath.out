@@ -1,0 +1,302 @@
+Нетерминал бесполезен в грамматике
+
+   binop
+
+
+Терминалы не используются в грамматике
+
+   ID
+   ADD
+   MUL
+   SUB
+   DIV
+   EQ
+   SQRT
+   USUB
+   END_OF_FILE
+
+
+Правила не используются в грамматике
+
+    8 binop: ADD stm stm
+    9      | SUB stm stm
+   10      | MUL stm stm
+   11      | DIV stm stm
+   12      | EQ stm stm
+
+
+Грамматика
+
+    0 $accept: list $end
+
+    1 list: stm
+    2     | list stm
+
+    3 stm: LNUM stm RNUM
+    4    | LID stm RID
+    5    | LOBJ list ROBJ
+    6    | LAPP list RAPP
+    7    | NUMBER
+
+
+Терминальные символы с правилами, в которых они появляются
+
+$end (0) 0
+error (256)
+NUMBER (258) 7
+ID (259)
+ADD (260)
+MUL (261)
+SUB (262)
+DIV (263)
+EQ (264)
+SQRT (265)
+USUB (266)
+LOBJ (267) 5
+ROBJ (268) 5
+LAPP (269) 6
+RAPP (270) 6
+LNUM (271) 3
+RNUM (272) 3
+LID (273) 4
+RID (274) 4
+END_OF_FILE (275)
+
+
+Нетерминальные символы с правилами, в которых они появляются
+
+$accept (21)
+    налево: 0
+list (22)
+    налево: 1 2, направо: 0 2 5 6
+stm (23)
+    налево: 3 4 5 6 7, направо: 1 2 3 4
+
+
+State 0
+
+    0 $accept: . list $end
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    list  переход в состояние 6
+    stm   переход в состояние 7
+
+
+State 1
+
+    7 stm: NUMBER .
+
+    $default  вывод с использованием правила 7 (stm)
+
+
+State 2
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    5    | LOBJ . list ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    list  переход в состояние 8
+    stm   переход в состояние 7
+
+
+State 3
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    6    | LAPP . list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    list  переход в состояние 9
+    stm   переход в состояние 7
+
+
+State 4
+
+    3 stm: . LNUM stm RNUM
+    3    | LNUM . stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    stm  переход в состояние 10
+
+
+State 5
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    4    | LID . stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    stm  переход в состояние 11
+
+
+State 6
+
+    0 $accept: list . $end
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    $end    сдвиг, и переход в состояние 12
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    stm  переход в состояние 13
+
+
+State 7
+
+    1 list: stm .
+
+    $default  вывод с использованием правила 1 (list)
+
+
+State 8
+
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    5    | LOBJ list . ROBJ
+    6    | . LAPP list RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    ROBJ    сдвиг, и переход в состояние 14
+    LAPP    сдвиг, и переход в состояние 3
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    stm  переход в состояние 13
+
+
+State 9
+
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LOBJ list ROBJ
+    6    | . LAPP list RAPP
+    6    | LAPP list . RAPP
+    7    | . NUMBER
+
+    NUMBER  сдвиг, и переход в состояние 1
+    LOBJ    сдвиг, и переход в состояние 2
+    LAPP    сдвиг, и переход в состояние 3
+    RAPP    сдвиг, и переход в состояние 15
+    LNUM    сдвиг, и переход в состояние 4
+    LID     сдвиг, и переход в состояние 5
+
+    stm  переход в состояние 13
+
+
+State 10
+
+    3 stm: LNUM stm . RNUM
+
+    RNUM  сдвиг, и переход в состояние 16
+
+
+State 11
+
+    4 stm: LID stm . RID
+
+    RID  сдвиг, и переход в состояние 17
+
+
+State 12
+
+    0 $accept: list $end .
+
+    $default  принять
+
+
+State 13
+
+    2 list: list stm .
+
+    $default  вывод с использованием правила 2 (list)
+
+
+State 14
+
+    5 stm: LOBJ list ROBJ .
+
+    $default  вывод с использованием правила 5 (stm)
+
+
+State 15
+
+    6 stm: LAPP list RAPP .
+
+    $default  вывод с использованием правила 6 (stm)
+
+
+State 16
+
+    3 stm: LNUM stm RNUM .
+
+    $default  вывод с использованием правила 3 (stm)
+
+
+State 17
+
+    4 stm: LID stm RID .
+
+    $default  вывод с использованием правила 4 (stm)

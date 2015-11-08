@@ -166,51 +166,89 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 	}
 }
 
+int CEditControlModel::getPrecedence(std::wstring operation) {
+	if (operation == L">sulp/<" || operation == L"<sunim/>")
+		return 2;
+
+	if (operation == L">semit/<" || operation == L">edivid/<")
+		return 3;
+
+	if (operation == L">/qe<")
+		return 4;
+}
+
 std::wstring CEditControlModel::Wrap(std::wstring &text, bool isNumber) {
 	if (text == L"")
 		return L"";
 	if (isNumber)
-		return L"<cn>" + text + L"</cn>";
+		return L">nc<" + text + L">nc/<";
 	else
-		return L"<ci>" + text + L"</ci>";
+		return L">ic<" + text + L">/ic<";
 }
 
 std::wstring CEditControlModel::ParseText() {
-	std::wstring result = L"";
+	std::wstring result = L""; 
+	std::stack <std::wstring> operationStack;
 
 	std::wstring currentWord = L"";
-	int i = 0;
-	do {
-		if ((params.text[i] <= L'9') && (params.text[i] >= L'0') || (params.text[i] <= L'z') && (params.text[i] >= L'a'))
+	bool isNumber = true;
+	int i = params.text.length() - 1;
+	while (i >= 0) {
+		if ((params.text[i] <= L'9') && (params.text[i] >= L'0') || (params.text[i] <= L'z') && (params.text[i] >= L'a')) {
 			currentWord += params.text[i];
+			isNumber = isNumber && (params.text[i] <= L'9') && (params.text[i] >= L'0');
+		}
 		else
 		{
-			result += Wrap(currentWord, true);
+			result += Wrap(currentWord, isNumber);
 			currentWord = L"";
+			isNumber = true;
 		}
 
-		if (operations.find(params.text[i]) != operations.end())
+		//это очень странно, но нужно для того, чтобы потом перевернуть строку в конце
+		if (operations.find(params.text[i]) != operations.end()) {
+			std::wstring tmp;
 			switch (params.text[i]) {
 			case L'+':
-				result += L"<mo>+</mo>";
+				tmp = L">/sulp<";
 				break;
 			case L'-':
-				result += L"<mo>-</mo>";
+				tmp = L">/sunim<";
 				break;
 			case L'*':
-				result += L"<mo>*</mo>";
+				tmp = L">/semit<"; //SORRY IM REALLY SORRY
 				break;
 			case L'/':
-				result += L"<mo>/</mo>";
+				tmp = L">/edivid<";
 				break;
 			case L'=':
-				result += L"<mo>=</mo>";
+				tmp = L">/qe<";
 				break;
 			default:
 				break;
 			}
-		i++;
-	} while (i <= params.text.length());
+
+			while (!operationStack.empty() && (getPrecedence(operationStack.top()) <= getPrecedence(tmp)))
+			{
+				result += operationStack.top();
+				operationStack.pop();
+			}
+			operationStack.push(tmp);
+		}
+		i--;
+	};
+
+	if (currentWord != L"")
+		result += Wrap(currentWord, isNumber);
+
+	while (!operationStack.empty())
+	{
+		result += operationStack.top();
+		operationStack.pop();
+	}
+
+	//reverse the string
+	result = std::wstring(result.rbegin(), result.rend());
 
 	return result;
 }

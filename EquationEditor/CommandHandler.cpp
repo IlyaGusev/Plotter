@@ -141,6 +141,10 @@ STDMETHODIMP CCommandHandler::Execute(
 		case ID_CMD_EXIT:
 			PostMessage( hwnd, WM_CLOSE, NULL, NULL );
 			break;
+
+		case ID_CMD_SAVE:
+			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_SAVE ), LPARAM( 0 ) );
+			break;
 	}
 
 	return S_OK;

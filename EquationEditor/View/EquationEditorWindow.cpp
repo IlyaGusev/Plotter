@@ -176,6 +176,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_SYSTEM:
 				presenter->AddControlView( SYSTEM );
 				break;
+		case ID_ADD_SAVE:
+			presenter->Serialize();
+			break;
 		}
 	}
 }
@@ -204,7 +207,6 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 
 		case VK_UP:     // UP ARROW 
 		case VK_DOWN:   // DOWN ARROW 
-			presenter->Serialize();
 			break;
 	}
 }

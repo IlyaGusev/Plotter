@@ -10,7 +10,7 @@
 #include "Model/Utils/Caret.h"
 
 // Реализованные типы вьюшек
-enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL, PARENTHESES, SUM, PRODUCT, SYSTEM };
+enum ViewType { TEXT, EXPR, FRAC, DEGR, SUBSCRIPT, RADICAL, PARENTHESES, SQUAREBRACKETS, BRACES, SUM, PRODUCT, SYSTEM };
 
 // Что из этой модельки нужно отрисовать на экране
 struct CDrawParams {

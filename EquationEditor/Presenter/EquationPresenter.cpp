@@ -5,6 +5,7 @@
 #include "Model/SubscriptControlModel.h"
 #include "Model/RadicalControlModel.h"
 #include "Model/ParenthesesControlModel.h"
+#include "Model/SquareBracketsControlModel.h"
 #include "Model/ProductControlModel.h"
 #include "Model/SumControlModel.h"
 #include "Model/SystemControlModel.h"
@@ -490,6 +491,20 @@ void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> pare
 	view.Redraw();
 }
 
+void CEquationPresenter::addSquareBrackets( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	std::shared_ptr<CSquareBracketsControlModel> squareBracketsModel( new CSquareBracketsControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	squareBracketsModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( squareBracketsModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, squareBracketsModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
 void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CRadicalControlModel> radicalModel( new CRadicalControlModel( caret.GetCurEdit()->GetRect(), parent ) );
@@ -550,6 +565,9 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 		break;
 	case PARENTHESES:
 		addParentheses( parent, selectedChild );
+		break;
+	case SQUAREBRACKETS:
+		addSquareBrackets( parent, selectedChild );
 		break;
 	case SUM:
 		addSum( parent, selectedChild );

@@ -116,6 +116,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 	CCaret caret;
 	if( HIWORD( wParam ) == 1 ) {
 		switch( LOWORD( wParam ) ) {
+			case ID_ACC_SQRBRAC:
+				presenter->AddControlView( SQUAREBRACKETS );
+				break;
 			case ID_ACC_DEGR:
 				presenter->AddControlView( DEGR );
 				break;

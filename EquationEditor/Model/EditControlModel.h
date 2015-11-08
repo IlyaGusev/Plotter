@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <stack>
 
 #include "Model/IBaseExprModel.h"
 
@@ -63,6 +64,7 @@ public:
 private:
 	const std::set<wchar_t> operations = { L'+', L'-', L'/', L'*', L'=' };
 
+	int getPrecedence(std::wstring operation);
 	std::wstring Wrap(std::wstring &text, bool isNumber);
 	std::vector<int> symbolsWidths;	// Ширина каждого символа
 	std::list< std::shared_ptr<IBaseExprModel> > children;	// Заглушка-пустой список

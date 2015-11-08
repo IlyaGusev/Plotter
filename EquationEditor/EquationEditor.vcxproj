@@ -82,13 +82,16 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="CommandHandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\BracesControlModel.cpp" />
     <ClCompile Include="Model\DegrControlModel.cpp" />
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
     <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\IBracketsModel.cpp" />
     <ClCompile Include="Model\ParenthesesControlModel.cpp" />
     <ClCompile Include="Model\ProductControlModel.cpp" />
     <ClCompile Include="Model\RadicalControlModel.cpp" />
+    <ClCompile Include="Model\SquareBracketsControlModel.cpp" />
     <ClCompile Include="Model\SubscriptControlModel.cpp" />
     <ClCompile Include="Model\SumControlModel.cpp" />
     <ClCompile Include="Model\SystemControlModel.cpp" />
@@ -105,14 +108,17 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="Model\BracesControlModel.h" />
     <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />
     <ClInclude Include="Model\FracControlModel.h" />
     <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\IBracketsModel.h" />
     <ClInclude Include="Model\ParenthesesControlModel.h" />
     <ClInclude Include="Model\ProductControlModel.h" />
     <ClInclude Include="Model\RadicalControlModel.h" />
+    <ClInclude Include="Model\SquareBracketsControlModel.h" />
     <ClInclude Include="Model\SubscriptControlModel.h" />
     <ClInclude Include="Model\SumControlModel.h" />
     <ClInclude Include="Model\SystemControlModel.h" />

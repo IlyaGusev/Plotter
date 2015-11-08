@@ -47,7 +47,7 @@ class CEquationPresenter
 public:
 	CEquationPresenter( IEditorView& newView );
 
-  void SetDelta( int delta );
+	void SetDelta( int delta );
 
 	void AddControlView( ViewType viewType );
 
@@ -72,17 +72,17 @@ public:
 	void MoveCaretTop();
 	void MoveCaretBottom();
 
-  void OnEnter(); // пока только создает нового ребенка, если мы находимся внутри системы уравнений
+	void OnEnter(); // пока только создает нового ребенка, если мы находимся внутри системы уравнений
 
 	CCaret GetCaret() const
 	{
 		return caret;
 	}
 
-  std::shared_ptr<CExprControlModel> GetRoot()
-  {
-    return root;
-  }
+	std::shared_ptr<CExprControlModel> GetRoot()
+	{
+		return root;
+	}
 
 private:
 	std::shared_ptr<CExprControlModel> root;
@@ -106,7 +106,9 @@ private:
 	void addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
-  void addSystem(std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild);
+	void addSystem( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addSquareBrackets( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addBraces( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 
 	void deleteSelectedParts();
 
@@ -122,7 +124,7 @@ private:
 
 	void invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode );
 
-  int deltaY; // текущая величина сдвига прямоугольничков вверх (для обработки скролла)
+	int deltaY; // текущая величина сдвига прямоугольничков вверх (для обработки скролла)
 
-  std::shared_ptr<CSystemControlModel> NearestSystem(std::shared_ptr<CEditControlModel> edit); // находит ближайшую систему уравнений
+	std::shared_ptr<CSystemControlModel> NearestSystem( std::shared_ptr<CEditControlModel> edit ); // находит ближайшую систему уравнений
 };

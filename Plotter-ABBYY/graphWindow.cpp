@@ -429,8 +429,8 @@ void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxCol
 {
 	int semiGridSize = graphInPoints.getGridSize() / 2;
 
-	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - semiGridSize );
-	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + semiGridSize );
+	std::pair< double, double > minPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, min - 2*semiGridSize );
+	std::pair< double, double > maxPointPair = graphInPoints.getRelativePointWithXYZ( semiGridSize, semiGridSize, max + 2*semiGridSize );
 
 	minColorPoint.X = (int)minPointPair.first;
 	minColorPoint.Y = (int)minPointPair.second;

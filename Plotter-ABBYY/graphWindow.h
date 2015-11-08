@@ -45,7 +45,7 @@ private:
 	int cmdShow;
 	HWND handle;
 	HMENU menu;
-	
+
 	GP graphInPoints;
 
 	bool needToFillPolygons;
@@ -65,6 +65,6 @@ private:
 	void generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
 												double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax, 
 												std::vector< std::vector < std::pair<double, double> > > &points);
-
+	bool ScreenCapture( LPWSTR filename );
 };
 

@@ -49,8 +49,7 @@ bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
 		NULL, NULL, hInstance, this);
 
 	menu = ::LoadMenu(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU1));	// Загрузить меню из файла ресурса
-	//SetMenu(handle, menu);
-	
+	SetMenu(handle, menu);
 
 	return handle;
 }
@@ -160,6 +159,79 @@ void GraphWindow::OnLButtonDown( int xMousePos, int yMousePos )
 	prevMousePosY = yMousePos;
 }
 
+//////////////////////////////
+
+int GetEncoderClsid(const WCHAR* format, CLSID* pClsid)
+{
+    UINT num = 0;          // number of image encoders
+    UINT size = 0;         // size of the image encoder array in bytes
+
+    ImageCodecInfo* pImageCodecInfo = NULL;
+
+    GetImageEncodersSize(&num, &size);
+    if(size == 0)
+    {
+        return -1;  // Failure
+    }
+
+    pImageCodecInfo = (ImageCodecInfo*)(malloc(size));
+    if(pImageCodecInfo == NULL)
+    {
+        return -1;  // Failure
+    }
+
+    GetImageEncoders(num, size, pImageCodecInfo);
+
+    for(UINT j = 0; j < num; ++j)
+    {
+        if( wcscmp(pImageCodecInfo[j].MimeType, format) == 0 )
+        {
+            *pClsid = pImageCodecInfo[j].Clsid;
+            free(pImageCodecInfo);
+            return j;  // Success
+        }    
+    }
+
+    free(pImageCodecInfo);
+    return -1;  // Failure
+}
+
+void BitmapToJpg(HBITMAP hbmpImage, int width, int height, LPWSTR filename)
+{
+    Bitmap *p_bmp = Bitmap::FromHBITMAP(hbmpImage, NULL);
+    //Bitmap *p_bmp = new Bitmap(width, height, PixelFormat32bppARGB);
+    
+    CLSID pngClsid;
+    int result = GetEncoderClsid(L"image/jpeg", &pngClsid);
+    /*if(result != -1)
+        std::cout << "Encoder succeeded" << std::endl;
+    else
+        std::cout << "Encoder failed" << std::endl;*/
+    p_bmp->Save(filename, &pngClsid, NULL);
+    delete p_bmp;
+}
+
+bool GraphWindow::ScreenCapture(LPWSTR filename)
+{
+	RECT rect;
+	GetClientRect( handle, &rect );
+	int x = rect.left;
+	int y = rect.top;
+	int width = rect.right - rect.left;
+	int height = rect.bottom - rect.top;
+
+	HDC hDc = CreateCompatibleDC(GetDC(handle));
+    HBITMAP hBmp = CreateCompatibleBitmap(GetDC(handle), width, height);
+    SelectObject(hDc, hBmp);
+    BitBlt(hDc, 0, 0, width, height, GetDC(handle), 0, 0, SRCCOPY);
+    BitmapToJpg(hBmp, width, height, filename);
+    DeleteObject(hBmp);
+    return true;
+}
+
+//////////////////////////////
+
+
 void GraphWindow::OnImageSave() {
 	HANDLE file;
 	wchar_t filename[256];
@@ -170,16 +242,14 @@ void GraphWindow::OnImageSave() {
 	enteredFileName.hwndOwner = NULL;
 	enteredFileName.lpstrFile = filename;
 	enteredFileName.nMaxFile = 256;
-	enteredFileName.lpstrFilter = L"Image Files( *.png )";
+	enteredFileName.lpstrFilter = L"Image Files( *.jpg )";
 	enteredFileName.nFilterIndex = 1;
 	enteredFileName.lpstrTitle = TEXT("Сохранить как");   //заголовок
 	enteredFileName.lpstrInitialDir = NULL;   //начальный каталог для сохранения
 	enteredFileName.Flags = OFN_OVERWRITEPROMPT | OFN_CREATEPROMPT;
 
 	if (::GetSaveFileName(&enteredFileName)) {
-		file = ::CreateFile(static_cast<LPCWSTR>(filename), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-		
-		CloseHandle(file);
+		ScreenCapture( enteredFileName.lpstrFile );
 	}
 }
 
@@ -368,6 +438,7 @@ void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxCol
 	maxColorPoint.Y = (int)maxPointPair.second;
 }
 
+
 void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
 	Graphics graphics( dc );
 	graphics.SetInterpolationMode(InterpolationModeNearestNeighbor);
@@ -397,7 +468,6 @@ void GraphWindow::fillWithGradient(HDC dc, Color maxColor, Color minColor) {
 		 graphics.FillPolygon( &linGrBrush, polygons[i].poly, 4 );
 	}
 }
-
 
 LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
 	if (message == WM_NCCREATE) {

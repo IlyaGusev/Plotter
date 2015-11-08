@@ -158,8 +158,14 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_RADICAL:
 				presenter->AddControlView( RADICAL );
 				break;
-			case ID_ADD_PARANTHESIS:
+			case ID_ADD_PARANTHESES:
 				presenter->AddControlView( PARENTHESES );
+				break;
+			case ID_ADD_BRACES:
+				presenter->AddControlView( BRACES );
+				break;
+			case ID_ADD_SQUAREBRACKETS:
+				presenter->AddControlView( SQUAREBRACKETS );
 				break;
 			case ID_ADD_SUM:
 				presenter->AddControlView( SUM );

@@ -151,7 +151,6 @@ string CompositeNode::translate(int notation) const {
 	for (int i = 0; i < nodes.size(); i++) {
 		s += nodes[i]->translate(notation);// + " ";
 	}
-	cout << "comp node\n";
 	s = addFence(notation, s);
 	if (notation == MATHML && Node::lfence != "(")
 		s = "<mrow>" + s + "</mrow>";

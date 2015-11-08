@@ -20,6 +20,10 @@ public:
     // X[n] - начальное приближение, ответ записывается также в X[n];
     static STATUS_RESULT Jacobi (int n, const std::vector< std::vector <double> > & A, const std::vector<double>& F, std::vector<double>& X);
 
+    static int sum( int i_begin, int i_end );
+
+    static int prod( int i_begin, int i_end );
+
 };
 
 #endif // CCALCULATOR_H

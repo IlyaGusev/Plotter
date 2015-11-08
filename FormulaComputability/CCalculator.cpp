@@ -59,3 +59,19 @@ STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double
     } while ( norm > eps );
     return CALCULATED;
 }
+
+int CCalculator::sum( int i_begin, int i_end ) {
+    int result = 0;
+    for (int i = i_begin; i <= i_end; ++i) {
+        result += i;
+    }
+    return result;
+}
+
+int CCalculator::prod( int i_begin, int i_end ) {
+    int result = 1;
+    for (int i = i_begin; i <= i_end; ++i) {
+        result *= i;
+    }
+    return result;
+}

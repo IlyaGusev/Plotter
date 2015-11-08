@@ -102,6 +102,9 @@
     <ClCompile Include="Model\SquareBracketsControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
+    <ClCompile Include="Model\BracesControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\EditControlModel.h">
@@ -180,6 +183,9 @@
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Model\SquareBracketsControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\BracesControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>

@@ -82,6 +82,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="CommandHandler.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\BracesControlModel.cpp" />
     <ClCompile Include="Model\DegrControlModel.cpp" />
     <ClCompile Include="Model\EditControlModel.cpp" />
     <ClCompile Include="Model\ExprControlModel.cpp" />
@@ -107,6 +108,7 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="Model\BracesControlModel.h" />
     <ClInclude Include="Model\DegrControlModel.h" />
     <ClInclude Include="Model\EditControlModel.h" />
     <ClInclude Include="Model\ExprControlModel.h" />

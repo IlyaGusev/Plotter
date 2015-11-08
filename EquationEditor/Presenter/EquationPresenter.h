@@ -108,7 +108,7 @@ private:
 	void addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addSystem( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addSquareBrackets( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
-
+	void addBraces( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 
 	void deleteSelectedParts();
 

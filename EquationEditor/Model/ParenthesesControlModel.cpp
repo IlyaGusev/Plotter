@@ -8,16 +8,6 @@ CParenthesesControlModel::CParenthesesControlModel( CRect rect, std::weak_ptr<IB
 	depth = parent.lock()->GetDepth() + 1;
 }
 
-void CParenthesesControlModel::Resize()
-{
-	// мидл висит на середние. размеры подстраиваются так, чтобы, вне зависимости от содержимого, снизу и свреху от центра было одинаковое расстояние
-	int width = content->GetRect().GetWidth() + 10;
-	int height = 2 * (MAX( content->GetMiddle(), content->GetRect().GetHeight() - content->GetMiddle() ) + 3);
-
-	rect.Right() = rect.Left() + width;
-	rect.Bottom() = rect.Top() + height;
-}
-
 std::wstring CParenthesesControlModel::Serialize() {
 	if (!content->IsEmpty()) {
 		return L"<mfenced>" + content->Serialize() + L"</mfenced>";
@@ -34,13 +24,13 @@ void CParenthesesControlModel::updatePolygons()
 {
 	params.polygon.clear();
 	// левая скобка
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, rect.Bottom() - 5 ) ); // середина
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 2 ) ); // верх
-	params.polygon.push_back( CLine( rect.Left() + 2, rect.Bottom() - 5, rect.Left() + 5, rect.Bottom() - 2 ) ); // низ
+	params.polygon.push_back( CLine( rect.Left(), rect.Top() + 3, rect.Left(), rect.Bottom() - 3 ) ); // середина
+	params.polygon.push_back( CLine( rect.Left(), rect.Top() + 3, rect.Left() + 3, rect.Top() ) ); // верх
+	params.polygon.push_back( CLine( rect.Left(), rect.Bottom() - 3, rect.Left() + 3, rect.Bottom() ) ); // низ
 	// правая скобка
-	params.polygon.push_back( CLine( rect.Right() - 2, rect.Top() + 5, rect.Right() - 2, rect.Bottom() - 5 ) ); // середина
-	params.polygon.push_back( CLine( rect.Right() - 2, rect.Top() + 5, rect.Right() - 5, rect.Top() + 2 ) ); // верх
-	params.polygon.push_back( CLine( rect.Right() - 2, rect.Bottom() - 5, rect.Right() - 5, rect.Bottom() - 2 ) ); // низ
+	params.polygon.push_back( CLine( rect.Right(), rect.Top() + 3, rect.Right(), rect.Bottom() - 3 ) ); // середина
+	params.polygon.push_back( CLine( rect.Right(), rect.Top() + 3, rect.Right() - 3, rect.Top() ) ); // верх
+	params.polygon.push_back( CLine( rect.Right(), rect.Bottom() - 3, rect.Right() - 3, rect.Bottom() ) ); // низ
 }
 
 std::shared_ptr<IBaseExprModel> CParenthesesControlModel::CopySelected() const

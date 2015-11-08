@@ -5,7 +5,6 @@ class CSquareBracketsControlModel : public IBracketsModel
 {
 public:
 	CSquareBracketsControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
-	void Resize();
 
 	ViewType GetType() const;
 

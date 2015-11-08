@@ -8,8 +8,6 @@ class CParenthesesControlModel : public IBracketsModel {
 public:
 	CParenthesesControlModel( CRect rect, std::weak_ptr<IBaseExprModel> parent );
 
-	void Resize();
-
 	ViewType GetType() const;
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;

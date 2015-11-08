@@ -100,7 +100,7 @@
       <Filter>Source Files\Model</Filter>
     </ClCompile>
     <ClCompile Include="Model\SquareBracketsControlModel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,7 +180,7 @@
       <Filter>Source Files\Model</Filter>
     </ClInclude>
     <ClInclude Include="Model\SquareBracketsControlModel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

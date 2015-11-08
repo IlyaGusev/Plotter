@@ -42,6 +42,16 @@ void IBracketsModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChi
 	PlaceChildren();
 }
 
+void IBracketsModel::Resize()
+{
+	// мидл висит на середине. размеры подстраиваются так, чтобы, вне зависимости от содержимого, снизу и свреху от центра было одинаковое расстояние
+	int width = content->GetRect().GetWidth() + 10;
+	int height = 2 * (MAX( content->GetMiddle(), content->GetRect().GetHeight() - content->GetMiddle() ) + 3);
+
+	rect.Right() = rect.Left() + width;
+	rect.Bottom() = rect.Top() + height;
+}
+
 std::list<std::shared_ptr<IBaseExprModel>> IBracketsModel::GetChildren() const
 {
 	return std::list<std::shared_ptr<IBaseExprModel>> { content };

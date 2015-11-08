@@ -11,7 +11,7 @@ public:
 	virtual std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 	virtual void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
-	virtual void Resize() = 0;
+	virtual void Resize();
 
 	virtual void PlaceChildren(); // virtual??
 

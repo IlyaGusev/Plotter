@@ -1,9 +1,13 @@
 ﻿#include <vector>
 #include <Windowsx.h>
-
+#include "resource.h"
 #include "graphWindow.h"
+
 using namespace Gdiplus;
 #pragma comment (lib, "Gdiplus.lib")
+
+const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
+const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
 
 GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D /*= false*/, bool isFillPolygonsIf3D /*= true */ ) :
 	windowWidth(width),
@@ -12,9 +16,6 @@ GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, boo
 	needToFillPolygons( isFillPolygonsIf3D )
 {
 }
-
-const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
-const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
 
 bool GraphWindow::RegisterClass(HINSTANCE hInstance) {
 	WNDCLASSEX tag;
@@ -43,7 +44,7 @@ bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
 	cmdShow = nCmdShow;
 
 	handle = ::CreateWindowEx( NULL, nameClassWindow, NULL, 
-		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER,
+		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN,
 		200, 20, windowWidth, windowHeight,
 		NULL, NULL, hInstance, this);
 
@@ -59,7 +60,81 @@ HWND GraphWindow::GetHandle() {
 	return handle;
 }
 
-void GraphWindow::OnDestroy() {
+void GraphWindow::OnCreate()
+{
+	HINSTANCE hInstance = (HINSTANCE) GetWindowLong( handle, GWL_HINSTANCE );
+	plusButtonHWND = ::CreateWindow( L"BUTTON", NULL, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+		10, 10, 64, 64, handle, (HMENU) plusButtonCode, hInstance, NULL );
+	plusButtonHWND = ::CreateWindow( L"BUTTON", NULL, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+		10, 84, 64, 64, handle, (HMENU) minusButtonCode, hInstance, NULL );
+
+	plusBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_PLUS ) );
+	plusPressedBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_PLUS_PRESSED ) );
+	minusBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_MINUS ) );
+	minusPressedBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_MINUS_PRESSED ) );
+}
+
+void GraphWindow::OnDrawButtons( DRAWITEMSTRUCT* pdis )
+{
+	HINSTANCE hInstance = (HINSTANCE) ::GetWindowLong( handle, GWL_HINSTANCE );
+	HBITMAP curBitmap;
+	if( plusButtonCode == pdis->CtlID ) {
+		if( pdis->itemState & ODS_SELECTED ) {
+			curBitmap = plusPressedBitmap;
+		} else {
+			curBitmap = plusBitmap;
+		}
+	} else if( minusButtonCode == pdis->CtlID ) {
+		if( pdis->itemState & ODS_SELECTED ) {
+			curBitmap = minusPressedBitmap;
+		} else {
+			curBitmap = minusBitmap;
+		}
+	}
+	HDC hDC = pdis->hDC;
+	RECT rectItem = pdis->rcItem;
+
+	// Draw the bitmap on button
+	if( curBitmap != NULL ) {
+		RECT rcImage;
+		BITMAP bm;
+		LONG cxBitmap, cyBitmap;
+		if( ::GetObject( curBitmap, sizeof(bm), &bm ) ) {
+			cxBitmap = bm.bmWidth;
+			cyBitmap = bm.bmHeight;
+		}
+
+		// Center image horizontally  
+		::CopyRect( &rcImage, &rectItem );
+		LONG image_width = rcImage.right - rcImage.left;
+		LONG image_height = rcImage.bottom - rcImage.top;
+		rcImage.left = (image_width - cxBitmap) / 2;
+		rcImage.top = (image_height - cyBitmap) / 2;
+		::DrawState( hDC, NULL, NULL, (LPARAM) curBitmap, 0,
+			rcImage.left, rcImage.top,
+			rcImage.right - rcImage.left,
+			rcImage.bottom - rcImage.top,
+			DST_BITMAP );
+	}
+}
+
+void GraphWindow::OnCommand( int command )
+{
+	if( command == plusButtonCode ) {
+		::SendMessage( handle, WM_KEYDOWN, 0x58, 0 );
+	}
+	if( command == minusButtonCode ) {
+		::SendMessage( handle, WM_KEYDOWN, 0x5A, 0 );
+	}
+}
+
+void GraphWindow::OnSize( int cxCurr, int cyCurr )
+{
+
+}
+
+void GraphWindow::OnDestroy()
+{
 	::PostQuitMessage(0);
 }
 
@@ -177,7 +252,6 @@ void GraphWindow::OnPaint()
 	::DeleteDC(hdc);
 	::DeleteDC(newHdc);
 
-	::ValidateRect(handle, NULL);
 	::EndPaint(handle, &ps);
 }
 
@@ -402,7 +476,7 @@ void GraphWindow::drawAxes(HDC dc) {
 		projectionCoord = graphInPoints.getZProjection(axisScaleCoord);
 		::TextOut(dc, projectionCoord.first, projectionCoord.second,
 			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
-}
+	}
 }
 
 void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {
@@ -533,15 +607,28 @@ void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vect
 
 LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam) {
 	if (message == WM_NCCREATE) {
-		GraphWindow* that = reinterpret_cast< GraphWindow* >(reinterpret_cast<LPCREATESTRUCT>(lParam)->lpCreateParams);
-		::SetWindowLong(handle, GWL_USERDATA, reinterpret_cast<LONG>(that));
-
+		GraphWindow* that = reinterpret_cast<GraphWindow*>(reinterpret_cast<LPCREATESTRUCT>(lParam)->lpCreateParams);
+		::SetWindowLong( handle, GWL_USERDATA, reinterpret_cast<LONG>(LPCREATESTRUCT( lParam )->lpCreateParams) );
+		
+		that->handle = handle;
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
 
 	GraphWindow* that = reinterpret_cast< GraphWindow* >(::GetWindowLong(handle, GWL_USERDATA));
 
 	switch (message) {
+		case WM_CREATE:
+			that->OnCreate();
+			return 0;
+
+		case WM_DRAWITEM:
+			that->OnDrawButtons( (DRAWITEMSTRUCT*) lParam );
+			return 0;
+
+		case WM_COMMAND:
+			that->OnCommand( LOWORD(wParam) );
+			return 0;
+
 		case WM_CLOSE:
 			that->OnClose();
 			return 0;
@@ -552,7 +639,7 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 
 		case WM_PAINT:
 			that->OnPaint();
-			return 0;
+			break;
 
 		case WM_KEYDOWN:
 			that->OnKeyDown(wParam);

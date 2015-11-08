@@ -65,6 +65,9 @@
     <ClInclude Include="pugixml\pugiconfig.hpp">
       <Filter>PugiXML</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="ex.xml">
@@ -76,5 +79,27 @@
     <Xml Include="exsimple.xml">
       <Filter>Formulas</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="plus_pressed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="plus.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="bitmap1.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="minus.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="minus_pressed.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

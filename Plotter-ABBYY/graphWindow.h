@@ -29,7 +29,10 @@ protected:
 	void OnPaint();
 	void OnClose();
 	void OnDestroy();
-
+	void OnCreate();
+	void OnDrawButtons( DRAWITEMSTRUCT* pdis );
+	void OnCommand( int command );
+	void OnSize( int cxCurr, int cyCurr );
 private:
 	const static wchar_t* nameClassWindow;
 	const static wchar_t* nameWindow;
@@ -43,6 +46,10 @@ private:
 	int cmdShow;
 	HWND handle;
 	
+	HWND plusButtonHWND;
+	HBITMAP plusBitmap, plusPressedBitmap, minusBitmap, minusPressedBitmap;
+	static const int plusButtonCode = 1000, minusButtonCode = 1001;
+
 	GP graphInPoints;
 
 	bool needToFillPolygons;

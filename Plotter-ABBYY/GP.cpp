@@ -28,6 +28,7 @@ GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/,
 
 	double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
 	calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
+	calculateZcoordinates();
 
 	calculateRelativePoints();
 }
@@ -202,12 +203,6 @@ void GP::calculateRelativePoints()
 
 				relativePoints[i][0][k] = std::pair<double, double>( xRel, yRel );
 			}
-			/*relativePoints[i].resize( 1 );
-			double xRel = origin.first + ( x.first * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-				z.first * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
-			double yRel = origin.second + ( x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-				z.second * (calc.GetZ( i, 0 ) - globalZShift) * lengthOfSection );
-			relativePoints[i][0] = std::pair<double, double>( xRel, yRel );*/
 		}
 	}
 }
@@ -247,10 +242,15 @@ double GP::getZMax() const {
 
 std::vector<std::vector<std::vector<double>>> GP::getZcoordinates()
 {
-	std::vector<std::vector<std::vector<double>>> zCoordinates( calc.GetGridSize() );
-	for( size_t i = 0; i < calc.GetGridSize( ); ++i ) {
+	return zCoordinates;
+}
+
+void GP::calculateZcoordinates()
+{
+	zCoordinates.resize( calc.GetGridSize() );
+	for( size_t i = 0; i < calc.GetGridSize(); ++i ) {
 		zCoordinates[i].resize( calc.GetGridSize() );
-		for( size_t j = 0; j < calc.GetGridSize( ); ++j ) {
+		for( size_t j = 0; j < calc.GetGridSize(); ++j ) {
 			auto z_ij = calc.GetZ( i, j );
 			zCoordinates[i][j].resize( z_ij.size() );
 			for( size_t k = 0; k < z_ij.size(); ++k ) {
@@ -258,10 +258,10 @@ std::vector<std::vector<std::vector<double>>> GP::getZcoordinates()
 			}
 		}
 	}
-	return zCoordinates;
 }
 
-std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zValue ) {
+std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zValue )
+{
 	std::pair<double, double> x = getAxisVectorVisual( 0 );
 	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );

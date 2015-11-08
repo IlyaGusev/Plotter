@@ -4,8 +4,8 @@
 
 #include "GP.h"
 
-struct Polygon4Wrap {
-	Gdiplus::PointF poly[4];
+struct CTriangle {
+	Gdiplus::PointF poly[3];
 };
 
 class GraphWindow {
@@ -51,7 +51,8 @@ private:
 	void drawAxes(HDC dc);
 
 	// red for max and blue for min by default
-	void fillWithGradient( HDC dc, std::vector< std::vector < std::vector< Gdiplus::PointF > > >& yPolygonPoints, std::vector< std::vector < std::vector< Gdiplus::PointF > > >& zPolygonPoints,
+	void fillWithGradient( HDC dc, std::vector< std::vector < std::vector< Gdiplus::PointF > > >& yPolygonPoints, 
+		std::vector < std::vector< Gdiplus::PointF > >& zPolygonPoints,
 		Gdiplus::Color maxColor = Gdiplus::Color(128, 255, 0, 0), Gdiplus::Color minColor = Gdiplus::Color(128, 0, 0, 255) );
 
 	static LRESULT __stdcall windowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);

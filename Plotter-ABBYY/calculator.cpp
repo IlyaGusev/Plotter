@@ -215,10 +215,10 @@ double MathMlCalculator::getSecondArg( int i, int j )
 
 bool MathMlCalculator::findRoot( const std::function<double(double)>& func, double& root )
 {
-	double z_0 = rand() % 200 - 100;
-	double z_1 = rand() % 200 - 100;
+	double z_0 = rand() % 100 - 50;
+	double z_1 = rand() % 100 - 50;
 	while( z_1 == z_0 ) {
-		z_1 = rand( ) % 200 - 100;
+		z_1 = rand() % 100 - 50;
 	}
 	double z_n = 0;
 	for( int i = 0; i < 100 && fabs( z_1 - z_0 ) > eps; ++i ) {
@@ -233,7 +233,7 @@ bool MathMlCalculator::findRoot( const std::function<double(double)>& func, doub
 	}
 	OperationHandler::setVar( "z", z_n );
 	double f_n = zFormula() / func( z_n );
-	if( fabs( z_1 - z_0 ) <= eps && fabs( f_n ) <= eps ) {
+	if( fabs( z_1 - z_0 ) <= eps && fabs( f_n ) <= 10 * eps ) {
 		root = z_n;
 		return true;
 	}

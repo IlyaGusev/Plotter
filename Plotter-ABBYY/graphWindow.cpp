@@ -193,35 +193,32 @@ void GraphWindow::drawGraph(HDC dc) {
 	::SelectObject(dc, linePen);
 
 	std::vector< std::vector < std::vector< std::pair<double, double> > > > points = graphInPoints.getRelativePoints();
-	std::vector< std::vector < std::vector< PointF > > > yPolygonPoints;
-	std::vector< std::vector < std::vector< PointF > > > zPolygonPoints;
 
 	int iSize = points.size();
 	int jSize = points[0].size();
-	// Проводим отрезки вдоль оси Y
-	for( size_t i = 0; i < iSize; ++i ) {
-		yPolygonPoints.push_back( std::vector < std::vector< PointF > >() );
-		zPolygonPoints.push_back( std::vector < std::vector< PointF > >() );
-		zPolygonPoints.back().push_back( std::vector<PointF>() );
 
-		size_t j = 0;
+	std::vector< std::vector < std::vector< PointF > > > yPolygonPoints( iSize );
+	std::vector< std::vector< PointF > > zPolygonPoints( 2 * (iSize + jSize) );
+	POINT* lppoints = new POINT[max( jSize, iSize )];
+
+	// Проводим отрезки вдоль оси Y
+	for( int i = 0; i < iSize; ++i ) {
+		int j = 0;
 		// Ищем, где точки начинаются
 		for( ; j < jSize && points[i][j].size( ) == 0; ++j );
 		// Считаем, что есть k слоев, рисуем отрезки послойно
-		for( size_t k = 0; k < ((j < jSize) ? points[i][j].size( ) : 0); ++k ) {
-			yPolygonPoints.back().push_back( std::vector<PointF>() );
-
-			POINT* lppoints = new POINT[jSize - j];
-			size_t size = 0;
-			size_t lastPoint = 0;
+		yPolygonPoints[i].resize( ((j < jSize) ? points[i][j].size() : 0) );
+		for( int k = 0; k < ((j < jSize) ? points[i][j].size( ) : 0); ++k ) {
+			int size = 0;
+			int lastPoint = 0;
 			// Проводим отрезок, соединяющий этот и следующий слой (вообще говоря, это нужно не всегда...)
 			if( k + 1 < points[i][j].size() ) {
 				::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
 				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
-				zPolygonPoints.back().back().push_back( PointF( points[i][j][k].first, points[i][j][k].second ) );
-				zPolygonPoints.back().back().push_back( PointF( points[i][j][k + 1].first, points[i][j][k + 1].second ) );
+				zPolygonPoints[i].push_back( PointF( points[i][j][k].first, points[i][j][k].second ) );
+				zPolygonPoints[i].push_back( PointF( points[i][j][k + 1].first, points[i][j][k + 1].second ) );
 			}
-			for( size_t l = j; l < jSize; ++l ) {
+			for( int l = j; l < jSize; ++l ) {
 				// Если в этой точке достаточно слоев - проводим отрезок через нее
 				if( points[i][l].size() > k ) {
 					// Если размер равен нулю и l != j - значит, среди отрезков на этой прямой был разрыв, заполняем его
@@ -230,7 +227,7 @@ void GraphWindow::drawGraph(HDC dc) {
 					}
 					lppoints[size] = { round( points[i][l][k].first ), round( points[i][l][k].second ) };
 				
-					yPolygonPoints.back().back().push_back( PointF( points[i][l][k].first, points[i][l][k].second ) );
+					yPolygonPoints[i][k].push_back( PointF( points[i][l][k].first, points[i][l][k].second ) );
 					++size;
 					lastPoint = l;
 				} else {
@@ -240,52 +237,51 @@ void GraphWindow::drawGraph(HDC dc) {
 					::PolyBezier( dc, lppoints, bezierPointsSize );
 					// Оставшиеся точки соединяем линией
 					for( int p = bezierPointsSize - size; p < 0; ++p ) {
-						if( k < points[i][l + p - 1].size() && k < points[i][l + p].size() ) {
+						if( l + p - 1 >= 0 && k < points[i][l + p - 1].size() && k < points[i][l + p].size() ) {
 							::MoveToEx( dc, round( points[i][l + p - 1][k].first ), round( points[i][l + p - 1][k].second ), NULL );
 							::LineTo( dc, round( points[i][l + p][k].first ), round( points[i][l + p][k].second ) );
-							yPolygonPoints.back().back().push_back( PointF( points[i][l + p - 1][k].first, points[i][l + p - 1][k].second ) );
-							yPolygonPoints.back().back().push_back( PointF( points[i][l + p][k].first, points[i][l + p][k].second ) );
+							yPolygonPoints[i][k].push_back( PointF( points[i][l + p - 1][k].first, points[i][l + p - 1][k].second ) );
+							yPolygonPoints[i][k].push_back( PointF( points[i][l + p][k].first, points[i][l + p][k].second ) );
 						}
 					}
 					size = 0;
-					if( k < points[i][l - 1].size() ) {
+					if( l - 1 >= 0 && k < points[i][l - 1].size() ) {
 						::MoveToEx( dc, round( points[i][l - 1][k].first ), round( points[i][l - 1][k].second ), NULL );
-						yPolygonPoints.back().back().push_back( PointF( points[i][l - 1][k].first, points[i][l - 1][k].second ) );
+						yPolygonPoints[i][k].push_back( PointF( points[i][l - 1][k].first, points[i][l - 1][k].second ) );
 					}
 				}
 			}
 
 			::PolyBezier( dc, lppoints, size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1 );
-			delete[] lppoints;
 
 			// Проводим отрезок в верхний слой
 			if( k + 1 < points[i][lastPoint].size() ) {
 				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
-				zPolygonPoints.back().back().push_back( PointF( points[i][lastPoint][k].first, points[i][lastPoint][k].second ) );
+				zPolygonPoints[iSize + i].push_back( PointF( points[i][lastPoint][k].first, points[i][lastPoint][k].second ) );
 				::LineTo( dc, round( points[i][lastPoint][k + 1].first ), round( points[i][lastPoint][k + 1].second ) );
-				zPolygonPoints.back().back().push_back( PointF( points[i][lastPoint][k + 1].first, points[i][lastPoint][k + 1].second ) );
-				::MoveToEx( dc, round( points[i][lastPoint][k].first ), round( points[i][lastPoint][k].second ), NULL );
+				zPolygonPoints[iSize + i].push_back( PointF( points[i][lastPoint][k + 1].first, points[i][lastPoint][k + 1].second ) );
 			}
 		}
 	}
 
 	// Проводим отрезки вдоль оси X
-	for( size_t j = 0; j < jSize; ++j ) {
-		size_t i = 0;
+	for( int j = 0; j < jSize; ++j ) {
+		int i = 0;
 		// Ищем, где точки начинаются
 		for( ; i < iSize && points[i][j].size() == 0; ++i );
 		// Считаем, что есть k слоев, рисуем отрезки послойно
-		for( size_t k = 0; k < ((i < iSize) ? points[i][j].size() : 0); ++k ) {
-			POINT* lppoints = new POINT[iSize - i];
-			size_t size = 0;
-			size_t lastPoint = 0;
+		for( int k = 0; k < ((i < iSize) ? points[i][j].size( ) : 0); ++k ) {
+			int size = 0;
+			int lastPoint = 0;
 			// Проводим отрезок, соединяющий этот и следующий слой (вообще говоря, это нужно не всегда...)
 			if( k + 1 < points[i][j].size() ) {
 				::MoveToEx( dc, round( points[i][j][k].first ), round( points[i][j][k].second ), NULL );
 				::LineTo( dc, round( points[i][j][k + 1].first ), round( points[i][j][k + 1].second ) );
+				zPolygonPoints[2 * iSize + j].push_back( PointF( points[i][j][k].first, points[i][j][k].second ) );
+				zPolygonPoints[2 * iSize + j].push_back( PointF( points[i][j][k + 1].first, points[i][j][k + 1].second ) );
 			}
 
-			for( size_t l = i; l < iSize; ++l ) {
+			for( int l = i; l < iSize; ++l ) {
 				// Если в этой точке достаточно слоев - проводим отрезок через нее
 				if( points[l][j].size() > k ) {
 					// Если размер равен нулю и l != i - значит, среди отрезков на этой прямой был разрыв, заполняем его
@@ -302,31 +298,32 @@ void GraphWindow::drawGraph(HDC dc) {
 					::PolyBezier( dc, lppoints, bezierPointsSize );
 					// Оставшиеся точки соединяем линией
 					for( int p = bezierPointsSize - size; p < 0; ++p ) {
-						if( k < points[l + p - 1][j].size( ) && k < points[l + p][j].size( ) ) {
+						if( l + p - 1 >= 0 && k < points[l + p - 1][j].size( ) && k < points[l + p][j].size( ) ) {
 							::MoveToEx( dc, round( points[l + p - 1][j][k].first ), round( points[l + p - 1][j][k].second ), NULL );
 							::LineTo( dc, round( points[l + p][j][k].first ), round( points[l + p][j][k].second ) );
 						}
 					}
 					size = 0;
-					if( k < points[l - 1][j].size() ) {
+					if( l - 1 >= 0 && k < points[l - 1][j].size() ) {
 						::MoveToEx( dc, round( points[l - 1][j][k].first ), round( points[l - 1][j][k].second ), NULL );
 					}
 				}
 			}
 
 			::PolyBezier( dc, lppoints, size % 3 == 0 ? size - 2 : 3 * (size / 3) + 1 );
-			delete[] lppoints;
 
 			// Проводим отрезок в верхний слой
 			if( k + 1 < points[lastPoint][j].size( ) ) {
 				::MoveToEx( dc, round( points[lastPoint][j][k].first ), round( points[lastPoint][j][k].second ), NULL );
+				zPolygonPoints[2 * iSize + jSize + j].push_back( PointF( points[lastPoint][j][k].first, points[lastPoint][j][k].second ) );
 				::LineTo( dc, round( points[lastPoint][j][k + 1].first ), round( points[lastPoint][j][k + 1].second ) );
-				::MoveToEx( dc, round( points[lastPoint][j][k].first ), round( points[lastPoint][j][k].second ), NULL );
+				zPolygonPoints[2 * iSize + jSize + j].push_back( PointF( points[lastPoint][j][k + 1].first, points[lastPoint][j][k + 1].second ) );
 			}
 		}
 	}
 
 	::DeleteObject(linePen);
+	delete lppoints;
 
 	if( needToFillPolygons ) {
 		fillWithGradient( dc, yPolygonPoints, zPolygonPoints );
@@ -457,8 +454,8 @@ void GraphWindow::generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxCol
 	maxColorPoint.Y = (int) maxPointPair.second;
 }
 
-void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vector< PointF > > >& yPolygonPoints, std::vector< std::vector < std::vector< PointF > > >& zPolygonPoints,
-	Color maxColor, Color minColor )
+void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vector< Gdiplus::PointF > > >& yPolygonPoints, std::vector < std::vector< Gdiplus::PointF > >& zPolygonPoints,
+	Gdiplus::Color maxColor /*= Gdiplus::Color(128, 255, 0, 0)*/, Gdiplus::Color minColor /*= Gdiplus::Color(128, 0, 0, 255) */ )
 {
 	Graphics graphics( dc );
 	graphics.SetInterpolationMode( InterpolationModeNearestNeighbor );
@@ -471,37 +468,54 @@ void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vect
 	double max, min;
 	getMaxMinZAndRelativeGridKnots( min, max, xMin, yMin, xMax, yMax );
 
-	std::vector< Polygon4Wrap > polygons;
+	std::vector< CTriangle > polygons;
 	
-	for( int i = 0; i < yPolygonPoints.size( ) - 1; ++i ) {
-		for( int k = 0; k < yPolygonPoints[i].size( ); ++k ) {
-			for( int j = 0; j < ((yPolygonPoints[i + 1].size( ) > k) ? (min( yPolygonPoints[i][k].size( ), yPolygonPoints[i + 1][k].size( ) ) - 1) : 0); ++j ) {
-				Polygon4Wrap wrap;
-				wrap.poly[0] = yPolygonPoints[i][k][j];
-				wrap.poly[1] = yPolygonPoints[i][k][j + 1];
-				wrap.poly[2] = yPolygonPoints[i + 1][k][j + 1];
-				wrap.poly[3] = yPolygonPoints[i + 1][k][j];
+	for( int i = 0; i < yPolygonPoints.size() - 1; ++i ) {
+		for( int k = 0; k < yPolygonPoints[i].size(); ++k ) {
+			for( int j = 0; j + 1 < yPolygonPoints[i][k].size(); ++j )
+			{
+				CTriangle wrap;
+				if( yPolygonPoints[i + 1].size() > k && yPolygonPoints[i + 1][k].size() > j ) {
+					wrap.poly[0] = yPolygonPoints[i][k][j];
+					wrap.poly[1] = yPolygonPoints[i][k][j + 1];
+					wrap.poly[2] = yPolygonPoints[i + 1][k][j];
+					polygons.push_back( wrap );
+				}
 
-				polygons.push_back( wrap );
+				if( yPolygonPoints[i + 1].size() > k && yPolygonPoints[i + 1][k].size() > j + 1 ) {
+					wrap.poly[0] = yPolygonPoints[i][k][j + 1];
+					wrap.poly[1] = yPolygonPoints[i + 1][k][j + 1];
+					wrap.poly[2] = yPolygonPoints[i + 1][k][j];
+					polygons.push_back( wrap );
+				}
 			}
 		}
 	}
 
-	for( int i = 0; i < zPolygonPoints.size() - 1; ++i ) {
-		for( int k = 0; k < zPolygonPoints[i].size( ); ++k ) {
-			int sizeJ = min( zPolygonPoints[i][k].size(), zPolygonPoints[i + 1][k].size() ) - 1;
-			for( int j = 0; j < ( (zPolygonPoints[i + 1].size() > k) ? sizeJ : 0 ); ++j ) {
-				Polygon4Wrap wrap;
-				wrap.poly[0] = zPolygonPoints[i][k][j];
-				wrap.poly[1] = zPolygonPoints[i][k][j + 1];
-				wrap.poly[2] = zPolygonPoints[i + 1][k][j + 1];
-				wrap.poly[3] = zPolygonPoints[i + 1][k][j];
+	int iSize = yPolygonPoints.size();
+	int jSize = (zPolygonPoints.size() - 2 * iSize) / 2;
+	std::vector<int> sizes = { 0, iSize, 2 * iSize, 2 * iSize + jSize, 2 * (iSize + jSize) };
+	for( int k = 0; k < sizes.size() - 1; ++k ) {
+		for( int i = sizes[k]; i < sizes[k+1]; ++i ) {
+			for( int j = 0; j + 1 < zPolygonPoints[i].size(); ++j ) {
+				CTriangle wrap;
+				if( zPolygonPoints[i + 1].size() > j ) {
+					wrap.poly[0] = zPolygonPoints[i][j];
+					wrap.poly[1] = zPolygonPoints[i][j + 1];
+					wrap.poly[2] = zPolygonPoints[i + 1][j];
+					polygons.push_back( wrap );
+				}
 
-				polygons.push_back( wrap );
+				if( zPolygonPoints[i + 1].size() > j + 1 ) {
+					wrap.poly[0] = zPolygonPoints[i][j + 1];
+					wrap.poly[1] = zPolygonPoints[i + 1][j + 1];
+					wrap.poly[2] = zPolygonPoints[i + 1][j];
+					polygons.push_back( wrap );
+				}
 			}
 		}
 	}
-
+	
 	Point maxPoint, minPoint;
 	generatePointsOfMaxAndMinGradientColor( maxPoint, minPoint, min, max, xMin, yMin, xMax, yMax );
 
@@ -512,7 +526,7 @@ void GraphWindow::fillWithGradient( HDC dc, std::vector< std::vector < std::vect
 		minColor);
 
 	for (int i = 0; i < polygons.size(); ++i) {
-		graphics.FillPolygon( &linGrBrush, polygons[i].poly, 4 );
+		graphics.FillPolygon( &linGrBrush, polygons[i].poly, 3 );
 	}
 }
 

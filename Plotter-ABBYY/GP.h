@@ -41,6 +41,7 @@ public:
 	std::pair<double, double> getOriginCoordinates();
 	// возвращает значения Z для пары XY
 	std::vector<std::vector<std::vector<double>>> getZcoordinates();
+	void calculateZcoordinates();
 	// возвращает точку на экране, которая соответствует точке на графике с координатой Z и узлу сетки i j 
 	std::pair<double, double> getRelativePointWithXYZ( int i, int j, double z );
 	// возвращает размер сетки
@@ -70,6 +71,8 @@ private:
 	std::vector< Vector > prevRelativeAxis;
 	// относительные точки уже в 2D, в качестве индексов изначальная сетка X, Y 
 	std::vector < std::vector < std::vector< std::pair<double, double > > > > relativePoints;
+
+	std::vector<std::vector<std::vector<double>>> zCoordinates;
 	// координаты пересечения осей в 2D
 	std::pair<double, double> origin;
 

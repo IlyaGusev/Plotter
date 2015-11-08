@@ -126,11 +126,7 @@ void GraphWindow::OnCommand( int command )
 	if( command == minusButtonCode ) {
 		::SendMessage( handle, WM_KEYDOWN, 0x5A, 0 );
 	}
-}
-
-void GraphWindow::OnSize( int cxCurr, int cyCurr )
-{
-
+	::SetFocus( handle );
 }
 
 void GraphWindow::OnDestroy()

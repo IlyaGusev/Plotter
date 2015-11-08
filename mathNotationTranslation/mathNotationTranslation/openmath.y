@@ -33,11 +33,21 @@ void omerror(const char *){};
 %type <binop_node> binop;
 
 %%
-list: list stm { printf("list1\n"); }
-	| stm { printf("list2\n");}
+list: list stm { $$ = new CompositeNode($1); }
+    | stm { $$ = $1; $$-> add($2); }
 ;
 
-stm: LNUM stm RNUM {$$ = $2; printf("NUMBER", $2); }
-   | NUMBER {$$ = new NumNode(omlval.intValue);}
+stm: LNUM stm RNUM { $$ = $2; }
+   | LID stm RID { $$ = $2; }
+   | LOBJ list ROBJ { $$ = $2; }
+   | LAPP list RAPP { $$ = $2; }
+   | NUMBER {$$ = new NumNode(omlval.intValue); }
+;
+
+binop: ADD stm stm { $$ = new BinOpNode($2, $3, "+"); }
+     | SUB stm stm { $$ = new BinOpNode($2, $3, "-"); }
+     | MUL stm stm { $$ = new BinOpNode($2, $3, "*"); }
+     | DIV stm stm { $$ = new BinOpNode($2, $3, "/"); }
+     | EQ stm stm { $$ = new BinOpNode($2, $3, "="); }
 ;
 %%

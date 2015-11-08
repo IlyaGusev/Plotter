@@ -22,12 +22,16 @@ std::pair< std::complex <double>, std::complex <double> >  CCalculator::quadrati
 // X[n] - начальное приближение, ответ записывается также в X[n];
 STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double> >& A, const std::vector<double>& F, std::vector<double>& X)
 {
+    //проверка данных на валидность
+    for ( int i = 0; i < A.size(); ++i ) {
+        if ( A[i].size() != n ) {
+            throw IncorrectArgumentException();
+        }
+    }
+
     double eps = 0.001;
     std::vector< double > tempX(n);
     double norm; // норма, определяемая как наибольшая разность компонент столбца иксов соседних итераций.
-
-    ///TODO: проверка на вырожденность
-    ///TODO: проверка на сходимость метода
 
     for (int i = 0; i < n; ++i) {
         if (A[i][i] == 0) {
@@ -60,6 +64,8 @@ STATUS_RESULT CCalculator::Jacobi (int n, const std::vector< std::vector <double
     return CALCULATED;
 }
 
+
+
 int CCalculator::sum( int i_begin, int i_end ) {
     int result = 0;
     for (int i = i_begin; i <= i_end; ++i) {
@@ -75,3 +81,5 @@ int CCalculator::prod( int i_begin, int i_end ) {
     }
     return result;
 }
+
+

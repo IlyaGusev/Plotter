@@ -1,12 +1,14 @@
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
 #include <string>
+#include <sstream>
 #include <memory>
 #include <vector>
 #include <iostream>
 #include <map>
 #include <array>
 using namespace std;
+
 enum LANGUAGE{
 	MATHML,
 	OPENMATH,

@@ -29,10 +29,13 @@ void omerror(const char *){};
 %token <str> ADD MUL SUB DIV EQ SQRT USUB LOBJ ROBJ LAPP RAPP LNUM RNUM LID RID END_OF_FILE
 
 %type <node> stm
+%type <composite_node> doc
 %type <composite_node> list
 %type <binop_node> binop;
 
 %%
+doc: LOBJ list ROBJ { $$ = $2; }
+
 list: stm { $$ = new CompositeNode($1); }
     | list stm { $$ = $1; $$->add($2); }
 ;

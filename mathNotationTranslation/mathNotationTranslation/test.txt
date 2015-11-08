@@ -1,0 +1,13 @@
+<OMA>
+<OMS cd="relation1" name="eq"/>
+<OMS cd="arith1" name="divide"/>
+<OMA>
+<OMS cd="arith1" name="plus"/>
+<OMI> 5 </OMI>
+<OMI> 1 </OMI>
+</OMA>
+<OMA>
+<OMI> 3 </OMI>
+</OMA>
+<OMV name="x">
+</OMA>

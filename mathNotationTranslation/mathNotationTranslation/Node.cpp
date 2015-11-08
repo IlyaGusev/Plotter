@@ -7,11 +7,11 @@ string Node::translate(int notation) const {
 map<string, array<string, 3>> Node::createMap()
 {
 	map<string, array<string, 3>> m;
-	m["+"] = { " <mo> + </mo> ", "<OMS cd=\"arith1\" name=\"plus\"/>", " + " };
-	m["-"] = { " <mo> - </mo> ", "<OMS cd=\"arith1\" name=\"minus\"/>", " - " };
-	m["*"] = { " <mo> * </mo> ", "<OMS cd=\"arith1\" name=\"times\"/>", " * " };
-	m["/"] = { " <mo> / </mo> ", "<OMS cd=\"arith1\" name=\"divide\"/>", " / " };
-	m["="] = { " <mo> = </mo> ", "<OMS cd=\"relation1\" name=\"eq\"/>", " = " };
+	m["+"] = { " <mo> + </mo> ", "<OMS cd=\"arith1\" name=\"plus\"/>\n", " + " };
+	m["-"] = { " <mo> - </mo> ", "<OMS cd=\"arith1\" name=\"minus\"/>\n", " - " };
+	m["*"] = { " <mo> * </mo> ", "<OMS cd=\"arith1\" name=\"times\"/>\n", " * " };
+	m["/"] = { " <mo> / </mo> ", "<OMS cd=\"arith1\" name=\"divide\"/>\n", " / " };
+	m["="] = { " <mo> = </mo> ", "<OMS cd=\"relation1\" name=\"eq\"/>\n", " = " };
 	return m;
 }
 
@@ -19,6 +19,7 @@ void Node::setFence(string _lfence, string _rfence) {
 	lfence = _lfence;
 	rfence = _rfence;
 }
+
 string Node::addFence(int notation, string _s) const {
 	string s = _s;
 	switch (notation) {
@@ -27,7 +28,6 @@ string Node::addFence(int notation, string _s) const {
 				s = "<mfenced>" + s + "</mfenced>";
 			break;
 		case OPENMATH:
-			//s = "";
 			break;
 		case TEX:
 			s = lfence + s + rfence;
@@ -42,13 +42,15 @@ NumNode::~NumNode() {}
 
 string NumNode::translate(int notation) const {
 	string result;
-	string num = string(to_string(number));
+	ostringstream ss;
+    ss << number;
+    string num = ss.str(); 
 	switch (notation) {
 		case MATHML:
 			result = " <mn> " + num + " </mn> ";
 			break;
 		case OPENMATH:
-			result = " <OMI> " + num + " </OMI> ";
+			result = "<OMI> " + num + " </OMI>\n";
 			break;
 		case TEX:
 			result = num;
@@ -68,7 +70,7 @@ string IdNode::translate(int notation) const {
 			result = " <mi> " + id + " </mi> ";
 			break;
 		case OPENMATH:
-			result = "<OMV name=\"" + id + "\">"; 
+			result = "<OMV name=\"" + id + "\">\n"; 
 			break;
 		case TEX:
 			result = id;
@@ -98,7 +100,10 @@ string BinOpNode::translate(int notation) const {
 					         right->translate(notation) + "</msup> ";
 				break;
 			case OPENMATH:
-				result = "";
+				//result = "";
+				if (operation == "frac")
+					result = "<OMS cd=\"arith1\" name=\"divide\"/>\n" +
+					         left->translate(notation) + right->translate(notation);
 				break;
 			case TEX:
 				if (operation == "frac")
@@ -110,7 +115,10 @@ string BinOpNode::translate(int notation) const {
 		return addFence(notation, result);
 	}
 	else
-		return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));
+		if (notation != OPENMATH)
+			return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));
+		else
+			return addFence(notation, createMap()[operation][notation] + left->translate(notation) + right->translate(notation));
 }
 
 
@@ -141,13 +149,13 @@ void CompositeNode::add(Node* _node) {
 string CompositeNode::translate(int notation) const {
 	string s;
 	for (int i = 0; i < nodes.size(); i++) {
-		s += nodes[i]->translate(notation) + " ";
+		s += nodes[i]->translate(notation);// + " ";
 	}
 	s = addFence(notation, s);
 	if (notation == MATHML && Node::lfence != "(")
 		s = "<mrow>" + s + "</mrow>";
 	if (notation == OPENMATH)
-		s = "<OMA>" + s + "</OMA>";
+		s = "<OMA>\n" + s + "</OMA>\n";
 	return s;
 
 }

@@ -74,8 +74,12 @@ void CSystemControlModel::Resize()
 }
 
 std::wstring CSystemControlModel::Serialize() {
-	// TODO
-  return L"";
+	std::wstring result = L"<set>";
+	for (auto child : GetChildren()) {
+		result += L"<mrow>" + child->Serialize() + L"</mrow>";
+	}
+
+	return result + L"</set>";
 }
 
 int CSystemControlModel::FindLineNum(std::shared_ptr<CEditControlModel> edit)

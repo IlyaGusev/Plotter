@@ -8,9 +8,9 @@ CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr )
 {
 	presenter = std::make_shared<CEquationPresenter>(*this);
 	isPressedShift = false;
-  yMinScroll = 0;
-  yCurrentScroll = 0;
-  yMaxScroll = 0;
+	yMinScroll = 0;
+	yCurrentScroll = 0;
+	yMaxScroll = 0;
 }
 
 bool CEquationEditorWindow::RegisterClassW() 
@@ -29,7 +29,7 @@ bool CEquationEditorWindow::RegisterClassW()
 
 bool CEquationEditorWindow::Create( HWND parent, RECT rect ) 
 {
-  symbolSelectedColorref = RGB( 0xFF, 0xFF, 0xFF );	// Белый
+	symbolSelectedColorref = RGB( 0xFF, 0xFF, 0xFF );	// Белый
 	symbolUnselectedColorref = RGB( 0, 0, 0 );			// Черный
 	bkSelectedColorref = RGB( 0x1F, 0xAE, 0xE9 );		// Голубой
 	bkUnselectedColorref = RGB( 0xFF, 0xFF, 0xFF );		// Белый
@@ -158,9 +158,12 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 		case ID_ADD_PRODUCT:
 			presenter->AddControlView( PRODUCT );
 			break;
-    case ID_ADD_SYSTEM:
-      presenter->AddControlView( SYSTEM );
-      break;
+		case ID_ADD_SYSTEM:
+			presenter->AddControlView( SYSTEM );
+			break;
+		case ID_ADD_SAVE:
+			presenter->Serialize();
+			break;
 		}
 	}
 }
@@ -189,7 +192,6 @@ void CEquationEditorWindow::OnKeyDown( WPARAM wParam )
 
 	case VK_UP:     // UP ARROW 
 	case VK_DOWN:   // DOWN ARROW 
-		presenter->Serialize();
 		break;
 	}
 }

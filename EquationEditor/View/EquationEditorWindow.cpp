@@ -168,6 +168,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 void CEquationEditorWindow::OnKeyDown( WPARAM wParam ) 
 {
 	switch( wParam ) {
+  case VK_RETURN:
+    presenter->OnEnter();
+    break;
 	case VK_DELETE:
 		presenter->DeleteNextSymbol( GetKeyState( VK_CONTROL ) < 0 );
 		break;

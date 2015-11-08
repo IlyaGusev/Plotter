@@ -71,14 +71,7 @@ public:
 	void MoveCaretTop();
 	void MoveCaretBottom();
 
-	//void MoveCaretLeft( CCaret& externalCaret )
-	//{
-	//	caret.GetCurEdit->
-	//}
-	//void MoveCaretRight( CCaret& externalCaret )
-	//{
-
-	//}
+  void OnEnter(); // пока только создает нового ребенка, если мы находимся внутри системы уравнений
 
 	CCaret GetCaret() const
 	{

@@ -96,7 +96,8 @@ int CEditControlModel::GetSymbolPointByNumber( int number ) const
 {
 	int offset = rect.Left();
 	for( int i = 0; i < number; ++i ) {
-		offset += symbolsWidths[i];
+    if ( i < symbolsWidths.size() )
+		  offset += symbolsWidths[i];
 	}
 	return offset;
 }

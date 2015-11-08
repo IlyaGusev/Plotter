@@ -34,8 +34,12 @@ public:
 
   int CalcHeight() const;
 
+  void AddChild( int num, std::shared_ptr<IBaseExprModel> initChild = 0 );
+
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 	std::wstring Serialize();
+
+  int FindLineNum(std::shared_ptr<CEditControlModel>);
 
 private:
   // Дети-линии

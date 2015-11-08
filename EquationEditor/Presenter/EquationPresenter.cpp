@@ -354,6 +354,30 @@ void CEquationPresenter::MoveCaretRight()
 	view.Redraw();
 }
 
+void CEquationPresenter::OnEnter()
+{
+  std::weak_ptr<IBaseExprModel> parentSystem = caret.GetCurEdit();
+  while (parentSystem.lock().get() != nullptr && parentSystem.lock().get()->GetType() != SYSTEM) {
+    parentSystem = parentSystem.lock().get()->GetParent();
+  }
+
+  if ( parentSystem.lock().get() != nullptr ) { // if caret is in equation system
+    int lineNum = std::dynamic_pointer_cast<CSystemControlModel>(parentSystem.lock())->FindLineNum(caret.GetCurEdit()) + 1; // надо поместить новый контрол на следующую строку
+    std::dynamic_pointer_cast<CSystemControlModel>(parentSystem.lock())->AddChild(lineNum, nullptr); // вторым аргументом мог бы быть IBaseExprModel для вставки, но нет
+    invalidateTree();
+    view.Redraw();
+
+    std::list<std::shared_ptr<IBaseExprModel>> children = parentSystem.lock().get()->GetChildren();
+    auto it = children.begin();
+    std::advance(it, lineNum);
+    caret.SetCurEdit(it->get()->GetChildren().front());
+    invalidateTree();
+    view.Redraw();
+  } else {
+    // if we're not in system -- keep calm and wait for realization
+  }
+}
+
 void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	// Создаем новые модели для дроби

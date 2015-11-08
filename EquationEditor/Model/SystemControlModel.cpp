@@ -1,5 +1,6 @@
 ﻿#include "Model/SystemControlModel.h"
 #include "Model/EditControlModel.h"
+#include <memory>
 
 CSystemControlModel::CSystemControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent ) :
 	IBaseExprModel(rect, parent)
@@ -19,12 +20,26 @@ int CSystemControlModel::CalcHeight() const
   return height;
 }
 
+void CSystemControlModel::AddChild(int num, std::shared_ptr<IBaseExprModel> initChild)
+{
+  if (initChild != nullptr) {
+    children.insert(children.begin() + num, initChild); // ахтунг, не испытывалось на практике!
+    children[num]->SetParent(shared_from_this());
+    children[num]->UpdateDepth();
+  } else {
+    CRect childRect = CRect(0, 0, 0, 20);
+    children.insert(children.begin() + num, std::make_shared<CExprControlModel>(childRect, std::weak_ptr<IBaseExprModel>(shared_from_this())));
+    children[num]->InitializeChildren();
+  }
+}
+
 void CSystemControlModel::Resize()
 {
   int width = 0;  
   for (auto child : GetChildren()) {
     width = MAX(child->GetRect().GetWidth(), width);
   }
+  width += 15;
 
   int height = CalcHeight();
 
@@ -37,6 +52,18 @@ std::wstring CSystemControlModel::Serialize() {
   return L"";
 }
 
+int CSystemControlModel::FindLineNum(std::shared_ptr<CEditControlModel> edit)
+{
+  std::weak_ptr<IBaseExprModel> current = edit;
+  while (current.lock() != nullptr && current.lock().get()->GetParent().lock().get()->GetType() != SYSTEM) {
+    current = current.lock().get()->GetParent();
+  }
+
+  if (current.lock().get() != nullptr) { // если мы в системе, а это должно быть так
+    return std::find(children.begin(), children.end(), current.lock()) - children.begin();
+  }
+}
+
 void CSystemControlModel::PlaceChildren()
 {
 	CRect newRect;
@@ -47,7 +74,7 @@ void CSystemControlModel::PlaceChildren()
     newRect.Top() = currentTop;
     currentTop += oldRect.GetHeight() + 5;
     newRect.Bottom() = newRect.Top() + oldRect.GetHeight();
-    newRect.Left() = rect.Left() + 10;
+    newRect.Left() = rect.Left() + 15;
     newRect.Right() = newRect.Left() + oldRect.GetWidth();
     children[i]->SetRect(newRect);
   }
@@ -60,7 +87,7 @@ int CSystemControlModel::GetMiddle( ) const
 	return CalcHeight() / 2;
 }
 
-void CSystemControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild /*= 0 */ )
+void CSystemControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> initChild )
 {
 	CRect childRect = CRect( 0, 0, 0, rect.GetHeight( ) );
 	if( initChild ) {
@@ -162,23 +189,23 @@ void CSystemControlModel::updatePolygons()
   params.polygon.clear();
 
   int middle = rect.Top() + rect.GetHeight() / 2;
-  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 2, middle - 3 )); // середина 1
-  params.polygon.push_back(CLine(rect.Left() + 2, middle + 3, rect.Left() + 2, rect.Bottom() - 5)); // середина 2
-  params.polygon.push_back(CLine(rect.Left() + 2, middle + 3, rect.Left(), middle - 1)); // "носик" нижний
-  params.polygon.push_back(CLine(rect.Left() + 2, middle - 3, rect.Left(), middle + 1)); // "носик" верхний
-  params.polygon.push_back(CLine(rect.Left() + 2, rect.Top() + 5, rect.Left() + 5, rect.Top() + 2)); // верх
-  params.polygon.push_back(CLine(rect.Left() + 2, rect.Bottom() - 5, rect.Left() + 5, rect.Bottom() - 2)); // низ
+  params.polygon.push_back(CLine(rect.Left() + 7, rect.Top() + 5, rect.Left() + 7, middle - 3 )); // середина 1
+  params.polygon.push_back(CLine(rect.Left() + 7, middle + 3, rect.Left() + 7, rect.Bottom() - 5)); // середина 2
+  params.polygon.push_back(CLine(rect.Left() + 7, middle + 3, rect.Left() + 5, middle - 1)); // "носик" нижний
+  params.polygon.push_back(CLine(rect.Left() + 7, middle - 3, rect.Left() + 5, middle + 1)); // "носик" верхний
+  params.polygon.push_back(CLine(rect.Left() + 7, rect.Top() + 5, rect.Left() + 10, rect.Top() + 2)); // верх
+  params.polygon.push_back(CLine(rect.Left() + 7, rect.Bottom() - 5, rect.Left() + 10, rect.Bottom() - 2)); // низ
 }
 
 void CSystemControlModel::UpdateSelection()
 {
 	params.isSelected = false;
   for (auto child : children) {
-    if (child->IsSelected()) {
-      params.isSelected = true;
+    if (!child->IsSelected()) {
       return;
     }
   }
+  params.isSelected = true;
 }
 
 std::shared_ptr<IBaseExprModel> CSystemControlModel::CopySelected() const

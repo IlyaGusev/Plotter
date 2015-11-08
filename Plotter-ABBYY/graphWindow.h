@@ -25,14 +25,15 @@ protected:
 	void OnMouseWheel( WPARAM wParam );
 	void OnMouseMove( WPARAM wParam, int x, int y );
 	void OnLButtonDown( int xMousePos, int yMousePos );
+	void OnImageSave();
 
 	void OnPaint();
+	void OnSize(int width, int height);
 	void OnClose();
 	void OnDestroy();
 	void OnCreate();
 	void OnDrawButtons( DRAWITEMSTRUCT* pdis );
-	void OnCommand( int command );
-	void OnSize( int cxCurr, int cyCurr );
+	int OnCommand( int loWord, int hiWord );
 private:
 	const static wchar_t* nameClassWindow;
 	const static wchar_t* nameWindow;
@@ -45,6 +46,7 @@ private:
 
 	int cmdShow;
 	HWND handle;
+	HMENU menu;
 	
 	HWND plusButtonHWND;
 	HBITMAP plusBitmap, plusPressedBitmap, minusBitmap, minusPressedBitmap;
@@ -55,7 +57,9 @@ private:
 	bool needToFillPolygons;
 
 	void drawGraph(HDC dc);
+	void drawAxe(HDC dc, int axisNum, RECT rec, const std::string axisName);
 	void drawAxes(HDC dc);
+	void drawCoordinates(HDC dc, int axisNum, double maxValue, int pointsCount = 6);
 
 	// red for max and blue for min by default
 	void fillWithGradient( HDC dc, std::vector< std::vector < std::vector< Gdiplus::PointF > > >& yPolygonPoints, 
@@ -67,5 +71,6 @@ private:
 	void getMaxMinZAndRelativeGridKnots( double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax );
 	void generatePointsOfMaxAndMinGradientColor( Gdiplus::Point &maxColorPoint, Gdiplus::Point &minColorPoint, 
 												double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax );
+	bool ScreenCapture( LPWSTR filename );
 };
 

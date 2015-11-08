@@ -10,10 +10,7 @@ GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/,
 	double inputLengthOfSection /*= 5*/, std::pair<double, double>& inputWindowSize /*= std::pair<double, double>( 700, 700 ) */ ) :
 	lengthOfSection( inputLengthOfSection ),
 	windowSize( inputWindowSize ),
-	scale( 1 ),
-	globalXShift( 0 ),
-	globalYShift( 0 ),
-	globalZShift( 0 )
+	scale( 1 )
 {
 	calc = MathMlCalculator( formulaPath, is2D );
 
@@ -127,19 +124,19 @@ void GP::rotateToCurrentAngle()
 
 void GP::moveAlongX( int num )
 {
-	globalXShift += num;
+	recalculateOrigin(num, 0, 0);
 	calculateRelativePoints();
 }
 
 void GP::moveAlongY( int num )
 {
-	globalYShift += num;
+	recalculateOrigin(0, num, 0);
 	calculateRelativePoints();
 }
 
 void GP::moveAlongZ( int num )
 {
-	globalZShift += num;
+	recalculateOrigin(0, 0, num);
 	calculateRelativePoints();
 }
 
@@ -151,7 +148,7 @@ void GP::changeScale( int num )
 		lengthOfSection += num;
 
 		double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-		//calc.RecalculatePoints( 4 * (int) (size / lengthOfSection) );
+		//calc.RecalculatePoints( 4 * (int) (size * 2 / lengthOfSection) );
 
 		calculateRelativePoints();
 	}
@@ -159,13 +156,27 @@ void GP::changeScale( int num )
 
 std::pair<double, double> GP::getOriginCoordinates()
 {
-	std::pair<double, double> res = origin;
-	std::pair<double, double> x = getAxisVectorVisual( 0 );
-	std::pair<double, double> y = getAxisVectorVisual( 1 );
-	std::pair<double, double> z = getAxisVectorVisual( 2 );
-	res.first -= lengthOfSection * ( x.first * globalXShift + y.first * globalYShift + z.first * globalZShift );
-	res.second -= lengthOfSection * ( x.second * globalXShift + y.second * globalYShift + z.second * globalZShift );
-	return res;
+	return origin;
+}
+
+
+void GP::changeSize(double x, double y) {
+	if (windowSize.first != x || windowSize.second != y) {
+		windowSize.first = x;
+		windowSize.second = y;
+		origin.first = windowSize.first;
+		origin.second = windowSize.second;
+	}
+}
+
+void GP::recalculateOrigin(int xShift, int yShift, int zShift) {
+	std::pair<double, double> x = getAxisVectorVisual(0);
+	std::pair<double, double> y = getAxisVectorVisual(1);
+	std::pair<double, double> z = getAxisVectorVisual(2);
+	origin.first += (x.first * xShift  + y.first * yShift +
+		z.first * zShift ) * lengthOfSection;
+	origin.second += (x.second * xShift + y.second * yShift +
+		z.second * zShift) * lengthOfSection;
 }
 
 void GP::calculateRelativePoints()
@@ -181,12 +192,12 @@ void GP::calculateRelativePoints()
 				auto z_ij = calc.GetZ( i, j );
 				relativePoints[i][j].resize( z_ij.size() );
 				for( size_t k = 0; k < z_ij.size(); ++k ) {
-					double xRel = origin.first + scale *(x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-						y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-						z.first * (z_ij[k] - globalZShift) * lengthOfSection);
-					double yRel = origin.second + scale * (x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-						y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-						z.second * (z_ij[k] - globalZShift) * lengthOfSection);
+					double xRel = origin.first + scale * (x.first * calc.GetX( i, j ) * lengthOfSection +
+						y.first * calc.GetY( i, j ) * lengthOfSection +
+						z.first * z_ij[k] * lengthOfSection);
+					double yRel = origin.second + scale * (x.second * calc.GetX( i, j )  * lengthOfSection +
+						y.second * calc.GetY( i, j ) * lengthOfSection +
+						z.second * z_ij[k] * lengthOfSection);
 
 					relativePoints[i][j][k] = std::pair<double, double>( xRel, yRel );
 				}
@@ -196,10 +207,10 @@ void GP::calculateRelativePoints()
 			relativePoints[i].resize( 1 );
 			relativePoints[i][0].resize( z_ij.size() );
 			for( size_t k = 0; k < z_ij.size(); ++k ) {
-				double xRel = origin.first + scale * (x.first * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-					z.first * (z_ij[k] - globalZShift) * lengthOfSection);
-				double yRel = origin.second + scale * (x.second * (calc.GetX( i, 0 ) - globalXShift) * lengthOfSection +
-					z.second * (z_ij[k] - globalZShift) * lengthOfSection);
+				double xRel = origin.first + scale * (x.first * calc.GetX( i, 0 ) * lengthOfSection +
+					z.first * z_ij[k] * lengthOfSection);
+				double yRel = origin.second + scale * (x.second * calc.GetX( i, 0 ) * lengthOfSection +
+					z.second * z_ij[k] * lengthOfSection);
 
 				relativePoints[i][0][k] = std::pair<double, double>( xRel, yRel );
 			}
@@ -207,37 +218,31 @@ void GP::calculateRelativePoints()
 	}
 }
 
-std::pair<double, double> GP::getXProjection(double x) const
+
+std::pair<double, double> GP::getProjection(double value, int axisNum) const
 {
-	std::pair<double, double> xAxis = getAxisVectorVisual(0);
-	return std::make_pair(origin.first + xAxis.first * (x - globalXShift) * lengthOfSection,
-		origin.second + xAxis.second * (x - globalXShift) * lengthOfSection);
+	std::pair<double, double> axis = getAxisVectorVisual(axisNum);
+	return std::make_pair(origin.first + axis.first * value * lengthOfSection,
+		origin.second + axis.second * value* lengthOfSection);
 }
 
-std::pair<double, double> GP::getYProjection(double y) const
-{
-	std::pair<double, double> yAxis = getAxisVectorVisual(1);
-	return std::make_pair(origin.first + yAxis.first * (y - globalYShift) * lengthOfSection,
-		origin.second + yAxis.second * (y - globalYShift) * lengthOfSection);
+std::pair<double, double> GP::getMaxRelativePoint(std::pair<double, double>& axis, int top, int bottom, int left, int right) {
+	double maxX;
+	double maxY;
+	if (fabs(axis.first) > fabs(axis.second)) {
+		maxX = (axis.first > 0) ? right : left;
+		maxY = origin.second + (maxX - origin.first) / axis.first * axis.second;
+	} else {
+		maxY = (axis.second > 0) ? bottom : top;
+		maxX = origin.first + (maxY - origin.second) / axis.second * axis.first;
+	}
+	return std::make_pair(maxX, maxY);
 }
 
-std::pair<double, double> GP::getZProjection(double z) const
-{
-	std::pair<double, double> zAxis = getAxisVectorVisual(2);
-	return std::make_pair(origin.first + zAxis.first * (z - globalZShift) * lengthOfSection,
-		origin.second + zAxis.second * (z - globalZShift) * lengthOfSection);
-}
 
-double GP::getXMax() const {
-	return calc.getXMax();
-}
-
-double GP::getYMax() const {
-	return calc.getYMax();
-}
-
-double GP::getZMax() const {
-	return calc.getZMax();
+double GP::getAxisMax(const std::pair<double, double>& relativeMaxPoint, const std::pair<double, double>& axis) const{
+	return  (axis.second == 0)? (relativeMaxPoint.first - origin.first) / (lengthOfSection * axis.first)
+		: (relativeMaxPoint.second - origin.second) / (lengthOfSection * axis.second);
 }
 
 std::vector<std::vector<std::vector<double>>> GP::getZcoordinates()
@@ -254,7 +259,7 @@ void GP::calculateZcoordinates()
 			auto z_ij = calc.GetZ( i, j );
 			zCoordinates[i][j].resize( z_ij.size() );
 			for( size_t k = 0; k < z_ij.size(); ++k ) {
-				zCoordinates[i][j][k] = z_ij[k] - globalZShift;
+				zCoordinates[i][j][k] = z_ij[k];
 			}
 		}
 	}
@@ -265,12 +270,12 @@ std::pair<double, double> GP::getRelativePointWithXYZ( int i, int j, double zVal
 	std::pair<double, double> x = getAxisVectorVisual( 0 );
 	std::pair<double, double> y = getAxisVectorVisual( 1 );
 	std::pair<double, double> z = getAxisVectorVisual( 2 );
-	double xRel = origin.first + scale * (x.first * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-		y.first * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-		z.first * (zValue - globalZShift) * lengthOfSection);
-	double yRel = origin.second + scale * (x.second * (calc.GetX( i, j ) - globalXShift) * lengthOfSection +
-		y.second * (calc.GetY( i, j ) - globalYShift) * lengthOfSection +
-		z.second * (zValue - globalZShift) * lengthOfSection);
+	double xRel = origin.first + ( x.first * (calc.GetX( i, j )) * lengthOfSection +
+					y.first * (calc.GetY( i, j )) * lengthOfSection +
+					z.first * (zValue) * lengthOfSection );
+	double yRel = origin.second + ( x.second * (calc.GetX( i, j ) ) * lengthOfSection +
+					y.second * (calc.GetY( i, j )) * lengthOfSection +
+					z.second * (zValue) * lengthOfSection );
 	return std::make_pair( xRel, yRel );
 }
 

@@ -14,13 +14,13 @@ public:
 	void RecalculatePoints( int gridSize );
 
 	//double countExpression(double xArgument, double yArgument);
-	double GetX( int i, int j );
-	double GetY( int i, int j );
-	std::vector<double> GetZ( int i, int j );
+	double GetX( int i, int j ) const;
+	double GetY( int i, int j ) const;
+	std::vector<double> GetZ( int i, int j ) const;
 
 	bool Is2D();
 
-	int GetGridSize();
+	int GetGridSize() const;
 
 	double getXMax() const;
 	double getYMax() const;

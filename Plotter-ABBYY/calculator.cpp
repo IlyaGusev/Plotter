@@ -79,17 +79,17 @@ void MathMlCalculator::RecalculatePoints( int _gridSize )
 	}
 }
 
-double MathMlCalculator::GetX( int i, int j )
+double MathMlCalculator::GetX( int i, int j ) const
 {
 	return xPoints[i][j];
 }
 
-double MathMlCalculator::GetY( int i, int j )
+double MathMlCalculator::GetY( int i, int j ) const
 {
 	return yPoints[i][j];
 }
 
-std::vector<double> MathMlCalculator::GetZ( int i, int j )
+std::vector<double> MathMlCalculator::GetZ( int i, int j ) const
 {
 	return zPoints[i][j];
 }
@@ -203,7 +203,7 @@ bool MathMlCalculator::buildCoordFormula(const pugi::xml_node& coordRoot) {
 	return false;
 }
 
-int MathMlCalculator::GetGridSize()
+int MathMlCalculator::GetGridSize() const
 {
 	return gridSize;
 }

@@ -40,9 +40,8 @@ list: stm { $$ = new CompositeNode($1); }
 
 stm: LNUM stm RNUM { $$ = $2; }
    | LID stm RID { $$ = $2; }
-   | LOBJ list ROBJ { $$ = $2; $$->setFence("<OMOBJ>","</OMOBJ"); }
+   | LOBJ list ROBJ { $$ = $2; FOUT<<$$->translate(NOTATION); }
    | LAPP list RAPP { $$ = $2; }
-   | LAPP list RAPP END_OF_FILE { $$ = $2; FOUT<<$$->translate(NOTATION); } 
    | binop { $$ = $1; }
    | NUMBER { $$ = new NumNode(omlval.value); }
    | ID { $$ = new IdNode(omlval.identName); }

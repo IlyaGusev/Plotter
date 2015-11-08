@@ -151,10 +151,11 @@ string CompositeNode::translate(int notation) const {
 	for (int i = 0; i < nodes.size(); i++) {
 		s += nodes[i]->translate(notation);// + " ";
 	}
+	cout << "comp node\n";
 	s = addFence(notation, s);
 	if (notation == MATHML && Node::lfence != "(")
-		cout << "i'm here!" <<endl;
-	if (notation == OPENMATH)
+		s = "<mrow>" + s + "</mrow>";
+	if (notation == OPENMATH && Node::lfence != "(")
 		s = "<OMA>\n" + s + "</OMA>\n";;
 	return s;
 

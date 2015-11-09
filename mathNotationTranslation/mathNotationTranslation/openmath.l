@@ -15,15 +15,15 @@ LAPP			"<OMA>"
 RAPP			"</OMA>"
 LNUM 			"<OMI>"
 RNUM 			"</OMI>"
-LID				\<OMV\ name=\"
-RID				\"\/>
-EQUALS			\<OMS\ cd=\"relation1\"\ name=\"eq\"\/>
-MINUS 			\<OMS\ cd=\"arith1\"\ name=\"minus\"\/>
-PLUS 			\<OMS\ cd=\"arith1\"\ name=\"plus\"\/>
-DIVIDE			\<OMS\ cd=\"arith1\"\ name=\"divide\"\/>
-TIMES 			\<OMS\ cd=\"arith1\"\ name=\"times\"\/>
-ROOT			\<OMS\ cd=\"arith1\"\ name=\"root\"\/>
-UMINUS 			\<OMS\ cd=\"arith1\"\ name=\"unary_minus\"\/>
+LID				"<OMV name=\""
+RID				"\"/>"
+EQUALS			"<OMS\ cd=\"relation1\"\ name=\"eq\"\/>"
+MINUS 			"<OMS\ cd=\"arith1\"\ name=\"minus\"\/>"
+PLUS 			"<OMS\ cd=\"arith1\"\ name=\"plus\"\/>"
+DIVIDE			"<OMS\ cd=\"arith1\"\ name=\"divide\"\/>"
+TIMES 			"<OMS\ cd=\"arith1\"\ name=\"times\"\/>"
+ROOT			"<OMS\ cd=\"arith1\"\ name=\"root\"\/>"
+UMINUS 			"<OMS\ cd=\"arith1\"\ name=\"unary_minus\"\/>"
 ID				[a-z][a-z0-9]*
 NUMBER			([0-9]+)(\.[0-9]+)?
 END_OF_FILE		<<EOF>>

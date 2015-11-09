@@ -2,6 +2,7 @@
 
    SQRT
    USUB
+   END_OF_FILE
 
 
 Грамматика
@@ -15,40 +16,39 @@
     4    | LID stm RID
     5    | LOBJ list ROBJ
     6    | LAPP list RAPP
-    7    | LAPP list RAPP END_OF_FILE
-    8    | binop
-    9    | NUMBER
-   10    | ID
+    7    | binop
+    8    | NUMBER
+    9    | ID
 
-   11 binop: ADD stm stm
-   12      | SUB stm stm
-   13      | MUL stm stm
-   14      | DIV stm stm
-   15      | EQ stm stm
+   10 binop: ADD stm stm
+   11      | SUB stm stm
+   12      | MUL stm stm
+   13      | DIV stm stm
+   14      | EQ stm stm
 
 
 Терминальные символы с правилами, в которых они появляются
 
 $end (0) 0
 error (256)
-NUMBER (258) 9
-ID (259) 10
-ADD (260) 11
-MUL (261) 13
-SUB (262) 12
-DIV (263) 14
-EQ (264) 15
+NUMBER (258) 8
+ID (259) 9
+ADD (260) 10
+MUL (261) 12
+SUB (262) 11
+DIV (263) 13
+EQ (264) 14
 SQRT (265)
 USUB (266)
 LOBJ (267) 5
 ROBJ (268) 5
-LAPP (269) 6 7
-RAPP (270) 6 7
+LAPP (269) 6
+RAPP (270) 6
 LNUM (271) 3
 RNUM (272) 3
 LID (273) 4
 RID (274) 4
-END_OF_FILE (275) 7
+END_OF_FILE (275)
 
 
 Нетерминальные символы с правилами, в которых они появляются
@@ -56,12 +56,12 @@ END_OF_FILE (275) 7
 $accept (21)
     налево: 0
 list (22)
-    налево: 1 2, направо: 0 2 5 6 7
+    налево: 1 2, направо: 0 2 5 6
 stm (23)
-    налево: 3 4 5 6 7 8 9 10, направо: 1 2 3 4 11 12 13
-    14 15
+    налево: 3 4 5 6 7 8 9, направо: 1 2 3 4 10 11 12 13
+    14
 binop (24)
-    налево: 11 12 13 14 15, направо: 8
+    налево: 10 11 12 13 14, направо: 7
 
 
 State 0
@@ -73,15 +73,14 @@ State 0
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -102,16 +101,16 @@ State 0
 
 State 1
 
-    9 stm: NUMBER .
+    8 stm: NUMBER .
 
-    $default  вывод с использованием правила 9 (stm)
+    $default  вывод с использованием правила 8 (stm)
 
 
 State 2
 
-   10 stm: ID .
+    9 stm: ID .
 
-    $default  вывод с использованием правила 10 (stm)
+    $default  вывод с использованием правила 9 (stm)
 
 
 State 3
@@ -120,16 +119,15 @@ State 3
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   11      | ADD . stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   10      | ADD . stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -153,16 +151,15 @@ State 4
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   13      | MUL . stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   12      | MUL . stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -186,16 +183,15 @@ State 5
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   12      | SUB . stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   11      | SUB . stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -219,16 +215,15 @@ State 6
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   14      | DIV . stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   13      | DIV . stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -252,16 +247,15 @@ State 7
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
-   15      | EQ . stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+   14      | EQ . stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -288,15 +282,14 @@ State 8
     5    | . LOBJ list ROBJ
     5    | LOBJ . list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -324,16 +317,14 @@ State 9
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
     6    | LAPP . list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    7    | LAPP . list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -359,15 +350,14 @@ State 10
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -392,15 +382,14 @@ State 11
     4    | LID . stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -426,15 +415,14 @@ State 12
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     $end    сдвиг, и переход в состояние 24
     NUMBER  сдвиг, и переход в состояние 1
@@ -462,9 +450,9 @@ State 13
 
 State 14
 
-    8 stm: binop .
+    7 stm: binop .
 
-    $default  вывод с использованием правила 8 (stm)
+    $default  вывод с использованием правила 7 (stm)
 
 
 State 15
@@ -473,16 +461,15 @@ State 15
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   11      | ADD stm . stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   10      | ADD stm . stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -506,16 +493,15 @@ State 16
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   13      | MUL stm . stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   12      | MUL stm . stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -539,16 +525,15 @@ State 17
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   12      | SUB stm . stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   11      | SUB stm . stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -572,16 +557,15 @@ State 18
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   14      | DIV stm . stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   13      | DIV stm . stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -605,16 +589,15 @@ State 19
     4    | . LID stm RID
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
-   15      | EQ stm . stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+   14      | EQ stm . stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -640,15 +623,14 @@ State 20
     5    | . LOBJ list ROBJ
     5    | LOBJ list . ROBJ
     6    | . LAPP list RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -675,16 +657,14 @@ State 21
     5    | . LOBJ list ROBJ
     6    | . LAPP list RAPP
     6    | LAPP list . RAPP
-    7    | . LAPP list RAPP END_OF_FILE
-    7    | LAPP list . RAPP END_OF_FILE
-    8    | . binop
-    9    | . NUMBER
-   10    | . ID
-   11 binop: . ADD stm stm
-   12      | . SUB stm stm
-   13      | . MUL stm stm
-   14      | . DIV stm stm
-   15      | . EQ stm stm
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
 
     NUMBER  сдвиг, и переход в состояние 1
     ID      сдвиг, и переход в состояние 2
@@ -733,37 +713,37 @@ State 25
 
 State 26
 
-   11 binop: ADD stm stm .
+   10 binop: ADD stm stm .
 
-    $default  вывод с использованием правила 11 (binop)
+    $default  вывод с использованием правила 10 (binop)
 
 
 State 27
 
-   13 binop: MUL stm stm .
-
-    $default  вывод с использованием правила 13 (binop)
-
-
-State 28
-
-   12 binop: SUB stm stm .
+   12 binop: MUL stm stm .
 
     $default  вывод с использованием правила 12 (binop)
 
 
+State 28
+
+   11 binop: SUB stm stm .
+
+    $default  вывод с использованием правила 11 (binop)
+
+
 State 29
 
-   14 binop: DIV stm stm .
+   13 binop: DIV stm stm .
 
-    $default  вывод с использованием правила 14 (binop)
+    $default  вывод с использованием правила 13 (binop)
 
 
 State 30
 
-   15 binop: EQ stm stm .
+   14 binop: EQ stm stm .
 
-    $default  вывод с использованием правила 15 (binop)
+    $default  вывод с использованием правила 14 (binop)
 
 
 State 31
@@ -775,10 +755,7 @@ State 31
 
 State 32
 
-    6 stm: LAPP list RAPP .  [$end, NUMBER, ID, ADD, MUL, SUB, DIV, EQ, LOBJ, ROBJ, LAPP, RAPP, LNUM, RNUM, LID, RID]
-    7    | LAPP list RAPP . END_OF_FILE
-
-    END_OF_FILE  сдвиг, и переход в состояние 35
+    6 stm: LAPP list RAPP .
 
     $default  вывод с использованием правила 6 (stm)
 
@@ -795,10 +772,3 @@ State 34
     4 stm: LID stm RID .
 
     $default  вывод с использованием правила 4 (stm)
-
-
-State 35
-
-    7 stm: LAPP list RAPP END_OF_FILE .
-
-    $default  вывод с использованием правила 7 (stm)

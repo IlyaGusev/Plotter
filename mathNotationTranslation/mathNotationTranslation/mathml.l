@@ -12,59 +12,47 @@ void mlerror(const char *);
 
 WHITESPACE  	[ \t\f\r]
 LINE_SEPARATOR 	[\n]+
-LOPER			"<mo>"
-ROPER			"</mo>"
-LNUM			"<mn>"
-RNUM			"</mn>"
-LID				"<mi>"
-RID				"</mi>"
-LROW			"<mrow>"
-RROW			"</mrow>"
-LROOT			"<mroot>"
-RROOT			"</mroot>"
-LFRAC			"<mfrac>"
-RFRAC			"</mfrac>"
-LSQRT			"<msqrt>"
-RSQRT			"</msqrt>"
-LSUP			"<msup>"
-RSUP			"</msup>"
-LFENCED 		"<mfenced>"
-RFENCED 		"</mfenced>"
+LMATH			"<math>"
+RMATH			"</math>"
+LAPP			"<apply>"
+RAPP			"</apply>"
+LNUM			"<cn>"
+RNUM			"</cn>"
+LID				"<ci>"
+RID				"</ci>"
+EQUALS			"<eq/>"
+PLUS			"<plus/>"
+MINUS			"<minus/>"
+TIMES			"<times/>"
+DIVIDE			"<divide/>"
+ROOT			"<root/>"
 ID				[a-zA-Z][a-zA-Z0-9]*
 NUMBER			([0-9]+)(\.[0-9]+)?
 END_OF_FILE 	<<EOF>>
 
 
 %%
-{ID}	{strcpy(mllval.identName, mltext);return ID;}
-"+"		{return ADD;}
-"*"		{return MUL;}
-"-"		{return SUB;}
-"/"		{return DIV;}
-"="		{return EQ;}
+{ID}			{ strcpy(mllval.identName, mltext); return ID; }
+{NUMBER}		{ mllval.value = atof(mltext);	return NUMBER; }
+{LMATH}			{ return LMATH; }
+{RMATH}			{ return RMATH; }
+{LAPP}			{ return LAPP; }
+{RAPP}			{ return RAPP; }
+{LNUM}     		{ return LNUM;}
+{RNUM}     		{ return RNUM;}
+{LID}			{ return LID; }
+{RID}			{ return RID; }
 
-{NUMBER}	{    mllval.value = atof(mltext);	return NUMBER;}
-{LOPER}     {return LOPER;}
-{ROPER}     {return ROPER;}
-{LID}     {return LID;}
-{RID}     {return RID;}
-{LROW}     {return LROW;}
-{RROW}     {return RROW;}
-{LFRAC}     {return LFRAC;}
-{RFRAC}     {return RFRAC;}
-{LSQRT}     {return LSQRT;}
-{RSQRT}     {return RSQRT;}
-{LSUP}     {return LSUP;}
-{RSUP}     {return RSUP;}
-{LNUM}     {return LNUM;}
-{RNUM}     {return RNUM;}
-{LFENCED}     {return LFENCED;}
-{RFENCED}     {return RFENCED;}
+{EQUALS}		{ return EQ; }
+{MINUS}			{ return SUB; }
+{PLUS}			{ return ADD; }
+{DIVIDE}		{ return DIV; }
+{TIMES}			{ return MUL; }
+{ROOT}			{ return SQRT; }
+
 {WHITESPACE}     {}
-.           { }
-
 {LINE_SEPARATOR} {}
-
-<<EOF>>     { return END_OF_FILE;}
+.                {}
+<<EOF>>          { return END_OF_FILE;}
 
 %%

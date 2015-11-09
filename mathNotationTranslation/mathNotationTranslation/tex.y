@@ -35,22 +35,22 @@ void texerror(const char *){};
 %type <binop_node> binop;
 %%
 
-list: stm {$$ = new CompositeNode($1);}
- | list stm {$$ = $1; $$->add($2);}
+list: stm {$$ = new CompositeNode($1); }
+    | list stm {$$ = $1; $$->add($2); }
 ;
 
 stm: FRAC LBRACE list RBRACE LBRACE list RBRACE {$3->setFence("{", "}"); $6->setFence("{", "}"); $$ = new BinOpNode($3, $6, "frac");}
- | LPAREN list RPAREN {$$ = $2; $$->setFence("(", ")");}
- | LBRACE list RBRACE {$$ = $2; FOUT<<$$->translate(NOTATION);}
- | binop {$$ = $1;}
- | NUMBER {$$ = new NumNode(texlval.value);}
- | ID {$$ = new IdNode(texlval.identName);}
+   | LPAREN list RPAREN {$$ = $2; $$->setFence("(", ")");}
+   | LBRACE list RBRACE {$$ = $2; FOUT<<$$->translate(NOTATION); }
+   | binop {$$ = $1;}
+   | NUMBER {$$ = new NumNode(texlval.value);}
+   | ID {$$ = new IdNode(texlval.identName);}
 ;
 
 binop: stm ADD stm { $$ = new BinOpNode($1, $3, "+");}
- | stm EQ stm { $$ = new BinOpNode($1, $3, "=");}
- | stm SUB stm { $$ = new BinOpNode($1, $3, "-");}
- | stm MUL stm { $$ = new BinOpNode($1, $3, "*");}
- | stm DIV stm { $$ = new BinOpNode($1, $3, "/");}
+     | stm EQ stm { $$ = new BinOpNode($1, $3, "=");}
+     | stm SUB stm { $$ = new BinOpNode($1, $3, "-");}
+     | stm MUL stm { $$ = new BinOpNode($1, $3, "*");}
+     | stm DIV stm { $$ = new BinOpNode($1, $3, "/");}
 ;
 %%

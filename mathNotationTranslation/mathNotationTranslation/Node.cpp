@@ -93,7 +93,6 @@ string BinOpNode::translate(int notation) const {
 				if (operation == "frac")
 					result = "<divide/>\n" + left->translate(notation) +
 					         right->translate(notation);
->>>>>>> 413f1dab2298b19e5e399a5a96da3621bc1e11e5
 				break;
 			case OPENMATH:
 				//result = "";

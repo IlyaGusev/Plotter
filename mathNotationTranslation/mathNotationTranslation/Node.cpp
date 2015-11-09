@@ -93,11 +93,11 @@ string BinOpNode::translate(int notation) const {
 		switch (notation) {
 			case MATHML:
 				if (operation == "frac")
-					result = " <mfrac>" + left->translate(notation) +
-					         right->translate(notation) + "</mfrac> ";
+					result = " <mrow> <mfrac>" + left->translate(notation) +
+					         right->translate(notation) + "\t</mfrac> </mrow> ";
 				if (operation == "sup")
-					result = " <msup>" + left->translate(notation) +
-					         right->translate(notation) + "</msup> ";
+					result = " <mrow> <msup>" + left->translate(notation) +
+					         right->translate(notation) + "</msup> </mrow> ";
 				break;
 			case OPENMATH:
 				//result = "";
@@ -115,8 +115,12 @@ string BinOpNode::translate(int notation) const {
 		return addFence(notation, result);
 	}
 	else
-		if (notation != OPENMATH)
+		if (notation != OPENMATH) {
+			if (notation == MATHML) {
+				return addFence(notation, "<mrow>" + left->translate(notation) + createMap()[operation][notation] + right->translate(notation) + "</mrow>");
+			}
 			return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));
+		}		
 		else
 			return addFence(notation, createMap()[operation][notation] + left->translate(notation) + right->translate(notation));
 }

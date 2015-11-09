@@ -252,7 +252,7 @@ void GP::calculateZcoordinates()
 	zCoordinates.resize( calc.GetGridSize() );
 	for( size_t i = 0; i < calc.GetGridSize(); ++i ) {
 		zCoordinates[i].resize( calc.GetGridSize() );
-		for( size_t j = 0; j < calc.GetGridSize(); ++j ) {
+		for( size_t j = 0; j < (calc.Is2D() ? 1 : calc.GetGridSize()); ++j ) {
 			auto z_ij = calc.GetZ( i, j );
 			zCoordinates[i][j].resize( z_ij.size() );
 			for( size_t k = 0; k < z_ij.size(); ++k ) {

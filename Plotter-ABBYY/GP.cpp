@@ -1,8 +1,5 @@
 ﻿#include "GP.h"
 
-#define MinLengthOfSection 20
-#define MaxLengthOfSection 100
-
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
@@ -142,13 +139,12 @@ void GP::moveAlongZ( int num )
 
 void GP::changeScale( int num )
 {
-	if( lengthOfSection + num > MinLengthOfSection && lengthOfSection + num <= MaxLengthOfSection ) {
+	if( scale * (lengthOfSection + num) / lengthOfSection < maxScale && scale * (lengthOfSection + num) / lengthOfSection > minScale ) {
 		scale *= (lengthOfSection + num) / lengthOfSection;
 
-		lengthOfSection += num;
+		//lengthOfSection += num;
 
 		double size = (windowSize.first > windowSize.second) ? windowSize.first : windowSize.second;
-		//calc.RecalculatePoints( 4 * (int) (size * 2 / lengthOfSection) );
 
 		calculateRelativePoints();
 	}

@@ -89,8 +89,7 @@ private:
 	std::pair<double, double> windowSize;
 	
 	// Смещения и увеличение графика
-	/*double globalXShift;
-	double globalYShift;
-	double globalZShift;*/
 	double scale;
+
+	const int minScale = 0.4, maxScale = 2;
 };

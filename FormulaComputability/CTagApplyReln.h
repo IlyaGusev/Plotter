@@ -14,6 +14,7 @@ public:
 	virtual void operator ()( const CNode& node, CTreeNode& tree_node );
 protected:
 	static void enterToAllLimitableArgs( const CNode& node );//обход всех дочерних вершин для функций sum, product
+	static void enterToAllLimitableArgs( const CNode& node, CTreeNode& tree_node );
 };
 
 
@@ -55,7 +56,13 @@ void CTagApplyReln< TFunc>::operator ()( const CNode& node, CTreeNode& tree_node
 	const CTag& func = CTagContainer::getTag(child.name());
 	CTreeNode& next_node = tree_node.Step(child.name());
 	func.checkTree(child, next_node);
-	enterToAllChilds( node, next_node);
+
+	if (! (func.getType() & LIMITABLE )) {
+		enterToAllChilds( node, next_node);
+	}
+	else {
+		enterToAllLimitableArgs( node, next_node );
+	}
 }
 
 template<CType TFunc>
@@ -82,5 +89,28 @@ void CTagApplyReln< TFunc>::enterToAllLimitableArgs( const CNode& node )
 	//удаляем итерируемую переменную из области видимости
 	CTagCi::deleteIdentifier( bVar.text().as_string() );
 }
+
+template<CType TFunc>
+void CTagApplyReln< TFunc>::enterToAllLimitableArgs( const CNode& node, CTreeNode& tree_node )
+{
+	//предполагаем, что все теги корректно заданы
+	CNode child = node.first_child();
+	//узел, содержащий информацию о переменной, по которой будет выполнено взятие суммы или произведения
+	CNode bVar = child.next_sibling().first_child();
+	while ( !child.empty() ) {
+		CTag& childTag = CTagContainer::getTag( child.name() );
+		if ( childTag.getType() & CONDITION ) {
+			CTagCi::AddIdentifier( bVar, BOUND | VARIABLE | TFunc );
+		}
+		childTag(child, tree_node);
+		if ( childTag.getType() & LIMIT_UP ) {
+			CTagCi::AddIdentifier( bVar, BOUND | VARIABLE | TFunc );
+		}
+		child = child.next_sibling();
+	}
+	//удаляем итерируемую переменную из области видимости
+	CTagCi::deleteIdentifier( bVar.text().as_string() );
+}
+
 
 #endif

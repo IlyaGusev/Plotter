@@ -23,15 +23,36 @@ private:
 int main(int argc, char** argv) {
     try {
 		char* pathToFile = argv[1];
+        string flag;
         pugi::xml_document doc;
         pugi::xml_parse_result result = doc.load_file(pathToFile);
         if ( !result ) {
             throw XmlLoadException(result.description());
         }
-        // if ( FormulaComputability::checkComputability(doc) ) {
-        //     cout << "Given formula is computable" << endl;
-        // }
-        FormulaComputability::solveQudraticEquation(doc);
+
+        if (argc==3){
+			flag = argv[2];
+            if (flag=="-quad"){
+                FormulaComputability::solveQudraticEquation(doc);
+            }
+            else if (flag=="-sum"){
+                FormulaComputability::calculateLimits(doc, "sum");
+            }
+            else if (flag=="-prod"){
+                FormulaComputability::calculateLimits(doc, "prod");
+            }
+            else if (flag=="-sys"){
+                // FormulaComputability::calculateSum(doc);
+            }
+            else
+                throw invalid_argument("Wrong arguments");
+		}
+        else{
+            if ( FormulaComputability::checkComputability(doc) ) {
+                cout << "Given formula is computable" << endl;
+            }
+        }
+
     } catch (const exception& e) {
         cerr << "Error: " << e.what() << std::endl;
     }

@@ -117,6 +117,13 @@ const CNode CTag::checkArgumentType( const CNode& node, const CNode& parentNode,
     return curArgTag.checkSignature( node );
 }
 
+const CNode CTag::checkArgumentType( const CNode& node, const CNode& parentNode, int requiredType, CTreeNode& tree_node )
+{
+    checkArgumentType(node, parentNode, requiredType);
+    CTag& curArgTag = CTagContainer::getTag( node.name() );
+    return curArgTag.checkTree( node,  tree_node);
+}
+
 void CTag::throwException( const CNode& errorTag, int position, ErrorType errType )
 {
     static_assert( ATTRIBUTE_REQUIRED == 10, "add new enum value to throwException" );
@@ -230,8 +237,19 @@ void CTagBVar::operator()( const CNode& node ) const
             throwException( ident , ident.offset_debug(), INVALID_ARGUMENT );
         }
     }
-
 }
+
+void CTagBVar::operator()( const CNode& node, CTreeNode& tree_node )
+{
+    (*this)(node);
+    hasNoText( node );
+    CNode ident = node.first_child();
+    CTag& identTag = CTagContainer::getTag( ident.name() );
+    string identName(deleteSpaces(ident.text().as_string()));
+    tree_node.Step("bvar").Step("ci");
+    ident = identTag.checkSignature(ident);
+}
+
 
 CTagCondition::CTagCondition()
 {
@@ -274,14 +292,16 @@ const CNode CTagLimitable::checkSignature( const CNode& node ) const
     CNode nextArg = checkArgumentType( node.next_sibling(), node.parent(), BOUND );
     CTag& nextArgTag = CTagContainer::getTag( nextArg.name() );
     if ( !( nextArgTag.getType() & CONDITION ) ) {
-        nextArg = checkArgumentType( checkArgumentType( nextArg, node.parent(), LIMIT_LO ),
-                                                                            node.parent(), LIMIT_UP );
+        CNode temp = checkArgumentType( nextArg, node.parent(), LIMIT_LO );
+        nextArg = checkArgumentType( temp, node.parent(), LIMIT_UP );
     } else {
         nextArg = nextArg.next_sibling();
     }
+
     nextArg = checkArgumentType( nextArg, node.parent(), SPECIAL | NUMBER | VARIABLE );
     return nextArg;
 }
+
 
 void CTagLimitable::operator()( const CNode& node ) const
 {

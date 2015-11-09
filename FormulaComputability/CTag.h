@@ -38,6 +38,7 @@ protected:
 	void hasNoText( const CNode& node ) const;
 	void hasNChilds( const CNode& node,int N ) const;
 	const CNode checkArgumentType( const CNode& node, const CNode& parentNode, int requieredType ) const;
+	const CNode checkArgumentType( const CNode& node, const CNode& parentNode, int requieredType, CTreeNode& tree_node );
 	const string& getName() const;
 };
 
@@ -54,6 +55,7 @@ class CTagBVar : public CTagAtomic
 public:
 	CTagBVar();
 	virtual void operator() ( const CNode& node )const;
+	virtual void operator() ( const CNode& node, CTreeNode& tree_node );
 };
 
 //класс для работы с тегом <condition>

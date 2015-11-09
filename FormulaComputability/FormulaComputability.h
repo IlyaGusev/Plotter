@@ -19,7 +19,8 @@ public:
 	FormulaComputability();
     static bool checkComputability(const CNode& rootNode);//проверяет вычислимость формулы,
                                                         //rootNode - корневой элемент xml-документа
-		static double solveQudraticEquation(const CNode& rootNode);
+	static bool solveQudraticEquation(const CNode& rootNode);
+	static bool calculateLimits(const CNode& rootNode, string);
 	~FormulaComputability();
 };
 

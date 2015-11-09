@@ -27,3 +27,13 @@ void CTagQualifiers::operator()( const CNode& node ) const
         throwException( arg, arg.offset_debug(), INVALID_ARGUMENT );
     }
 }
+
+void CTagQualifiers::operator()( const CNode& node, CTreeNode& tree_node )
+{
+    (*this)(node);
+    auto arg = node.first_child();
+    CTag& argTag = CTagContainer::getTag( arg.name() );
+    int argType = argTag.getType();
+    argTag(arg, tree_node.Step(node.name()));
+    arg = argTag.checkSignature(arg);
+}

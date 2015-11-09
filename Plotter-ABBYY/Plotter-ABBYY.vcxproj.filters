@@ -85,21 +85,4 @@
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="plus_pressed.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="plus.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="bitmap1.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="minus.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="minus_pressed.bmp">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
 </Project>

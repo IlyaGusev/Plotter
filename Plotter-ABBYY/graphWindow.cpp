@@ -66,59 +66,13 @@ HWND GraphWindow::GetHandle() {
 void GraphWindow::OnCreate()
 {
 	HINSTANCE hInstance = (HINSTANCE) GetWindowLong( handle, GWL_HINSTANCE );
-	plusButtonHWND = ::CreateWindow( L"BUTTON", NULL, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
-		10, 10, 64, 64, handle, (HMENU) plusButtonCode, hInstance, NULL );
-	plusButtonHWND = ::CreateWindow( L"BUTTON", NULL, WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
-		10, 84, 64, 64, handle, (HMENU) minusButtonCode, hInstance, NULL );
 
-	plusBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_PLUS ) );
-	plusPressedBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_PLUS_PRESSED ) );
-	minusBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_MINUS ) );
-	minusPressedBitmap = ::LoadBitmap( hInstance, MAKEINTRESOURCE( IDB_BITMAP_MINUS_PRESSED ) );
-}
-
-void GraphWindow::OnDrawButtons( DRAWITEMSTRUCT* pdis )
-{
-	HINSTANCE hInstance = (HINSTANCE) ::GetWindowLong( handle, GWL_HINSTANCE );
-	HBITMAP curBitmap;
-	if( plusButtonCode == pdis->CtlID ) {
-		if( pdis->itemState & ODS_SELECTED ) {
-			curBitmap = plusPressedBitmap;
-		} else {
-			curBitmap = plusBitmap;
-		}
-	} else if( minusButtonCode == pdis->CtlID ) {
-		if( pdis->itemState & ODS_SELECTED ) {
-			curBitmap = minusPressedBitmap;
-		} else {
-			curBitmap = minusBitmap;
-		}
-	}
-	HDC hDC = pdis->hDC;
-	RECT rectItem = pdis->rcItem;
-
-	// Draw the bitmap on button
-	if( curBitmap != NULL ) {
-		RECT rcImage;
-		BITMAP bm;
-		LONG cxBitmap, cyBitmap;
-		if( ::GetObject( curBitmap, sizeof(bm), &bm ) ) {
-			cxBitmap = bm.bmWidth;
-			cyBitmap = bm.bmHeight;
-		}
-
-		// Center image horizontally  
-		::CopyRect( &rcImage, &rectItem );
-		LONG image_width = rcImage.right - rcImage.left;
-		LONG image_height = rcImage.bottom - rcImage.top;
-		rcImage.left = (image_width - cxBitmap) / 2;
-		rcImage.top = (image_height - cyBitmap) / 2;
-		::DrawState( hDC, NULL, NULL, (LPARAM) curBitmap, 0,
-			rcImage.left, rcImage.top,
-			rcImage.right - rcImage.left,
-			rcImage.bottom - rcImage.top,
-			DST_BITMAP );
-	}
+	plusButton = plusButtonImage = new Image( L"plus.png" );
+	plusPressedButtonImage = new Image( L"plus_pressed.png" );
+	plusRect = { 0, 0, 64, 64 };
+	minusButton = minusButtonImage = new Image( L"minus.png" );
+	minusPressedButtonImage = new Image( L"minus_pressed.png" );
+	minusRect = { 0, 0, 64, 64 };
 }
 
 int GraphWindow::OnCommand( int loWord, int hiWord )
@@ -132,23 +86,17 @@ int GraphWindow::OnCommand( int loWord, int hiWord )
 			break;
 		}
 	}
-	switch( loWord ) {
-	case plusButtonCode:
-		::SendMessage( handle, WM_KEYDOWN, 0x58, 0 );
-		break;
-	case minusButtonCode:
-		::SendMessage( handle, WM_KEYDOWN, 0x5A, 0 );
-		break;
-	default:
-		break;
-	}
-	::SetFocus( handle );
 	return 0;
 }
 
 void GraphWindow::OnDestroy()
 {
-	::PostQuitMessage(0);
+	::PostQuitMessage( 0 );
+
+	delete plusButtonImage;
+	delete plusPressedButtonImage;
+	delete minusButtonImage;
+	delete minusPressedButtonImage;
 }
 
 void GraphWindow::OnClose() {
@@ -219,7 +167,7 @@ void GraphWindow::OnMouseWheel( WPARAM wParam )
 
 void GraphWindow::OnMouseMove( WPARAM wParam, int x, int y )
 {
-	if( wParam == MK_LBUTTON ) {
+	if( !isInClickMode && wParam == MK_LBUTTON ) {
 		if( x - prevMousePosX > 2 ) {
 			::SendMessage( handle, WM_KEYDOWN, VK_RIGHT, 0 );
 			prevMousePosX = x;
@@ -239,8 +187,26 @@ void GraphWindow::OnMouseMove( WPARAM wParam, int x, int y )
 
 void GraphWindow::OnLButtonDown( int xMousePos, int yMousePos )
 {
-	prevMousePosX = xMousePos;
-	prevMousePosY = yMousePos;
+	if( plusRect.Contains( xMousePos, yMousePos ) ) {
+		isInClickMode = true;
+		plusButton = plusPressedButtonImage;
+		::SendMessage( handle, WM_KEYDOWN, 0x58, 0 );
+	} else if( minusRect.Contains( xMousePos, yMousePos ) ) {
+		isInClickMode = true;
+		minusButton = minusPressedButtonImage;
+		::SendMessage( handle, WM_KEYDOWN, 0x5A, 0 );
+	} else {
+		prevMousePosX = xMousePos;
+		prevMousePosY = yMousePos;
+	}
+}
+
+void GraphWindow::OnLButtonUp( int xMousePos, int yMousePos )
+{
+	isInClickMode = false;
+	plusButton = plusButtonImage;
+	minusButton = minusButtonImage;
+	::InvalidateRect( handle, NULL, FALSE );
 }
 
 //////////////////////////////
@@ -304,17 +270,16 @@ bool GraphWindow::ScreenCapture(LPWSTR filename)
 	int width = rect.right - rect.left;
 	int height = rect.bottom - rect.top;
 
-	HDC hDc = CreateCompatibleDC(GetDC(handle));
-    HBITMAP hBmp = CreateCompatibleBitmap(GetDC(handle), width, height);
-    SelectObject(hDc, hBmp);
-    BitBlt(hDc, 0, 0, width, height, GetDC(handle), 0, 0, SRCCOPY);
-    BitmapToJpg(hBmp, width, height, filename);
-    DeleteObject(hBmp);
+	HDC hDc = CreateCompatibleDC( GetDC( handle ) );
+	HBITMAP hBmp = CreateCompatibleBitmap( GetDC( handle ), width, height );
+	SelectObject( hDc, hBmp );
+	BitBlt( hDc, 0, 0, width, height, GetDC( handle ), 0, 0, SRCCOPY );
+	BitmapToJpg( hBmp, width, height, filename );
+	DeleteObject( hBmp );
     return true;
 }
 
 //////////////////////////////
-
 
 void GraphWindow::OnImageSave() {
 	HANDLE file;
@@ -339,6 +304,11 @@ void GraphWindow::OnImageSave() {
 
 void GraphWindow::OnSize(int width, int height) {
 	graphInPoints.changeSize((width - 20) / 2, height / 2);
+
+	plusRect.X = width - 64 - 10;
+	minusRect.X = width - 64 - 10;
+	plusRect.Y = height - 2 * 64 - 20;
+	minusRect.Y = height - 64 - 10;
 }
 
 void GraphWindow::OnPaint()
@@ -355,6 +325,10 @@ void GraphWindow::OnPaint()
 
 	drawGraph(newHdc);
 	drawAxes(newHdc);
+	Graphics graphics( newHdc );
+
+	graphics.DrawImage( plusButton, plusRect );
+	graphics.DrawImage( minusButton, minusRect );
 
 	::BitBlt( hdc, 0, 0, rect.right, rect.bottom, newHdc, 0, 0, SRCCOPY );
 
@@ -558,7 +532,7 @@ void GraphWindow::drawCoordinates(HDC dc, int axisNum, double maxValue, int poin
 		::TextOut(dc, projectionCoord.first, projectionCoord.second,
 			(LPCWSTR)std::wstring(text.begin(), text.end()).c_str(), text.length() - 4);
 	}
-	}
+}
 
 void GraphWindow::getMaxMinZAndRelativeGridKnots(double& min, double& max, int& xMin, int& yMin, int& xMax, int& yMax) {
 	std::vector<std::vector<std::vector<double>>> zCoordinates = graphInPoints.getZcoordinates();
@@ -700,10 +674,6 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 			that->OnCreate();
 			return 0;
 
-		case WM_DRAWITEM:
-			that->OnDrawButtons( (DRAWITEMSTRUCT*) lParam );
-			return 0;
-
 		case WM_COMMAND:
 			return that->OnCommand( LOWORD( wParam ), HIWORD( wParam ) );
 
@@ -720,7 +690,7 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 			break;
 
 		case WM_SIZE:
-			//that->OnSize(LOWORD(lParam), HIWORD(lParam));
+			that->OnSize(LOWORD(lParam), HIWORD(lParam));
 			return 0;
 
 		case WM_KEYDOWN:
@@ -733,6 +703,10 @@ LRESULT __stdcall GraphWindow::windowProc(HWND handle, UINT message, WPARAM wPar
 
 		case WM_LBUTTONDOWN:
 			that->OnLButtonDown( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
+			return 0;
+
+		case WM_LBUTTONUP:
+			that->OnLButtonUp( GET_X_LPARAM( lParam ), GET_Y_LPARAM( lParam ) );
 			return 0;
 
 		case WM_MOUSEMOVE:

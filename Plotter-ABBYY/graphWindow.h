@@ -25,6 +25,7 @@ protected:
 	void OnMouseWheel( WPARAM wParam );
 	void OnMouseMove( WPARAM wParam, int x, int y );
 	void OnLButtonDown( int xMousePos, int yMousePos );
+	void OnLButtonUp( int xMousePos, int yMousePos );
 	void OnImageSave();
 
 	void OnPaint();
@@ -32,7 +33,6 @@ protected:
 	void OnClose();
 	void OnDestroy();
 	void OnCreate();
-	void OnDrawButtons( DRAWITEMSTRUCT* pdis );
 	int OnCommand( int loWord, int hiWord );
 private:
 	const static wchar_t* nameClassWindow;
@@ -40,6 +40,7 @@ private:
 
 	int prevMousePosX;
 	int prevMousePosY;
+	bool isInClickMode = false;
 
 	int windowWidth;
 	int windowHeight;
@@ -47,10 +48,15 @@ private:
 	int cmdShow;
 	HWND handle;
 	HMENU menu;
-	
-	HWND plusButtonHWND;
-	HBITMAP plusBitmap, plusPressedBitmap, minusBitmap, minusPressedBitmap;
-	static const int plusButtonCode = 1000, minusButtonCode = 1001;
+
+	Gdiplus::Image* plusButtonImage;
+	Gdiplus::Image* plusPressedButtonImage;
+	Gdiplus::Image* plusButton;
+	Gdiplus::Rect plusRect;
+	Gdiplus::Image* minusButtonImage;
+	Gdiplus::Image* minusPressedButtonImage;
+	Gdiplus::Image* minusButton;
+	Gdiplus::Rect minusRect;
 
 	GP graphInPoints;
 

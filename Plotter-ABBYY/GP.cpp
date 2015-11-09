@@ -161,11 +161,12 @@ std::pair<double, double> GP::getOriginCoordinates()
 
 
 void GP::changeSize(double x, double y) {
-	if (windowSize.first != x || windowSize.second != y) {
+	if( windowSize.first != x || windowSize.second != y ) {
 		windowSize.first = x;
 		windowSize.second = y;
 		origin.first = windowSize.first;
 		origin.second = windowSize.second;
+		calculateRelativePoints();
 	}
 }
 

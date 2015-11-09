@@ -13,7 +13,7 @@ int _stdcall wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR comma
 
 	// first  bool - is2D
 	// second bool - isNeedToFillIf3D
-	GraphWindow mainWindow( 700, 700, L"./ex.xml", false, true );
+	GraphWindow mainWindow( 700, 700, L"./exbig.xml", false, true );
 
 	if( !mainWindow.Create( hInstance, nCmdShow ) ) {
 		return 1;

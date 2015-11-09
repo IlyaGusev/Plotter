@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
 			to_notation = 1;
 		else if (to == "tex")
 			to_notation = 2;
-		
+
 		NOTATION = to_notation;
 
 		if (from == "mathml") {
@@ -58,7 +58,6 @@ int main(int argc, char** argv) {
 			fclose(texin);
 		}
 		else if (from == "openmath") {
-			//cout << "Not implemented yet :(";
 			omin = fopen(input.c_str(), "r");
 			if (omin == NULL)
 				throw new invalid_argument("File not found");

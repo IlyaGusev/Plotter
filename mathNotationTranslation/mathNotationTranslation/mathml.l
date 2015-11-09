@@ -43,7 +43,7 @@ END_OF_FILE 	<<EOF>>
 "/"		{return DIV;}
 "="		{return EQ;}
 
-{NUMBER}	{    mllval.intValue = atoi(mltext);	return NUMBER;}
+{NUMBER}	{    mllval.value = atof(mltext);	return NUMBER;}
 {LOPER}     {return LOPER;}
 {ROPER}     {return ROPER;}
 {LID}     {return LID;}

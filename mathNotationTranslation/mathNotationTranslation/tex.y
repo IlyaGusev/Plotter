@@ -16,7 +16,7 @@ void texerror(const char *){};
 %}
 
 %union {
-    int intValue;
+    float value;
     char identName[256];
     char str[256];
     struct Node* node;
@@ -24,7 +24,7 @@ void texerror(const char *){};
     struct BinOpNode* binop_node;
 };
 
-%token <intValue> NUMBER
+%token <value> NUMBER
 %token <identName> ID
 %token <str> ADD MUL SUB DIV EQ SUP LBRACE RBRACE FRAC SQRT LPAREN RPAREN END_OF_FILE
 %left ADD SUB EQ
@@ -43,7 +43,7 @@ stm: FRAC LBRACE list RBRACE LBRACE list RBRACE {$3->setFence("{", "}"); $6->set
  | LPAREN list RPAREN {$$ = $2; $$->setFence("(", ")");}
  | LBRACE list RBRACE {$$ = $2; FOUT<<$$->translate(NOTATION);}
  | binop {$$ = $1;}
- | NUMBER {$$ = new NumNode(texlval.intValue);}
+ | NUMBER {$$ = new NumNode(texlval.value);}
  | ID {$$ = new IdNode(texlval.identName);}
 ;
 

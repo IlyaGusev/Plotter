@@ -44,7 +44,7 @@ string NumNode::translate(int notation) const {
 	string result;
 	ostringstream ss;
     ss << number;
-    string num = ss.str(); 
+    string num = ss.str();
 	switch (notation) {
 		case MATHML:
 			result = " <mn> " + num + " </mn> ";
@@ -153,9 +153,9 @@ string CompositeNode::translate(int notation) const {
 	}
 	s = addFence(notation, s);
 	if (notation == MATHML && Node::lfence != "(")
-		s = "<mrow>" + s + "</mrow>";
+		cout << "i'm here!" <<endl;
 	if (notation == OPENMATH)
-		s = "<OMA>\n" + s + "</OMA>\n";
+		s = "<OMA>\n" + s + "</OMA>\n";;
 	return s;
 
 }

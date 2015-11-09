@@ -16,7 +16,7 @@ void mlerror(const char *){};
 %}
 
 %union {
-    int intValue;
+    float value;
     char identName[256];
     char str[256];
     struct Node* node;
@@ -24,7 +24,7 @@ void mlerror(const char *){};
     struct BinOpNode* binop_node;
 };
 
-%token <intValue> NUMBER
+%token <value> NUMBER
 %token <identName> ID
 %token <str> ADD MUL SUB DIV EQ LOPER ROPER LNUM RNUM LID RID LROW RROW LROOT RROT LFRAC RFRAC LSQRT RSQRT LSUP RSUP LFENCED RFENCED END_OF_FILE
 %left LOPER ADD ROPER EQ
@@ -43,9 +43,9 @@ stm: LNUM stm RNUM {$$ = $2;}
  | LFRAC stm stm RFRAC {$2->setFence("{", "}"); $3->setFence("{", "}"); $$ = new BinOpNode($2, $3, "frac");}
  | LFENCED list RFENCED {$$ = $2; $$->setFence("(", ")");}
  | LROW list RROW {$$ = $2;}
- | LROW list RROW END_OF_FILE {$$ = $2; FOUT<<$$->translate(NOTATION);}
+ | LROW list RROW END_OF_FILE {$$ = $2; FOUT<<$$->translate(NOTATION); }
  | binop {$$ = $1;}
- | NUMBER {$$ = new NumNode(mllval.intValue);}
+ | NUMBER {$$ = new NumNode(mllval.value);}
  | ID {$$ = new IdNode(mllval.identName);}
  | LSUP stm stm RSUP {$$ = new BinOpNode($2, $3, "sup");}
 ;

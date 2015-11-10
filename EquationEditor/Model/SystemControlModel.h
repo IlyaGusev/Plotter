@@ -1,18 +1,16 @@
 ﻿#pragma once
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
+#include <vector>
 
-// Модель для дроби
-// Держит на себе пару ExprControl'ов - числитель и знаменатель
-class CFracControlModel : public IBaseExprModel {
+// Модель для системы
+// Держит на себе вектор ExprControl'ов - "уравнения" системы
+class CSystemControlModel : public IBaseExprModel {
 public:
-	CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
+	CSystemControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
-	// Выставляем размеры вьюшек
-	// Ширина дроби - 15 пикселей
-	// Высота дроби - две высоты соседнего текстового поля + 5
 	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void SetRect( const CRect& rect );
@@ -34,13 +32,19 @@ public:
 
 	void UpdateSelection();
 
+  int CalcHeight() const;
+
+  void AddChild( int num, std::shared_ptr<IBaseExprModel> initChild = 0 );
+  std::shared_ptr<IBaseExprModel> TryRemoveChild(int line); // контрол нового активного edit если ребенок удалился, nullptr иначе
+
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 	std::wstring Serialize();
+
+  int FindLineNum(std::shared_ptr<CEditControlModel>);
+  bool CanRemoveChild(int line);
 private:
-	// Верхний ребенок
-	std::shared_ptr<IBaseExprModel> firstChild;
-	// Нижний ребенок
-	std::shared_ptr<IBaseExprModel> secondChild;
+  // Дети-линии
+  std::vector<std::shared_ptr<IBaseExprModel>> children;
 
 	void updatePolygons();
 };

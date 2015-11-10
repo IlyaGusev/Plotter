@@ -30,6 +30,10 @@ int& CCaret::Offset() {
 	return offset;
 }
 
+void CCaret::SetOffset(int off) {
+  offset = off;
+}
+
 bool CCaret::operator!=(const CCaret& other) const {
 	return !(other == *this);
 }

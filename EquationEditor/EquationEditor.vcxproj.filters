@@ -80,7 +80,29 @@
     </ClCompile>
     <ClCompile Include="RibbonFramework.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>    <ClCompile Include="Model\ParenthesesControlModel.cpp">
+    </ClCompile>
+    <ClCompile Include="Model\ParenthesesControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\ProductControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SumControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="View\MainWindow.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SystemControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\IBracketsModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SquareBracketsControlModel.cpp">
+      <Filter>Source Files\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\BracesControlModel.cpp">
       <Filter>Source Files\Model</Filter>
     </ClCompile>
   </ItemGroup>
@@ -141,7 +163,29 @@
     </ClInclude>
     <ClInclude Include="RibbonFramework.h">
       <Filter>Header Files</Filter>
-    </ClInclude>    <ClInclude Include="Model\ParenthesesControlModel.h">
+    </ClInclude>
+    <ClInclude Include="Model\ParenthesesControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\ProductControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SumControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="View\MainWindow.h">
+      <Filter>Source Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SystemControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\IBracketsModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SquareBracketsControlModel.h">
+      <Filter>Source Files\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\BracesControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
   </ItemGroup>
@@ -154,13 +198,13 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="RibbonMarkup.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="RibbonUI.bml" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\bitmap1.bmp">
+    <CustomBuild Include="RibbonMarkup.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -17,6 +17,20 @@ void CRadicalControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CRadicalControlModel::Serialize() {
+	std::wstring result = L"";
+
+	if (!firstChild->IsEmpty()) {
+		result += L"<apply><root/><degree>" + firstChild->Serialize() + L"</degree>";
+	}
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</apply>";
+	}
+
+	return result;
+}
+
 void CRadicalControlModel::PlaceChildren()
 {
 	CRect newRect;
@@ -88,6 +102,8 @@ void CRadicalControlModel::MoveBy(int dx, int dy)
 
 void CRadicalControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из подкоренного выражения - идём в показатель
 	if( from == secondChild.get() ) {
 		firstChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -104,6 +120,8 @@ void CRadicalControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& ca
 
 void CRadicalControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в показатель
 	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -145,7 +163,8 @@ void CRadicalControlModel::updatePolygons()
 
 void CRadicalControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CRadicalControlModel::CopySelected() const

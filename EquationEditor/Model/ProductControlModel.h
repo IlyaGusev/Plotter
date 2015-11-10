@@ -2,17 +2,17 @@
 #include "Model/IBaseExprModel.h"
 #include "Model/ExprControlModel.h"
 
-// Модель для дроби
-// Держит на себе пару ExprControl'ов - числитель и знаменатель
-class CFracControlModel : public IBaseExprModel {
+class CSumControlModel;
+
+// Модель для произведения
+// Держит на себе пару ExprControl'ов - верхний и нижний индексы
+class CProductControlModel : public IBaseExprModel {
 public:
-	CFracControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
+	CProductControlModel( const CRect& rect, std::weak_ptr<IBaseExprModel> parent );
 
 	std::list<std::shared_ptr<IBaseExprModel>> GetChildren() const;
 
 	// Выставляем размеры вьюшек
-	// Ширина дроби - 15 пикселей
-	// Высота дроби - две высоты соседнего текстового поля + 5
 	void InitializeChildren( std::shared_ptr<IBaseExprModel> initChild = 0 );
 
 	void SetRect( const CRect& rect );
@@ -29,8 +29,10 @@ public:
 
 	void MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
 	void MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode = false );
-	
+
 	bool IsEmpty() const;
+	int GetSymbolHeight() const;
+	int GetSymbolTop() const;
 
 	void UpdateSelection();
 
@@ -41,6 +43,18 @@ private:
 	std::shared_ptr<IBaseExprModel> firstChild;
 	// Нижний ребенок
 	std::shared_ptr<IBaseExprModel> secondChild;
+	// Ребенок под произведением
+	std::shared_ptr<IBaseExprModel> productChild;
+
+	CRect symbolRect;
+
+	std::shared_ptr<CSumControlModel> realChildPresentSum;
+	std::shared_ptr<CProductControlModel> realChildPresentProduct;
 
 	void updatePolygons();
+	int getIndexHeight( int rectHeight );
+	int getSumChildRectTop() const;
+	void updateSymbolRect();
+	int getSumChildHeight() const;
+	void setRealChildPresentSumOrProduct();
 };

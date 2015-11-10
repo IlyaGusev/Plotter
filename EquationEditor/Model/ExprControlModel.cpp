@@ -23,6 +23,19 @@ void CExprControlModel::InitializeChildren( std::shared_ptr<IBaseExprModel> init
 	PlaceChildren();
 }
 
+std::wstring CExprControlModel::Serialize() {
+	std::wstring result = L"";
+	for (auto child : children) {
+		result += child->Serialize();
+	}
+	return result;
+}
+
+void CExprControlModel::RemoveChild(std::shared_ptr<IBaseExprModel> child)
+{
+  children.remove(child);
+}
+
 void CExprControlModel::Resize()
 {
 	int width = 0;
@@ -71,6 +84,7 @@ std::list<std::shared_ptr<IBaseExprModel>> CExprControlModel::GetChildren() cons
 void CExprControlModel::AddChildAfter( std::shared_ptr<IBaseExprModel> newChild, std::shared_ptr<IBaseExprModel> currentChild ) 
 {
 	auto currentChildIterator = std::find( children.begin(), children.end(), currentChild );
+	
 	if( currentChildIterator == children.end() ) {
 		children.push_back( newChild );
 	} else {
@@ -157,9 +171,9 @@ void CExprControlModel::UpdateSelection()
 bool CExprControlModel::DeleteSelectedPart() 
 {
 	// Если уже пустой - ничего не трогаем
-	if( IsEmpty() ) {
-		return true;
-	}
+	//if( IsEmpty() ) {
+	//	return true;
+	//}
 
 	for( auto it = children.begin(); it != children.end(); ++it ) {
 		// Если нужна дополнительная обработка, DeleteSelectedPart() ребенка вернет false

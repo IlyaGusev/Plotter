@@ -8,12 +8,14 @@
 #include "Model/ExprControlModel.h"
 #include "Model/EditControlModel.h"
 #include "Model/Utils/Caret.h"
+#include "Model/SystemControlModel.h"
 
 #include "Presenter/Utils/TreeBfsProcessor.h"
 #include "Presenter/Utils/TreeDfsProcessor.h"
 
 // Интерфейс окна редактора
-class IEditorView {
+class IEditorView
+{
 public:
 	virtual ~IEditorView() {}
 
@@ -40,9 +42,12 @@ public:
 
 
 // Класс, размещающий прямоугольники вьюшек на экране
-class CEquationPresenter {
+class CEquationPresenter
+{
 public:
 	CEquationPresenter( IEditorView& newView );
+
+	void SetDelta( int delta );
 
 	void AddControlView( ViewType viewType );
 
@@ -52,9 +57,11 @@ public:
 
 	void DeleteNextSymbol( bool withCtrl = false );
 
+	std::wstring Serialize();
+
 	// Отправляет во вьюшку всё, что нужно на ней нарисовать
 	void OnDraw();
-	
+
 	void SetCaret( int x, int y );
 
 	void SetSelection( int x, int y );
@@ -64,8 +71,21 @@ public:
 	void MoveCaretRight();
 	void MoveCaretTop();
 	void MoveCaretBottom();
+
+	void OnEnter(); // пока только создает нового ребенка, если мы находимся внутри системы уравнений
+
+	CCaret GetCaret() const
+	{
+		return caret;
+	}
+
+	std::shared_ptr<CExprControlModel> GetRoot()
+	{
+		return root;
+	}
+
 private:
-    std::shared_ptr<CExprControlModel> root;
+	std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;
 	CCaret caret;
 	CCaret beginSelectionCaret;
@@ -84,7 +104,12 @@ private:
 	void addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addSubscript( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
 	void addParentheses( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
-	
+	void addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addSystem( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addSquareBrackets( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+	void addBraces( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild );
+
 	void deleteSelectedParts();
 
 	// Говорит, правее ли model1 находится model2
@@ -97,5 +122,9 @@ private:
 	void setCaretPos( int x, int y, CCaret& curCaret );
 	void invalidateTree();
 
-	void invalidateBranch(std::shared_ptr<IBaseExprModel> startingNode);
+	void invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode );
+
+	int deltaY; // текущая величина сдвига прямоугольничков вверх (для обработки скролла)
+
+	std::shared_ptr<CSystemControlModel> NearestSystem( std::shared_ptr<CEditControlModel> edit ); // находит ближайшую систему уравнений
 };

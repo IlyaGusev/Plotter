@@ -19,6 +19,20 @@ void CFracControlModel::Resize()
 	rect.Bottom() = rect.Top() + height;
 }
 
+std::wstring CFracControlModel::Serialize() {
+	std::wstring result = L"<mfrac><mrow>";
+
+	if (!firstChild->IsEmpty()) {
+		result += firstChild->Serialize() + L"</mrow><mrow>";
+	}
+	result += params.text;
+	if (!secondChild->IsEmpty()) {
+		result += secondChild->Serialize() + L"</mrow></mfrac>";
+	}
+
+	return result;
+}
+
 void CFracControlModel::PlaceChildren()
 {
 	CRect newRect;
@@ -89,6 +103,8 @@ void CFracControlModel::MoveBy( int dx, int dy )
 
 void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ ) 
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в нижнего ребенка
 	if( from == parent.lock().get() ) {
 		secondChild->MoveCaretLeft( this, caret, isInSelectionMode );
@@ -102,6 +118,8 @@ void CFracControlModel::MoveCaretLeft( const IBaseExprModel* from, CCaret& caret
 
 void CFracControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& caret, bool isInSelectionMode /*= false */ )
 {
+	if (isInSelectionMode)
+		params.isSelected = true;
 	// Если пришли из родителя - идем в верхнего ребенка
 	if( from == parent.lock().get() ) {
 		firstChild->MoveCaretRight( this, caret, isInSelectionMode );
@@ -126,7 +144,8 @@ void CFracControlModel::updatePolygons()
 
 void CFracControlModel::UpdateSelection()
 {
-	params.isSelected = firstChild->IsSelected() && secondChild->IsSelected();
+	if (!(firstChild->IsSelected()) || !(secondChild->IsSelected()))
+		params.isSelected = false;
 }
 
 std::shared_ptr<IBaseExprModel> CFracControlModel::CopySelected() const

@@ -30,6 +30,7 @@ public:
 	void UpdateSelection();
 
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
+	std::wstring Serialize();
 private:
 	int getExponentHeight(int rectHeight);
 

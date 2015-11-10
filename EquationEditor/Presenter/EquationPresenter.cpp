@@ -5,19 +5,25 @@
 #include "Model/SubscriptControlModel.h"
 #include "Model/RadicalControlModel.h"
 #include "Model/ParenthesesControlModel.h"
+#include "Model/SquareBracketsControlModel.h"
+#include "Model/BracesControlModel.h"
+#include "Model/ProductControlModel.h"
+#include "Model/SumControlModel.h"
+#include "Model/SystemControlModel.h"
 
-CEquationPresenter::CEquationPresenter( IEditorView& newView ) : 
+CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	view( newView ),
 	isInSelectionMode( false )
 {
-	CRect rect(20, 180, 30, 200);
+	CRect rect( 20, 30, 30, 50 );
+	deltaY = 0;
 
 	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
 	root->InitializeChildren();
 	caret.SetCurEdit( root->GetChildren().front() );
 
 	// initialize tree invalidate processors
-	highlightingProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+	highlightingProcessor = CTreeBfsProcessor( root, []( CTreeBfsProcessor::Node node ) {
 		// Если у exprControl единственный ребенок - это текст. Если текст пустой - соответствующий editControl надо подсветить
 		if( node->GetType() == EXPR ) {
 			if( node->IsEmpty() ) {
@@ -31,43 +37,60 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	} );
 
 	resizeProcessor = CTreeDfsProcessor( root );
-	resizeProcessor.SetExitProcessFunc( [] ( CTreeDfsProcessor::Node node ) {
+	resizeProcessor.SetExitProcessFunc( []( CTreeDfsProcessor::Node node ) {
 		node->Resize();
 	} );
 
-	placeProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+	placeProcessor = CTreeBfsProcessor( root, []( CTreeBfsProcessor::Node node ) {
 		node->PlaceChildren();
 	} );
 
 	// initialize draw processor
-	drawProcessor = CTreeBfsProcessor( root, [=] ( CTreeBfsProcessor::Node node ) {
+	drawProcessor = CTreeBfsProcessor( root, [=]( CTreeBfsProcessor::Node node ) {
 		if( node->IsSelected() ) {
-			view.DrawSelectedRect( node->GetRect() );
+			CRect rect = node->GetRect();
+			rect.MoveBy( 0, -deltaY );
+			view.DrawSelectedRect( rect );
 		}
 		if( !node->GetLines().empty() ) {
-			view.DrawPolygon( node->GetLines(), node->IsSelected() );
+			std::list<CLine> lines;
+			for( CLine line : node->GetLines() ) {
+				line.MoveBy( 0, -deltaY );
+				lines.push_back( line );
+			}
+			view.DrawPolygon( lines, node->IsSelected() );
 		}
 		for( std::pair<std::wstring, CRect> selectedText : node->GetSelectedText() ) {
+			selectedText.second.MoveBy( 0, -deltaY );
 			view.DrawString( selectedText.first, selectedText.second, true );
 		}
 		for( std::pair<std::wstring, CRect> selectedText : node->GetUnselectedText() ) {
+			selectedText.second.MoveBy( 0, -deltaY );
 			view.DrawString( selectedText.first, selectedText.second, false );
 		}
 		if( node->IsHighlighted() ) {
-			view.DrawHighlightedRect( node->GetRect(), node->IsSelected() );
+			CRect rect = node->GetRect();
+			rect.MoveBy( 0, -deltaY );
+			view.DrawHighlightedRect( rect, node->IsSelected() );
 		}
 	} );
 
-	deleteSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+	deleteSelectionProcessor = CTreeBfsProcessor( root, []( CTreeBfsProcessor::Node node ) {
 		node->DeleteSelection();
 	} );
 
-	updateSelectionProcessor = CTreeBfsProcessor( root, [] ( CTreeBfsProcessor::Node node ) {
+	updateSelectionProcessor = CTreeBfsProcessor( root, []( CTreeBfsProcessor::Node node ) {
 		node->UpdateSelection();
 	} );
 }
 
-void CEquationPresenter::deleteSelectedParts() {
+void CEquationPresenter::SetDelta( int delta )
+{
+	deltaY = delta;
+}
+
+void CEquationPresenter::deleteSelectedParts()
+{
 	// Ставим каретку левее
 	caret = (isRightDirection( caret.GetCurEdit().get(), beginSelectionCaret.GetCurEdit().get(),
 		caret.Offset(), beginSelectionCaret.Offset() ))
@@ -84,7 +107,7 @@ void CEquationPresenter::deleteSelectedParts() {
 	root->DeleteSelectedPart();	// processor
 }
 
-void CEquationPresenter::InsertSymbol( wchar_t symbol ) 
+void CEquationPresenter::InsertSymbol( wchar_t symbol )
 {
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
@@ -99,8 +122,25 @@ void CEquationPresenter::InsertSymbol( wchar_t symbol )
 	view.Redraw();
 }
 
-void CEquationPresenter::DeleteSymbol( bool withCtrl ) 
+void CEquationPresenter::DeleteSymbol( bool withCtrl )
 {
+	// если курсор стоит на пустой строчке в системе уравнений, надо её убить 
+	std::shared_ptr<IBaseExprModel> next = nullptr;
+	auto parentSystem = NearestSystem( caret.GetCurEdit() );
+	if( parentSystem != nullptr ) {
+		int line = parentSystem->FindLineNum( caret.GetCurEdit() );
+		if( parentSystem->CanRemoveChild( line ) ) {
+			MoveCaretLeft();
+		}
+
+		next = parentSystem->TryRemoveChild( line );
+		if( next != nullptr ) {
+			invalidateTree();
+			view.Redraw();
+			return;
+		}
+	}
+	// иначе просто обычная строчка
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
@@ -109,14 +149,18 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 		--caret.Offset();
 		if( withCtrl ) {
-			while (caret.Offset() != 0) {
+			while( caret.Offset() != 0 ) {
 				caret.GetCurEdit()->DeleteSymbol( caret.Offset() - 1 );
 				--caret.Offset();
 			};
 		}
 	} else if( !withCtrl ) {
 		do {
-			MoveCaretLeft();
+			SetSelection( caret.GetPointX(), caret.GetPointY() );
+			deleteSelectedParts();
+			isInSelectionMode = false;
+			deleteSelectionProcessor.Process();
+			//MoveCaretLeft();
 		} while( caret.GetCurEdit() != root->GetChildren().front() && caret.Offset() == 0 );
 	}
 
@@ -124,12 +168,19 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 	view.Redraw();
 }
 
+std::wstring CEquationPresenter::Serialize()
+{
+	std::wstring result = root->Serialize();
+	std::cout << std::string( result.begin(), result.end() );
+	return L"";
+}
+
 void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 {
 	if( isInSelectionMode ) {
 		deleteSelectedParts();
 		isInSelectionMode = false;
-		deleteSelectionProcessor.Process( );
+		deleteSelectionProcessor.Process();
 	} else if( caret.Offset() != caret.GetCurEdit()->GetSymbolsWidths().size() ) {
 		caret.GetCurEdit()->DeleteSymbol( caret.Offset() );
 		if( withCtrl ) {
@@ -139,7 +190,11 @@ void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 		}
 	} else if( !withCtrl ) {
 		do {
-			MoveCaretRight();
+			SetSelection( caret.GetPointX(), caret.GetPointY() );
+			deleteSelectedParts();
+			isInSelectionMode = false;
+			deleteSelectionProcessor.Process();
+			//MoveCaretRight();
 		} while( caret.GetCurEdit() != root->GetChildren().back() && caret.GetCurEdit()->GetSymbolsWidths().size() == 0 );
 	}
 
@@ -147,16 +202,16 @@ void CEquationPresenter::DeleteNextSymbol( bool withCtrl )
 	view.Redraw();
 }
 
-void CEquationPresenter::OnDraw() 
+void CEquationPresenter::OnDraw()
 {
 	drawProcessor.Process();
-	
+
 	// Рисует каретку
 	// +1 - чтобы был небольшой пробел между кареткой и символом
 	view.SetCaret( caret.GetPointX() + 1, caret.GetPointY(), caret.GetHeight() );
 }
 
-std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x ) 
+std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditControlModel> editControlModel, int x )
 {
 	int offset = 0;
 	int length = editControlModel->GetRect().Left();
@@ -167,7 +222,7 @@ std::pair<int, int> CEquationPresenter::findCaretPos( std::shared_ptr<CEditContr
 		length += width;
 		++offset;
 	}
-	return std::make_pair(length, offset);
+	return std::make_pair( length, offset );
 }
 
 void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
@@ -213,14 +268,14 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 				}
 			}
 		} else {
-			int minDistance = std::numeric_limits<int>::max( );
+			int minDistance = std::numeric_limits<int>::max();
 			for( auto candidate : candidates ) {
-				auto rect = candidate->GetRect( );
-				if( rect.Top( ) <= y && rect.Bottom( ) >= y ) {
+				auto rect = candidate->GetRect();
+				if( rect.Top() <= y && rect.Bottom() >= y ) {
 					chosenCandidate = candidate;
 					break;
 				}
-				int distance = MIN( std::abs( rect.Top( ) - y ), std::abs( rect.Bottom( ) - y ) );
+				int distance = MIN( std::abs( rect.Top() - y ), std::abs( rect.Bottom() - y ) );
 				if( distance < minDistance ) {
 					minDistance = distance;
 					chosenCandidate = candidate;
@@ -228,14 +283,14 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 			}
 		}
 	} else {
-		int minDistance = std::numeric_limits<int>::max( );
+		int minDistance = std::numeric_limits<int>::max();
 		for( auto candidate : candidates ) {
-			auto rect = candidate->GetRect( );
-			if( rect.Right( ) >= x && rect.Left( ) <= x ) {
+			auto rect = candidate->GetRect();
+			if( rect.Right() >= x && rect.Left() <= x ) {
 				chosenCandidate = candidate;
 				break;
 			}
-			int distance = MIN( std::abs( rect.Right( ) - x ), std::abs( rect.Left( ) - x ) );
+			int distance = MIN( std::abs( rect.Right() - x ), std::abs( rect.Left() - x ) );
 			if( distance < minDistance ) {
 				minDistance = distance;
 				chosenCandidate = candidate;
@@ -251,7 +306,7 @@ void CEquationPresenter::setCaretPos( int x, int y, CCaret& curCaret )
 	curCaret.Offset() = newCaretPos.second;
 }
 
-void CEquationPresenter::SetCaret( int x, int y ) 
+void CEquationPresenter::SetCaret( int x, int y )
 {
 	isInSelectionMode = false;
 	deleteSelectionProcessor.Process();
@@ -288,7 +343,7 @@ bool CEquationPresenter::isRightDirection( const IBaseExprModel* model1, const I
 	return first < second;
 }
 
-void CEquationPresenter::SetSelection( int x, int y ) 
+void CEquationPresenter::SetSelection( int x, int y )
 {
 	if( !isInSelectionMode ) {
 		beginSelectionCaret = caret;
@@ -309,16 +364,49 @@ void CEquationPresenter::SetSelection( int x, int y )
 	view.Redraw();
 }
 
-void CEquationPresenter::MoveCaretLeft() 
+void CEquationPresenter::MoveCaretLeft()
 {
 	caret.GetCurEdit()->MoveCaretLeft( caret.GetCurEdit().get(), caret );
 	view.Redraw();
 }
 
-void CEquationPresenter::MoveCaretRight() 
+void CEquationPresenter::MoveCaretRight()
 {
 	caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret );
 	view.Redraw();
+}
+
+std::shared_ptr<CSystemControlModel> CEquationPresenter::NearestSystem( std::shared_ptr<CEditControlModel> edit ) // ближайший слева объект "системы уравнений"
+{
+	std::weak_ptr<IBaseExprModel> parentSystem = edit;
+	while( parentSystem.lock().get() != nullptr && parentSystem.lock().get()->GetType() != SYSTEM ) {
+		parentSystem = parentSystem.lock().get()->GetParent();
+	}
+
+	return std::dynamic_pointer_cast< CSystemControlModel >(parentSystem.lock());
+}
+
+void CEquationPresenter::OnEnter()
+{
+	std::shared_ptr<CSystemControlModel> parentSystem = NearestSystem( caret.GetCurEdit() );
+
+	if( parentSystem != nullptr ) { // if caret is in equation system
+		int lineNum = parentSystem->FindLineNum( caret.GetCurEdit() ) + 1; // надо поместить новый контрол на следующую строку
+		parentSystem->AddChild( lineNum, nullptr ); // вторым аргументом мог бы быть IBaseExprModel для вставки, но нет
+		invalidateTree();
+		view.Redraw();
+
+		std::list<std::shared_ptr<IBaseExprModel>> children = parentSystem->GetChildren();
+		auto it = children.begin();
+		std::advance( it, lineNum );
+		caret.SetCurEdit( it->get()->GetChildren().front() );
+		caret.SetOffset( 0 );
+
+		invalidateTree();
+		view.Redraw();
+	} else {
+		// if we're not in system -- keep calm and wait for realization
+	}
 }
 
 void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
@@ -336,17 +424,48 @@ void CEquationPresenter::addFrac( std::shared_ptr<CExprControlModel> parent, std
 	view.Redraw();
 }
 
+void CEquationPresenter::addSum( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	// Создаем новые модели для суммы
+	std::shared_ptr<CSumControlModel> sumModel( new CSumControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	sumModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( sumModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, sumModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addProduct( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	// Создаем новые модели для произведения
+	std::shared_ptr<CProductControlModel> productModel( new CProductControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	productModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( productModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, productModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
 void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
 {
 	std::shared_ptr<CDegrControlModel> degrModel( new CDegrControlModel( caret.GetCurEdit()->GetRect(), parent ) );
 	degrModel->InitializeChildren( selectedChild );
 	parent->AddChildAfter( degrModel, caret.GetCurEdit() );
 
-	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, degrModel );
 
+
 	invalidateTree();
-	
+
 	view.Redraw();
 }
 
@@ -360,7 +479,7 @@ void CEquationPresenter::addSubscript( std::shared_ptr<CExprControlModel> parent
 	parent->AddChildAfter( newEditControl, subscriptModel );
 
 	invalidateTree();
-	
+
 	view.Redraw();
 }
 
@@ -368,10 +487,39 @@ void CEquationPresenter::addParentheses( std::shared_ptr<CExprControlModel> pare
 {
 	std::shared_ptr<CParenthesesControlModel> parenthesesModel( new CParenthesesControlModel( caret.GetCurEdit()->GetRect(), parent ) );
 	parenthesesModel->InitializeChildren( selectedChild );
-	parent->AddChildAfter( parenthesesModel, caret.GetCurEdit( ) );
+	parent->AddChildAfter( parenthesesModel, caret.GetCurEdit() );
 
-	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit( )->SliceEditControl( caret.Offset( ) );
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, parenthesesModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addBraces( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	std::shared_ptr<CBracesControlModel> bracesModel( new CBracesControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	bracesModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( bracesModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, bracesModel );
+
+	invalidateTree();
+
+	view.Redraw();
+}
+
+
+void CEquationPresenter::addSquareBrackets( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	std::shared_ptr<CSquareBracketsControlModel> squareBracketsModel( new CSquareBracketsControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	squareBracketsModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( squareBracketsModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, squareBracketsModel );
 
 	invalidateTree();
 
@@ -388,7 +536,21 @@ void CEquationPresenter::addRadical( std::shared_ptr<CExprControlModel> parent, 
 	parent->AddChildAfter( newEditControl, radicalModel );
 
 	invalidateTree();
-	
+
+	view.Redraw();
+}
+
+void CEquationPresenter::addSystem( std::shared_ptr<CExprControlModel> parent, std::shared_ptr<CExprControlModel> selectedChild )
+{
+	std::shared_ptr<CSystemControlModel> systemModel( new CSystemControlModel( caret.GetCurEdit()->GetRect(), parent ) );
+	systemModel->InitializeChildren( selectedChild );
+	parent->AddChildAfter( systemModel, caret.GetCurEdit() );
+
+	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
+	parent->AddChildAfter( newEditControl, systemModel );
+
+	invalidateTree();
+
 	view.Redraw();
 }
 
@@ -396,54 +558,69 @@ void CEquationPresenter::AddControlView( ViewType viewType )
 {
 	std::shared_ptr<CExprControlModel> selectedChild;
 	if( isInSelectionMode ) {
-		selectedChild = std::dynamic_pointer_cast<CExprControlModel>( root->CopySelected() );
+		selectedChild = std::dynamic_pointer_cast< CExprControlModel >(root->CopySelected());
 		deleteSelectedParts();
 		isInSelectionMode = false;
 		deleteSelectionProcessor.Process();
 	}
 	// Подцепляем новую вьюшку к родителю той вьюшки, на которой находился фокус
 	// Родитель должен иметь тип CExprControlModel
-	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast<CExprControlModel>( caret.GetCurEdit()->GetParent().lock() ) );
+	std::shared_ptr<CExprControlModel> parent( std::dynamic_pointer_cast< CExprControlModel >(caret.GetCurEdit()->GetParent().lock()) );
 	if( parent == nullptr ) {
 		parent = root;
 	}
 
 	// Создаем новую вьюшку с выбранным типом
 	switch( viewType ) {
-	case FRAC:
-		addFrac( parent, selectedChild );
-		break;
-	case DEGR:
-		addDegr( parent, selectedChild );
-		break;
-	case SUBSCRIPT: 
-		addSubscript( parent, selectedChild );
-		break;
-	case RADICAL:
-		addRadical( parent, selectedChild );
-		break;
-	case PARENTHESES:
-		addParentheses( parent, selectedChild );
-		break;
-	default:
-		break;
+		case FRAC:
+			addFrac( parent, selectedChild );
+			break;
+		case DEGR:
+			addDegr( parent, selectedChild );
+			break;
+		case SUBSCRIPT:
+			addSubscript( parent, selectedChild );
+			break;
+		case RADICAL:
+			addRadical( parent, selectedChild );
+			break;
+		case PARENTHESES:
+			addParentheses( parent, selectedChild );
+			break;
+		case SQUAREBRACKETS:
+			addSquareBrackets( parent, selectedChild );
+			break;
+		case BRACES:
+			addBraces( parent, selectedChild );
+			break;
+		case SUM:
+			addSum( parent, selectedChild );
+			break;
+		case PRODUCT:
+			addProduct( parent, selectedChild );
+			break;
+		case SYSTEM:
+			addSystem( parent, selectedChild );
+			break;
+		default:
+			break;
 	}
 
 	MoveCaretRight();
 }
 
-void CEquationPresenter::invalidateTree( )
+void CEquationPresenter::invalidateTree()
 {
 	invalidateBranch( root );
 }
 
-void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode ) 
+void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> startingNode )
 {
 	highlightingProcessor.SetStartingNode( startingNode );
 	resizeProcessor.SetStartingNode( startingNode );
 	placeProcessor.SetStartingNode( startingNode );
 
-	highlightingProcessor.Process( );
+	highlightingProcessor.Process();
 	resizeProcessor.Process();
 	placeProcessor.Process();
 }

@@ -181,9 +181,9 @@ std::wstring CEditControlModel::Wrap(std::wstring &text, bool isNumber) {
 	if (text == L"")
 		return L"";
 	if (isNumber)
-		return L">nc<" + text + L">nc/<";
+		return L">nc/<" + text + L">nc<";
 	else
-		return L">ic<" + text + L">/ic<";
+		return L">ic/<" + text + L">ic<";
 }
 
 std::wstring CEditControlModel::ParseText() {
@@ -210,19 +210,19 @@ std::wstring CEditControlModel::ParseText() {
 			std::wstring tmp;
 			switch (params.text[i]) {
 			case L'+':
-				tmp = L">/sulp<";
+				tmp = L">/sulp<>ylppa<";
 				break;
 			case L'-':
-				tmp = L">/sunim<";
+				tmp = L">/sunim<>ylppa<";
 				break;
 			case L'*':
-				tmp = L">/semit<"; //SORRY IM REALLY SORRY
+				tmp = L">/semit<>ylppa<"; //SORRY IM REALLY SORRY
 				break;
 			case L'/':
-				tmp = L">/edivid<";
+				tmp = L">/edivid<>ylppa<";
 				break;
 			case L'=':
-				tmp = L">/qe<";
+				tmp = L">/qe<>ylppa<";
 				break;
 			default:
 				break;
@@ -245,6 +245,7 @@ std::wstring CEditControlModel::ParseText() {
 	{
 		result += operationStack.top();
 		operationStack.pop();
+		result = L">ylppa/<" + result;
 	}
 
 	//reverse the string

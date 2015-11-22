@@ -1,0 +1,14 @@
+<mrow>
+  <mfrac>
+    <mrow>
+      <mn>5</mn>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+    <mrow>
+      <mn>3</mn>
+    </mrow>
+  </mfrac>
+  <mo>=</mo>
+  <mi>x</mi>
+</mrow>

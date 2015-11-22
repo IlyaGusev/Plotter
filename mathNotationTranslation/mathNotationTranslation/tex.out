@@ -1,0 +1,657 @@
+Терминалы не используются в грамматике
+
+   SUP
+   SQRT
+   END_OF_FILE
+
+
+Грамматика
+
+    0 $accept: list $end
+
+    1 list: stm
+    2     | list stm
+
+    3 stm: FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | LPAREN list RPAREN
+    5    | LBRACE list RBRACE
+    6    | binop
+    7    | NUMBER
+    8    | ID
+
+    9 binop: stm ADD stm
+   10      | stm EQ stm
+   11      | stm SUB stm
+   12      | stm MUL stm
+   13      | stm DIV stm
+
+
+Терминальные символы с правилами, в которых они появляются
+
+$end (0) 0
+error (256)
+NUMBER (258) 7
+ID (259) 8
+ADD (260) 9
+MUL (261) 12
+SUB (262) 11
+DIV (263) 13
+EQ (264) 10
+SUP (265)
+LBRACE (266) 3 5
+RBRACE (267) 3 5
+FRAC (268) 3
+SQRT (269)
+LPAREN (270) 4
+RPAREN (271) 4
+END_OF_FILE (272)
+
+
+Нетерминальные символы с правилами, в которых они появляются
+
+$accept (18)
+    налево: 0
+list (19)
+    налево: 1 2, направо: 0 2 3 4 5
+stm (20)
+    налево: 3 4 5 6 7 8, направо: 1 2 9 10 11 12 13
+binop (21)
+    налево: 9 10 11 12 13, направо: 6
+
+
+State 0
+
+    0 $accept: . list $end
+    1 list: . stm
+    2     | . list stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    list   переход в состояние 6
+    stm    переход в состояние 7
+    binop  переход в состояние 8
+
+
+State 1
+
+    7 stm: NUMBER .
+
+    $default  вывод с использованием правила 7 (stm)
+
+
+State 2
+
+    8 stm: ID .
+
+    $default  вывод с использованием правила 8 (stm)
+
+
+State 3
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    5    | LBRACE . list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    list   переход в состояние 9
+    stm    переход в состояние 7
+    binop  переход в состояние 8
+
+
+State 4
+
+    3 stm: FRAC . LBRACE list RBRACE LBRACE list RBRACE
+
+    LBRACE  сдвиг, и переход в состояние 10
+
+
+State 5
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    4    | LPAREN . list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    list   переход в состояние 11
+    stm    переход в состояние 7
+    binop  переход в состояние 8
+
+
+State 6
+
+    0 $accept: list . $end
+    2 list: list . stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    $end    сдвиг, и переход в состояние 12
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 13
+    binop  переход в состояние 8
+
+
+State 7
+
+    1 list: stm .  [$end, NUMBER, ID, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+
+    ADD  сдвиг, и переход в состояние 14
+    MUL  сдвиг, и переход в состояние 15
+    SUB  сдвиг, и переход в состояние 16
+    DIV  сдвиг, и переход в состояние 17
+    EQ   сдвиг, и переход в состояние 18
+
+    $default  вывод с использованием правила 1 (list)
+
+
+State 8
+
+    6 stm: binop .
+
+    $default  вывод с использованием правила 6 (stm)
+
+
+State 9
+
+    2 list: list . stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    5    | LBRACE list . RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    RBRACE  сдвиг, и переход в состояние 19
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 13
+    binop  переход в состояние 8
+
+
+State 10
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    3    | FRAC LBRACE . list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    list   переход в состояние 20
+    stm    переход в состояние 7
+    binop  переход в состояние 8
+
+
+State 11
+
+    2 list: list . stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    4    | LPAREN list . RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+    RPAREN  сдвиг, и переход в состояние 21
+
+    stm    переход в состояние 13
+    binop  переход в состояние 8
+
+
+State 12
+
+    0 $accept: list $end .
+
+    $default  принять
+
+
+State 13
+
+    2 list: list stm .  [$end, NUMBER, ID, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+
+    ADD  сдвиг, и переход в состояние 14
+    MUL  сдвиг, и переход в состояние 15
+    SUB  сдвиг, и переход в состояние 16
+    DIV  сдвиг, и переход в состояние 17
+    EQ   сдвиг, и переход в состояние 18
+
+    $default  вывод с использованием правила 2 (list)
+
+
+State 14
+
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+    9      | stm ADD . stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 22
+    binop  переход в состояние 8
+
+
+State 15
+
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   12      | stm MUL . stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 23
+    binop  переход в состояние 8
+
+
+State 16
+
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   11      | stm SUB . stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 24
+    binop  переход в состояние 8
+
+
+State 17
+
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+   13      | stm DIV . stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 25
+    binop  переход в состояние 8
+
+
+State 18
+
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   10      | stm EQ . stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 26
+    binop  переход в состояние 8
+
+
+State 19
+
+    5 stm: LBRACE list RBRACE .
+
+    $default  вывод с использованием правила 5 (stm)
+
+
+State 20
+
+    2 list: list . stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    3    | FRAC LBRACE list . RBRACE LBRACE list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    RBRACE  сдвиг, и переход в состояние 27
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 13
+    binop  переход в состояние 8
+
+
+State 21
+
+    4 stm: LPAREN list RPAREN .
+
+    $default  вывод с использованием правила 4 (stm)
+
+
+State 22
+
+    9 binop: stm . ADD stm
+    9      | stm ADD stm .  [$end, NUMBER, ID, ADD, SUB, EQ, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+
+    MUL  сдвиг, и переход в состояние 15
+    DIV  сдвиг, и переход в состояние 17
+
+    $default  вывод с использованием правила 9 (binop)
+
+    Конфликт между правилом 9 и лексемой ADD разрешен выводом (%left ADD).
+    Конфликт между правилом 9 и лексемой MUL разрешен сдвигом (ADD < MUL).
+    Конфликт между правилом 9 и лексемой SUB разрешен выводом (%left SUB).
+    Конфликт между правилом 9 и лексемой DIV разрешен сдвигом (ADD < DIV).
+    Конфликт между правилом 9 и лексемой EQ разрешен выводом (%left EQ).
+
+
+State 23
+
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   12      | stm MUL stm .  [$end, NUMBER, ID, ADD, MUL, SUB, DIV, EQ, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+   13      | stm . DIV stm
+
+    $default  вывод с использованием правила 12 (binop)
+
+    Конфликт между правилом 12 и лексемой ADD разрешен выводом (ADD < MUL).
+    Конфликт между правилом 12 и лексемой MUL разрешен выводом (%left MUL).
+    Конфликт между правилом 12 и лексемой SUB разрешен выводом (SUB < MUL).
+    Конфликт между правилом 12 и лексемой DIV разрешен выводом (%left DIV).
+    Конфликт между правилом 12 и лексемой EQ разрешен выводом (EQ < MUL).
+
+
+State 24
+
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   11      | stm SUB stm .  [$end, NUMBER, ID, ADD, SUB, EQ, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+
+    MUL  сдвиг, и переход в состояние 15
+    DIV  сдвиг, и переход в состояние 17
+
+    $default  вывод с использованием правила 11 (binop)
+
+    Конфликт между правилом 11 и лексемой ADD разрешен выводом (%left ADD).
+    Конфликт между правилом 11 и лексемой MUL разрешен сдвигом (SUB < MUL).
+    Конфликт между правилом 11 и лексемой SUB разрешен выводом (%left SUB).
+    Конфликт между правилом 11 и лексемой DIV разрешен сдвигом (SUB < DIV).
+    Конфликт между правилом 11 и лексемой EQ разрешен выводом (%left EQ).
+
+
+State 25
+
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+   13      | stm DIV stm .  [$end, NUMBER, ID, ADD, MUL, SUB, DIV, EQ, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+
+    $default  вывод с использованием правила 13 (binop)
+
+    Конфликт между правилом 13 и лексемой ADD разрешен выводом (ADD < DIV).
+    Конфликт между правилом 13 и лексемой MUL разрешен выводом (%left MUL).
+    Конфликт между правилом 13 и лексемой SUB разрешен выводом (SUB < DIV).
+    Конфликт между правилом 13 и лексемой DIV разрешен выводом (%left DIV).
+    Конфликт между правилом 13 и лексемой EQ разрешен выводом (EQ < DIV).
+
+
+State 26
+
+    9 binop: stm . ADD stm
+   10      | stm . EQ stm
+   10      | stm EQ stm .  [$end, NUMBER, ID, ADD, SUB, EQ, LBRACE, RBRACE, FRAC, LPAREN, RPAREN]
+   11      | stm . SUB stm
+   12      | stm . MUL stm
+   13      | stm . DIV stm
+
+    MUL  сдвиг, и переход в состояние 15
+    DIV  сдвиг, и переход в состояние 17
+
+    $default  вывод с использованием правила 10 (binop)
+
+    Конфликт между правилом 10 и лексемой ADD разрешен выводом (%left ADD).
+    Конфликт между правилом 10 и лексемой MUL разрешен сдвигом (EQ < MUL).
+    Конфликт между правилом 10 и лексемой SUB разрешен выводом (%left SUB).
+    Конфликт между правилом 10 и лексемой DIV разрешен сдвигом (EQ < DIV).
+    Конфликт между правилом 10 и лексемой EQ разрешен выводом (%left EQ).
+
+
+State 27
+
+    3 stm: FRAC LBRACE list RBRACE . LBRACE list RBRACE
+
+    LBRACE  сдвиг, и переход в состояние 28
+
+
+State 28
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    3    | FRAC LBRACE list RBRACE LBRACE . list RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    list   переход в состояние 29
+    stm    переход в состояние 7
+    binop  переход в состояние 8
+
+
+State 29
+
+    2 list: list . stm
+    3 stm: . FRAC LBRACE list RBRACE LBRACE list RBRACE
+    3    | FRAC LBRACE list RBRACE LBRACE list . RBRACE
+    4    | . LPAREN list RPAREN
+    5    | . LBRACE list RBRACE
+    6    | . binop
+    7    | . NUMBER
+    8    | . ID
+    9 binop: . stm ADD stm
+   10      | . stm EQ stm
+   11      | . stm SUB stm
+   12      | . stm MUL stm
+   13      | . stm DIV stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    LBRACE  сдвиг, и переход в состояние 3
+    RBRACE  сдвиг, и переход в состояние 30
+    FRAC    сдвиг, и переход в состояние 4
+    LPAREN  сдвиг, и переход в состояние 5
+
+    stm    переход в состояние 13
+    binop  переход в состояние 8
+
+
+State 30
+
+    3 stm: FRAC LBRACE list RBRACE LBRACE list RBRACE .
+
+    $default  вывод с использованием правила 3 (stm)

@@ -1,0 +1,245 @@
+// ******************************************************************************
+// * This is an automatically generated file containing the ribbon resource for *
+// * your application.                                                          *
+// ******************************************************************************
+
+#include ".\RibbonIDs.h"
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_FRAC_LabelTitle_RESID L"\x0414\x0440\x043e\x0431\x044c" /* LabelTitle ID_CMD_FRAC_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_FRAC_LabelDescription_RESID L"\x0414\x0440\x043e\x0431\x044c" /* LabelDescription ID_CMD_FRAC_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_FRAC_TooltipDescription_RESID L"\x0421\x043e\x0437\x0434\x0430\x043d\x0438\x0435 \x043d\x043e\x0432\x043e\x0439 \x0434\x0440\x043e\x0431\x0438" /* TooltipDescription ID_CMD_FRAC_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_FRAC_LargeImages_RESID    BITMAP    "Res\frac.bmp" /* LargeImages ID_CMD_FRAC_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_DEGR_LabelTitle_RESID L"\x0421\x0442\x0435\x043f\x0435\x043d\x044c" /* LabelTitle ID_CMD_DEGR_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_DEGR_LabelDescription_RESID L"\x0421\x0442\x0435\x043f\x0435\x043d\x044c" /* LabelDescription ID_CMD_DEGR_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_DEGR_TooltipDescription_RESID L"\x0421\x043e\x0437\x0434\x0430\x043d\x0438\x0435 \x043d\x043e\x0432\x043e\x0439 \x0441\x0442\x0435\x043f\x0435\x043d\x0438" /* TooltipDescription ID_CMD_DEGR_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_DEGR_LargeImages_RESID    BITMAP    "Res\degr.bmp" /* LargeImages ID_CMD_DEGR_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_SUBSCRIPT_LabelTitle_RESID L"\x041d\x0438\x0436\x043d\x0438\x0439 \x0438\x043d\x0434\x0435\x043a\x0441" /* LabelTitle ID_CMD_SUBSCRIPT_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SUBSCRIPT_LabelDescription_RESID L"\x041d\x0438\x0436\x043d\x0438\x0439 \x0438\x043d\x0434\x0435\x043a\x0441" /* LabelDescription ID_CMD_SUBSCRIPT_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SUBSCRIPT_TooltipDescription_RESID L"\x0421\x043e\x0437\x0434\x0430\x043d\x0438\x0435 \x043d\x0438\x0436\x043d\x0435\x0433\x043e \x0438\x043d\x0434\x0435\x043a\x0441\x0430" /* TooltipDescription ID_CMD_SUBSCRIPT_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_SUBSCRIPT_LargeImages_RESID    BITMAP    "Res\subscript.bmp" /* LargeImages ID_CMD_SUBSCRIPT_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_RADICAL_LabelTitle_RESID L"\x041a\x043e\x0440\x0435\x043d\x044c" /* LabelTitle ID_CMD_RADICAL_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_RADICAL_LabelDescription_RESID L"\x041a\x043e\x0440\x0435\x043d\x044c" /* LabelDescription ID_CMD_RADICAL_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_RADICAL_TooltipDescription_RESID L"\x0421\x043e\x0437\x0434\x0430\x043d\x0438\x0435 \x043a\x043e\x0440\x043d\x044f" /* TooltipDescription ID_CMD_RADICAL_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_RADICAL_LargeImages_RESID    BITMAP    "Res\\radical.bmp" /* LargeImages ID_CMD_RADICAL_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_Parantheses_LabelTitle_RESID L"\x041a\x0440\x0443\x0433\x043b\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_Parantheses_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Parantheses_LabelDescription_RESID L"\x041a\x0440\x0443\x0433\x043b\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelDescription ID_CMD_Parantheses_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Parantheses_TooltipDescription_RESID L"\x041a\x0440\x0443\x0433\x043b\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* TooltipDescription ID_CMD_Parantheses_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Parantheses_LargeImages_RESID    BITMAP    "Res\parantheses.bmp" /* LargeImages ID_CMD_Parantheses_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_SquareBrackets_LabelTitle_RESID L"\x041a\x0432\x0430\x0434\x0440\x0430\x0442\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_SquareBrackets_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SquareBrackets_LabelDescription_RESID L"\x041a\x0432\x0430\x0434\x0440\x0430\x0442\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelDescription ID_CMD_SquareBrackets_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SquareBrackets_TooltipDescription_RESID L"\x041a\x0432\x0430\x0434\x0440\x0430\x0442\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* TooltipDescription ID_CMD_SquareBrackets_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_SquareBrackets_LargeImages_RESID    BITMAP    "Res\squarebrackets.bmp" /* LargeImages ID_CMD_SquareBrackets_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_Braces_LabelTitle_RESID L"\x0424\x0438\x0433\x0443\x0440\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_Braces_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Braces_LabelDescription_RESID L"\x0424\x0438\x0433\x0443\x0440\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* LabelDescription ID_CMD_Braces_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Braces_TooltipDescription_RESID L"\x0424\x0438\x0433\x0443\x0440\x043d\x044b\x0435 \x0441\x043a\x043e\x0431\x043a\x0438" /* TooltipDescription ID_CMD_Braces_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Braces_LargeImages_RESID    BITMAP    "Res\braces.bmp" /* LargeImages ID_CMD_Braces_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_Sum_LabelTitle_RESID L"\x0421\x0443\x043c\x043c\x0430" /* LabelTitle ID_CMD_Sum_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Sum_LabelDescription_RESID L"\x0421\x0443\x043c\x043c\x0430" /* LabelDescription ID_CMD_Sum_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Sum_TooltipDescription_RESID L"\x0421\x0443\x043c\x043c\x0430" /* TooltipDescription ID_CMD_Sum_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Sum_LargeImages_RESID    BITMAP    "Res\sum.bmp" /* LargeImages ID_CMD_Sum_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_Product_LabelTitle_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* LabelTitle ID_CMD_Product_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Product_LabelDescription_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* LabelDescription ID_CMD_Product_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Product_TooltipDescription_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* TooltipDescription ID_CMD_Product_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Product_LargeImages_RESID    BITMAP    "Res\product.bmp" /* LargeImages ID_CMD_Product_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_System_LabelTitle_RESID L"\x0421\x0438\x0441\x0442\x0435\x043c\x0430 \x0443\x0440\x0430\x0432\x043d\x0435\x043d\x0438\x0439" /* LabelTitle ID_CMD_System_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_System_LabelDescription_RESID L"\x0421\x0438\x0441\x0442\x0435\x043c\x0430 \x0443\x0440\x0430\x0432\x043d\x0435\x043d\x0438\x0439" /* LabelDescription ID_CMD_System_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_System_TooltipDescription_RESID L"\x0421\x0438\x0441\x0442\x0435\x043c\x0430 \x0443\x0440\x0430\x0432\x043d\x0435\x043d\x0438\x0439" /* TooltipDescription ID_CMD_System_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_System_LargeImages_RESID    BITMAP    "Res\eqsystem.bmp" /* LargeImages ID_CMD_System_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_EXIT_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_EXIT_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_EXIT_LabelDescription_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelDescription ID_CMD_EXIT_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_EXIT_TooltipDescription_RESID L"\x0417\x0430\x043a\x0440\x044b\x0442\x0438\x0435 \x043f\x0440\x0438\x043b\x043e\x0436\x0435\x043d\x0438\x044f" /* TooltipDescription ID_CMD_EXIT_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_EXIT_LargeImages_RESID    BITMAP    "Res\\Exit32.bmp" /* LargeImages ID_CMD_EXIT_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_SAVE_LabelTitle_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0438\x0442\x044c \x0432 \x0444\x0430\x0439\x043b" /* LabelTitle ID_CMD_SAVE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SAVE_LabelDescription_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0438\x0442\x044c \x0432 \x0444\x0430\x0439\x043b" /* LabelDescription ID_CMD_SAVE_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_SAVE_TooltipDescription_RESID L"\x0421\x043e\x0445\x0440\x0430\x043d\x0435\x043d\x0438\x0435 \x0432\x044b\x0440\x0430\x0436\x0435\x043d\x0438\x044f \x0432 \x0444\x0430\x0439\x043b" /* TooltipDescription ID_CMD_SAVE_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_SAVE_LargeImages_RESID    BITMAP    "Res\\Save32.bmp" /* LargeImages ID_CMD_SAVE_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
+    ID_CMD_TAB_MAIN_LabelTitle_RESID L"\x0413\x043b\x0430\x0432\x043d\x0430\x044f" /* LabelTitle ID_CMD_TAB_MAIN_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_TAB_MORE_LabelTitle_RESID L"\x0411\x043e\x043b\x044c\x0448\x0435" /* LabelTitle ID_CMD_TAB_MORE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_FILE_LabelTitle_RESID L"\x0414\x0435\x0439\x0441\x0442\x0432\x0438\x044f" /* LabelTitle ID_CMD_GROUP_FILE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_BRACKET_LabelTitle_RESID L"\x0421\x043a\x043e\x0431\x043a\x0438" /* LabelTitle ID_CMD_GROUP_BRACKET_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_SUM_PRODUCT_LabelTitle_RESID L"\x0421\x0443\x043c\x043c\x0430 \x0438 \x043f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* LabelTitle ID_CMD_GROUP_SUM_PRODUCT_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_SYSTEM_LabelTitle_RESID L"\x0421\x0438\x0441\x0442\x0435\x043c\x0430 \x0443\x0440\x0430\x0432\x043d\x0435\x043d\x0438\x0439" /* LabelTitle ID_CMD_GROUP_SYSTEM_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_EXIT_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_GROUP_EXIT_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_MORE_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_MORE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    InternalCmd2_LabelTitle_RESID L"Label:InternalCmd2" /* LabelTitle InternalCmd2_LabelTitle_RESID: (null) */
+END
+
+APPLICATION_RIBBON    UIFILE    "RibbonUI.bml"

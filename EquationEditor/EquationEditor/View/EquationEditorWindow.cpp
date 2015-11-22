@@ -106,10 +106,38 @@ int CEquationEditorWindow::GetSymbolWidth( wchar_t symbol, int symbolHeight )
 	return symbolWidth;
 }
 
+void CEquationEditorWindow::SaveToFile() {
+	wchar_t path[MAX_PATH] = L"";
+	DWORD bytesWritten;
+	OPENFILENAME fileName;
+	::ZeroMemory(&fileName, sizeof(fileName));
+	fileName.lStructSize = sizeof(fileName);
+	fileName.hwndOwner = hwnd;
+	fileName.lpstrFilter = static_cast<LPCWSTR>(L"MathML Files (*.xml)\0*.xml\0TeX Files (*.tex)\0*.tex\0");
+	fileName.lpstrFile = static_cast<LPWSTR>(path);
+	fileName.nMaxFile = MAX_PATH;
+	fileName.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	fileName.lpstrDefExt = static_cast<LPCWSTR>(L"txt");
+	::GetSaveFileName(&fileName);
+
+	short bom = 0xFEFF;
+	HANDLE fileHandle = ::CreateFile(static_cast<LPCWSTR>(path), GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	std::wstring wpath = std::wstring(path);
+	std::wstring ext = wpath.substr(wpath.find_last_of(L".") + 1);
+	std::wstring buffer = L"";
+	if (ext.compare(L"xml") == 0) {
+		buffer = presenter->Serialize();
+	}
+	::WriteFile(fileHandle, &bom, sizeof(bom), &bytesWritten, NULL);
+	::WriteFile(fileHandle, buffer.c_str(), buffer.size()*sizeof(wchar_t), &bytesWritten, NULL);
+	::CloseHandle(fileHandle);
+}
+
 void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos )
 {
 	presenter->SetCaret( xMousePos, yMousePos );
 }
+
 
 void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 {
@@ -177,7 +205,7 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 				presenter->AddControlView( SYSTEM );
 				break;
 		case ID_ADD_SAVE:
-			presenter->Serialize();
+			SaveToFile();
 			break;
 		}
 	}

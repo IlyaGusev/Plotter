@@ -5,8 +5,8 @@
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
-	FILE *stream;
-	freopen_s(&stream, "output.txt", "w", stdout);
+	//FILE *stream;
+	//freopen_s(&stream, "output.txt", "w", stdout);
 	HRESULT hr = CoInitialize(NULL);
   CMainWindow::RegisterClassW();
   CMainWindow wnd;
@@ -22,6 +22,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		}
   }
 
-	fclose(stream);
+	//fclose(stream);
   return 0;
 }

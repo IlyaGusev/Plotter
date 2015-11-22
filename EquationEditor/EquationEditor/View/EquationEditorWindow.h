@@ -44,6 +44,8 @@ public:
 
 	int GetSymbolWidth( wchar_t symbol, int symbolHeight );
 
+	void SaveToFile();
+
 	void OnLButtonDown( int xMousePos, int yMousePos );
 
 	void OnWmCommand( WPARAM wParam, LPARAM lParam );

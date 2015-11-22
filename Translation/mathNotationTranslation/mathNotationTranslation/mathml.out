@@ -1,0 +1,772 @@
+Терминалы не используются в грамматике
+
+   SQRT
+   END_OF_FILE
+
+
+Грамматика
+
+    0 $accept: list $end
+
+    1 list: stm
+    2     | list stm
+
+    3 stm: LNUM stm RNUM
+    4    | LID stm RID
+    5    | LMATH list RMATH
+    6    | LAPP list RAPP
+    7    | binop
+    8    | NUMBER
+    9    | ID
+
+   10 binop: ADD stm stm
+   11      | SUB stm stm
+   12      | MUL stm stm
+   13      | DIV stm stm
+   14      | EQ stm stm
+
+
+Терминальные символы с правилами, в которых они появляются
+
+$end (0) 0
+error (256)
+NUMBER (258) 8
+ID (259) 9
+ADD (260) 10
+MUL (261) 12
+SUB (262) 11
+DIV (263) 13
+EQ (264) 14
+SQRT (265)
+LMATH (266) 5
+RMATH (267) 5
+LAPP (268) 6
+RAPP (269) 6
+LNUM (270) 3
+RNUM (271) 3
+LID (272) 4
+RID (273) 4
+END_OF_FILE (274)
+
+
+Нетерминальные символы с правилами, в которых они появляются
+
+$accept (20)
+    налево: 0
+list (21)
+    налево: 1 2, направо: 0 2 5 6
+stm (22)
+    налево: 3 4 5 6 7 8 9, направо: 1 2 3 4 10 11 12 13
+    14
+binop (23)
+    налево: 10 11 12 13 14, направо: 7
+
+
+State 0
+
+    0 $accept: . list $end
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    list   переход в состояние 12
+    stm    переход в состояние 13
+    binop  переход в состояние 14
+
+
+State 1
+
+    8 stm: NUMBER .
+
+    $default  вывод с использованием правила 8 (stm)
+
+
+State 2
+
+    9 stm: ID .
+
+    $default  вывод с использованием правила 9 (stm)
+
+
+State 3
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   10      | ADD . stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 15
+    binop  переход в состояние 14
+
+
+State 4
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   12      | MUL . stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 16
+    binop  переход в состояние 14
+
+
+State 5
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   11      | SUB . stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 17
+    binop  переход в состояние 14
+
+
+State 6
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   13      | DIV . stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 18
+    binop  переход в состояние 14
+
+
+State 7
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+   14      | EQ . stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 19
+    binop  переход в состояние 14
+
+
+State 8
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    5    | LMATH . list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    list   переход в состояние 20
+    stm    переход в состояние 13
+    binop  переход в состояние 14
+
+
+State 9
+
+    1 list: . stm
+    2     | . list stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    6    | LAPP . list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    list   переход в состояние 21
+    stm    переход в состояние 13
+    binop  переход в состояние 14
+
+
+State 10
+
+    3 stm: . LNUM stm RNUM
+    3    | LNUM . stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 22
+    binop  переход в состояние 14
+
+
+State 11
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    4    | LID . stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 23
+    binop  переход в состояние 14
+
+
+State 12
+
+    0 $accept: list . $end
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    $end    сдвиг, и переход в состояние 24
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 25
+    binop  переход в состояние 14
+
+
+State 13
+
+    1 list: stm .
+
+    $default  вывод с использованием правила 1 (list)
+
+
+State 14
+
+    7 stm: binop .
+
+    $default  вывод с использованием правила 7 (stm)
+
+
+State 15
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   10      | ADD stm . stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 26
+    binop  переход в состояние 14
+
+
+State 16
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   12      | MUL stm . stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 27
+    binop  переход в состояние 14
+
+
+State 17
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   11      | SUB stm . stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 28
+    binop  переход в состояние 14
+
+
+State 18
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   13      | DIV stm . stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 29
+    binop  переход в состояние 14
+
+
+State 19
+
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+   14      | EQ stm . stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 30
+    binop  переход в состояние 14
+
+
+State 20
+
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    5    | LMATH list . RMATH
+    6    | . LAPP list RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    RMATH   сдвиг, и переход в состояние 31
+    LAPP    сдвиг, и переход в состояние 9
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 25
+    binop  переход в состояние 14
+
+
+State 21
+
+    2 list: list . stm
+    3 stm: . LNUM stm RNUM
+    4    | . LID stm RID
+    5    | . LMATH list RMATH
+    6    | . LAPP list RAPP
+    6    | LAPP list . RAPP
+    7    | . binop
+    8    | . NUMBER
+    9    | . ID
+   10 binop: . ADD stm stm
+   11      | . SUB stm stm
+   12      | . MUL stm stm
+   13      | . DIV stm stm
+   14      | . EQ stm stm
+
+    NUMBER  сдвиг, и переход в состояние 1
+    ID      сдвиг, и переход в состояние 2
+    ADD     сдвиг, и переход в состояние 3
+    MUL     сдвиг, и переход в состояние 4
+    SUB     сдвиг, и переход в состояние 5
+    DIV     сдвиг, и переход в состояние 6
+    EQ      сдвиг, и переход в состояние 7
+    LMATH   сдвиг, и переход в состояние 8
+    LAPP    сдвиг, и переход в состояние 9
+    RAPP    сдвиг, и переход в состояние 32
+    LNUM    сдвиг, и переход в состояние 10
+    LID     сдвиг, и переход в состояние 11
+
+    stm    переход в состояние 25
+    binop  переход в состояние 14
+
+
+State 22
+
+    3 stm: LNUM stm . RNUM
+
+    RNUM  сдвиг, и переход в состояние 33
+
+
+State 23
+
+    4 stm: LID stm . RID
+
+    RID  сдвиг, и переход в состояние 34
+
+
+State 24
+
+    0 $accept: list $end .
+
+    $default  принять
+
+
+State 25
+
+    2 list: list stm .
+
+    $default  вывод с использованием правила 2 (list)
+
+
+State 26
+
+   10 binop: ADD stm stm .
+
+    $default  вывод с использованием правила 10 (binop)
+
+
+State 27
+
+   12 binop: MUL stm stm .
+
+    $default  вывод с использованием правила 12 (binop)
+
+
+State 28
+
+   11 binop: SUB stm stm .
+
+    $default  вывод с использованием правила 11 (binop)
+
+
+State 29
+
+   13 binop: DIV stm stm .
+
+    $default  вывод с использованием правила 13 (binop)
+
+
+State 30
+
+   14 binop: EQ stm stm .
+
+    $default  вывод с использованием правила 14 (binop)
+
+
+State 31
+
+    5 stm: LMATH list RMATH .
+
+    $default  вывод с использованием правила 5 (stm)
+
+
+State 32
+
+    6 stm: LAPP list RAPP .
+
+    $default  вывод с использованием правила 6 (stm)
+
+
+State 33
+
+    3 stm: LNUM stm RNUM .
+
+    $default  вывод с использованием правила 3 (stm)
+
+
+State 34
+
+    4 stm: LID stm RID .
+
+    $default  вывод с использованием правила 4 (stm)

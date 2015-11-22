@@ -1,0 +1,26 @@
+<apply>
+  <eq/>
+  <apply>
+    <minus/>
+    <apply>
+      <plus/>
+      <apply>
+        <power/>
+        <ci>x</ci>
+        <cn>2</cn>
+      </apply>
+      <apply>
+        <power/>
+        <ci>y</ci>
+        <cn>2</cn>
+      </apply>
+      <apply>
+        <power/>
+        <ci>z</ci>
+        <cn>2</cn>
+      </apply>
+    </apply>
+    <cn>4</cn>
+  </apply>
+  <cn>0</cn>
+</apply>

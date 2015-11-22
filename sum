@@ -1,0 +1,13 @@
+<apply> 
+     <sum/> 
+     <bvar> 
+          <ci> x </ci> 
+     </bvar> 
+     <lowlimit> 
+          <cn> 1 </cn> 
+     </lowlimit> 
+     <uplimit> 
+          <cn> 10 </cn> 
+     </uplimit> 
+     <ci> x </ci> 
+</apply> 

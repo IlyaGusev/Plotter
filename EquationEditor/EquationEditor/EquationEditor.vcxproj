@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0535C118-5692-4E53-B586-9B1F6225DDFC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>EquationEditor</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CommandHandler.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\BracesControlModel.cpp" />
+    <ClCompile Include="Model\DegrControlModel.cpp" />
+    <ClCompile Include="Model\EditControlModel.cpp" />
+    <ClCompile Include="Model\ExprControlModel.cpp" />
+    <ClCompile Include="Model\FracControlModel.cpp" />
+    <ClCompile Include="Model\IBracketsModel.cpp" />
+    <ClCompile Include="Model\ParenthesesControlModel.cpp" />
+    <ClCompile Include="Model\ProductControlModel.cpp" />
+    <ClCompile Include="Model\RadicalControlModel.cpp" />
+    <ClCompile Include="Model\SquareBracketsControlModel.cpp" />
+    <ClCompile Include="Model\SubscriptControlModel.cpp" />
+    <ClCompile Include="Model\SumControlModel.cpp" />
+    <ClCompile Include="Model\SystemControlModel.cpp" />
+    <ClCompile Include="Model\Utils\Caret.cpp" />
+    <ClCompile Include="Model\Utils\Line.cpp" />
+    <ClCompile Include="Model\Utils\Rect.cpp" />
+    <ClCompile Include="Presenter\EquationPresenter.cpp" />
+    <ClCompile Include="Presenter\Utils\TreeBfsProcessor.cpp" />
+    <ClCompile Include="Presenter\Utils\TreeDfsProcessor.cpp" />
+    <ClCompile Include="RibbonFramework.cpp" />
+    <ClCompile Include="View\EquationEditorWindow.cpp" />
+    <ClCompile Include="View\MainWindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="CommandHandler.h" />
+    <ClInclude Include="Model\BracesControlModel.h" />
+    <ClInclude Include="Model\DegrControlModel.h" />
+    <ClInclude Include="Model\EditControlModel.h" />
+    <ClInclude Include="Model\ExprControlModel.h" />
+    <ClInclude Include="Model\FracControlModel.h" />
+    <ClInclude Include="Model\IBaseExprModel.h" />
+    <ClInclude Include="Model\IBracketsModel.h" />
+    <ClInclude Include="Model\ParenthesesControlModel.h" />
+    <ClInclude Include="Model\ProductControlModel.h" />
+    <ClInclude Include="Model\RadicalControlModel.h" />
+    <ClInclude Include="Model\SquareBracketsControlModel.h" />
+    <ClInclude Include="Model\SubscriptControlModel.h" />
+    <ClInclude Include="Model\SumControlModel.h" />
+    <ClInclude Include="Model\SystemControlModel.h" />
+    <ClInclude Include="Model\Utils\Caret.h" />
+    <ClInclude Include="Model\Utils\Line.h" />
+    <ClInclude Include="Model\Utils\Rect.h" />
+    <ClInclude Include="Presenter\EquationPresenter.h" />
+    <ClInclude Include="Presenter\Utils\TreeBfsProcessor.h" />
+    <ClInclude Include="Presenter\Utils\TreeDfsProcessor.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RibbonFramework.h" />
+    <ClInclude Include="RibbonIDs.h" />
+    <ClInclude Include="View\EquationEditorWindow.h" />
+    <ClInclude Include="View\MainWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EquationEditor.rc" />
+    <ResourceCompile Include="RibbonResource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="RibbonMarkup.xml">
+      <SubType>Designer</SubType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">UICC.exe RibbonMarkup.xml RibbonUI.bml /header:RibbonIDs.h /res:RibbonResource.rc</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">RibbonUI.bml; RibbonIDs.h; RibbonResource.rc</Outputs>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RibbonUI.bml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

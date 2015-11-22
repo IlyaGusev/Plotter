@@ -1,0 +1,216 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
+
+  <Application.Commands>
+
+    <Command Name="cmdButtonFrac"
+             Symbol="ID_CMD_FRAC"
+             LabelTitle="Дробь"
+             LabelDescription="Дробь"
+             TooltipDescription="Создание новой дроби">
+      <Command.LargeImages>
+        <Image>Res\frac.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonDegr"
+             Symbol="ID_CMD_DEGR"
+             LabelTitle="Степень"
+             LabelDescription="Степень"
+             TooltipDescription="Создание новой степени">
+      <Command.LargeImages>
+        <Image>Res\degr.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonSubscript"
+             Symbol="ID_CMD_SUBSCRIPT"
+             LabelTitle="Нижний индекс"
+             LabelDescription="Нижний индекс"
+             TooltipDescription="Создание нижнего индекса">
+      <Command.LargeImages>
+        <Image>Res\subscript.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonRadical"
+             Symbol="ID_CMD_RADICAL"
+             LabelTitle="Корень"
+             LabelDescription="Корень"
+             TooltipDescription="Создание корня">
+      <Command.LargeImages>
+        <Image>Res\\radical.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonParantheses"
+             Symbol="ID_CMD_Parantheses"
+             LabelTitle="Круглые скобки"
+             LabelDescription="Круглые скобки"
+             TooltipDescription="Круглые скобки">
+      <Command.LargeImages>
+        <Image>Res\parantheses.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonSquareBrackets"
+         Symbol="ID_CMD_SquareBrackets"
+         LabelTitle="Квадратные скобки"
+         LabelDescription="Квадратные скобки"
+         TooltipDescription="Квадратные скобки">
+      <Command.LargeImages>
+        <Image>Res\squarebrackets.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+
+    <Command Name="cmdButtonBraces"
+         Symbol="ID_CMD_Braces"
+         LabelTitle="Фигурные скобки"
+         LabelDescription="Фигурные скобки"
+         TooltipDescription="Фигурные скобки">
+      <Command.LargeImages>
+        <Image>Res\braces.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+
+    <Command Name="cmdButtonSum"
+             Symbol="ID_CMD_Sum"
+             LabelTitle="Сумма"
+             LabelDescription="Сумма"
+             TooltipDescription="Сумма">
+      <Command.LargeImages>
+        <Image>Res\sum.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonProduct"
+             Symbol="ID_CMD_Product"
+             LabelTitle="Произведение"
+             LabelDescription="Произведение"
+             TooltipDescription="Произведение">
+      <Command.LargeImages>
+        <Image>Res\product.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonSystem"
+             Symbol="ID_CMD_System"
+             LabelTitle="Система уравнений"
+             LabelDescription="Система уравнений"
+             TooltipDescription="Система уравнений">
+      <Command.LargeImages>
+        <Image>Res\eqsystem.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonExit"
+             Symbol="ID_CMD_EXIT"
+             LabelTitle="Выход"
+             LabelDescription="Выход"
+             TooltipDescription="Закрытие приложения">
+      <Command.LargeImages>
+        <Image>Res/Exit32.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonSave"
+             Symbol="ID_CMD_SAVE"
+             LabelTitle="Сохранить в файл"
+             LabelDescription="Сохранить в файл"
+             TooltipDescription="Сохранение выражения в файл">
+      <Command.LargeImages>
+        <Image>Res/Save32.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdTabMain"
+             Symbol="ID_CMD_TAB_MAIN"
+             LabelTitle="Главная">
+    </Command>
+
+    <Command Name="cmdTabMore"
+             Symbol="ID_CMD_TAB_MORE"
+             LabelTitle="Больше">
+    </Command>
+
+    <Command Name="cmdGroupActions"
+             Symbol="ID_CMD_GROUP_FILE"
+             LabelTitle="Действия">
+    </Command>
+
+    <Command Name="cmdGroupBracket"
+         Symbol="ID_CMD_GROUP_BRACKET"
+         LabelTitle="Скобки">
+    </Command>
+
+    <Command Name="cmdGroupSumProduct"
+        Symbol="ID_CMD_GROUP_SUM_PRODUCT"
+        LabelTitle="Сумма и произведение">
+    </Command>
+
+    <Command Name="cmdGroupSystem"
+             Symbol="ID_CMD_GROUP_SYSTEM"
+             LabelTitle="Система уравнений">
+    </Command>
+
+
+    <Command Name="cmdGroupExit"
+             Symbol="ID_CMD_GROUP_EXIT"
+             LabelTitle="Выход">
+    </Command>
+
+    <Command Name="cmdGroupMore"
+             Symbol="ID_CMD_MORE"
+             LabelTitle="Выход">
+    </Command>
+  </Application.Commands>
+
+  <Application.Views>
+    <Ribbon>
+      <Ribbon.ApplicationMenu>
+        <ApplicationMenu>
+          <MenuGroup Class="MajorItems">
+            <Button CommandName='cmdButtonSave' />
+          </MenuGroup>
+          <MenuGroup Class="MajorItems">
+            <Button CommandName='cmdButtonExit' />
+          </MenuGroup>
+        </ApplicationMenu>
+      </Ribbon.ApplicationMenu>
+
+      <Ribbon.Tabs>
+
+        <Tab CommandName="cmdTabMain">
+
+          <Group CommandName="cmdGroupActions" SizeDefinition="FourButtons">
+            <Button CommandName="cmdButtonFrac" />
+            <Button CommandName="cmdButtonDegr" />
+            <Button CommandName="cmdButtonSubscript" />
+            <Button CommandName="cmdButtonRadical" />
+          </Group>
+
+          <Group CommandName="cmdGroupBracket" SizeDefinition="ThreeButtons">
+            <Button CommandName="cmdButtonParantheses" />
+            <Button CommandName="cmdButtonBraces" />
+            <Button CommandName="cmdButtonSquareBrackets" />
+          </Group>
+
+          <Group CommandName="cmdGroupSumProduct" SizeDefinition="TwoButtons">
+            <Button CommandName="cmdButtonSum" />
+            <Button CommandName="cmdButtonProduct" />
+          </Group>
+
+          <Group CommandName="cmdGroupSystem" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonSystem" />
+          </Group>
+
+          <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonExit" />
+          </Group>
+        </Tab>
+      </Ribbon.Tabs>
+    </Ribbon>
+  </Application.Views>
+</Application>

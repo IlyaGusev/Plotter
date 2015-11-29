@@ -24,14 +24,13 @@ std::wstring CSumControlModel::Serialize() {
 		result += L"<apply><sum/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
 	}
 
-	if (!sumChild->IsEmpty()) {
-		result += L"<apply>" + sumChild->Serialize() + L"</apply>";
-	}
-
 	if (!secondChild->IsEmpty()) {
-		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit>";
 	}
 
+	if (!sumChild->IsEmpty()) {
+		result += sumChild->Serialize() + L"</apply>";
+	}
 
 	return result;
 }

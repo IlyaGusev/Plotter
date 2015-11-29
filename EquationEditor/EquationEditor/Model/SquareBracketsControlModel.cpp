@@ -9,7 +9,7 @@ CSquareBracketsControlModel::CSquareBracketsControlModel( CRect rect, std::weak_
 std::wstring CSquareBracketsControlModel::Serialize()
 {
 	if( !content->IsEmpty() ) {
-		return L"<mfenced open=\"[\" close=\"]\">" + content->Serialize() + L"</mfenced>";
+		return L"<apply>" + content->Serialize() + L"</apply>";
 	}
 	return L"";
 }

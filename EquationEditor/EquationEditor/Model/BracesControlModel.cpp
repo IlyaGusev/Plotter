@@ -9,7 +9,7 @@ CBracesControlModel::CBracesControlModel( CRect rect, std::weak_ptr<IBaseExprMod
 std::wstring CBracesControlModel::Serialize()
 {
 	if( !content->IsEmpty() ) {
-		return L"<mfenced open=\"{\" close=\"}\">" + content->Serialize() + L"</mfenced>";
+		return L"<apply>" + content->Serialize() + L"</apply>";
 	}
 	return L"";
 }

@@ -20,14 +20,14 @@ void CFracControlModel::Resize()
 }
 
 std::wstring CFracControlModel::Serialize() {
-	std::wstring result = L"<mfrac><mrow>";
+	std::wstring result = L"<apply><csymbol cd=\"arith1\">divide</csymbol>";
 
 	if (!firstChild->IsEmpty()) {
-		result += firstChild->Serialize() + L"</mrow><mrow>";
+		result += firstChild->Serialize();
 	}
 	result += params.text;
 	if (!secondChild->IsEmpty()) {
-		result += secondChild->Serialize() + L"</mrow></mfrac>";
+		result += secondChild->Serialize() + L"</apply>";
 	}
 
 	return result;

@@ -40,12 +40,12 @@ std::wstring CProductControlModel::Serialize() {
 		result += L"<apply><product/><uplimit>" + firstChild->Serialize() + L"</uplimit>";
 	}
 
-	if (!productChild->IsEmpty()) {
-		result += L"<apply>" + productChild->Serialize() + L"</apply>";
+	if (!secondChild->IsEmpty()) {
+		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit>";
 	}
 
-	if (!secondChild->IsEmpty()) {
-		result += L"<lowlimit>" + secondChild->Serialize() + L"</lowlimit></apply>";
+	if (!productChild->IsEmpty()) {
+		result += productChild->Serialize() + L"</apply>";
 	}
 
 	return result;

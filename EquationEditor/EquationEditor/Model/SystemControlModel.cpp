@@ -76,7 +76,7 @@ void CSystemControlModel::Resize()
 std::wstring CSystemControlModel::Serialize() {
 	std::wstring result = L"<set>";
 	for (auto child : GetChildren()) {
-		result += L"<mrow>" + child->Serialize() + L"</mrow>";
+		result += L"<apply>" + child->Serialize() + L"</apply>";
 	}
 
 	return result + L"</set>";

@@ -10,7 +10,7 @@ CParenthesesControlModel::CParenthesesControlModel( CRect rect, std::weak_ptr<IB
 
 std::wstring CParenthesesControlModel::Serialize() {
 	if (!content->IsEmpty()) {
-		return L"<mfenced>" + content->Serialize() + L"</mfenced>";
+		return L"<apply>" + content->Serialize() + L"</apply>";
 	}
 	return L"";
 }

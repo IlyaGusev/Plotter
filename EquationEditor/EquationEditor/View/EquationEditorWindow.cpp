@@ -113,7 +113,7 @@ void CEquationEditorWindow::SaveToFile() {
 	::ZeroMemory(&fileName, sizeof(fileName));
 	fileName.lStructSize = sizeof(fileName);
 	fileName.hwndOwner = hwnd;
-	fileName.lpstrFilter = static_cast<LPCWSTR>(L"MathML Files (*.xml)\0*.xml\0TeX Files (*.tex)\0*.tex\0");
+	fileName.lpstrFilter = static_cast<LPCWSTR>(L"MathML Files (*.xml)\0*.xml\0TeX Files (*.tex)\0*.tex\0OpenMath Files (*.xml)\0*.xml\0");
 	fileName.lpstrFile = static_cast<LPWSTR>(path);
 	fileName.nMaxFile = MAX_PATH;
 	fileName.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;

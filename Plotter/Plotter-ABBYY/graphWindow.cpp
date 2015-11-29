@@ -385,7 +385,7 @@ void GraphWindow::drawGraph(HDC dc) {
 					if( size == 0 && l != j ) {
 						::LineTo( dc, round( points[i][l][k].first ), round( points[i][l][k].second ) );
 					}
-					lppoints[size] = { round( points[i][l][k].first ), round( points[i][l][k].second ) };
+					lppoints[size] = { (LONG)round( points[i][l][k].first ), (LONG)round( points[i][l][k].second ) };
 				
 					yPolygonPoints[i][k].push_back( PointF( points[i][l][k].first, points[i][l][k].second ) );
 					++size;
@@ -448,7 +448,7 @@ void GraphWindow::drawGraph(HDC dc) {
 					if( size == 0 && l != i ) {
 						::LineTo( dc, round( points[l][j][k].first ), round( points[l][j][k].second ) );
 					}
-					lppoints[size] = { round( points[l][j][k].first ), round( points[l][j][k].second ) };
+					lppoints[size] = { (LONG)round( points[l][j][k].first ), (LONG)round( points[l][j][k].second ) };
 					++size;
 					lastPoint = l;
 				} else {

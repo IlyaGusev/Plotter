@@ -28,11 +28,11 @@ std::wstring CSubscriptControlModel::Serialize() {
 	std::wstring result = L"";
 
 	if (!firstChild->IsEmpty()) {
-		result += L"<msub>" + firstChild->Serialize();
+		result += L"<apply><selector/>" + firstChild->Serialize();
 	}
 	result += params.text;
 	if (!secondChild->IsEmpty()) {
-		result += secondChild->Serialize() + L"</msub>";
+		result += secondChild->Serialize() + L"</apply>";
 	}
 
 	return result;

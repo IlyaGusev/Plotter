@@ -1,3 +1,12 @@
+#include <stdio.h>
+#include <tchar.h>
+#include <iostream>
+#include <memory>
+#include <utility>
+#include <string>
+#include <stdexcept>
+#include <fstream>
+
 #include "Node.h"
 
 string Node::translate(int notation) const {
@@ -111,8 +120,7 @@ string BinOpNode::translate(int notation) const {
 	}
 	else
 		if (notation == TEX)
-			return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));
-		}		
+			return addFence(notation, left->translate(notation) + createMap()[operation][notation] + right->translate(notation));	
 		else
 			return addFence(notation, createMap()[operation][notation] + left->translate(notation) + right->translate(notation));
 }

@@ -1,6 +1,7 @@
 ﻿#include <Windowsx.h>
 #include "resource.h"
 #include "View/EquationEditorWindow.h"
+#include "Translation.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
@@ -113,11 +114,11 @@ void CEquationEditorWindow::SaveToFile() {
 	::ZeroMemory(&fileName, sizeof(fileName));
 	fileName.lStructSize = sizeof(fileName);
 	fileName.hwndOwner = hwnd;
-	fileName.lpstrFilter = static_cast<LPCWSTR>(L"MathML Files (*.xml)\0*.xml\0TeX Files (*.tex)\0*.tex\0");
+	fileName.lpstrFilter = static_cast<LPCWSTR>(L"MathML Files (*.xml)\0*.xml\0TeX Files (*.tex)\0*.tex\0OpenMath Files (*.math)\0*.math\0");
 	fileName.lpstrFile = static_cast<LPWSTR>(path);
 	fileName.nMaxFile = MAX_PATH;
 	fileName.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	fileName.lpstrDefExt = static_cast<LPCWSTR>(L"txt");
+	fileName.lpstrDefExt = static_cast<LPCWSTR>(L"xml");
 	::GetSaveFileName(&fileName);
 
 	short bom = 0xFEFF;
@@ -128,6 +129,13 @@ void CEquationEditorWindow::SaveToFile() {
 	if (ext.compare(L"xml") == 0) {
 		buffer = presenter->Serialize();
 	}
+	else if (ext.compare(L"tex") == 0) {
+		buffer = TranslationDll::translateText(presenter->Serialize(), "mathml", "tex");
+	}
+	else if (ext.compare(L"math") == 0) {
+		buffer = TranslationDll::translateText(presenter->Serialize(), "mathml", "openmath");
+	}
+	
 	::WriteFile(fileHandle, &bom, sizeof(bom), &bytesWritten, NULL);
 	::WriteFile(fileHandle, buffer.c_str(), buffer.size()*sizeof(wchar_t), &bytesWritten, NULL);
 	::CloseHandle(fileHandle);

@@ -1,0 +1,13 @@
+<apply>
+<eq/>
+<ci> x </ci>
+<divide/>
+<apply>
+<plus/>
+<cn> 5.1 </cn>
+<ci> y </ci>
+</apply>
+<apply>
+<cn> 4 </cn>
+</apply>
+</apply>

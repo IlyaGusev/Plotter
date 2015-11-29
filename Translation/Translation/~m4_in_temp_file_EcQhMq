@@ -1,0 +1,594 @@
+m4_init()
+m4_define([b4_actions], 
+[b4_case(2, [b4_syncline(37, [["mathml.y"]])
+[    {]b4_lhs_value([[composite_node]])[ = new CompositeNode(]b4_rhs_value(1, 1, [[node]])[);}]])
+
+b4_case(3, [b4_syncline(38, [["mathml.y"]])
+[    {]b4_lhs_value([[composite_node]])[ = ]b4_rhs_value(2, 1, [[composite_node]])[; ]b4_lhs_value([[composite_node]])[->add(]b4_rhs_value(2, 2, [[node]])[);}]])
+
+b4_case(4, [b4_syncline(41, [["mathml.y"]])
+[    {]b4_lhs_value([[node]])[ = ]b4_rhs_value(3, 2, [[node]])[;}]])
+
+b4_case(5, [b4_syncline(42, [["mathml.y"]])
+[    {]b4_lhs_value([[node]])[ = ]b4_rhs_value(3, 2, [[node]])[;}]])
+
+b4_case(6, [b4_syncline(43, [["mathml.y"]])
+[    { ]b4_lhs_value([[node]])[ = ]b4_rhs_value(3, 2, [[composite_node]])[; FOUT<<]b4_lhs_value([[node]])[->translate(NOTATION); }]])
+
+b4_case(7, [b4_syncline(44, [["mathml.y"]])
+[    { ]b4_lhs_value([[node]])[ = ]b4_rhs_value(3, 2, [[composite_node]])[; }]])
+
+b4_case(8, [b4_syncline(45, [["mathml.y"]])
+[    {]b4_lhs_value([[node]])[ = ]b4_rhs_value(1, 1, [[binop_node]])[;}]])
+
+b4_case(9, [b4_syncline(46, [["mathml.y"]])
+[    {]b4_lhs_value([[node]])[ = new NumNode(mllval.value);}]])
+
+b4_case(10, [b4_syncline(47, [["mathml.y"]])
+[    {]b4_lhs_value([[node]])[ = new IdNode(mllval.identName);}]])
+
+b4_case(11, [b4_syncline(50, [["mathml.y"]])
+[    { ]b4_lhs_value([[binop_node]])[ = new BinOpNode(]b4_rhs_value(3, 2, [[node]])[, ]b4_rhs_value(3, 3, [[node]])[, "+"); }]])
+
+b4_case(12, [b4_syncline(51, [["mathml.y"]])
+[    { ]b4_lhs_value([[binop_node]])[ = new BinOpNode(]b4_rhs_value(3, 2, [[node]])[, ]b4_rhs_value(3, 3, [[node]])[, "-"); }]])
+
+b4_case(13, [b4_syncline(52, [["mathml.y"]])
+[    { ]b4_lhs_value([[binop_node]])[ = new BinOpNode(]b4_rhs_value(3, 2, [[node]])[, ]b4_rhs_value(3, 3, [[node]])[, "*"); }]])
+
+b4_case(14, [b4_syncline(53, [["mathml.y"]])
+[    { ]b4_lhs_value([[binop_node]])[ = new BinOpNode(]b4_rhs_value(3, 2, [[node]])[, ]b4_rhs_value(3, 3, [[node]])[, "/"); }]])
+
+b4_case(15, [b4_syncline(54, [["mathml.y"]])
+[    { ]b4_lhs_value([[binop_node]])[ = new BinOpNode(]b4_rhs_value(3, 2, [[node]])[, ]b4_rhs_value(3, 3, [[node]])[, "="); }]])
+
+])
+
+m4_define([b4_mergers], 
+[[]])
+
+m4_define([b4_tokens], 
+[[[[NUMBER]], 258],
+[[[ID]], 259],
+[[[ADD]], 260],
+[[[MUL]], 261],
+[[[SUB]], 262],
+[[[DIV]], 263],
+[[[EQ]], 264],
+[[[SQRT]], 265],
+[[[LMATH]], 266],
+[[[RMATH]], 267],
+[[[LAPP]], 268],
+[[[RAPP]], 269],
+[[[LNUM]], 270],
+[[[RNUM]], 271],
+[[[LID]], 272],
+[[[RID]], 273],
+[[[END_OF_FILE]], 274]])
+
+m4_define([b4_symbol_destructors], 
+[])
+
+m4_define([b4_symbol_printers], 
+[])
+
+m4_define([b4_translate],
+[[     0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19]])
+
+
+m4_define([b4_use_push_for_pull_flag],
+[[0]])
+
+
+m4_define([b4_pact_ninf],
+[[-13]])
+
+
+m4_define([b4_conflict_list_heads],
+[[     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0]])
+
+
+m4_define([b4_toknum_max],
+[[274]])
+
+
+m4_define([b4_rhs],
+[[    21,     0,    -1,    22,    -1,    21,    22,    -1,    15,    22,
+      16,    -1,    17,    22,    18,    -1,    11,    21,    12,    -1,
+      13,    21,    14,    -1,    23,    -1,     3,    -1,     4,    -1,
+       5,    22,    22,    -1,     7,    22,    22,    -1,     6,    22,
+      22,    -1,     8,    22,    22,    -1,     9,    22,    22,    -1]])
+
+
+m4_define([b4_last],
+[[81]])
+
+
+m4_define([b4_stos_min],
+[[0]])
+
+
+m4_define([b4_tag_seen_flag],
+[[1]])
+
+
+m4_define([b4_token_table_flag],
+[[0]])
+
+
+m4_define([b4_parser_file_name],
+[[mathml.tab.cpp]])
+
+
+m4_define([b4_table_min],
+[[0]])
+
+
+m4_define([b4_table],
+[[    15,    16,    17,    18,    19,    33,    34,    22,    23,    25,
+      20,    21,    26,    27,    28,    29,    30,    25,    25,    24,
+       0,     0,     1,     2,     3,     4,     5,     6,     7,     0,
+       8,     0,     9,     0,    10,     0,    11,     1,     2,     3,
+       4,     5,     6,     7,     0,     8,    31,     9,     0,    10,
+       0,    11,     1,     2,     3,     4,     5,     6,     7,     0,
+       8,     0,     9,    32,    10,     0,    11,     1,     2,     3,
+       4,     5,     6,     7,     0,     8,     0,     9,     0,    10,
+       0,    11]])
+
+
+m4_define([b4_conflicting_rules_max],
+[[0]])
+
+
+m4_define([b4_merger],
+[[     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0]])
+
+
+m4_define([b4_glr_flag],
+[[0]])
+
+
+m4_define([b4_percent_define_syncline(lr.keep-unreachable-states)],
+[[]])
+
+
+m4_define([b4_check_max],
+[[21]])
+
+
+m4_define([b4_spec_graph_file],
+[[]])
+
+
+m4_define([b4_rline_min],
+[[0]])
+
+
+m4_define([b4_toknum],
+[[     0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,   266,   267,   268,   269,   270,   271,   272,   273,   274]])
+
+
+m4_define([b4_defgoto_max],
+[[14]])
+
+
+m4_define([b4_version],
+[[2.7]])
+
+
+m4_define([b4_translate_min],
+[[0]])
+
+
+m4_define([b4_stype],
+[[]b4_syncline(18, [["mathml.y"]])[
+
+    float value;
+    char identName@{256@};
+    char str@{256@};
+    struct Node* node;
+    struct CompositeNode* composite_node;
+    struct BinOpNode* binop_node;
+
+]])
+
+
+m4_define([b4_pkgdatadir],
+[[C:\Users\Илья\Documents\WinBisonFlex\data]])
+
+
+m4_define([b4_pgoto_min],
+[[-13]])
+
+
+m4_define([b4_rhs_max],
+[[23]])
+
+
+m4_define([b4_pgoto],
+[[   -13,     2,    -3,   -13]])
+
+
+m4_define([b4_pact_max],
+[[64]])
+
+
+m4_define([b4_debug_flag],
+[[0]])
+
+
+m4_define([b4_yacc_flag],
+[[0]])
+
+
+m4_define([b4_spec_verbose_file],
+[[]])
+
+
+m4_define([b4_conflict_list_heads_min],
+[[0]])
+
+
+m4_define([b4_tname],
+[["$][end", "error", "$][undefined", "NUMBER", "ID", "ADD", "MUL", "SUB",
+  "DIV", "EQ", "SQRT", "LMATH", "RMATH", "LAPP", "RAPP", "LNUM", "RNUM",
+  "LID", "RID", "END_OF_FILE", "$][accept", "list", "stm", "binop", ]b4_null[]])
+
+
+m4_define([b4_defact],
+[[     0,     9,    10,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     2,     8,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     1,     3,    11,    13,    12,    14,
+      15,     6,     7,     4,     5]])
+
+
+m4_define([b4_tokens_number],
+[[20]])
+
+
+m4_define([b4_stos_max],
+[[23]])
+
+
+m4_define([b4_merger_min],
+[[0]])
+
+
+m4_define([b4_table_max],
+[[34]])
+
+
+m4_define([b4_spec_name_prefix],
+[[ml]])
+
+
+m4_define([b4_epilogue],
+[[]b4_syncline(56, [["mathml.y"]])[
+
+]])
+
+
+m4_define([b4_table_ninf],
+[[-1]])
+
+
+m4_define([b4_prhs],
+[[     0,     0,     3,     5,     8,    12,    16,    20,    24,    26,
+      28,    30,    34,    38,    42,    46]])
+
+
+m4_define([b4_check],
+[[     3,     4,     5,     6,     7,    16,    18,    10,    11,    12,
+       8,     9,    15,    16,    17,    18,    19,    20,    21,     0,
+      -1,    -1,     3,     4,     5,     6,     7,     8,     9,    -1,
+      11,    -1,    13,    -1,    15,    -1,    17,     3,     4,     5,
+       6,     7,     8,     9,    -1,    11,    12,    13,    -1,    15,
+      -1,    17,     3,     4,     5,     6,     7,     8,     9,    -1,
+      11,    -1,    13,    14,    15,    -1,    17,     3,     4,     5,
+       6,     7,     8,     9,    -1,    11,    -1,    13,    -1,    15,
+      -1,    17]])
+
+
+m4_define([b4_nterms_number],
+[[4]])
+
+
+m4_define([b4_rline_max],
+[[54]])
+
+
+m4_define([b4_dprec],
+[[     0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0]])
+
+
+m4_define([b4_percent_define_loc(lr.default-reductions)],
+[[[[<default value>:-1.-1]], [[<default value>:-1.-1]]]])
+
+
+m4_define([b4_rline],
+[[     0,    37,    37,    38,    41,    42,    43,    44,    45,    46,
+      47,    50,    51,    52,    53,    54]])
+
+
+m4_define([b4_prhs_min],
+[[0]])
+
+
+m4_define([b4_percent_define_bison_variables(lr.keep-unreachable-states)],
+[[]])
+
+
+m4_define([b4_spec_outfile],
+[[mathml.tab.cpp]])
+
+
+m4_define([b4_translate_max],
+[[19]])
+
+
+m4_define([b4_user_token_number_max],
+[[274]])
+
+
+m4_define([b4_r1_min],
+[[0]])
+
+
+m4_define([b4_max_left_semantic_context],
+[[0]])
+
+
+m4_define([b4_prefix],
+[[ml]])
+
+
+m4_define([b4_pgoto_max],
+[[2]])
+
+
+m4_define([b4_rules_number],
+[[15]])
+
+
+m4_define([b4_file_name_all_but_ext],
+[[mathml.tab]])
+
+
+m4_define([b4_error_verbose_flag],
+[[0]])
+
+
+m4_define([b4_percent_define(lr.type)],
+[[lalr]])
+
+
+m4_define([b4_r2_min],
+[[0]])
+
+
+m4_define([b4_pact],
+[[    64,   -13,   -13,    64,    64,    64,    64,    64,    64,    64,
+      64,    64,    19,   -13,   -13,    64,    64,    64,    64,    64,
+      34,    49,   -11,   -12,   -13,   -13,   -13,   -13,   -13,   -13,
+     -13,   -13,   -13,   -13,   -13]])
+
+
+m4_define([b4_dprec_min],
+[[0]])
+
+
+m4_define([b4_defact_min],
+[[0]])
+
+
+m4_define([b4_percent_define(lr.keep-unreachable-states)],
+[[false]])
+
+
+m4_define([b4_synclines_flag],
+[[1]])
+
+
+m4_define([b4_nondeterministic_flag],
+[[0]])
+
+
+m4_define([b4_defines_flag],
+[[1]])
+
+
+m4_define([b4_conflict_list_heads_max],
+[[0]])
+
+
+m4_define([b4_dir_prefix],
+[[]])
+
+
+m4_define([b4_merger_max],
+[[0]])
+
+
+m4_define([b4_undef_token_number],
+[[2]])
+
+
+m4_define([b4_percent_define_bison_variables(lr.type)],
+[[]])
+
+
+m4_define([b4_percent_define_loc(lr.keep-unreachable-states)],
+[[[[<default value>:-1.-1]], [[<default value>:-1.-1]]]])
+
+
+m4_define([b4_prhs_max],
+[[46]])
+
+
+m4_define([b4_spec_file_prefix],
+[[]])
+
+
+m4_define([b4_r1_max],
+[[23]])
+
+
+m4_define([b4_percent_define_bison_variables(lr.default-reductions)],
+[[]])
+
+
+m4_define([b4_percent_define_loc(lr.type)],
+[[[[<default value>:-1.-1]], [[<default value>:-1.-1]]]])
+
+
+m4_define([b4_toknum_min],
+[[0]])
+
+
+m4_define([b4_percent_define(lr.default-reductions)],
+[[most]])
+
+
+m4_define([b4_spec_defines_file],
+[[mathml.tab.h]])
+
+
+m4_define([b4_conflicting_rules_min],
+[[0]])
+
+
+m4_define([b4_r1],
+[[     0,    20,    21,    21,    22,    22,    22,    22,    22,    22,
+      22,    23,    23,    23,    23,    23]])
+
+
+m4_define([b4_pre_prologue],
+[[]b4_syncline(1, [["mathml.y"]])[
+
+#include <string>
+#include <stdio.h>
+#include <iostream>
+#include <stdexcept>
+#include <fstream>
+#include "Node.h"
+#include "mathml.tab.h"
+using std::cout;
+using std::endl;
+extern FILE * mlin;
+extern int NOTATION;
+extern std::ofstream FOUT;
+int mllex();
+void mlerror(const char *){};
+]])
+
+
+m4_define([b4_r2],
+[[     0,     2,     1,     2,     3,     3,     3,     3,     1,     1,
+       1,     3,     3,     3,     3,     3]])
+
+
+m4_define([b4_check_min],
+[[-1]])
+
+
+m4_define([b4_states_number],
+[[35]])
+
+
+m4_define([b4_r2_max],
+[[3]])
+
+
+m4_define([b4_dprec_max],
+[[0]])
+
+
+m4_define([b4_defgoto],
+[[    -1,    12,    13,    14]])
+
+
+m4_define([b4_defact_max],
+[[15]])
+
+
+m4_define([b4_stos],
+[[     0,     3,     4,     5,     6,     7,     8,     9,    11,    13,
+      15,    17,    21,    22,    23,    22,    22,    22,    22,    22,
+      21,    21,    22,    22,     0,    22,    22,    22,    22,    22,
+      22,    12,    14,    16,    18]])
+
+
+m4_define([b4_final_state_number],
+[[24]])
+
+
+m4_define([b4_defgoto_min],
+[[-1]])
+
+
+m4_define([b4_file_name],
+[["mathml.y"]])
+
+
+m4_define([b4_percent_define_syncline(lr.default-reductions)],
+[[]])
+
+
+m4_define([b4_percent_define_syncline(lr.type)],
+[[]])
+
+
+m4_define([b4_locations_flag],
+[[0]])
+
+
+m4_define([b4_rhs_min],
+[[-1]])
+
+
+m4_define([b4_pact_min],
+[[-13]])
+
+
+m4_define([b4_conflicting_rules],
+[[     0]])
+
+

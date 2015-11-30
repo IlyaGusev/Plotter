@@ -749,7 +749,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 31 "openmath.l"
+#line 32 "openmath.l"
 
 #line 755 "openmath.flex.cpp"
 
@@ -836,112 +836,112 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 32 "openmath.l"
+#line 33 "openmath.l"
 { strcpy(omlval.identName, omtext); return ID; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 33 "openmath.l"
+#line 34 "openmath.l"
 { omlval.value = atof(omtext); return NUMBER; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 34 "openmath.l"
+#line 35 "openmath.l"
 { return LOBJ; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 35 "openmath.l"
+#line 36 "openmath.l"
 { return ROBJ; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "openmath.l"
+#line 37 "openmath.l"
 { return LAPP; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 37 "openmath.l"
+#line 38 "openmath.l"
 { return RAPP; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "openmath.l"
+#line 39 "openmath.l"
 { return LNUM; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "openmath.l"
+#line 40 "openmath.l"
 { return RNUM; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 40 "openmath.l"
+#line 41 "openmath.l"
 { return LID; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 41 "openmath.l"
+#line 42 "openmath.l"
 { return RID; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 43 "openmath.l"
+#line 44 "openmath.l"
 { return EQ; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 44 "openmath.l"
+#line 45 "openmath.l"
 { return SUB; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 45 "openmath.l"
+#line 46 "openmath.l"
 { return ADD; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 46 "openmath.l"
+#line 47 "openmath.l"
 { return DIV; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 47 "openmath.l"
+#line 48 "openmath.l"
 { return MUL; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 48 "openmath.l"
+#line 49 "openmath.l"
 { return SQRT; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 49 "openmath.l"
+#line 50 "openmath.l"
 { return USUB; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 52 "openmath.l"
+#line 53 "openmath.l"
 {}
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 53 "openmath.l"
+#line 54 "openmath.l"
 {}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 54 "openmath.l"
+#line 55 "openmath.l"
 {}
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
-#line 55 "openmath.l"
+#line 56 "openmath.l"
 { return END_OF_FILE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 56 "openmath.l"
+#line 57 "openmath.l"
 ECHO;
 	YY_BREAK
 #line 948 "openmath.flex.cpp"
@@ -1936,6 +1936,6 @@ void omfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 55 "openmath.l"
+#line 56 "openmath.l"
 
 

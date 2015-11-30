@@ -7,6 +7,7 @@
 void omerror(const char *);
 %}
 
+
 WHITESPACE  	[ \t\f\r]
 LINE_SEPARATOR 	[\n]+
 LOBJ			"<OMOBJ>"

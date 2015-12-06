@@ -57,6 +57,9 @@ public:
   void OnScroll( WPARAM wParam );
 
   void UpdateScrollbar();
+
+  void ValidateFormula();
+
 protected:
   void OnDestroy();
 

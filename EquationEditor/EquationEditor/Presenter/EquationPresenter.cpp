@@ -17,7 +17,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 {
 	CRect rect( 20, 30, 30, 50 );
 	deltaY = 0;
-
+	
 	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
 	root->InitializeChildren();
 	caret.SetCurEdit( root->GetChildren().front() );

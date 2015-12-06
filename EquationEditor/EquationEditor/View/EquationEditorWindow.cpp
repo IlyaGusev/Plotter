@@ -136,7 +136,6 @@ void CEquationEditorWindow::SaveToFile() {
 	else if (ext.compare(L"math") == 0) {
 		buffer = TranslationDll::translateText(presenter->Serialize(), "mathml", "openmath");
 	}
-	
 	::WriteFile(fileHandle, &bom, sizeof(bom), &bytesWritten, NULL);
 	::WriteFile(fileHandle, buffer.c_str(), buffer.size()*sizeof(wchar_t), &bytesWritten, NULL);
 	::CloseHandle(fileHandle);
@@ -220,6 +219,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 				break;
 			case ID_ADD_SYSTEM:
 				presenter->AddControlView( SYSTEM );
+				break;
+			case ID_ADD_Validator:
+				CEquationEditorWindow::ValidateFormula();
 				break;
 		case ID_ADD_SAVE:
 			SaveToFile();
@@ -513,4 +515,28 @@ LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT messa
 			return 0;
 	}
 	return ::DefWindowProc( handle, message, wParam, lParam );
+}
+
+
+void CEquationEditorWindow::ValidateFormula()
+{
+	wchar_t path[MAX_PATH] = L"./temp.xml";
+	DWORD bytesWritten;
+	short bom = 0xFEFF;
+	HANDLE fileHandle = ::CreateFile( static_cast<LPCWSTR>( path ), GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
+	std::wstring wpath = std::wstring( path );
+	std::wstring buffer = presenter->Serialize();
+	::WriteFile( fileHandle, &bom, sizeof( bom ), &bytesWritten, NULL );
+	::WriteFile( fileHandle, buffer.c_str(), buffer.size()*sizeof( wchar_t ), &bytesWritten, NULL );
+	::CloseHandle( fileHandle );
+	bool flag = false;
+	try {
+		flag = ValidatorDll::validate( wpath.c_str() );
+		::DeleteFile( static_cast<LPCWSTR>( path ) );
+	}
+	catch( const std::exception& e ) {
+		string error = e.what();
+		std::cerr << "Error: " << error << std::endl;
+		::DeleteFile( static_cast<LPCWSTR>( path ) );
+	}
 }

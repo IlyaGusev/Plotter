@@ -84,6 +84,16 @@
         <Image>Res\sum.bmp</Image>
       </Command.LargeImages>
     </Command>
+    
+    
+    <Command Name="cmdButtonValidation"
+           Symbol="ID_CMD_Validate"
+           LabelTitle="Валидация"
+           LabelDescription="JUST DO IT!"
+           TooltipDescription="Validation">
+    <Command.LargeImages>
+    </Command.LargeImages>
+  </Command>
 
     <Command Name="cmdButtonProduct"
              Symbol="ID_CMD_Product"
@@ -204,6 +214,10 @@
 
           <Group CommandName="cmdGroupSystem" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonSystem" />
+          </Group>
+
+          <Group CommandName="cmdGroupValidation" SizeDefinition="OneButton">
+            <Button CommandName="cmdButtonValidation" />
           </Group>
 
           <Group CommandName="cmdGroupExit" SizeDefinition="OneButton">

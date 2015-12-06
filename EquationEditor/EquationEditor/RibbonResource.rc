@@ -135,6 +135,21 @@ END
 ID_CMD_Sum_LargeImages_RESID    BITMAP    "Res\sum.bmp" /* LargeImages ID_CMD_Sum_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
+    ID_CMD_Validate_LabelTitle_RESID L"\x0412\x0430\x043b\x0438\x0434\x0430\x0446\x0438\x044f" /* LabelTitle ID_CMD_Validate_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Validate_LabelDescription_RESID L"JUST DO IT!" /* LabelDescription ID_CMD_Validate_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Validate_TooltipDescription_RESID L"Validation" /* TooltipDescription ID_CMD_Validate_TooltipDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
     ID_CMD_Product_LabelTitle_RESID L"\x041f\x0440\x043e\x0438\x0437\x0432\x0435\x0434\x0435\x043d\x0438\x0435" /* LabelTitle ID_CMD_Product_LabelTitle_RESID: (null) */
 END
 
@@ -235,6 +250,11 @@ END
 STRINGTABLE 
 BEGIN
     ID_CMD_MORE_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_MORE_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    cmdGroupValidation_LabelTitle_RESID L"Label:cmdGroupValidation" /* LabelTitle cmdGroupValidation_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 

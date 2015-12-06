@@ -4,6 +4,7 @@
 #include "RibbonFramework.h"
 #include "RibbonIds.h"
 #include "resource.h"
+
 // Статический метод создания экземпляра объекта.
 __checkReturn HRESULT CCommandHandler::CreateInstance( __deref_out IUICommandHandler **ppCommandHandler )
 {
@@ -136,6 +137,10 @@ STDMETHODIMP CCommandHandler::Execute(
 
 		case ID_CMD_System:
 			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_SYSTEM ), LPARAM( 0 ) );
+			break;
+
+		case ID_CMD_Validate:
+			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_Validator ), LPARAM( 0 ) );
 			break;
 
 		case ID_CMD_EXIT:

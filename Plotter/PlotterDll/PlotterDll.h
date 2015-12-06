@@ -18,5 +18,5 @@
 
 
 namespace PlotterDll {
-    PLOTTERDLL_API HWND showGraph( HINSTANCE hInstance, int nCmdShow );
+    PLOTTERDLL_API HWND drawGraph( HINSTANCE hInstance, int nCmdShow );
 }

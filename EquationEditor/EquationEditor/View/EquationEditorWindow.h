@@ -16,15 +16,15 @@ public:
 		return hwnd;
 	}
 
-  // Создать экземпляр окна
-  // Если true, то создано успешно
-  bool Create( HWND parent, RECT rect );
-  // Показать окно
-  void Show(int cmdShow);
-  // Создание edit'а
-  void OnCreate();
-  // Реагировать на изменения размера окна
-  void OnSize(int cxSize, int cySize);
+    // Создать экземпляр окна
+    // Если true, то создано успешно
+    bool Create( HWND parent, RECT rect );
+    // Показать окно
+    void Show(int cmdShow);
+    // Создание edit'а
+    void OnCreate();
+    // Реагировать на изменения размера окна
+    void OnSize(int cxSize, int cySize);
 
 	void OnChar( WPARAM wParam );
 
@@ -54,9 +54,11 @@ public:
 
 	void OnMouseMove( WPARAM wParam, int x, int y );
 
-  void OnScroll( WPARAM wParam );
+    void OnScroll( WPARAM wParam );
 
-  void UpdateScrollbar();
+    void UpdateScrollbar();
+
+    void DrawGraph();
 protected:
   void OnDestroy();
 

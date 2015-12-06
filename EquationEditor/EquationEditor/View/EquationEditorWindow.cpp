@@ -221,9 +221,12 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_SYSTEM:
 				presenter->AddControlView( SYSTEM );
 				break;
-		case ID_ADD_SAVE:
-			SaveToFile();
-			break;
+            case ID_DRAW_GRAPH:
+                DrawGraph();
+                break;
+		    case ID_ADD_SAVE:
+			    SaveToFile();
+			    break;
 		}
 	}
 }
@@ -451,6 +454,11 @@ void CEquationEditorWindow::OnDraw()
 	::DeleteDC( hdc );
 
 	::EndPaint( hwnd, &ps );
+}
+
+void CEquationEditorWindow::DrawGraph()
+{
+    //SaveToFile();
 }
 
 LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam )

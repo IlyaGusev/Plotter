@@ -16,7 +16,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     wnd.Create();
     wnd.Show(nCmdShow);
 
-    //auto graphHandle = PlotterDll::showGraph( hInstance, nCmdShow );
+    //auto graphHandle = PlotterDll::drawGraph( hInstance, nCmdShow );
 
 	HACCEL table = ::LoadAccelerators( hInstance, MAKEINTRESOURCE( IDR_ACCELERATOR1 ) );
     MSG msg;

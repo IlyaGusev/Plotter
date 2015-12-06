@@ -138,6 +138,10 @@ STDMETHODIMP CCommandHandler::Execute(
 			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_SYSTEM ), LPARAM( 0 ) );
 			break;
 
+        case ID_CMD_Graph:
+            ::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_DRAW_GRAPH ), LPARAM( 0 ) );
+            break;
+
 		case ID_CMD_EXIT:
 			PostMessage( hwnd, WM_CLOSE, NULL, NULL );
 			break;

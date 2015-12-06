@@ -80,7 +80,7 @@ CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
 	} );
 
 	updateSelectionProcessor = CTreeBfsProcessor( root, []( CTreeBfsProcessor::Node node ) {
-		node->UpdateSelection();
+		node->UpdateSelection(); // после входа в ноду
 	} );
 }
 
@@ -350,7 +350,7 @@ void CEquationPresenter::SetSelection( int x, int y )
 
 	CCaret selectionCaret;
 	setCaretPos( x, y, selectionCaret );
-	while( selectionCaret.GetCurEdit() != nullptr && selectionCaret != caret ) {
+	while( selectionCaret.GetCurEdit() != nullptr && selectionCaret != caret ) { // Двигаем каретку
 		if( isRightDirection( caret.GetCurEdit().get(), selectionCaret.GetCurEdit().get(), caret.Offset(), selectionCaret.Offset() ) ) {
 			caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret, true );
 		} else {
@@ -358,7 +358,7 @@ void CEquationPresenter::SetSelection( int x, int y )
 		}
 	}
 
-	updateSelectionProcessor.Process();
+	updateSelectionProcessor.Process(); // Красим выделенную часть?
 	view.Redraw();
 }
 
@@ -621,4 +621,15 @@ void CEquationPresenter::invalidateBranch( std::shared_ptr<IBaseExprModel> start
 	highlightingProcessor.Process();
 	resizeProcessor.Process();
 	placeProcessor.Process();
+}
+
+
+void CEquationPresenter::Copy()
+{
+
+}
+
+void CEquationPresenter::Paste( int x, int y )
+{
+
 }

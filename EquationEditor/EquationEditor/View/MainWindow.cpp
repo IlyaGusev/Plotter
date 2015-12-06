@@ -194,7 +194,7 @@ LRESULT CMainWindow::mainWindowProc(HWND handle, UINT message, WPARAM wParam, LP
     return 0;
 
   case WM_ERASEBKGND:
-    return 0;
+	  return 0;
   }
   return ::DefWindowProc(handle, message, wParam, lParam);
 }

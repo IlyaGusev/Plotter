@@ -177,6 +177,15 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 				caret.GetCurEdit()->MoveCaretRight( caret.GetCurEdit().get(), caret );
 				presenter->SetSelection( caret.GetPointX(), caret.GetPointY() );
 				break;
+			case ID_COPY:
+				caret = presenter->GetCaret();
+				presenter->SetSelection( caret.GetPointX(), caret.GetPointY() );
+				presenter->Copy();
+				break;
+			case ID_PASTE:
+				caret = presenter->GetCaret();
+				presenter->Paste( caret.GetPointX(), caret.GetPointY() );
+				break;
 			default:
 				return;
 		}

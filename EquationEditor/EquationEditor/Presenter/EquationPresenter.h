@@ -74,6 +74,9 @@ public:
 
 	void OnEnter(); // пока только создает нового ребенка, если мы находимся внутри системы уравнений
 
+	void Copy();
+	void Paste(int x, int y);
+
 	CCaret GetCaret() const
 	{
 		return caret;

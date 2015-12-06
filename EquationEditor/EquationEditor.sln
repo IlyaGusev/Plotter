@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EquationEditor", "EquationE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Translation", "..\Translation\Translation.vcxproj", "{5630DDF1-4C4C-4464-AC92-9AC1DECE7C1E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Validator", "..\Validator\Validator.vcxproj", "{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -29,6 +31,14 @@ Global
 		{5630DDF1-4C4C-4464-AC92-9AC1DECE7C1E}.Release|Win32.Build.0 = Release|Win32
 		{5630DDF1-4C4C-4464-AC92-9AC1DECE7C1E}.Release|x64.ActiveCfg = Release|x64
 		{5630DDF1-4C4C-4464-AC92-9AC1DECE7C1E}.Release|x64.Build.0 = Release|x64
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Debug|Win32.Build.0 = Debug|Win32
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Debug|x64.ActiveCfg = Debug|x64
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Debug|x64.Build.0 = Debug|x64
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Release|Win32.ActiveCfg = Release|Win32
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Release|Win32.Build.0 = Release|Win32
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Release|x64.ActiveCfg = Release|x64
+		{B3BC4352-2566-4F48-A9E0-8D486B25D1EA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

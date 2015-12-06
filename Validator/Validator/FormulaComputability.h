@@ -3,7 +3,7 @@
 #define _FORMULACOMPUTALILITY_H
 
 #include "CTagContainer.h"
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 #include "CTag.h"
 #include "CTagCi.h"
 #include "CCalculator.h"

@@ -13,7 +13,7 @@ struct CTreeNode{
 
   CTreeNode& Step(string name){
       for (int i=0; i<this->children.size(); i++){
-        if (!(this->children[i].visited) and name == this->children[i].name){
+        if (!(this->children[i].visited) && name == this->children[i].name){
           this->children[i].visited = true;
           return this->children[i];
         }

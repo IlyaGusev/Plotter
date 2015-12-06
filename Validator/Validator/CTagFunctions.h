@@ -70,7 +70,7 @@ const CNode CTagVarArgFunction< TArg, TRes>::checkSignature(const CNode& node)co
 template< CType TArg,CType TRes>
 const CNode CTagVarArgFunction< TArg, TRes>::checkTree(const CNode& node, CTreeNode& tree_node)const
 {
-	(*this).checkSignature(node);
+	return (*this).checkSignature(node);
 };
 
 template< CType TArg, CType TRes, int CountArg>
@@ -87,7 +87,7 @@ const CNode CTagNArgFunction< TArg, TRes, CountArg>::checkSignature(const CNode&
 template< CType TArg, CType TRes, int CountArg>
 const CNode CTagNArgFunction< TArg, TRes, CountArg>::checkTree(const CNode& node, CTreeNode& tree_node)const
 {
-	(*this).checkSignature(node);
+	return (*this).checkSignature(node);
 };
 
 #endif

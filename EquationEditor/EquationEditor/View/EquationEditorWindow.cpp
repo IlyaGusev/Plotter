@@ -2,6 +2,7 @@
 #include "resource.h"
 #include "View/EquationEditorWindow.h"
 #include "Translation.h"
+#include "Validator.h"
 
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
 
@@ -139,6 +140,14 @@ void CEquationEditorWindow::SaveToFile() {
 	::WriteFile(fileHandle, &bom, sizeof(bom), &bytesWritten, NULL);
 	::WriteFile(fileHandle, buffer.c_str(), buffer.size()*sizeof(wchar_t), &bytesWritten, NULL);
 	::CloseHandle(fileHandle);
+	bool flag = false;
+	try {
+		flag = ValidatorDll::validate(wpath.c_str());
+	}
+	catch (const std::exception& e) {
+		string error = e.what();
+		std::cerr << "Error: " << error << std::endl;
+	}
 }
 
 void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos )

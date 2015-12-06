@@ -1,5 +1,5 @@
-#ifndef _COMMON_H
-#define _COMMON_H
+#pragma once
+
 #include <string>
 #include <vector>
 #include <exception>
@@ -10,12 +10,12 @@
 #include <utility>
 #include <sstream>
 #include <typeinfo>
-#include "../pugixml/pugixml.hpp"
+#include "pugixml.hpp"
 
-//Р±РёС‚РѕРІС‹Рµ РјР°СЃРєРё, РѕРїСЂРµРґРµР»СЏСЋС‰РёРµ С‚РёРїС‹ С‚РµРіРѕРІ
+//битовые маски, определяющие типы тегов
 #define VOID (~0)
 #define NUMBER			0x00000001
-#define BOOL			0x00000002
+#define BOOLM			0x00000002
 #define VARIABLE		0x00000004
 #define FUNCTION		0x00000008
 #define CALCULATEBLE	0x00000010
@@ -33,5 +33,3 @@ using namespace pugi;
 
 typedef unsigned int CType;
 typedef pugi::xml_node CNode;
-
-#endif

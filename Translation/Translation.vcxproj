@@ -79,6 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <ExecutablePath>$(ProjectDir)\External\WinBisonFlex;$(VC_ExecutablePath_x86);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -177,23 +178,29 @@
   <ItemGroup>
     <Flex Include="Translation\mathml.l">
       <Prefix Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ml</Prefix>
+      <Prefix Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ml</Prefix>
     </Flex>
     <Flex Include="Translation\openmath.l">
       <Prefix Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">om</Prefix>
+      <Prefix Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">om</Prefix>
     </Flex>
     <Flex Include="Translation\tex.l">
       <Prefix Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">tex</Prefix>
+      <Prefix Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">tex</Prefix>
     </Flex>
   </ItemGroup>
   <ItemGroup>
     <Bison Include="Translation\mathml.y">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">-p ml %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-p ml %(AdditionalOptions)</AdditionalOptions>
     </Bison>
     <Bison Include="Translation\openmath.y">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">-p om %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-p om %(AdditionalOptions)</AdditionalOptions>
     </Bison>
     <Bison Include="Translation\tex.y">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">-p tex %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-p tex %(AdditionalOptions)</AdditionalOptions>
     </Bison>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

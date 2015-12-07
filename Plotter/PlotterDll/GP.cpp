@@ -3,13 +3,13 @@
 // Graph in Points
 // Данный класс предназначен для поточечного представления графика в зависимости от положения осей 
 // получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-GP::GP( const wchar_t* formulaPath, bool is2D /*= false*/,
+GP::GP( const char* formulaString, bool is2D /*= false*/,
 	double inputLengthOfSection /*= 5*/, std::pair<double, double>& inputWindowSize /*= std::pair<double, double>( 700, 700 ) */ ) :
 	lengthOfSection( inputLengthOfSection ),
 	windowSize( inputWindowSize ),
 	scale( 1 )
 {
-	calc = MathMlCalculator( formulaPath, is2D );
+	calc = MathMlCalculator( formulaString, is2D );
 
 	origin.first = windowSize.first / 2;
 	origin.second = windowSize.second / 2;

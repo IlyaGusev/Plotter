@@ -7,10 +7,10 @@
 pugi::xml_document MathMlCalculator::doc;
 double MathMlCalculator::eps = 0.005;
 
-MathMlCalculator::MathMlCalculator( const wchar_t* formulaPath, bool _is2D ) :
+MathMlCalculator::MathMlCalculator( const char* formulaString, bool _is2D ) :
 	is2D( _is2D )
 {
-	pugi::xml_parse_result result = doc.load_file( formulaPath );
+	pugi::xml_parse_result result = doc.load_string( formulaString );
 	buildFormulas( doc );
 	srand( time( NULL ) );
 }

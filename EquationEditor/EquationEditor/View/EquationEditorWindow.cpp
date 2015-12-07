@@ -1,10 +1,13 @@
 ﻿#include <Windowsx.h>
 #include "resource.h"
+#include "PlotterDll.h"
 #include "View/EquationEditorWindow.h"
 #include "Translation.h"
 #include "Validator.h"
 
+
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
+
 
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr )
 {
@@ -43,10 +46,11 @@ bool CEquationEditorWindow::Create( HWND parent, RECT rect )
 		parent, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 
-void CEquationEditorWindow::Show( int cmdShow )
+void CEquationEditorWindow::Show( int nCmdShow )
 {
+    cmdShow = nCmdShow;
 	UpdateScrollbar();
-	::ShowWindow( hwnd, cmdShow );
+	::ShowWindow( hwnd, nCmdShow );
 }
 
 void CEquationEditorWindow::OnDestroy()
@@ -223,9 +227,12 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_Validator:
 				CEquationEditorWindow::ValidateFormula();
 				break;
-		case ID_ADD_SAVE:
-			SaveToFile();
-			break;
+            //case ID_DRAW_GRAPH:
+            //    DrawGraph();
+            //    break;
+		    case ID_ADD_SAVE:
+			    SaveToFile();
+			    break;
 		}
 	}
 }
@@ -458,6 +465,37 @@ void CEquationEditorWindow::OnDraw()
 	::DeleteDC( hdc );
 
 	::EndPaint( hwnd, &ps );
+}
+
+void CEquationEditorWindow::DrawGraph()
+{
+    //const wchar_t* buffer = presenter->Serialize().c_str();
+    const wchar_t* buffer = L"<apply><eq/><apply><minus/><apply><plus/><apply><power/><ci>x</ci><cn>2</cn></apply><apply><power/><ci>y</ci><cn>2</cn></apply><apply><power/><ci>z</ci><cn>2</cn></apply></apply><cn>4</cn></apply><cn>0</cn></apply>";
+    bool flag = false;
+    try {
+        flag = ValidatorDll::validate( buffer );
+    } catch( const std::exception& e ) {
+    }
+
+    flag = true;
+    if( flag ) {
+        int BUFFER_SIZE = 2048;
+        char* charBuffer = ( char* ) malloc( BUFFER_SIZE );
+        std::wcstombs( charBuffer, buffer, BUFFER_SIZE );
+        
+        try {
+            PlotterDll::drawGraph( cmdShow, charBuffer );
+        } catch( const std::exception& e ) {
+            std::cerr << e.what() << std::endl;
+            ::MessageBox( NULL, L"Ошибка при построении графика.", NULL, NULL );
+        }
+        
+        free( charBuffer );
+    } else {
+        ::MessageBox( NULL, L"График не может быть построен, так как формула не прошла валидацию.", NULL, NULL );
+    }
+
+    
 }
 
 LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam )

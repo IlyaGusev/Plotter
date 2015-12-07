@@ -60,7 +60,7 @@ RECT CMainWindow::getChildRect() {
 
 bool CMainWindow::Create()
 {
-  if ( ::CreateWindowEx( 0, L"MainWindow", L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED | WS_CLIPCHILDREN, 0, 0, 800, 600,
+  if ( ::CreateWindowEx( 0, L"MainWindow", L"Equation Editor", WS_OVERLAPPEDWINDOW | WS_EX_LAYERED | WS_CLIPCHILDREN, 0, 0, 1000, 600,
     nullptr, nullptr, ::GetModuleHandle(nullptr), this ) != 0 ) {
     
     return ( editor.Create( GetHandle(), getChildRect() ) != 0 );
@@ -68,10 +68,10 @@ bool CMainWindow::Create()
   return false;
 }
 
-void CMainWindow::Show(int cmdShow)
+void CMainWindow::Show( int cmdShow )
 {
-  ::ShowWindow(hwnd, cmdShow);
-  editor.Show(cmdShow);
+    ::ShowWindow(hwnd, cmdShow);
+    editor.Show(cmdShow);
 }
 
 void CMainWindow::OnDestroy()

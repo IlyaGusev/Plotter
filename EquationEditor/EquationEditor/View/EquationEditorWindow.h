@@ -5,26 +5,26 @@
 class CEquationEditorWindow : public IEditorView {
 
 public:
-  CEquationEditorWindow();
+    CEquationEditorWindow();
 
-  // Зарегистрировать класс окна
-  // Если true, то зарегистрировали успешно
-  static bool RegisterClassW();
+    // Зарегистрировать класс окна
+    // Если true, то зарегистрировали успешно
+    static bool RegisterClassW();
 
 	HWND GetHandle()
 	{
 		return hwnd;
 	}
 
-  // Создать экземпляр окна
-  // Если true, то создано успешно
-  bool Create( HWND parent, RECT rect );
-  // Показать окно
-  void Show(int cmdShow);
-  // Создание edit'а
-  void OnCreate();
-  // Реагировать на изменения размера окна
-  void OnSize(int cxSize, int cySize);
+    // Создать экземпляр окна
+    // Если true, то создано успешно
+    bool Create( HWND parent, RECT rect );
+    // Показать окно
+    void Show(int nCmdShow);
+    // Создание edit'а
+    void OnCreate();
+    // Реагировать на изменения размера окна
+    void OnSize(int cxSize, int cySize);
 
 	void OnChar( WPARAM wParam );
 
@@ -54,21 +54,24 @@ public:
 
 	void OnMouseMove( WPARAM wParam, int x, int y );
 
-  void OnScroll( WPARAM wParam );
+    void OnScroll( WPARAM wParam );
 
-  void UpdateScrollbar();
+    void UpdateScrollbar();
 
-  void ValidateFormula();
+    void ValidateFormula();
+
+    void DrawGraph();
 
 protected:
-  void OnDestroy();
+    void OnDestroy();
 
 private:
-  HWND hwnd;		// хэндл окна
-  HWND parent;  // хэндл родителя MainWindow 
+    HWND hwnd;		// хэндл окна
+    HWND parent;    // хэндл родителя MainWindow 
 	HDC hdc;		// канва для рисования
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
 	bool isPressedShift;
+    int cmdShow;
 
 	COLORREF symbolSelectedColorref;
 	COLORREF symbolUnselectedColorref;
@@ -77,15 +80,15 @@ private:
 	COLORREF bkSelectedHighlightColorref;
 	COLORREF bkUnselectedHightlightColorref;
 
-  int yMinScroll;       // minimum vertical scroll value 
-  int yCurrentScroll;   // current vertical scroll value 
-  int yMaxScroll;       // maximum vertical scroll value
+    int yMinScroll;       // minimum vertical scroll value 
+    int yCurrentScroll;   // current vertical scroll value 
+    int yMaxScroll;       // maximum vertical scroll value
 
-  static const wchar_t* const className;
+    static const wchar_t* const className;
 	
 	std::shared_ptr<CEquationPresenter> presenter;
 
-  static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
 	HFONT getFont( int height );
 };

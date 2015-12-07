@@ -46,7 +46,7 @@ bool GraphWindow::Create() {
 		200, 20, windowWidth, windowHeight,
 		NULL, NULL, ::GetModuleHandle( nullptr ), this);
 
-	menu = ::LoadMenu(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU1));	// Загрузить меню из файла ресурса
+	menu = ::LoadMenu(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU2));	// Загрузить меню из файла ресурса
 	SetMenu(handle, menu);
 
 	return handle;

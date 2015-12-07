@@ -475,7 +475,14 @@ void CEquationEditorWindow::DrawGraph()
         int BUFFER_SIZE = 2048;
         char* charBuffer = ( char* ) malloc( BUFFER_SIZE );
         std::wcstombs( charBuffer, buffer, BUFFER_SIZE );
-        PlotterDll::drawGraph( cmdShow, charBuffer );
+        
+        try {
+            PlotterDll::drawGraph( cmdShow, charBuffer );
+        } catch( const std::exception& e ) {
+            std::cerr << e.what() << std::endl;
+            ::MessageBox( NULL, L"Ошибка при построении графика.", NULL, NULL );
+        }
+        
         free( charBuffer );
     } else {
         ::MessageBox( NULL, L"График не может быть построен, так как формула не прошла валидацию.", NULL, NULL );

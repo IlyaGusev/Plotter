@@ -170,7 +170,6 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 
 std::wstring CEquationPresenter::Serialize()
 {
-    return L"" + root->Serialize();
 	return L"<math>"+root->Serialize()+ L"</math>";
 }
 

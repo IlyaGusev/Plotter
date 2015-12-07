@@ -128,13 +128,13 @@ void CEquationEditorWindow::SaveToFile() {
 	std::wstring ext = wpath.substr(wpath.find_last_of(L".") + 1);
 	std::wstring buffer = L"";
 	if (ext.compare(L"xml") == 0) {
-		buffer = presenter->Serialize();
+		buffer = presenter->Serialize( false );
 	}
 	else if (ext.compare(L"tex") == 0) {
-		buffer = TranslationDll::translateText(presenter->Serialize(), "mathml", "tex");
+		buffer = TranslationDll::translateText(presenter->Serialize( false ), "mathml", "tex");
 	}
 	else if (ext.compare(L"math") == 0) {
-		buffer = TranslationDll::translateText(presenter->Serialize(), "mathml", "openmath");
+		buffer = TranslationDll::translateText(presenter->Serialize( false ), "mathml", "openmath");
 	}
 	::WriteFile(fileHandle, &bom, sizeof(bom), &bytesWritten, NULL);
 	::WriteFile(fileHandle, buffer.c_str(), buffer.size()*sizeof(wchar_t), &bytesWritten, NULL);
@@ -530,22 +530,19 @@ void CEquationEditorWindow::ValidateFormula()
 	short bom = 0xFEFF;
 	HANDLE fileHandle = ::CreateFile( static_cast<LPCWSTR>( path ), GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 	std::wstring wpath = std::wstring( path );
-	std::wstring buffer = presenter->Serialize();
-		//TranslationDll::translateText( presenter->Serialize(), "mathml", "tex" );
-		//TranslationDll::translateText( presenter->Serialize(), "mathml", "openmath" );
+	std::wstring buffer = presenter->Serialize( true ); //L"<apply><plus/><apply><power/><ci>x</ci><cn>2</cn></apply><cn>1</cn></apply>";
 	::WriteFile( fileHandle, &bom, sizeof( bom ), &bytesWritten, NULL );
 	::WriteFile( fileHandle, buffer.c_str(), buffer.size()*sizeof( wchar_t ), &bytesWritten, NULL );
-	::CloseHandle( fileHandle );
+	::CloseHandle( fileHandle ); 
 	bool isValid = false;
 	try {
 		isValid = ValidatorDll::validate( wpath.c_str() );
-		::DeleteFile( static_cast<LPCWSTR>( path ) );
 	}
 	catch( const std::exception& e ) {
 		string error = e.what();
 		std::cerr << "Error: " << error << std::endl;
-		::DeleteFile( static_cast<LPCWSTR>( path ) );	
 	}
+	::DeleteFile( static_cast<LPCWSTR>( path ) );
 	if( isValid ) {
 		::MessageBox( NULL, static_cast<LPCWSTR>( L"Формула введена корректно!" ),
 					  static_cast<LPCWSTR>( L"Валидатор" ),

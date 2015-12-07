@@ -167,29 +167,119 @@ void CEditControlModel::MoveCaretRight( const IBaseExprModel* from, CCaret& care
 }
 
 int CEditControlModel::getPrecedence(std::wstring operation) {
-	if (operation == L">sulp/<" || operation == L"<sunim/>")
+	if (operation == L">/sulp<>ylppa<" || operation == L">/sunim<>ylppa<")
 		return 2;
 
-	if (operation == L">semit/<" || operation == L">edivid/<")
+	if (operation == L">/semit<>ylppa<" || operation == L">/edivid<>ylppa<")
 		return 3;
 
-	if (operation == L">/qe<")
+	if (operation == L">/qe<>ylppa<")
 		return 4;
 }
 
 std::wstring CEditControlModel::Wrap(std::wstring &text, bool isNumber) {
 	if (text == L"")
 		return L"";
-	if (isNumber)
+	/*if (isNumber)
 		return L">nc/<" + text + L">nc<";
 	else
-		return L">ic/<" + text + L">ic<";
+		return L">ic/<" + text + L">ic<";*/
+	if (isNumber)
+		return L"<cn>" + text + L"</cn>";
+	else
+		return L"<ci>" + text + L"</ci>";
 }
 
 std::wstring CEditControlModel::ParseText() {
 	std::wstring result = L""; 
 	std::stack <std::wstring> operationStack;
 
+	////
+	bool isMult = false, doMult = false;
+	std::stack <std::wstring> numberStack;
+
+	std::wstring currentWord = L"";
+	bool isNumber = true;
+	int textLength = params.text.length() - 1;
+	for (int i = 0; i <= textLength; i++) {
+		if ((params.text[i] <= L'9') && (params.text[i] >= L'0') || (params.text[i] <= L'z') && (params.text[i] >= L'a')) {
+			currentWord += params.text[i];
+			isNumber = isNumber && (params.text[i] <= L'9') && (params.text[i] >= L'0');
+			if( i == textLength )
+				numberStack.push(Wrap(currentWord, isNumber));
+		}
+		else
+		{
+			numberStack.push(Wrap(currentWord, isNumber));
+			currentWord = L"";
+			isNumber = true;
+			if (isMult)
+				doMult = true;
+		}
+
+		if (doMult) {
+			std::wstring tmp;
+			tmp = operationStack.top() + numberStack.top();
+			numberStack.pop();
+			operationStack.pop();
+			tmp += numberStack.top() + L"</apply>";
+			numberStack.pop();
+			numberStack.push(tmp);
+			doMult = false;
+		}
+
+		if (operations.find(params.text[i]) != operations.end()) {
+			std::wstring tmp;
+			switch (params.text[i]) {
+			case L'+':
+				tmp = L"<apply><plus/>";
+				operationStack.push(tmp);
+				isMult = false;
+				break;
+			case L'-':
+				tmp = L"<apply><minus/>";
+				operationStack.push(tmp);
+				isMult = false;
+				break;
+			case L'*':
+				tmp = L"<apply><times/>";
+				operationStack.push(tmp);
+				isMult = true;
+				break;
+			case L'/':
+				tmp = L"<apply><divide/>";
+				operationStack.push(tmp);
+				isMult = true;
+				break;
+			case L'=':
+				result += L"<apply><eq/>";
+				while (!operationStack.empty()) {
+					result += L"<apply>" + operationStack.top() + numberStack.top();
+					operationStack.pop();
+					numberStack.pop();
+					result += numberStack.top() + L"</apply>";
+				}
+				result += L"</apply>";
+				isMult = false;
+				break;
+			default:
+				break;
+			}
+		}
+	};
+	result += operationStack.top() + numberStack.top();
+	operationStack.pop();
+	numberStack.pop();
+	result += numberStack.top() + L"</apply>";
+	numberStack.pop();
+	while (!numberStack.empty()) {
+		result = operationStack.top() + result;
+		operationStack.pop();
+		result += numberStack.top() + L"</apply>";
+		numberStack.pop();
+	}
+	result = std::wstring(result);
+	/*
 	std::wstring currentWord = L"";
 	bool isNumber = true;
 	int i = params.text.length() - 1;
@@ -228,10 +318,11 @@ std::wstring CEditControlModel::ParseText() {
 				break;
 			}
 
-			while (!operationStack.empty() && (getPrecedence(operationStack.top()) <= getPrecedence(tmp)))
+			while (!operationStack.empty() && (getPrecedence(operationStack.top()) > getPrecedence(tmp)))
 			{
 				result += operationStack.top();
 				operationStack.pop();
+				result = L">ylppa/<" + result;
 			}
 			operationStack.push(tmp);
 		}
@@ -250,7 +341,7 @@ std::wstring CEditControlModel::ParseText() {
 
 	//reverse the string
 	result = std::wstring(result.rbegin(), result.rend());
-
+	*/
 	return result;
 }
 

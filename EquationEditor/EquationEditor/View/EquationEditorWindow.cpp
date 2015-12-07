@@ -1,10 +1,13 @@
 ﻿#include <Windowsx.h>
 #include "resource.h"
+#include "PlotterDll.h"
 #include "View/EquationEditorWindow.h"
 #include "Translation.h"
 #include "Validator.h"
 
+
 const wchar_t* const CEquationEditorWindow::className = L"EquationEditorWindow";
+
 
 CEquationEditorWindow::CEquationEditorWindow() : hwnd( nullptr )
 {
@@ -458,7 +461,7 @@ void CEquationEditorWindow::OnDraw()
 
 void CEquationEditorWindow::DrawGraph()
 {
-    //SaveToFile();
+    PlotterDll::drawGraph( 10 );
 }
 
 LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam )

@@ -17,7 +17,7 @@ GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, boo
 {
 }
 
-bool GraphWindow::RegisterClass(HINSTANCE hInstance) {
+bool GraphWindow::RegisterClass() {
 	WNDCLASSEX tag;
 	tag.cbSize = sizeof(WNDCLASSEX);
 	tag.style = CS_HREDRAW | CS_VREDRAW;
@@ -29,7 +29,7 @@ bool GraphWindow::RegisterClass(HINSTANCE hInstance) {
 	tag.hbrBackground = (HBRUSH)::GetStockObject(WHITE_BRUSH);
 	tag.lpszMenuName = NULL;
 	tag.lpszClassName = nameClassWindow;
-	tag.hInstance = hInstance;
+	tag.hInstance = ::GetModuleHandle( nullptr );
 	tag.hIconSm = NULL;
 
 	if (!::RegisterClassEx(&tag)) {
@@ -40,13 +40,11 @@ bool GraphWindow::RegisterClass(HINSTANCE hInstance) {
 	return true;
 }
 
-bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
-	cmdShow = nCmdShow;
-
+bool GraphWindow::Create() {
 	handle = ::CreateWindowEx( NULL, nameClassWindow, NULL, 
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_BORDER | WS_CLIPCHILDREN,
 		200, 20, windowWidth, windowHeight,
-		NULL, NULL, hInstance, this);
+		NULL, NULL, ::GetModuleHandle( nullptr ), this);
 
 	menu = ::LoadMenu(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU1));	// Загрузить меню из файла ресурса
 	SetMenu(handle, menu);
@@ -54,7 +52,7 @@ bool GraphWindow::Create(HINSTANCE hInstance, int nCmdShow) {
 	return handle;
 }
 
-void GraphWindow::Show() {
+void GraphWindow::Show( int cmdShow ) {
 	::ShowWindow(handle, cmdShow);
 	::UpdateWindow(handle);
 }

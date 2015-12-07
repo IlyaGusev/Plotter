@@ -5,11 +5,11 @@
 class CEquationEditorWindow : public IEditorView {
 
 public:
-  CEquationEditorWindow();
+    CEquationEditorWindow();
 
-  // Зарегистрировать класс окна
-  // Если true, то зарегистрировали успешно
-  static bool RegisterClassW();
+    // Зарегистрировать класс окна
+    // Если true, то зарегистрировали успешно
+    static bool RegisterClassW();
 
 	HWND GetHandle()
 	{
@@ -60,11 +60,11 @@ public:
 
     void DrawGraph();
 protected:
-  void OnDestroy();
+    void OnDestroy();
 
 private:
-  HWND hwnd;		// хэндл окна
-  HWND parent;  // хэндл родителя MainWindow 
+    HWND hwnd;		// хэндл окна
+    HWND parent;    // хэндл родителя MainWindow 
 	HDC hdc;		// канва для рисования
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
 	bool isPressedShift;
@@ -76,15 +76,15 @@ private:
 	COLORREF bkSelectedHighlightColorref;
 	COLORREF bkUnselectedHightlightColorref;
 
-  int yMinScroll;       // minimum vertical scroll value 
-  int yCurrentScroll;   // current vertical scroll value 
-  int yMaxScroll;       // maximum vertical scroll value
+    int yMinScroll;       // minimum vertical scroll value 
+    int yCurrentScroll;   // current vertical scroll value 
+    int yMaxScroll;       // maximum vertical scroll value
 
-  static const wchar_t* const className;
+    static const wchar_t* const className;
 	
 	std::shared_ptr<CEquationPresenter> presenter;
 
-  static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
+    static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
 	HFONT getFont( int height );
 };

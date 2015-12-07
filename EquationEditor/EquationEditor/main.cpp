@@ -2,7 +2,6 @@
 #include "RibbonFramework.h"
 #include "View\MainWindow.h"
 #include "resource.h"
-#include "PlotterDll.h"
 
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)

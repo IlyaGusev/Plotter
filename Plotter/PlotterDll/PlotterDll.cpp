@@ -3,13 +3,13 @@
 
 namespace PlotterDll {
 
-    PLOTTERDLL_API HWND drawGraph( HINSTANCE hInstance, int nCmdShow )
+    PLOTTERDLL_API HWND drawGraph( int nCmdShow )
     {
         Gdiplus::GdiplusStartupInput gdiplusStartupInput;
         ULONG_PTR gdiplusToken;
         Gdiplus::GdiplusStartup( &gdiplusToken, &gdiplusStartupInput, NULL );
 
-        if( !GraphWindow::RegisterClass( hInstance ) ) {
+        if( !GraphWindow::RegisterClass() ) {
             //return 1;
         }
 
@@ -17,10 +17,10 @@ namespace PlotterDll {
         // second bool - isNeedToFillIf3D
         GraphWindow mainWindow( 700, 700, L"C:\\Users\\1\\Desktop\\Plotter\\Plotter\\PlotterDll\\ex.xml", false, false );
 
-        if( !mainWindow.Create( hInstance, nCmdShow ) ) {
+        if( !mainWindow.Create() ) {
             //return NULL;
         }
-        mainWindow.Show();
+        mainWindow.Show( nCmdShow );
 
         return mainWindow.GetHandle();
 

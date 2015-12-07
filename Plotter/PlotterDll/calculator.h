@@ -8,7 +8,7 @@
 class MathMlCalculator {
 public:
 	MathMlCalculator() {}
-	MathMlCalculator( const wchar_t* formulaPath, bool is2D = false );
+	MathMlCalculator( const char* formulaString, bool is2D = false );
 
 	void RecalculatePoints();
 	void RecalculatePoints( int gridSize );

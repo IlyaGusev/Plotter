@@ -11,7 +11,7 @@
 class GP {
 public:
 	// получает на вход точки, длину стороны сетки, и углы под которыми расположены оси по отношению к стандартному положению оси X(----->)
-	GP( const wchar_t* formulaPath,
+	GP( const char* formulaString,
 		bool is2D = false, double inputLengthOfSection = 5,
 		std::pair<double, double>& inputWindowSize = std::pair<double, double>( 700, 700 ) );
 

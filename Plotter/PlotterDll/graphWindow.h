@@ -10,7 +10,7 @@ struct CTriangle {
 
 class GraphWindow {
 public:
-	GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D = false, bool isFillPolygonsIf3D = true );
+	GraphWindow( int width, int height, const char* formulaString, bool is2D = false, bool isFillPolygonsIf3D = true );
 
 	static bool RegisterClass();
 

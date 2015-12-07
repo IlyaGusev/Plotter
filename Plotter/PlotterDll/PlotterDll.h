@@ -18,5 +18,5 @@
 
 
 namespace PlotterDll {
-    PLOTTERDLL_API HWND drawGraph( int nCmdShow );
+    PLOTTERDLL_API HWND drawGraph( int nCmdShow, const char* path );
 }

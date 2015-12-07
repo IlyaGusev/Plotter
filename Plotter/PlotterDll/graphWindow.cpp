@@ -9,10 +9,10 @@ using namespace Gdiplus;
 const wchar_t* GraphWindow::nameClassWindow = L"ClassGraphWindow";
 const wchar_t* GraphWindow::nameWindow = L"GraphWindow";
 
-GraphWindow::GraphWindow( int width, int height, const wchar_t* formulaPath, bool is2D /*= false*/, bool isFillPolygonsIf3D /*= true */ ) :
+GraphWindow::GraphWindow( int width, int height, const char* formulaString, bool is2D /*= false*/, bool isFillPolygonsIf3D /*= true */ ) :
 	windowWidth(width),
 	windowHeight(height),
-	graphInPoints( formulaPath, is2D, 40 ),
+	graphInPoints( formulaString, is2D, 40 ),
 	needToFillPolygons( isFillPolygonsIf3D )
 {
 }

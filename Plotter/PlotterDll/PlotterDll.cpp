@@ -6,7 +6,7 @@ namespace PlotterDll {
     bool isRegistered = false;
 
 
-    PLOTTERDLL_API HWND drawGraph( int nCmdShow )
+    PLOTTERDLL_API HWND drawGraph( int nCmdShow, const char* path )
     {
         Gdiplus::GdiplusStartupInput gdiplusStartupInput;
         ULONG_PTR gdiplusToken;
@@ -19,7 +19,7 @@ namespace PlotterDll {
 
         // first  bool - is2D
         // second bool - isNeedToFillIf3D
-        GraphWindow mainWindow( 700, 700, L"C:\\Users\\1\\Desktop\\Plotter\\Plotter\\PlotterDll\\ex.xml", false, false );
+        GraphWindow mainWindow( 700, 700, path, false, false );
 
         if( !mainWindow.Create() ) {
             //return NULL;

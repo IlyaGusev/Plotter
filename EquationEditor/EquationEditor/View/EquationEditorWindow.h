@@ -20,7 +20,7 @@ public:
     // Если true, то создано успешно
     bool Create( HWND parent, RECT rect );
     // Показать окно
-    void Show(int cmdShow);
+    void Show(int nCmdShow);
     // Создание edit'а
     void OnCreate();
     // Реагировать на изменения размера окна
@@ -68,6 +68,7 @@ private:
 	HDC hdc;		// канва для рисования
 	std::unordered_map<int, HFONT> fonts; // Отображение из высоты шрифта в шрифт
 	bool isPressedShift;
+    int cmdShow;
 
 	COLORREF symbolSelectedColorref;
 	COLORREF symbolUnselectedColorref;

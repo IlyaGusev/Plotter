@@ -68,10 +68,10 @@ bool CMainWindow::Create()
   return false;
 }
 
-void CMainWindow::Show(int cmdShow)
+void CMainWindow::Show( int cmdShow )
 {
-  ::ShowWindow(hwnd, cmdShow);
-  editor.Show(cmdShow);
+    ::ShowWindow(hwnd, cmdShow);
+    editor.Show(cmdShow);
 }
 
 void CMainWindow::OnDestroy()

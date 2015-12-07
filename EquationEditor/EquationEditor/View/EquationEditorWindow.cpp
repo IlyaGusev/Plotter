@@ -46,10 +46,11 @@ bool CEquationEditorWindow::Create( HWND parent, RECT rect )
 		parent, nullptr, ::GetModuleHandle( nullptr ), this ) != 0;
 }
 
-void CEquationEditorWindow::Show( int cmdShow )
+void CEquationEditorWindow::Show( int nCmdShow )
 {
+    cmdShow = nCmdShow;
 	UpdateScrollbar();
-	::ShowWindow( hwnd, cmdShow );
+	::ShowWindow( hwnd, nCmdShow );
 }
 
 void CEquationEditorWindow::OnDestroy()
@@ -461,7 +462,7 @@ void CEquationEditorWindow::OnDraw()
 
 void CEquationEditorWindow::DrawGraph()
 {
-    PlotterDll::drawGraph( 10 );
+    PlotterDll::drawGraph( cmdShow );
 }
 
 LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam )

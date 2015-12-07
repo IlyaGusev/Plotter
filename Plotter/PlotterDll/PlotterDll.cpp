@@ -3,14 +3,18 @@
 
 namespace PlotterDll {
 
+    bool isRegistered = false;
+
+
     PLOTTERDLL_API HWND drawGraph( int nCmdShow )
     {
         Gdiplus::GdiplusStartupInput gdiplusStartupInput;
         ULONG_PTR gdiplusToken;
         Gdiplus::GdiplusStartup( &gdiplusToken, &gdiplusStartupInput, NULL );
 
-        if( !GraphWindow::RegisterClass() ) {
-            //return 1;
+        if( !isRegistered ) {
+            GraphWindow::RegisterClass();
+            isRegistered = true;
         }
 
         // first  bool - is2D
@@ -22,21 +26,22 @@ namespace PlotterDll {
         }
         mainWindow.Show( nCmdShow );
 
+//        return mainWindow.GetHandle();
+
+        MSG message;
+        BOOL getMessageResult = 0;
+        while( (getMessageResult = ::GetMessage( &message, NULL, 0, 0 )) != 0 ) {
+            if( getMessageResult == -1 ) {
+                //return -1;
+            }
+
+            ::TranslateMessage( &message );
+            ::DispatchMessage( &message );
+        }
+
+        Gdiplus::GdiplusShutdown( gdiplusToken );
+
         return mainWindow.GetHandle();
-
-        //MSG message;
-        //BOOL getMessageResult = 0;
-        //while( (getMessageResult = ::GetMessage( &message, NULL, 0, 0 )) != 0 ) {
-        //    if( getMessageResult == -1 ) {
-        //        return -1;
-        //    }
-
-        //    ::TranslateMessage( &message );
-        //    ::DispatchMessage( &message );
-        //}
-
-        //Gdiplus::GdiplusShutdown( gdiplusToken );
-
         //return message.wParam;
     }
 

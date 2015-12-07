@@ -168,9 +168,14 @@ void CEquationPresenter::DeleteSymbol( bool withCtrl )
 	view.Redraw();
 }
 
-std::wstring CEquationPresenter::Serialize()
+std::wstring CEquationPresenter::Serialize( bool forValidation )
 {
-	return L"<math>"+root->Serialize()+ L"</math>";
+	// Фуск дит чит. Валидатор не знает тега math и не умеет с ним работать...ТОДО
+	if( forValidation ) {
+		return root->Serialize();
+	} else {
+		return L"<math>" + root->Serialize() + L"</math>";
+	}
 }
 
 void CEquationPresenter::DeleteNextSymbol( bool withCtrl )

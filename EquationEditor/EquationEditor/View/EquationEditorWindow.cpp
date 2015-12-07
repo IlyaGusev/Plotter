@@ -351,6 +351,11 @@ void CEquationEditorWindow::OnChar( WPARAM wParam )
 				break;
 			}
 			presenter->InsertSymbol( ( wchar_t )wParam );
+
+			// Раскомментироивать, когда валидатор станет идеальным!
+			// Тогда уже в run-time можно говорить и подсвечивать пользователю где ошибка в формуле.
+			// CEquationEditorWindow::ValidateFormula();
+			
 			break;
 	}
 }
@@ -526,17 +531,30 @@ void CEquationEditorWindow::ValidateFormula()
 	HANDLE fileHandle = ::CreateFile( static_cast<LPCWSTR>( path ), GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 	std::wstring wpath = std::wstring( path );
 	std::wstring buffer = presenter->Serialize();
+		//TranslationDll::translateText( presenter->Serialize(), "mathml", "tex" );
+		//TranslationDll::translateText( presenter->Serialize(), "mathml", "openmath" );
 	::WriteFile( fileHandle, &bom, sizeof( bom ), &bytesWritten, NULL );
 	::WriteFile( fileHandle, buffer.c_str(), buffer.size()*sizeof( wchar_t ), &bytesWritten, NULL );
 	::CloseHandle( fileHandle );
-	bool flag = false;
+	bool isValid = false;
 	try {
-		flag = ValidatorDll::validate( wpath.c_str() );
+		isValid = ValidatorDll::validate( wpath.c_str() );
 		::DeleteFile( static_cast<LPCWSTR>( path ) );
 	}
 	catch( const std::exception& e ) {
 		string error = e.what();
 		std::cerr << "Error: " << error << std::endl;
-		::DeleteFile( static_cast<LPCWSTR>( path ) );
+		::DeleteFile( static_cast<LPCWSTR>( path ) );	
+	}
+	if( isValid ) {
+		::MessageBox( NULL, static_cast<LPCWSTR>( L"Формула введена корректно!" ),
+					  static_cast<LPCWSTR>( L"Валидатор" ),
+					  MB_OK
+					  );
+	} else {
+		::MessageBox( NULL, static_cast<LPCWSTR>( L"Замечена ошибка в формуле!" ),
+					  static_cast<LPCWSTR>( L"Валидатор" ),
+					  MB_OK
+					  );
 	}
 }

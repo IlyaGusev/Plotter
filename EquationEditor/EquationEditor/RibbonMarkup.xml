@@ -89,9 +89,10 @@
     <Command Name="cmdButtonValidation"
            Symbol="ID_CMD_Validate"
            LabelTitle="Валидация"
-           LabelDescription="JUST DO IT!"
-           TooltipDescription="Validation">
+           LabelDescription="Валидация"
+           TooltipDescription="Валидация">
     <Command.LargeImages>
+      <Image>Res\val.png</Image>
     </Command.LargeImages>
   </Command>
 
@@ -163,6 +164,11 @@
     <Command Name="cmdGroupSystem"
              Symbol="ID_CMD_GROUP_SYSTEM"
              LabelTitle="Система уравнений">
+    </Command>
+
+    <Command Name="cmdGroupValidation"
+             Symbol="ID_CMD_VALIDATOR"
+             LabelTitle="Валидация">
     </Command>
 
 

@@ -183,6 +183,22 @@ END
 ID_CMD_System_LargeImages_RESID    BITMAP    "Res\eqsystem.bmp" /* LargeImages ID_CMD_System_LargeImages_RESID: (null) */
 STRINGTABLE 
 BEGIN
+    ID_CMD_Graph_LabelTitle_RESID L"\x041f\x043e\x0441\x0442\x0440\x043e\x0438\x0442\x044c \x0433\x0440\x0430\x0444\x0438\x043a" /* LabelTitle ID_CMD_Graph_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Graph_LabelDescription_RESID L"\x041f\x043e\x0441\x0442\x0440\x043e\x0438\x0442\x044c \x0433\x0440\x0430\x0444\x0438\x043a" /* LabelDescription ID_CMD_Graph_LabelDescription_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_Graph_TooltipDescription_RESID L"\x041f\x043e\x0441\x0442\x0440\x043e\x0438\x0442\x044c \x0433\x0440\x0430\x0444\x0438\x043a" /* TooltipDescription ID_CMD_Graph_TooltipDescription_RESID: (null) */
+END
+
+ID_CMD_Graph_LargeImages_RESID    BITMAP    "Res\eqsystem.bmp" /* LargeImages ID_CMD_Graph_LargeImages_RESID: (null) */
+STRINGTABLE 
+BEGIN
     ID_CMD_EXIT_LabelTitle_RESID L"\x0412\x044b\x0445\x043e\x0434" /* LabelTitle ID_CMD_EXIT_LabelTitle_RESID: (null) */
 END
 
@@ -246,6 +262,11 @@ END
 STRINGTABLE 
 BEGIN
     ID_CMD_VALIDATOR_LabelTitle_RESID L"\x0412\x0430\x043b\x0438\x0434\x0430\x0446\x0438\x044f" /* LabelTitle ID_CMD_VALIDATOR_LabelTitle_RESID: (null) */
+END
+
+STRINGTABLE 
+BEGIN
+    ID_CMD_GROUP_GRAPH_LabelTitle_RESID L"\x0413\x0440\x0430\x0444\x0438\x043a" /* LabelTitle ID_CMD_GROUP_GRAPH_LabelTitle_RESID: (null) */
 END
 
 STRINGTABLE 

@@ -227,9 +227,9 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_Validator:
 				CEquationEditorWindow::ValidateFormula();
 				break;
-            //case ID_DRAW_GRAPH:
-            //    DrawGraph();
-            //    break;
+            case ID_DRAW_GRAPH:
+                DrawGraph();
+                break;
 		    case ID_ADD_SAVE:
 			    SaveToFile();
 			    break;

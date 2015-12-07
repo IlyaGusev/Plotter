@@ -84,17 +84,37 @@
         <Image>Res\sum.bmp</Image>
       </Command.LargeImages>
     </Command>
+
     
+    <Command Name="cmdButtonZoomIn"
+           Symbol="ID_CMD_ZoomIn"
+           LabelTitle="Увеличить"
+           LabelDescription="Увеличить"
+           TooltipDescription="Увеличить">
+      <Command.LargeImages>
+        <Image>Res\graph.png</Image>
+      </Command.LargeImages>
+    </Command>
+   
+    <Command Name="cmdButtonZoomOut"
+           Symbol="ID_CMD_ZoomOut"
+           LabelTitle="Уменьшить"
+           LabelDescription="Уменьшить"
+           TooltipDescription="Уменьшить">
+      <Command.LargeImages>
+        <Image>Res\graph.png</Image>
+      </Command.LargeImages>
+    </Command>
     
     <Command Name="cmdButtonValidation"
            Symbol="ID_CMD_Validate"
            LabelTitle="Валидация"
            LabelDescription="Валидация"
            TooltipDescription="Валидация">
-    <Command.LargeImages>
-      <Image>Res\val.png</Image>
-    </Command.LargeImages>
-  </Command>
+      <Command.LargeImages>
+        <Image>Res\val.png</Image>
+      </Command.LargeImages>
+    </Command>
 
     <Command Name="cmdButtonProduct"
              Symbol="ID_CMD_Product"
@@ -122,7 +142,7 @@
              LabelDescription="Построить график"
              TooltipDescription="Построить график">
       <Command.LargeImages>
-        <Image>Res\eqsystem.bmp</Image>
+        <Image>Res\graph.bmp</Image>
       </Command.LargeImages>
     </Command>
 
@@ -175,6 +195,11 @@
              Symbol="ID_CMD_GROUP_SYSTEM"
              LabelTitle="Система уравнений">
     </Command>
+
+    <Command Name="cmdGroupZoom"
+             Symbol="ID_CMD_ZOOM"
+             LabelTitle="Увеличение">
+    </Command>    
 
     <Command Name="cmdGroupValidation"
              Symbol="ID_CMD_VALIDATOR"
@@ -236,6 +261,11 @@
             <Button CommandName="cmdButtonSystem" />
           </Group>
 
+          <Group CommandName="cmdGroupZoom" SizeDefinition="TwoButtons">
+            <Button CommandName="cmdButtonZoomIn" />
+            <Button CommandName="cmdButtonZoomOut" />
+          </Group>
+            
           <Group CommandName="cmdGroupValidation" SizeDefinition="OneButton">
             <Button CommandName="cmdButtonValidation" />
           </Group>

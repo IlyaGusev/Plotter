@@ -221,6 +221,12 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			case ID_ADD_PRODUCT:
 				presenter->AddControlView( PRODUCT );
 				break;
+            case ID_ZOOM_IN:
+                // SaveToFile();
+                break;
+            case ID_ZOOM_OUT:
+                // SaveToFile();
+                break;
 			case ID_ADD_SYSTEM:
 				presenter->AddControlView( SYSTEM );
 				break;

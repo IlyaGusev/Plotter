@@ -152,9 +152,6 @@
     <ClInclude Include="Model\RadicalControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
-    <ClInclude Include="RibbonIDs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -188,6 +185,9 @@
     <ClInclude Include="Model\BracesControlModel.h">
       <Filter>Source Files\Model</Filter>
     </ClInclude>
+    <ClInclude Include="RibbonIDs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="EquationEditor.rc">
@@ -198,14 +198,11 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="RibbonUI.bml" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="RibbonMarkup.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="RibbonMarkup.xml" />
   </ItemGroup>
 </Project>

@@ -92,7 +92,7 @@
            LabelDescription="Увеличить"
            TooltipDescription="Увеличить">
       <Command.LargeImages>
-        <Image>Res\graph.png</Image>
+        <Image>Res\zoom_in.bmp</Image>
       </Command.LargeImages>
     </Command>
    
@@ -102,7 +102,7 @@
            LabelDescription="Уменьшить"
            TooltipDescription="Уменьшить">
       <Command.LargeImages>
-        <Image>Res\graph.png</Image>
+        <Image>Res\zoom_out.bmp</Image>
       </Command.LargeImages>
     </Command>
     

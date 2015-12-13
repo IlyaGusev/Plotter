@@ -135,6 +135,14 @@ STDMETHODIMP CCommandHandler::Execute(
 			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_PRODUCT ), LPARAM( 0 ) );
 			break;
 
+        case ID_CMD_ZoomIn:
+            ::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ZOOM_IN ), LPARAM( 0 ) );
+            break;
+
+        case ID_CMD_ZoomOut:
+            ::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ZOOM_OUT ), LPARAM( 0 ) );
+            break;
+
 		case ID_CMD_System:
 			::SendMessage( g_pHwnd, WM_COMMAND, WPARAM( ID_ADD_SYSTEM ), LPARAM( 0 ) );
 			break;

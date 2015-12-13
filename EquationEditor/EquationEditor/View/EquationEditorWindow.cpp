@@ -241,6 +241,7 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 			    SaveToFile();
 			    break;
 		}
+        OnZoom();
 	}
 }
 
@@ -506,32 +507,51 @@ void CEquationEditorWindow::DrawGraph()
 
 void CEquationEditorWindow::Zoom(bool param)
 {
-    std::shared_ptr<IBaseExprModel> root = presenter->GetRoot();
-    int height = root->GetRect().GetHeight();
+    int height = presenter->GetRoot()->GetRect().GetHeight();
     float step = 10;
     float coef = 1 + (param ? 1 : -1) * step / height;
-    ZoomDFS( root, coef );
+    OnZoom(coef);
+}
+
+
+void CEquationEditorWindow::OnZoom( float coef /* = 1 */, std::shared_ptr<IBaseExprModel> node /* = nullptr */ )
+{
+    ZoomDFS( MaxCoef( coef, presenter->GetRoot() ), presenter->GetRoot() );
     presenter->InvalidateTree();
     Redraw();
 }
 
 
-void CEquationEditorWindow::ZoomDFS( std::shared_ptr<IBaseExprModel> node, float coef )
+float CEquationEditorWindow::MaxCoef( float coef, std::shared_ptr<IBaseExprModel> node )
 {
+    for( auto child : node->GetChildren() ) {
+        coef = max( MaxCoef( coef, child ), coef );
+    }
+    int height = node->GetRect().GetHeight();
+    return max( height * coef, MIN_HEIGHT ) / height;
+}
+
+
+void CEquationEditorWindow::ZoomDFS( float coef, std::shared_ptr<IBaseExprModel> node )
+{
+    for( auto child : node->GetChildren() ) {
+        ZoomDFS( coef, child );
+    }
+
+    CRect rect = node->GetRect();
+    int heightNew = ( int ) rect.GetHeight() * coef;
+    int widthNew = ( int ) rect.GetWidth() * coef;
+    rect.Set(
+        rect.Left(),
+        rect.Top(),
+        rect.Left() + widthNew,
+        rect.Top() + heightNew
+        );
+    node->SetRect( rect );
+
     std::wstring text = node->GetText();
     if( text.length() > 0 ) {
         std::shared_ptr<CEditControlModel> eNode = std::dynamic_pointer_cast<CEditControlModel>(node);
-
-        CRect rect = eNode->GetRect();
-        int heightNew = ( int ) rect.GetHeight() * coef;
-        int widthNew = ( int ) rect.GetWidth() * coef;
-        rect.Set(
-            rect.Left(),
-            rect.Top(),
-            rect.Left() + widthNew,
-            rect.Top() + heightNew
-            );
-        eNode->SetRect( rect );
 
         std::vector<int> symbolsWidthsNew;
         for( int i = 0; i < text.length(); i++ ) {
@@ -539,10 +559,6 @@ void CEquationEditorWindow::ZoomDFS( std::shared_ptr<IBaseExprModel> node, float
             symbolsWidthsNew.push_back( symbolWidth );
         }
         eNode->UpdateSymbolsWidths( symbolsWidthsNew );
-    }
-
-    for( auto child : node->GetChildren() ) {
-        ZoomDFS( child, coef );
     }
 }
 

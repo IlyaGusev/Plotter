@@ -85,6 +85,7 @@ private:
     int yMaxScroll;       // maximum vertical scroll value
 
     static const wchar_t* const className;
+    static const int MIN_HEIGHT = 20;
 	
 	std::shared_ptr<CEquationPresenter> presenter;
 
@@ -93,5 +94,7 @@ private:
 	HFONT getFont( int height );
 
     void Zoom( bool param );
-    void ZoomDFS( std::shared_ptr<IBaseExprModel> node, float coef );
+    void OnZoom( float coef = 1, std::shared_ptr<IBaseExprModel> node = nullptr );
+    float MaxCoef( float coef, std::shared_ptr<IBaseExprModel> node );
+    void ZoomDFS( float coef, std::shared_ptr<IBaseExprModel> node );
 };

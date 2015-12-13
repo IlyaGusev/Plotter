@@ -90,6 +90,11 @@ public:
 		return root;
 	}
 
+    void InvalidateTree()
+    {
+        invalidateTree();
+    }
+
 private:
 	std::shared_ptr<CExprControlModel> root;
 	IEditorView& view;

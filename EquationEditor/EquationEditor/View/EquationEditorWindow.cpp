@@ -153,19 +153,12 @@ void CEquationEditorWindow::SaveToFile() {
 	}
 }
 
+
 void CEquationEditorWindow::OnLButtonDown( int xMousePos, int yMousePos )
 {
 	presenter->SetCaret( xMousePos, yMousePos );
 }
 
-
-//void dfs( std::shared_ptr<IBaseExprModel> node, std::shared_ptr<IBaseExprModel> newNode )
-//{
-//    for( auto child : node->GetChildren() ) {
-//
-//        dfs( child, newNode );
-//    }
-//}
 
 void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 {
@@ -230,68 +223,10 @@ void CEquationEditorWindow::OnWmCommand( WPARAM wParam, LPARAM lParam )
 				presenter->AddControlView( PRODUCT );
 				break;
             case ID_ZOOM_IN:
-            {
-                std::shared_ptr<CExprControlModel> root = presenter->GetRoot();
-                //root->GetMiddle();
-                //root->SetText( L"хей" );
-                //root->SetRect( rect );
-                //root->Resize();
-                // presenter = std::make_shared<CEquationPresenter>( *this, 200, presenter->GetRoot() );
-                std::list<std::shared_ptr<IBaseExprModel>> children = root->GetChildren();
-                std::shared_ptr<CEditControlModel> child = std::dynamic_pointer_cast<CEditControlModel>(children.front());
-                //for( auto child = children.begin(); child != children.begin(); child++ ) {
-                //    (*child)->SetText( L"вай" );
-                //}
-                //presenter->OnDraw();
-                //Redraw();
-                //child->SetText( L"хей" );
-                //caret.SetCurEdit( child );
-                //presenter->SetCaret( caret );
-                //presenter->InsertSymbol( 'w' );
-                //CRect rectNew( 20, 30, 30, 100 );
-                CRect rect = child->GetRect();
-                float k = 2;
-                int heightNew = ( int ) rect.GetHeight() * k;
-                int widthNew = ( int ) rect.GetWidth() * k;
-                rect.Set(
-                    rect.Left(),
-                    rect.Top(),
-                    rect.Left() + widthNew,
-                    rect.Top() + heightNew
-                    );
-                child->SetRect( rect );
-                
-                std::wstring text = child->GetText();
-                //child->SetText( std::wstring() );
-                //for( int i = 0; i < text.length(); i++ ) {
-                //    int symbolWidth = GetSymbolWidth( text[i], heightNew );
-                //    child->InsertSymbol( text[i], i, symbolWidth );
-                //}
-                //for( auto symbol : text ) {
-                //    int symbolWidth = GetSymbolWidth( symbol, heightNew );
-                //    child->InsertSymbol( symbol, -1, symbolWidth );
-                //}
-                
-                std::vector<int> symbolsWidthsNew;
-                for( int i = 0; i < text.length(); i++ ) {
-                    int symbolWidth = GetSymbolWidth( text[i], heightNew );
-                    symbolsWidthsNew.push_back( symbolWidth );
-                }
-                child->UpdateSymbolsWidths( symbolsWidthsNew );
-
-                //int symbolWidth = GetSymbolWidth( 'q', child->GetRect().GetHeight() );
-                //child->InsertSymbol( 'q', 0, symbolWidth );
-
-
-                //std::shared_ptr<CExprControlModel> root = presenter->GetRoot();
-                //presenter = std::make_shared<CEquationPresenter>( *this, 200 );
-                //std::shared_ptr<CExprControlModel> root_new = presenter->GetRoot();
-                Redraw();
+                Zoom( true );
                 break;
-            }
-
             case ID_ZOOM_OUT:
-                // SaveToFile();
+                Zoom( false );
                 break;
 			case ID_ADD_SYSTEM:
 				presenter->AddControlView( SYSTEM );
@@ -565,10 +500,52 @@ void CEquationEditorWindow::DrawGraph()
         free( charBuffer );
     } else {
         ::MessageBox( NULL, L"График не может быть построен, так как формула не прошла валидацию.", NULL, NULL );
+    }    
+}
+
+
+void CEquationEditorWindow::Zoom(bool param)
+{
+    std::shared_ptr<IBaseExprModel> root = presenter->GetRoot();
+    int height = root->GetRect().GetHeight();
+    float step = 10;
+    float coef = 1 + (param ? 1 : -1) * step / height;
+    ZoomDFS( root, coef );
+    presenter->InvalidateTree();
+    Redraw();
+}
+
+
+void CEquationEditorWindow::ZoomDFS( std::shared_ptr<IBaseExprModel> node, float coef )
+{
+    std::wstring text = node->GetText();
+    if( text.length() > 0 ) {
+        std::shared_ptr<CEditControlModel> eNode = std::dynamic_pointer_cast<CEditControlModel>(node);
+
+        CRect rect = eNode->GetRect();
+        int heightNew = ( int ) rect.GetHeight() * coef;
+        int widthNew = ( int ) rect.GetWidth() * coef;
+        rect.Set(
+            rect.Left(),
+            rect.Top(),
+            rect.Left() + widthNew,
+            rect.Top() + heightNew
+            );
+        eNode->SetRect( rect );
+
+        std::vector<int> symbolsWidthsNew;
+        for( int i = 0; i < text.length(); i++ ) {
+            int symbolWidth = GetSymbolWidth( text[i], heightNew );
+            symbolsWidthsNew.push_back( symbolWidth );
+        }
+        eNode->UpdateSymbolsWidths( symbolsWidthsNew );
     }
 
-    
+    for( auto child : node->GetChildren() ) {
+        ZoomDFS( child, coef );
+    }
 }
+
 
 LRESULT CEquationEditorWindow::equationEditorWindowProc( HWND handle, UINT message, WPARAM wParam, LPARAM lParam )
 {

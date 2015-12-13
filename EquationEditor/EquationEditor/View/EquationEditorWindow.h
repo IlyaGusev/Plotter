@@ -91,4 +91,7 @@ private:
     static LRESULT __stdcall equationEditorWindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
 	HFONT getFont( int height );
+
+    void Zoom( bool param );
+    void ZoomDFS( std::shared_ptr<IBaseExprModel> node, float coef );
 };

@@ -40,7 +40,7 @@ public:
 	std::shared_ptr<IBaseExprModel> CopySelected() const;
 	std::wstring Serialize();
 
-  void RemoveChild(std::shared_ptr<IBaseExprModel> child);
+    void RemoveChild(std::shared_ptr<IBaseExprModel> child);
 private:
 	std::list<std::shared_ptr<IBaseExprModel>> children;
 

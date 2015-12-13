@@ -31,6 +31,7 @@ public:
 	std::shared_ptr<CEditControlModel> SliceEditControl( int offset );
 
 	std::vector<int> GetSymbolsWidths() const;
+    void UpdateSymbolsWidths( std::vector<int> symbolsWidthsNew );
 
 	ViewType GetType() const;
 

@@ -13,7 +13,7 @@ public:
 
 private:
 	Node _startingNode;
-	std::function<void( Node)> _afterEnter;
+	std::function<void( Node )> _afterEnter;
 	std::function<void( Node )> _beforeEachChild;
 	std::function<bool( Node )> _condition;
 	std::function<void( Node )> _afterEachChild;

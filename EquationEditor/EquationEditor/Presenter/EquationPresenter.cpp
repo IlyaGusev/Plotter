@@ -11,15 +11,19 @@
 #include "Model/SumControlModel.h"
 #include "Model/SystemControlModel.h"
 
-CEquationPresenter::CEquationPresenter( IEditorView& newView ) :
+CEquationPresenter::CEquationPresenter( IEditorView& newView, int default_bottom, std::shared_ptr<IBaseExprModel> old_presenter ) :
 	view( newView ),
 	isInSelectionMode( false )
 {
-	CRect rect( 20, 30, 30, 50 );
+	CRect rect( 20, 30, 30, default_bottom );
 	deltaY = 0;
 	
 	root = std::make_shared<CExprControlModel>( rect, std::weak_ptr<IBaseExprModel>() );
-	root->InitializeChildren();
+    if( old_presenter ) {
+        root->InitializeChildren(old_presenter);
+    } else {
+        root->InitializeChildren();
+    }
 	caret.SetCurEdit( root->GetChildren().front() );
 
 	// initialize tree invalidate processors
@@ -465,7 +469,6 @@ void CEquationPresenter::addDegr( std::shared_ptr<CExprControlModel> parent, std
 
 	std::shared_ptr<CEditControlModel> newEditControl = caret.GetCurEdit()->SliceEditControl( caret.Offset() );
 	parent->AddChildAfter( newEditControl, degrModel );
-
 
 	invalidateTree();
 

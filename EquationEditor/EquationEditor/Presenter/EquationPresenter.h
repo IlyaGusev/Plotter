@@ -46,7 +46,7 @@ public:
 class CEquationPresenter
 {
 public:
-	CEquationPresenter( IEditorView& newView );
+	CEquationPresenter( IEditorView& newView, int default_bottom = 50, std::shared_ptr<IBaseExprModel> old_presenter = nullptr );
 
 	void SetDelta( int delta );
 
@@ -64,6 +64,11 @@ public:
 	void OnDraw();
 
 	void SetCaret( int x, int y );
+
+    void SetCaret( CCaret c )
+    {
+        caret = c;
+    }
 
 	void SetSelection( int x, int y );
 

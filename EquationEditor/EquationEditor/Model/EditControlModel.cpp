@@ -38,6 +38,9 @@ std::list< std::shared_ptr<IBaseExprModel> > CEditControlModel::GetChildren() co
 
 void CEditControlModel::InsertSymbol( wchar_t symbol, int offset, int symbolWidth ) 
 {
+    if( offset == -1 ) {
+        offset = params.text.length();
+    }
 	params.text.insert( offset, 1, symbol );
 	if( params.isHighlighted ) {
 		params.isHighlighted = false;
@@ -85,6 +88,11 @@ std::shared_ptr<CEditControlModel> CEditControlModel::SliceEditControl( int offs
 std::vector<int> CEditControlModel::GetSymbolsWidths() const 
 {
 	return symbolsWidths;
+}
+
+void CEditControlModel::UpdateSymbolsWidths( std::vector<int> symbolsWidthsNew )
+{
+    symbolsWidths = symbolsWidthsNew;
 }
 
 ViewType CEditControlModel::GetType( ) const 

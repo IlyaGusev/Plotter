@@ -112,6 +112,16 @@ public:
 
 	//Отдаёт строку -- перевод в текст данного поддерева
 	virtual std::wstring Serialize();
+
+    std::wstring GetText()
+    {
+        return params.text;
+    }
+
+    void SetText( std::wstring s )
+    {
+        params.text = s;
+    }
 };
 
 inline std::weak_ptr<IBaseExprModel> IBaseExprModel::GetParent( ) const
